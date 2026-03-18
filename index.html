@@ -1156,12 +1156,54 @@ footer {
   </div>
 </section>
 
+<!-- FOUNDING CUSTOMERS -->
+<section style="background:var(--ink);color:var(--paper);padding:4rem 2rem;">
+  <div class="container-sm" style="text-align:center;">
+    <div style="display:inline-flex;align-items:center;gap:.5rem;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(250,249,246,.45);margin-bottom:1.5rem;">
+      <span style="width:20px;height:1px;background:rgba(250,249,246,.3);display:inline-block;"></span>
+      Clientes Fundadores
+      <span style="width:20px;height:1px;background:rgba(250,249,246,.3);display:inline-block;"></span>
+    </div>
+    <h2 style="font-family:'Instrument Serif',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:400;line-height:1.15;letter-spacing:-.02em;margin-bottom:1rem;">
+      As primeiras 10 vagas são<br><em style="font-style:italic;color:rgba(250,249,246,.55);">gratuitas para sempre</em>
+    </h2>
+    <p style="font-size:16px;color:rgba(250,249,246,.6);line-height:1.7;max-width:480px;margin:0 auto 2.5rem;font-weight:300;">
+      Os 10 primeiros clientes que entrarem têm acesso vitalício sem mensalidade — e trava de preço em todos os planos futuros. Em troca, participam ativamente da construção do produto.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;max-width:560px;margin:0 auto 2.5rem;">
+      <div style="padding:1.25rem;border:1px solid rgba(250,249,246,.12);border-radius:12px;text-align:left;">
+        <div style="font-size:20px;margin-bottom:.5rem;">∞</div>
+        <div style="font-size:13px;font-weight:500;color:var(--paper);margin-bottom:.25rem;">Acesso vitalício</div>
+        <div style="font-size:12px;color:rgba(250,249,246,.45);">Sem mensalidade para sempre</div>
+      </div>
+      <div style="padding:1.25rem;border:1px solid rgba(250,249,246,.12);border-radius:12px;text-align:left;">
+        <div style="font-size:20px;margin-bottom:.5rem;">🔒</div>
+        <div style="font-size:13px;font-weight:500;color:var(--paper);margin-bottom:.25rem;">Trava de preço</div>
+        <div style="font-size:12px;color:rgba(250,249,246,.45);">Nunca paga mais que o preço atual</div>
+      </div>
+      <div style="padding:1.25rem;border:1px solid rgba(250,249,246,.12);border-radius:12px;text-align:left;">
+        <div style="font-size:20px;margin-bottom:.5rem;">🎯</div>
+        <div style="font-size:13px;font-weight:500;color:var(--paper);margin-bottom:.25rem;">Co-criação</div>
+        <div style="font-size:12px;color:rgba(250,249,246,.45);">Voz direta no roadmap do produto</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:.5rem;font-size:13px;color:rgba(250,249,246,.4);">
+      <div style="display:flex;gap:-4px;">
+        <div style="width:24px;height:24px;border-radius:50%;background:rgba(250,249,246,.15);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;">AG</div>
+        <div style="width:24px;height:24px;border-radius:50%;background:rgba(250,249,246,.15);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;margin-left:-6px;">MK</div>
+        <div style="width:24px;height:24px;border-radius:50%;background:rgba(250,249,246,.1);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;margin-left:-6px;">+8</div>
+      </div>
+      <span>8 vagas restantes · Seja um dos primeiros</span>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section" id="comecar">
   <div class="container-sm">
-    <div class="cta-label">Comece hoje</div>
-    <h2 class="cta-headline">Sua operação<br>começa agora</h2>
-    <p class="cta-sub">14 dias grátis. Sem cartão de crédito. Cancele quando quiser.</p>
+    <div class="cta-label">Garantir minha vaga</div>
+    <h2 class="cta-headline">Entre na lista.<br>Seja fundador.</h2>
+    <p class="cta-sub">Primeiros a entrar, primeiros a usar. Sem cartão de crédito agora.</p>
     <form class="cta-form" onsubmit="submitForm(event)">
       <input class="cta-input" type="email" id="email-input" placeholder="seu@email.com" required>
       <button class="btn-cta-submit" type="submit">Entrar na lista</button>
@@ -1211,14 +1253,33 @@ var observer = new IntersectionObserver(function(entries) {
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
 
-// Form submit
+// Form submit — envia para Formspree e exibe toast
 function submitForm(e) {
   e.preventDefault();
   var email = document.getElementById('email-input').value;
+  var btn = e.target.querySelector('button[type=submit]');
+  var originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Aguarde...';
+
+  fetch('https://formspree.io/f/xojkyqwe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ email: email, source: 'landing-aproove' })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) { showToast(); })
+  .catch(function() { showToast(); }) // fallback: mostra toast mesmo se offline
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = originalText;
+    document.getElementById('email-input').value = '';
+  });
+}
+function showToast() {
   var toast = document.getElementById('toast');
   toast.style.display = 'block';
-  document.getElementById('email-input').value = '';
-  setTimeout(function() { toast.style.display = 'none'; }, 4000);
+  setTimeout(function() { toast.style.display = 'none'; }, 5000);
 }
 
 // Nav scroll
