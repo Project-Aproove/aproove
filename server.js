@@ -229,12 +229,20 @@ function validToken(token) {
 }
 
 function readAuth() {
+  // Prioridade 1: variável de ambiente (persiste no Render)
+  if (process.env.BBRAIN_PASSWORD_HASH) {
+    return { hash: process.env.BBRAIN_PASSWORD_HASH };
+  }
+  // Prioridade 2: arquivo local (dev)
   try { return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8')); }
   catch { return null; }
 }
 
 function writeAuth(data) {
   fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2));
+  // Instrução para produção
+  console.log('\n🔑 Para persistir a senha no Render, adicione esta variável de ambiente:');
+  console.log(`   BBRAIN_PASSWORD_HASH=${data.hash}\n`);
 }
 
 function getToken(req) {
