@@ -276,7 +276,8 @@ nav {
 .ss-logo-mark svg { width: 11px; height: 11px; }
 .ss-logo-name { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -.02em; }
 .ss-client { font-size: 10px; color: var(--ink3); }
-.ss-item { display: flex; align-items: center; gap: 7px; padding: 6px 1rem; font-size: 11px; color: var(--ink3); cursor: default; }
+.ss-item { display: flex; align-items: center; gap: 7px; padding: 6px 1rem; font-size: 11px; color: var(--ink3); cursor: pointer; transition: background .15s; }
+.ss-item:hover:not(.active) { background: var(--paper2); }
 .ss-item.active { color: var(--ink); font-weight: 500; border-left: 2px solid var(--ink); background: var(--paper2); }
 .ss-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: .4; }
 .ss-item.active .ss-dot { opacity: 1; }
@@ -788,7 +789,7 @@ footer {
           <div class="screen-dot" style="background:#E8A040"></div>
           <div class="screen-dot" style="background:#40C040"></div>
         </div>
-        <div class="screen-url">aproove.app/aprovacoes</div>
+        <div class="screen-url" id="hero-url">aproove.app/aprovacoes</div>
       </div>
       <div class="screen-body">
         <div class="screen-sidebar">
@@ -799,13 +800,13 @@ footer {
             </div>
             <div class="ss-client">Marca Verão S/A</div>
           </div>
-          <div class="ss-item active"><div class="ss-dot"></div>Aprovar peças</div>
-          <div class="ss-item"><div class="ss-dot"></div>Calendário</div>
-          <div class="ss-item"><div class="ss-dot"></div>Histórico</div>
-          <div class="ss-item"><div class="ss-dot"></div>Downloads</div>
-          <div class="ss-item"><div class="ss-dot"></div>Relatório</div>
+          <div class="ss-item active" onclick="heroNav(this,'aprovacoes')"><div class="ss-dot"></div>Aprovar peças</div>
+          <div class="ss-item" onclick="heroNav(this,'calendario')"><div class="ss-dot"></div>Calendário</div>
+          <div class="ss-item" onclick="heroNav(this,'historico')"><div class="ss-dot"></div>Histórico</div>
+          <div class="ss-item" onclick="heroNav(this,'downloads')"><div class="ss-dot"></div>Downloads</div>
+          <div class="ss-item" onclick="heroNav(this,'relatorio')"><div class="ss-dot"></div>Relatório</div>
         </div>
-        <div class="screen-center">
+        <div class="screen-center" id="hs-center">
           <div class="sc-top" style="background:var(--paper2);">
             <span style="font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;">Campanha Verão · 4 redes</span>
             <span style="margin-left:auto;font-size:9px;background:var(--amber-l);color:var(--amber);padding:2px 6px;border-radius:4px;font-weight:600;">1 pendente</span>
@@ -850,7 +851,7 @@ footer {
           </div>
         </div>
 
-        <div class="screen-right" style="background:var(--paper);display:flex;flex-direction:column;">
+        <div class="screen-right" id="hs-right" style="background:var(--paper);display:flex;flex-direction:column;">
           <div style="padding:7px 10px;border-bottom:1px solid var(--line);background:var(--paper2);display:flex;align-items:center;gap:5px;">
             <div style="width:14px;height:14px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;"><svg width="8" height="8" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg></div>
             <span style="font-size:9px;font-weight:600;color:var(--ink);">Aprovação WhatsApp</span>
@@ -867,6 +868,149 @@ footer {
             <div style="background:white;border-radius:0 7px 7px 7px;padding:6px 8px;max-width:88%;box-shadow:0 1px 2px rgba(0,0,0,.08);"><div style="display:flex;align-items:center;gap:4px;"><span style="font-size:12px;">✅</span><div><div style="font-size:7.5px;font-weight:700;color:#075e54;">Aprovado com sucesso!</div><div style="font-size:6.5px;color:#555;">Agendado para 20/03 às 10h00</div></div></div><div style="text-align:right;font-size:6px;color:#999;margin-top:2px;">10:47</div></div>
           </div>
         </div>
+
+        <!-- Panel: Calendário -->
+        <div id="hs-calendario" style="display:none;grid-column:2/-1;flex-direction:column;background:var(--paper);border-left:1px solid var(--line);">
+          <div style="padding:8px 12px;border-bottom:1px solid var(--line);background:var(--paper2);display:flex;align-items:center;gap:8px;">
+            <span style="font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;">Calendário Editorial · Março 2026</span>
+            <span style="margin-left:auto;font-size:9px;background:var(--green-l);color:var(--green);padding:2px 6px;border-radius:4px;font-weight:600;">12 agendados</span>
+          </div>
+          <div style="padding:10px 16px;">
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-bottom:5px;">
+              <span style="font-size:7px;color:var(--ink3);font-weight:600;">D</span><span style="font-size:7px;color:var(--ink3);font-weight:600;">S</span><span style="font-size:7px;color:var(--ink3);font-weight:600;">T</span><span style="font-size:7px;color:var(--ink3);font-weight:600;">Q</span><span style="font-size:7px;color:var(--ink3);font-weight:600;">Q</span><span style="font-size:7px;color:var(--ink3);font-weight:600;">S</span><span style="font-size:7px;color:var(--ink3);font-weight:600;">S</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;">
+              <div style="font-size:8px;color:var(--ink3);">1</div>
+              <div style="font-size:8px;color:var(--ink);"><div>2</div><div style="width:5px;height:5px;border-radius:50%;background:#ee2a7b;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">3</div>
+              <div style="font-size:8px;color:var(--ink3);">4</div>
+              <div style="font-size:8px;color:var(--ink);"><div>5</div><div style="width:5px;height:5px;border-radius:50%;background:#1877f2;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">6</div>
+              <div style="font-size:8px;color:var(--ink3);">7</div>
+              <div style="font-size:8px;color:var(--ink3);">8</div>
+              <div style="font-size:8px;color:var(--ink);"><div>9</div><div style="width:5px;height:5px;border-radius:50%;background:#ee2a7b;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">10</div>
+              <div style="font-size:8px;color:var(--ink);"><div>11</div><div style="width:5px;height:5px;border-radius:50%;background:#0077b5;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">12</div>
+              <div style="font-size:8px;color:var(--ink);"><div>13</div><div style="width:5px;height:5px;border-radius:50%;background:#ee2a7b;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">14</div>
+              <div style="font-size:8px;color:var(--ink3);">15</div>
+              <div style="font-size:8px;color:var(--ink);"><div>16</div><div style="width:5px;height:5px;border-radius:50%;background:#1877f2;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">17</div>
+              <div style="font-size:8px;color:var(--ink3);">18</div>
+              <div style="font-size:8px;color:var(--ink);"><div>19</div><div style="width:5px;height:5px;border-radius:50%;background:#ee2a7b;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;font-weight:700;color:white;background:var(--ink);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin:0 auto;">20</div>
+              <div style="font-size:8px;color:var(--ink);"><div>21</div><div style="width:5px;height:5px;border-radius:50%;background:#0077b5;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink);"><div>22</div><div style="width:5px;height:5px;border-radius:50%;background:#ee2a7b;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">23</div>
+              <div style="font-size:8px;color:var(--ink);"><div>24</div><div style="width:5px;height:5px;border-radius:50%;background:#1877f2;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">25</div>
+              <div style="font-size:8px;color:var(--ink);"><div>26</div><div style="width:5px;height:5px;border-radius:50%;background:#ee2a7b;margin:1px auto 0;"></div></div>
+              <div style="font-size:8px;color:var(--ink3);">27</div>
+              <div style="font-size:8px;color:var(--ink3);">28</div>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:10px;">
+              <div style="display:flex;align-items:center;gap:3px;"><div style="width:6px;height:6px;border-radius:50%;background:#ee2a7b;"></div><span style="font-size:7px;color:var(--ink3);">Instagram</span></div>
+              <div style="display:flex;align-items:center;gap:3px;"><div style="width:6px;height:6px;border-radius:50%;background:#1877f2;"></div><span style="font-size:7px;color:var(--ink3);">Facebook</span></div>
+              <div style="display:flex;align-items:center;gap:3px;"><div style="width:6px;height:6px;border-radius:50%;background:#0077b5;"></div><span style="font-size:7px;color:var(--ink3);">LinkedIn</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: Histórico -->
+        <div id="hs-historico" style="display:none;grid-column:2/-1;flex-direction:column;background:var(--paper);border-left:1px solid var(--line);">
+          <div style="padding:8px 12px;border-bottom:1px solid var(--line);background:var(--paper2);display:flex;align-items:center;gap:8px;">
+            <span style="font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;">Histórico de aprovações</span>
+            <span style="margin-left:auto;font-size:9px;color:var(--ink3);">Campanha Verão</span>
+          </div>
+          <div style="padding:8px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--paper2);border-radius:7px;">
+              <div style="width:26px;height:26px;background:linear-gradient(135deg,#ffecd2,#fcb69f);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">☀️</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">Feed Instagram · Campanha Verão</div><div style="font-size:7px;color:var(--ink3);">Aprovado em 18/03 · 10:47</div></div>
+              <span style="font-size:7px;background:var(--green-l);color:var(--green);padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;">✓ Aprovado</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--paper2);border-radius:7px;">
+              <div style="width:26px;height:26px;background:linear-gradient(180deg,#667eea,#764ba2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">✨</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">Stories Instagram · Lançamento</div><div style="font-size:7px;color:var(--ink3);">Aprovado em 15/03 · 14:22</div></div>
+              <span style="font-size:7px;background:var(--green-l);color:var(--green);padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;">✓ Aprovado</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--paper2);border-radius:7px;">
+              <div style="width:26px;height:26px;background:linear-gradient(135deg,#a8edea,#fed6e3);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">🛍️</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">Post Facebook · Promoção</div><div style="font-size:7px;color:var(--ink3);">Aprovado em 12/03 · 09:15</div></div>
+              <span style="font-size:7px;background:var(--green-l);color:var(--green);padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;">✓ Aprovado</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--paper2);border-radius:7px;">
+              <div style="width:26px;height:26px;background:linear-gradient(135deg,#e0f2fe,#bfdbfe);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">💼</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">LinkedIn · Institucional</div><div style="font-size:7px;color:var(--ink3);">Pediu ajuste · 10/03</div></div>
+              <span style="font-size:7px;background:var(--amber-l);color:var(--amber);padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;">⚠ Revisão</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: Downloads -->
+        <div id="hs-downloads" style="display:none;grid-column:2/-1;flex-direction:column;background:var(--paper);border-left:1px solid var(--line);">
+          <div style="padding:8px 12px;border-bottom:1px solid var(--line);background:var(--paper2);display:flex;align-items:center;gap:8px;">
+            <span style="font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;">Downloads</span>
+            <span style="margin-left:auto;font-size:9px;color:var(--ink3);">3 arquivos disponíveis</span>
+          </div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--paper2);">
+              <div style="width:30px;height:30px;background:#FDECEA;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🖼️</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">campanha-verao-feed.zip</div><div style="font-size:7px;color:var(--ink3);">4 arquivos · 12,4 MB</div></div>
+              <div style="font-size:7px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);padding:4px 8px;border-radius:5px;flex-shrink:0;">↓ Baixar</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--paper2);">
+              <div style="width:30px;height:30px;background:#e0f2fe;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📄</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">relatorio-aprovacoes.pdf</div><div style="font-size:7px;color:var(--ink3);">Relatório · 1,2 MB</div></div>
+              <div style="font-size:7px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);padding:4px 8px;border-radius:5px;flex-shrink:0;">↓ Baixar</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--paper2);">
+              <div style="width:30px;height:30px;background:#f0fdf4;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📋</div>
+              <div style="flex:1;min-width:0;"><div style="font-size:8px;font-weight:600;color:var(--ink);">briefing-completo.pdf</div><div style="font-size:7px;color:var(--ink3);">Documento · 560 KB</div></div>
+              <div style="font-size:7px;font-weight:600;color:var(--ink);background:var(--paper);border:1px solid var(--line);padding:4px 8px;border-radius:5px;flex-shrink:0;">↓ Baixar</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: Relatório -->
+        <div id="hs-relatorio" style="display:none;grid-column:2/-1;flex-direction:column;background:var(--paper);border-left:1px solid var(--line);">
+          <div style="padding:8px 12px;border-bottom:1px solid var(--line);background:var(--paper2);display:flex;align-items:center;gap:8px;">
+            <span style="font-size:9px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;">Relatório · Campanha Verão</span>
+            <span style="margin-left:auto;font-size:9px;color:var(--ink3);">Março 2026</span>
+          </div>
+          <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+            <div style="background:var(--paper2);border-radius:9px;padding:10px 13px;">
+              <div style="font-size:20px;font-weight:700;color:var(--ink);">14</div>
+              <div style="font-size:8px;color:var(--ink3);margin-top:2px;">Peças aprovadas</div>
+              <div style="font-size:7px;color:var(--green);margin-top:4px;">↑ +3 vs mês anterior</div>
+            </div>
+            <div style="background:var(--paper2);border-radius:9px;padding:10px 13px;">
+              <div style="font-size:20px;font-weight:700;color:var(--ink);">2h</div>
+              <div style="font-size:8px;color:var(--ink3);margin-top:2px;">Tempo médio aprovação</div>
+              <div style="font-size:7px;color:var(--green);margin-top:4px;">↓ −40min vs mês anterior</div>
+            </div>
+            <div style="background:var(--paper2);border-radius:9px;padding:10px 13px;">
+              <div style="font-size:20px;font-weight:700;color:var(--ink);">93%</div>
+              <div style="font-size:8px;color:var(--ink3);margin-top:2px;">Taxa de aprovação</div>
+              <div style="font-size:7px;color:var(--green);margin-top:4px;">↑ +8% vs mês anterior</div>
+            </div>
+            <div style="background:var(--paper2);border-radius:9px;padding:10px 13px;">
+              <div style="font-size:20px;font-weight:700;color:var(--ink);">12</div>
+              <div style="font-size:8px;color:var(--ink3);margin-top:2px;">Posts publicados</div>
+              <div style="font-size:7px;color:var(--green);margin-top:4px;">↑ +2 vs mês anterior</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel: CTA (aparece na 4ª interação) -->
+        <div id="hs-cta" style="display:none;grid-column:2/-1;flex-direction:column;align-items:center;justify-content:center;background:var(--paper);border-left:1px solid var(--line);text-align:center;padding:28px 24px;">
+          <div style="font-size:30px;margin-bottom:10px;">🎯</div>
+          <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:5px;letter-spacing:-.02em;">Você acabou de explorar o Aproove</div>
+          <div style="font-size:10px;color:var(--ink3);margin-bottom:18px;line-height:1.6;">Calendário, histórico, downloads e relatórios —<br>tudo em um só lugar para sua equipe.</div>
+          <a href="#cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'});return false;" style="display:inline-block;background:var(--ink);color:white;font-size:11px;font-weight:600;padding:9px 22px;border-radius:8px;text-decoration:none;margin-bottom:9px;">Começar grátis →</a>
+          <div style="font-size:8px;color:var(--ink3);">10 vagas de fundador · Grátis na co-criação</div>
+        </div>
+
       </div>
     </div>
     <div class="screen-float-badge badge-approved">
@@ -1348,6 +1492,39 @@ window.addEventListener('scroll', function() {
     nav.style.boxShadow = 'none';
   }
 });
+
+// Hero interactive navigation
+var _heroClicks = 0;
+var _heroCurrent = 'aprovacoes';
+var _heroUrls = {
+  aprovacoes: 'aproove.app/aprovacoes',
+  calendario: 'aproove.app/calendario',
+  historico: 'aproove.app/historico',
+  downloads: 'aproove.app/downloads',
+  relatorio: 'aproove.app/relatorio',
+  cta: 'aproove.app/bem-vindo'
+};
+function heroNav(el, screen) {
+  if (screen === _heroCurrent) return;
+  if (screen !== 'aprovacoes') {
+    _heroClicks++;
+    if (_heroClicks >= 4) screen = 'cta';
+  }
+  document.querySelectorAll('.ss-item').forEach(function(i) { i.classList.remove('active'); });
+  el.classList.add('active');
+  var isAprov = screen === 'aprovacoes';
+  var center = document.getElementById('hs-center');
+  var right  = document.getElementById('hs-right');
+  if (center) center.style.display = isAprov ? 'flex' : 'none';
+  if (right)  right.style.display  = isAprov ? 'flex' : 'none';
+  ['calendario','historico','downloads','relatorio','cta'].forEach(function(s) {
+    var p = document.getElementById('hs-' + s);
+    if (p) p.style.display = s === screen ? 'flex' : 'none';
+  });
+  var urlEl = document.getElementById('hero-url');
+  if (urlEl) urlEl.textContent = _heroUrls[screen] || _heroUrls.aprovacoes;
+  _heroCurrent = screen;
+}
 
 // Stagger reveal on load
 document.querySelectorAll('.reveal').forEach(function(el, i) {
