@@ -15,9 +15,10 @@
  * Uso: node server.js
  */
 
-const http = require('http');
-const fs   = require('fs');
-const path = require('path');
+const http   = require('http');
+const fs     = require('fs');
+const path   = require('path');
+const crypto = require('crypto');
 
 // ── CARREGAR .env SE EXISTIR ─────────────────────────────────────────────────
 try {
@@ -38,6 +39,7 @@ const LAB_DIR      = path.join(ROOT, 'laboratorio');
 const VERSION_FILE  = path.join(ROOT, 'version.json');
 const IDEAS_FILE    = path.join(ROOT, 'ideas.json');
 const SESSIONS_FILE = path.join(ROOT, 'sessions.json');
+const AUTH_FILE     = path.join(ROOT, 'auth.json');
 
 // ── MIME ─────────────────────────────────────────────────────────────────────
 const MIME = {
@@ -144,6 +146,7 @@ function writeSessions(data) {
 const WA_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || '';
 const WA_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || '';
 const WA_PHONE_ID     = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
+const BBRAIN_OWNER    = process.env.BBRAIN_OWNER_PHONE || '5511981655857';
 
 async function sendWhatsAppReply(to, text) {
   if (!WA_ACCESS_TOKEN || !WA_PHONE_ID) return;
@@ -204,6 +207,41 @@ function processWhatsAppMessage(entry) {
   }
 }
 
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+const authSessions = new Map(); // token → expiresAt (ms)
+
+function hashPwd(password) {
+  return crypto.createHash('sha256').update('bbrain:' + password).digest('hex');
+}
+
+function newToken() {
+  const token = crypto.randomBytes(32).toString('hex');
+  authSessions.set(token, Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 dias
+  return token;
+}
+
+function validToken(token) {
+  if (!token) return false;
+  const exp = authSessions.get(token);
+  if (!exp) return false;
+  if (Date.now() > exp) { authSessions.delete(token); return false; }
+  return true;
+}
+
+function readAuth() {
+  try { return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8')); }
+  catch { return null; }
+}
+
+function writeAuth(data) {
+  fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2));
+}
+
+function getToken(req) {
+  const auth = req.headers['authorization'] || '';
+  return auth.startsWith('Bearer ') ? auth.slice(7) : '';
+}
+
 // ── UTILITÁRIOS HTTP ──────────────────────────────────────────────────────────
 function readBody(req) {
   return new Promise(resolve => {
@@ -241,6 +279,56 @@ const server = http.createServer(async (req, res) => {
   if (method === 'OPTIONS') {
     res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
     res.end(); return;
+  }
+
+  // ── AUTH ROUTES (sem proteção) ────────────────────────────────────────────
+
+  if (pathname === '/api/auth/status' && method === 'GET') {
+    const auth = readAuth();
+    if (!auth) return json(res, 200, { setup_required: true, authenticated: false });
+    return json(res, 200, { setup_required: false, authenticated: validToken(getToken(req)) });
+  }
+
+  if (pathname === '/api/auth/setup' && method === 'POST') {
+    try {
+      if (readAuth()) return json(res, 403, { error: 'Senha já configurada' });
+      const body = await readBody(req);
+      const { password } = JSON.parse(body);
+      if (!password || password.length < 6) return json(res, 400, { error: 'Mínimo 6 caracteres' });
+      writeAuth({ hash: hashPwd(password), created_at: new Date().toISOString() });
+      const token = newToken();
+      console.log('🔐 BBrain → senha criada');
+      return json(res, 200, { token });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
+  if (pathname === '/api/auth/login' && method === 'POST') {
+    try {
+      const auth = readAuth();
+      if (!auth) return json(res, 400, { error: 'Senha não configurada' });
+      const body = await readBody(req);
+      const { password } = JSON.parse(body);
+      if (hashPwd(password) !== auth.hash) {
+        console.log('⚠️  BBrain → login inválido');
+        return json(res, 401, { error: 'Senha incorreta' });
+      }
+      const token = newToken();
+      console.log('🔐 BBrain → login realizado');
+      return json(res, 200, { token });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
+  if (pathname === '/api/auth/logout' && method === 'POST') {
+    const token = getToken(req);
+    if (token) authSessions.delete(token);
+    return json(res, 200, { success: true });
+  }
+
+  // ── GUARD: protege todas as rotas /api/* ──────────────────────────────────
+  if (pathname.startsWith('/api/')) {
+    if (!validToken(getToken(req))) {
+      return json(res, 401, { error: 'Não autenticado', code: 'UNAUTHORIZED' });
+    }
   }
 
   // ── GET /api/version ──
@@ -364,6 +452,14 @@ const server = http.createServer(async (req, res) => {
       data.sessions.unshift(session);
       writeSessions(data);
       console.log(`📓 BBrain → sessão iniciada em "${session.location}"`);
+
+      // Notificação WhatsApp ao fundador
+      const t = new Date(session.started_at);
+      const hora  = t.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const data_ = t.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+      const msg   = `🧠 *BBrain iniciado*\n📅 ${data_} às ${hora}\n📍 ${session.location}${session.initial_thoughts ? '\n💭 ' + session.initial_thoughts : ''}`;
+      sendWhatsAppReply(BBRAIN_OWNER, msg);
+
       return json(res, 201, { session });
     } catch (e) { return json(res, 400, { error: e.message }); }
   }

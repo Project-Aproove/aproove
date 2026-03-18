@@ -241,6 +241,36 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   .main { padding: 1.25rem 1rem 4rem; }
   .tabs { padding: 0 1rem; overflow-x: auto; }
 }
+
+/* ── AUTH OVERLAY ── */
+.auth-overlay { position:fixed;inset:0;z-index:9999;background:var(--brain);display:flex;align-items:center;justify-content:center;padding:1.5rem; }
+.auth-overlay.hidden { display:none; }
+.auth-box { width:100%;max-width:360px;text-align:center; }
+.auth-icon { font-size:52px;display:block;margin-bottom:1.75rem; }
+.auth-title { font-size:26px;font-weight:700;color:white;letter-spacing:-.02em;margin-bottom:.375rem; }
+.auth-subtitle { font-size:13px;color:rgba(255,255,255,.4);margin-bottom:2rem;line-height:1.6; }
+.auth-input {
+  display:block;width:100%;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;padding:.8rem 1rem;
+  font-family:inherit;font-size:14px;color:white;
+  margin-bottom:.625rem;outline:none;transition:border-color .15s;
+}
+.auth-input::placeholder { color:rgba(255,255,255,.25); }
+.auth-input:focus { border-color:rgba(255,255,255,.3); }
+.auth-input[readonly] { opacity:.4;cursor:default; }
+.auth-btn {
+  display:block;width:100%;
+  background:rgba(255,255,255,.95);color:var(--brain);
+  border:none;border-radius:10px;padding:.9rem;
+  font-family:inherit;font-size:14px;font-weight:700;
+  cursor:pointer;margin-top:.375rem;transition:opacity .15s;
+  letter-spacing:-.01em;
+}
+.auth-btn:hover { opacity:.9; }
+.auth-btn:disabled { opacity:.4;cursor:not-allowed; }
+.auth-err { font-size:12px;color:#f87171;margin-top:.75rem;min-height:1.4em; }
+.auth-hint { font-size:11px;color:rgba(255,255,255,.2);margin-top:1.75rem;line-height:1.7; }
 </style>
 </head>
 <body>
@@ -363,6 +393,34 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   </div>
 </div>
 
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay" class="auth-overlay hidden">
+
+  <!-- SETUP: primeira vez -->
+  <div id="auth-setup" class="auth-box" style="display:none">
+    <span class="auth-icon">🧠</span>
+    <h1 class="auth-title">Bem-vindo ao BBrain</h1>
+    <p class="auth-subtitle">Primeira vez aqui.<br>Crie sua senha para proteger este espaço.</p>
+    <input type="password" id="setup-pwd"  class="auth-input" placeholder="Nova senha (mín. 6 caracteres)" autocomplete="new-password">
+    <input type="password" id="setup-pwd2" class="auth-input" placeholder="Confirmar senha" autocomplete="new-password">
+    <button id="setup-btn" class="auth-btn" onclick="doSetup()">Criar senha e entrar</button>
+    <p class="auth-err" id="setup-err"></p>
+    <p class="auth-hint">Você pode mudar sua senha a qualquer momento<br>nas configurações do BBrain.</p>
+  </div>
+
+  <!-- LOGIN: visitas seguintes -->
+  <div id="auth-login" class="auth-box" style="display:none">
+    <span class="auth-icon">🧠</span>
+    <h1 class="auth-title">BBrain</h1>
+    <p class="auth-subtitle">Bruno Cérebro · Aproove</p>
+    <input type="text"     id="login-user" class="auth-input" value="brunomassa" readonly>
+    <input type="password" id="login-pwd"  class="auth-input" placeholder="Senha" autocomplete="current-password">
+    <button id="login-btn" class="auth-btn" onclick="doLogin()">Entrar</button>
+    <p class="auth-err" id="login-err"></p>
+  </div>
+
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════════════
 // BBRAIN — Bruno Cérebro · Diário do Fundador + Captura de Ideias
@@ -375,8 +433,99 @@ let sessionTimer  = null;
 let activeFilter  = 'todas';
 let activeTab     = 'ideas';
 
+// ── AUTH ──────────────────────────────────────────────────────
+let authToken = localStorage.getItem('bbrain_token') || '';
+
+function api(url, opts = {}) {
+  opts.headers = { ...(opts.headers || {}), ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) };
+  return fetch(url, opts);
+}
+
+async function checkAuth() {
+  const overlay = document.getElementById('auth-overlay');
+  try {
+    const r = await api('/api/auth/status', {
+      headers: authToken ? { 'Authorization': 'Bearer ' + authToken } : {}
+    });
+    const d = await r.json();
+    if (d.authenticated) { overlay.classList.add('hidden'); return true; }
+    overlay.classList.remove('hidden');
+    if (d.setup_required) {
+      document.getElementById('auth-setup').style.display = 'block';
+      setTimeout(() => document.getElementById('setup-pwd').focus(), 100);
+    } else {
+      document.getElementById('auth-login').style.display = 'block';
+      setTimeout(() => document.getElementById('login-pwd').focus(), 100);
+    }
+    return false;
+  } catch {
+    // Servidor offline — esconde overlay e continua (modo offline/local)
+    overlay.classList.add('hidden');
+    return true;
+  }
+}
+
+async function doSetup() {
+  const pwd  = document.getElementById('setup-pwd').value;
+  const pwd2 = document.getElementById('setup-pwd2').value;
+  const err  = document.getElementById('setup-err');
+  const btn  = document.getElementById('setup-btn');
+  err.textContent = '';
+  if (pwd.length < 6) { err.textContent = 'Mínimo 6 caracteres'; return; }
+  if (pwd !== pwd2)   { err.textContent = 'As senhas não conferem'; return; }
+  btn.disabled = true; btn.textContent = 'Criando...';
+  try {
+    const r = await api('/api/auth/setup', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd })
+    });
+    const d = await r.json();
+    if (d.token) {
+      authToken = d.token;
+      localStorage.setItem('bbrain_token', authToken);
+      document.getElementById('auth-overlay').classList.add('hidden');
+      init();
+    } else { err.textContent = d.error || 'Erro ao criar senha'; }
+  } catch { err.textContent = 'Servidor offline'; }
+  btn.disabled = false; btn.textContent = 'Criar senha e entrar';
+}
+
+async function doLogin() {
+  const pwd = document.getElementById('login-pwd').value;
+  const err = document.getElementById('login-err');
+  const btn = document.getElementById('login-btn');
+  err.textContent = '';
+  if (!pwd) { err.textContent = 'Digite sua senha'; return; }
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  try {
+    const r = await api('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd })
+    });
+    const d = await r.json();
+    if (d.token) {
+      authToken = d.token;
+      localStorage.setItem('bbrain_token', authToken);
+      document.getElementById('auth-overlay').classList.add('hidden');
+      init();
+    } else { err.textContent = 'Senha incorreta'; document.getElementById('login-pwd').value = ''; }
+  } catch { err.textContent = 'Servidor offline'; }
+  btn.disabled = false; btn.textContent = 'Entrar';
+}
+
+// Enter no campo de senha
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const setup = document.getElementById('auth-setup');
+  const login = document.getElementById('auth-login');
+  if (setup && setup.style.display !== 'none') doSetup();
+  else if (login && login.style.display !== 'none') doLogin();
+});
+
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
+  const authed = await checkAuth();
+  if (!authed) return;
   updateCheckinDatetime();
   await loadData();
   checkForActiveSession();
@@ -397,7 +546,7 @@ async function loadData() {
 
 async function loadIdeas() {
   try {
-    const r = await fetch('/api/ideas');
+    const r = await api('/api/ideas');
     if (!r.ok) throw new Error();
     const d = await r.json();
     ideas = d.ideas || [];
@@ -411,7 +560,7 @@ async function loadIdeas() {
 
 async function loadSessions() {
   try {
-    const r = await fetch('/api/sessions');
+    const r = await api('/api/sessions');
     if (!r.ok) throw new Error();
     const d = await r.json();
     sessions = d.sessions || [];
@@ -484,7 +633,7 @@ async function startSession() {
   };
 
   try {
-    const r = await fetch('/api/sessions', {
+    const r = await api('/api/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(session)
@@ -602,7 +751,7 @@ async function submitIdea() {
   };
 
   try {
-    const r = await fetch('/api/ideas', {
+    const r = await api('/api/ideas', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(idea)
     });

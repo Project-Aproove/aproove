@@ -16,6 +16,7 @@ yarn-error.log*
 # ⚠️ Remova estas linhas se quiser versionar seus dados
 ideas.json
 sessions.json
+auth.json
 
 # Claude Code (configuração interna da ferramenta)
 .claude/

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: bbrain-aproove
+    env: node
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: BBRAIN_OWNER_PHONE
+        value: 5511981655857
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
