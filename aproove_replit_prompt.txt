@@ -1,0 +1,226 @@
+===========================================================
+APROOVE — PROMPT COMPLETO PARA REPLIT
+Versão 1.0 | Março 2026
+Cole este prompt integralmente no Replit Agent ou equivalente.
+===========================================================
+
+You are a senior full-stack developer and UI/UX designer tasked with building the MVP of "Aproove" — a B2B SaaS platform for social media content approval workflow management.
+
+IMPORTANT: All user interface text, labels, buttons, messages, and content must be written in Brazilian Portuguese (pt-BR).
+
+---
+
+PROJECT OVERVIEW
+Aproove centralizes the content approval flow between marketing teams and their clients. The core problem it solves: today, content approvals happen via WhatsApp, email, and PDFs — causing rework, delays, misalignment, and publication errors.
+
+---
+
+TECH STACK
+- Frontend: React + TypeScript + Tailwind CSS
+- Backend: Node.js + Express (or Next.js API routes)
+- Database: Supabase (PostgreSQL) or Firebase
+- Storage: Supabase Storage or Cloudinary (for image/video uploads)
+- Auth: Supabase Auth or Clerk
+- Deployment: Replit (web)
+
+---
+
+USER ROLES
+1. Internal Team (authenticated):
+   - Planner: creates campaigns, defines networks/formats/dates
+   - Social Media: writes copy (caption, CTA, hashtags) per piece
+   - Designer: uploads artwork per piece
+   - Marketing Manager: internal review and approval
+   - Admin: manages users, clients, integrations
+
+2. External User (client):
+   - Client Approver: accesses via public link or simple login, views mockup, approves or requests changes
+
+---
+
+CORE FEATURES TO BUILD (MVP SCOPE)
+
+1. CAMPAIGN PLANNING
+   Screen: "Nova Campanha" (New Campaign)
+   Fields:
+   - Campaign name
+   - Associated client
+   - Start and end date
+   - Campaign objective (dropdown: Awareness / Engagement / Lead Generation / Institutional / Commercial)
+   - Social networks (multi-select checkboxes with icons): Instagram, LinkedIn, TikTok, Facebook, X/Twitter
+   - For each selected network: format(s) + publication date + assigned social media user + assigned designer
+   
+   On save: system auto-generates a list of content pieces with status "Em Briefing" (In Briefing)
+
+2. CONTENT PRODUCTION
+   Screen: "Detalhe da Peça" (Content Piece Detail)
+   Fields:
+   - Social network + format (displayed, not editable)
+   - Publication date
+   - Status badge
+   - Copy area: caption, CTA, hashtags (filled by Social Media role)
+   - Artwork upload (drag & drop, image or video) — filled by Designer role
+   - Artwork preview after upload
+   - Button: "Marcar como pronto para revisão" (Mark as ready for review)
+
+3. VISUAL MOCKUP GENERATION
+   When both copy and artwork are complete, the system renders a visual mockup simulating the post as it would appear on the social network:
+   - Instagram: white phone frame, profile picture placeholder, username placeholder, image, caption, like/comment bar
+   - LinkedIn: feed-style card with profile photo, name, text, image
+   - TikTok: vertical dark phone frame with overlay text, like/share buttons
+   - Facebook: standard feed post card
+   - X/Twitter: tweet card with text and image
+
+4. CLIENT APPROVAL PORTAL
+   Screen: public or lightly-authenticated page accessible via unique link
+   Layout:
+   - Agency logo (customizable) at top
+   - Campaign name + scheduled publication date
+   - Visual mockup (network-specific frame)
+   - Caption text displayed below
+   - Three action buttons: [✓ Aprovar] [✎ Solicitar Ajuste] [✗ Reprovar]
+   - Comment field (mandatory, appears when "Solicitar Ajuste" is clicked)
+   - After approval: buttons disappear, confirmation message shown
+   
+   On approval: timestamp, user identifier, and IP are recorded (immutable)
+   On revision request: comment is attached to the piece; status changes to "Em Ajuste"
+
+5. VERSION HISTORY
+   Screen: "Histórico de Versões" (Version History)
+   - Vertical timeline per content piece
+   - Each version shows: version number, date, who submitted, artwork thumbnail, copy text, client's comment (if any), status badge
+   - Current version highlighted
+
+6. AUTOMATIC SCHEDULING
+   Logic (backend):
+   - On client approval, system reads the scheduled publication date from campaign planning
+   - Status updates automatically: Aprovado → Agendado
+   - (For MVP: scheduling confirmation is visual only — no real API integration with social networks yet)
+   - Dashboard reflects: Agendado → Publicado (manually confirmed by manager)
+
+7. MAIN DASHBOARD
+   Screen: "Dashboard"
+   KPI cards:
+   - Total active pieces
+   - Pending client approval
+   - In revision (Em Ajuste)
+   - Scheduled
+   - Published
+   
+   Campaign list with:
+   - Campaign name
+   - Client
+   - Progress bar (pieces by status)
+   - Quick action button
+   
+   Quick-access button: "Nova Campanha" (New Campaign)
+
+---
+
+STATUS SYSTEM (use colored badges in pt-BR)
+- "Em Briefing" — gray
+- "Em Produção" — blue
+- "Revisão Interna" — amber
+- "Aguardando Cliente" — amber
+- "Em Ajuste" — red
+- "Aprovado" — green
+- "Agendado" — blue
+- "Publicado" — green
+- "Reprovado" — red
+
+---
+
+UI/UX DESIGN DIRECTION
+- Design language: clean, modern, B2B SaaS — similar to Notion, Linear, or Figma
+- Color palette: neutral background (off-white #FAF9F5), dark ink (#1A1A18), minimal color accents only for status badges
+- Typography: DM Sans or Lato — clean, readable, professional
+- Layout: sidebar navigation (left) + main content area (right)
+- Components: cards, status badges, progress bars, drag-and-drop upload areas, modal dialogs
+- Mobile-responsive is a bonus, not required for MVP
+
+---
+
+NAVIGATION STRUCTURE (sidebar)
+- Dashboard (Painel)
+- Campanhas (Campaigns)
+- Peças (Content Pieces)
+- Clientes (Clients)
+- Configurações (Settings)
+
+---
+
+DATA MODELS (simplified)
+
+Campaign:
+- id, name, client_id, start_date, end_date, objective, networks[], status, created_by, created_at
+
+ContentPiece:
+- id, campaign_id, network, format, publication_date, assigned_social_media, assigned_designer, copy_caption, copy_cta, copy_hashtags, artwork_url, status, approval_timestamp, approval_user, approval_ip, created_at
+
+ContentVersion:
+- id, piece_id, version_number, artwork_url, copy_caption, copy_cta, copy_hashtags, status, client_comment, submitted_at, submitted_by
+
+Client:
+- id, name, logo_url, contact_email, approval_link_token
+
+User:
+- id, name, email, role (planner | social_media | designer | manager | admin), account_id
+
+---
+
+SECURITY AND LGPD COMPLIANCE
+- All routes must be authenticated (except client approval portal)
+- Role-based access control (RBAC): users only see and edit what their role permits
+- Approval records are immutable — no update or delete allowed after confirmation
+- All file uploads: validate file type and size before storing
+- Use HTTPS everywhere
+- Log all approval actions with timestamp, user ID, and IP address
+
+---
+
+FINANCIAL CONSIDERATIONS (architecture decisions)
+- Implement file size limits per upload (images: max 10MB, videos: max 100MB)
+- Store files in cloud object storage (not local filesystem)
+- Track storage usage per account for future billing enforcement
+- Implement soft limits with warning notifications (80% of plan limit)
+- Hard limits that block uploads at 100% of plan storage
+
+---
+
+DELIVERABLES
+Build a fully functional web application with:
+1. Authentication system (login/logout, role assignment)
+2. All 7 screens described above, fully functional in Brazilian Portuguese
+3. Database schema with seed data for demo purposes
+4. Client approval portal accessible via unique shareable link
+5. File upload and cloud storage integration
+6. Status workflow system with transitions
+7. Version history per content piece
+8. Responsive sidebar navigation
+
+Include demo seed data:
+- 1 demo agency account
+- 3 demo users (manager, social media, designer)
+- 1 demo client ("Empresa Demo")
+- 2 demo campaigns with pieces in different statuses
+- Example mockups for Instagram and LinkedIn
+
+---
+
+START BY:
+1. Setting up the project structure
+2. Creating the database schema
+3. Building the authentication system
+4. Building the Dashboard screen
+5. Building the Campaign creation screen
+6. Building the Content Piece detail screen with mockup preview
+7. Building the Client Approval Portal (public page)
+8. Connecting all flows end-to-end
+
+The final product should be a convincing, demonstrable MVP that can be shown to potential clients and investors. Prioritize working functionality over visual polish, but maintain a clean, professional B2B SaaS aesthetic throughout.
+
+All UI text, labels, error messages, success messages, placeholders, and navigation items must be in Brazilian Portuguese (pt-BR).
+
+===========================================================
+FIM DO PROMPT
+===========================================================

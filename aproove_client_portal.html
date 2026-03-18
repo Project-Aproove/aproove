@@ -1,0 +1,693 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;background:var(--color-background-tertiary)}
+
+.app{display:flex;min-height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-tertiary)}
+
+.sidebar{width:200px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;flex-shrink:0}
+.sb-top{padding:1rem 1rem .875rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sb-brand{display:flex;align-items:center;gap:8px;margin-bottom:.625rem}
+.sb-icon{width:28px;height:28px;border-radius:7px;background:var(--color-text-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-icon svg{width:16px;height:16px}
+.sb-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sb-client{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:3px 8px;border-radius:4px;display:inline-block}
+.sb-nav{padding:.5rem 0;flex:1}
+.sb-sec{padding:.5rem 1rem .25rem;font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.07em}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 1rem;font-size:12px;color:var(--color-text-secondary);cursor:pointer;border-left:2px solid transparent;transition:all .12s}
+.sb-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.sb-item.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-left-color:var(--color-text-primary);font-weight:500}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-badge{margin-left:auto;font-size:10px;background:var(--color-background-warning);color:var(--color-text-warning);padding:1px 6px;border-radius:10px;font-weight:500}
+.sb-bottom{padding:.875rem 1rem;border-top:0.5px solid var(--color-border-tertiary)}
+.sb-user{display:flex;align-items:center;gap:7px}
+.sb-av{width:28px;height:28px;border-radius:50%;background:var(--color-background-success);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--color-text-success);flex-shrink:0}
+.sb-uname{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.sb-urole{font-size:10px;color:var(--color-text-secondary)}
+
+.main{flex:1;overflow-y:auto;padding:1.25rem}
+.page{display:none}.page.active{display:block}
+.ph{margin-bottom:1.25rem}
+.ph h1{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.ph p{font-size:12px;color:var(--color-text-secondary)}
+
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
+.card-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:.75rem}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:.625rem;margin-bottom:.75rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.625rem;margin-bottom:.75rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.625rem;margin-bottom:.75rem}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem}
+.metric .lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.metric .val{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.metric .sub{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+
+.pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+.pill-pend{background:var(--color-background-warning);color:var(--color-text-warning)}
+.pill-apr{background:var(--color-background-success);color:var(--color-text-success)}
+.pill-pub{background:var(--color-background-info);color:var(--color-text-info)}
+.pill-adj{background:var(--color-background-warning);color:var(--color-text-warning)}
+.pill-rej{background:var(--color-background-danger);color:var(--color-text-danger)}
+
+.row{display:flex;align-items:center;gap:.625rem;padding:.5rem 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.row:last-child{border-bottom:none}
+.net-tag{font-size:10px;font-weight:500;padding:1px 6px;border-radius:3px;flex-shrink:0}
+.row-title{font-weight:500;color:var(--color-text-primary);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{font-size:11px;color:var(--color-text-secondary)}
+.row-time{font-size:11px;color:var(--color-text-secondary);flex-shrink:0}
+
+.notif-box{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:.625rem 1rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.625rem;font-size:12px;color:var(--color-text-warning)}
+.notif-action{margin-left:auto;padding:4px 12px;font-size:11px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-warning);background:transparent;color:var(--color-text-warning);cursor:pointer;font-family:var(--font-sans)}
+
+.btn-p{padding:8px 16px;font-size:12px;font-weight:500;border:none;border-radius:var(--border-radius-md);background:var(--color-text-primary);color:var(--color-background-primary);cursor:pointer;font-family:var(--font-sans);transition:opacity .12s;width:100%;margin-bottom:5px}
+.btn-p:hover{opacity:.85}
+.btn-s{padding:8px 16px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans);transition:background .12s;width:100%;margin-bottom:5px}
+.btn-s:hover{background:var(--color-background-secondary)}
+.btn-d{padding:7px 16px;font-size:11px;border:none;background:transparent;color:var(--color-text-danger);cursor:pointer;font-family:var(--font-sans);width:100%}
+
+.result-box{border-radius:var(--border-radius-md);padding:.625rem .875rem;margin-bottom:.5rem;display:none}
+.rb-suc{background:var(--color-background-success);border:0.5px solid var(--color-border-success)}
+.rb-warn{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning)}
+.rb-dan{background:var(--color-background-danger);border:0.5px solid var(--color-border-danger)}
+.rb-title{font-size:11px;font-weight:500}
+.rb-suc .rb-title{color:var(--color-text-success)}
+.rb-warn .rb-title{color:var(--color-text-warning)}
+.rb-dan .rb-title{color:var(--color-text-danger)}
+.rb-sub{font-size:10px;margin-top:2px}
+.rb-suc .rb-sub{color:var(--color-text-success)}
+.rb-warn .rb-sub{color:var(--color-text-warning)}
+.rb-dan .rb-sub{color:var(--color-text-danger)}
+
+.approval-grid{display:grid;grid-template-columns:160px 1fr 240px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;min-height:500px;background:var(--color-background-primary)}
+.al{background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary)}
+.al-head{padding:.625rem .875rem;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px;color:var(--color-text-secondary)}
+.al-head strong{display:block;font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px}
+.fmt-item{display:flex;align-items:center;gap:6px;padding:7px .875rem;cursor:pointer;border-left:2px solid transparent;font-size:11px;color:var(--color-text-secondary);transition:all .12s}
+.fmt-item:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.fmt-item.active{background:var(--color-background-primary);color:var(--color-text-primary);border-left-color:var(--color-text-primary);font-weight:500}
+.fi-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.fi-badge{margin-left:auto;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:500}
+
+.ac{background:var(--color-background-primary);display:flex;flex-direction:column}
+.ac-top{padding:.625rem .875rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:.5rem}
+.preview-zone{flex:1;background:var(--color-background-secondary);display:flex;align-items:flex-start;justify-content:center;padding:1rem}
+.phone{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:16px;overflow:hidden;width:200px}
+.ph-bar{padding:7px 9px;display:flex;align-items:center;gap:5px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ph-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0}
+.ph-nm{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.ph-sub{font-size:9px;color:var(--color-text-secondary)}
+.post-area{background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;position:relative}
+.post-inner{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px}
+.post-icon{font-size:28px;line-height:1}
+.post-title{font-size:11px;font-weight:500;color:var(--color-text-primary);text-align:center}
+.post-stl{font-size:10px;color:var(--color-text-secondary);text-align:center}
+.ig-acts{display:flex;gap:8px;padding:5px 9px 3px;font-size:12px;color:var(--color-text-secondary)}
+.ig-cap{padding:0 9px 6px;font-size:10px;color:var(--color-text-primary);line-height:1.5}
+.ig-cap .u{font-weight:500}
+.ig-cap .tags{color:#3B82F6;font-size:9px;margin-top:1px}
+.ig-date{padding:0 9px 7px;font-size:9px;color:var(--color-text-secondary)}
+.dark-area{background:#111;position:relative}
+.dk-cap{position:absolute;bottom:0;left:0;right:0;padding:6px 8px 18px}
+.dk-side{position:absolute;bottom:16px;right:5px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.story-bars{position:absolute;top:5px;left:7px;right:7px;display:flex;gap:2px}
+.story-bar{flex:1;height:2px;border-radius:1px}
+.story-head{position:absolute;top:14px;left:8px;display:flex;align-items:center;gap:4px}
+.story-cta{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:white;color:#111;font-size:9px;font-weight:600;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.tk-top{position:absolute;top:7px;left:0;right:0;display:flex;justify-content:space-around;padding:0 8px}
+.li-hdr{padding:6px 9px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:5px}
+.li-av{width:22px;height:22px;border-radius:3px;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:var(--color-text-info)}
+
+.ar{background:var(--color-background-secondary);border-left:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column}
+.ar-sec{padding:.625rem .875rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ar-lbl{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
+.rec-box{background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:.5rem .625rem;margin-bottom:.4rem}
+.rec-dt{font-size:12px;font-weight:500;color:var(--color-text-success);margin-bottom:2px}
+.rec-why{font-size:10px;color:var(--color-text-success);line-height:1.4}
+.bar-row{display:flex;align-items:center;gap:4px;padding:2px 0;font-size:10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bar-row:last-child{border-bottom:none}
+.bar-time{color:var(--color-text-secondary);width:32px;flex-shrink:0}
+.bar-track{flex:1;height:3px;background:var(--color-border-tertiary);border-radius:2px}
+.bar-fill{height:3px;border-radius:2px;background:var(--color-text-success)}
+.bar-pct{width:22px;text-align:right;font-size:10px;color:var(--color-text-secondary);flex-shrink:0}
+.di{display:flex;gap:4px;margin-bottom:.4rem}
+.di input{flex:1;padding:4px 6px;font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.di input:focus{outline:none;border-color:var(--color-border-primary)}
+.conf-box{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:.5rem .625rem;margin-bottom:.4rem;display:none}
+.conf-box.on{display:block}
+.conf-title{font-size:11px;font-weight:500;color:var(--color-text-warning);margin-bottom:3px}
+.conf-body{font-size:10px;color:var(--color-text-warning);line-height:1.4;margin-bottom:.375rem}
+.conf-btns{display:flex;gap:4px}
+.conf-btn{padding:2px 8px;font-size:10px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid var(--color-border-warning);background:transparent;color:var(--color-text-warning);font-family:var(--font-sans)}
+.conf-btn.pri{background:var(--color-text-warning);color:var(--color-background-primary)}
+.ar-cmt{flex:1;padding:.625rem .875rem}
+.ar-cmt textarea{width:100%;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 7px;font-size:11px;font-family:var(--font-sans);color:var(--color-text-primary);background:var(--color-background-primary);resize:none;height:52px}
+.ar-cmt textarea:focus{outline:none;border-color:var(--color-border-primary)}
+.ar-acts{padding:.625rem .875rem;border-top:0.5px solid var(--color-border-tertiary)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:10px;font-weight:500;color:var(--color-text-secondary);padding:3px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-cell{min-height:64px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:4px;cursor:pointer;transition:border-color .12s}
+.cal-cell:hover{border-color:var(--color-border-primary)}
+.cal-cell.today{border-color:var(--color-border-info);background:var(--color-background-info)}
+.cal-cell.empty{background:var(--color-background-secondary);cursor:default}
+.cal-cell.empty:hover{border-color:var(--color-border-tertiary)}
+.day-num{font-size:10px;color:var(--color-text-secondary);margin-bottom:2px}
+.cal-cell.today .day-num{color:var(--color-text-info);font-weight:500}
+.cal-pill{font-size:9px;padding:1px 4px;border-radius:3px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.cp-pub{background:var(--color-background-success);color:var(--color-text-success)}
+.cp-apr{background:var(--color-background-info);color:var(--color-text-info)}
+.cp-pend{background:var(--color-background-warning);color:var(--color-text-warning)}
+.cp-rej{background:var(--color-background-danger);color:var(--color-text-danger)}
+.cp-more{font-size:9px;color:var(--color-text-secondary)}
+.day-detail{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.875rem 1.25rem;margin-top:.625rem;display:none}
+.day-detail.on{display:block}
+.dd-row{display:flex;align-items:center;gap:.5rem;padding:.375rem 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.dd-row:last-child{border-bottom:none}
+
+.hist-filters{display:flex;gap:.375rem;margin-bottom:.875rem;flex-wrap:wrap}
+.hf{padding:3px 10px;font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:20px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .12s}
+.hf:hover,.hf.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.hist-entry{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:.75rem 1rem;margin-bottom:.5rem;display:flex;gap:.75rem}
+.hist-entry.hidden{display:none}
+.he-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.he-body{flex:1;min-width:0}
+.he-ch{display:inline-flex;align-items:center;font-size:10px;padding:1px 7px;border-radius:20px;font-weight:500;margin-bottom:3px}
+.ch-wa{background:#E8F5E9;color:#2E7D32}
+.ch-portal{background:var(--color-background-info);color:var(--color-text-info)}
+.ch-email{background:#F3E5F5;color:#6A1B9A}
+.he-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.he-meta{font-size:11px;color:var(--color-text-secondary);margin-bottom:.25rem;line-height:1.4}
+.he-audit{font-size:10px;color:var(--color-text-secondary);background:var(--color-background-secondary);border-radius:4px;padding:3px 7px;font-family:var(--font-mono);line-height:1.4}
+.he-right{flex-shrink:0;text-align:right}
+.he-date{font-size:10px;color:var(--color-text-secondary);margin-top:3px}
+
+.kv-block{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.25rem;text-align:center;margin-bottom:.75rem;border:0.5px solid var(--color-border-tertiary)}
+.kpi-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.kpi-row:last-child{border-bottom:none}
+.kpi-label{color:var(--color-text-secondary)}
+.kpi-value{font-weight:500;color:var(--color-text-primary)}
+
+.cfg-row{display:flex;align-items:center;justify-content:space-between;padding:.625rem 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.cfg-row:last-child{border-bottom:none}
+.cfg-label{color:var(--color-text-primary);font-weight:500}
+.cfg-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.toggle{width:32px;height:18px;border-radius:9px;background:var(--color-border-secondary);position:relative;cursor:pointer;transition:background .15s;flex-shrink:0}
+.toggle.on{background:var(--color-text-success)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:white;transition:transform .15s}
+.toggle.on::after{transform:translateX(14px)}
+
+.fin-plan{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between}
+.fp-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.fp-price{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.fp-price span{font-size:12px;font-weight:400;color:var(--color-text-secondary)}
+.fp-tag{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.fp-status{font-size:11px;background:var(--color-background-success);color:var(--color-text-success);padding:3px 10px;border-radius:20px;font-weight:500}
+.pay-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.pay-row:last-child{border-bottom:none}
+</style>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-icon">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3.5" stroke="white" stroke-width="1.5"/><path d="M4.5 8.25L6.75 10.5L11.5 5.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span class="sb-name">Aproove</span>
+      </div>
+      <span class="sb-client">Marca Verão S/A</span>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-sec">Minha conta</div>
+      <div class="sb-item active" onclick="goPage('dashboard',this)">
+        <div class="sb-dot" style="background:var(--color-text-secondary)"></div>Dashboard
+        <span class="sb-badge">3</span>
+      </div>
+      <div class="sb-item" onclick="goPage('campaign',this)">
+        <div class="sb-dot" style="background:#7F77DD"></div>Minha campanha
+      </div>
+      <div class="sb-item" onclick="goPage('approve',this)">
+        <div class="sb-dot" style="background:#BA7517"></div>Aprovar peças
+        <span class="sb-badge">3</span>
+      </div>
+      <div class="sb-item" onclick="goPage('calendar',this)">
+        <div class="sb-dot" style="background:#378ADD"></div>Calendário
+      </div>
+      <div class="sb-item" onclick="goPage('history',this)">
+        <div class="sb-dot" style="background:#639922"></div>Histórico
+      </div>
+      <div class="sb-sec">Conta</div>
+      <div class="sb-item" onclick="goPage('financial',this)">
+        <div class="sb-dot" style="background:var(--color-text-secondary)"></div>Financeiro
+      </div>
+      <div class="sb-item" onclick="goPage('settings',this)">
+        <div class="sb-dot" style="background:var(--color-text-secondary)"></div>Configurações
+      </div>
+    </div>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-av">JF</div>
+        <div>
+          <div class="sb-uname">João Ferreira</div>
+          <div class="sb-urole">Aprovador Master</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="ph"><h1>Olá, João</h1><p>Visão geral da sua campanha · 15 de março de 2026</p></div>
+      <div class="notif-box">
+        <span>3 peças aguardando sua aprovação — publicação nos próximos 5 dias</span>
+        <button class="notif-action" onclick="goPage('approve',document.querySelector('[onclick*=approve]'))">Ver agora</button>
+      </div>
+      <div class="g4">
+        <div class="metric"><div class="lbl">Aguardando aprovação</div><div class="val" style="color:var(--color-text-warning)">3</div><div class="sub">publicação em 5 dias</div></div>
+        <div class="metric"><div class="lbl">Aprovados este mês</div><div class="val" style="color:var(--color-text-success)">12</div><div class="sub">de 20 planejados</div></div>
+        <div class="metric"><div class="lbl">Publicados</div><div class="val">8</div><div class="sub">em 3 redes sociais</div></div>
+        <div class="metric"><div class="lbl">Em ajuste</div><div class="val">1</div><div class="sub">retorno esperado hoje</div></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">Próximas publicações</div>
+          <div class="row"><div class="sb-dot" style="background:#BA7517;flex-shrink:0"></div><div style="flex:1"><div class="row-title">IG Feed — Verão 2026</div><div class="row-sub">20/03 às 10h00</div></div><span class="pill pill-pend">Aguardando</span></div>
+          <div class="row"><div class="sb-dot" style="background:#BA7517;flex-shrink:0"></div><div style="flex:1"><div class="row-title">IG Reels — Verão 2026</div><div class="row-sub">20/03 às 18h00</div></div><span class="pill pill-pend">Aguardando</span></div>
+          <div class="row"><div class="sb-dot" style="background:#BA7517;flex-shrink:0"></div><div style="flex:1"><div class="row-title">LinkedIn — Verão 2026</div><div class="row-sub">20/03 às 08h00</div></div><span class="pill pill-pend">Aguardando</span></div>
+          <div class="row"><div class="sb-dot" style="background:#639922;flex-shrink:0"></div><div style="flex:1"><div class="row-title">IG Story — Verão 2026</div><div class="row-sub">20/03 às 09h00</div></div><span class="pill pill-apr">Aprovado</span></div>
+          <div class="row"><div class="sb-dot" style="background:#378ADD;flex-shrink:0"></div><div style="flex:1"><div class="row-title">TikTok — Verão 2026</div><div class="row-sub">20/03 às 19h00</div></div><span class="pill pill-pub">Agendado</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Atividade recente</div>
+          <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div style="flex:1"><div class="row-title">Story aprovado</div><div class="row-sub">via Portal · há 2h</div></div></div>
+          <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div style="flex:1"><div class="row-title">Ajuste solicitado</div><div class="row-sub">"Muda o CTA" · há 4h</div></div></div>
+          <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div style="flex:1"><div class="row-title">Reels publicado</div><div class="row-sub">15/03 às 18h00</div></div></div>
+          <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div style="flex:1"><div class="row-title">TikTok aprovado</div><div class="row-sub">via WhatsApp · 12/03</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMPANHA -->
+    <div class="page" id="page-campaign">
+      <div class="ph"><h1>Minha campanha</h1><p>Lançamento Verão 2026 · Janeiro a Março 2026</p></div>
+      <div class="kv-block">
+        <div style="font-size:32px;margin-bottom:8px">☀️</div>
+        <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Verão chegou. Sua estilo também.</div>
+        <div style="font-size:12px;color:var(--color-text-secondary)">Key Visual · Campanha Lançamento Verão 2026</div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">Direcionamento estratégico</div>
+          <div class="kpi-row"><span class="kpi-label">Objetivo</span><span class="kpi-value">Lançamento de produto</span></div>
+          <div class="kpi-row"><span class="kpi-label">Público-alvo</span><span class="kpi-value">Mulheres 25–40, classes A/B</span></div>
+          <div class="kpi-row"><span class="kpi-label">Tom de voz</span><span class="kpi-value">Moderno, aspiracional</span></div>
+          <div class="kpi-row"><span class="kpi-label">Período</span><span class="kpi-value">Jan–Mar 2026</span></div>
+          <div class="kpi-row"><span class="kpi-label">Redes ativas</span><span class="kpi-value">IG · LI · TikTok · FB</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">KPIs do contrato</div>
+          <div class="kpi-row"><span class="kpi-label">Alcance mensal</span><span class="kpi-value">+50.000 pessoas</span></div>
+          <div class="kpi-row"><span class="kpi-label">Taxa de engajamento</span><span class="kpi-value">+3,5% no Instagram</span></div>
+          <div class="kpi-row"><span class="kpi-label">Novos seguidores</span><span class="kpi-value">+500 por mês</span></div>
+          <div class="kpi-row"><span class="kpi-label">Leads gerados</span><span class="kpi-value">100 via link na bio</span></div>
+          <div class="kpi-row"><span class="kpi-label">Posts mensais</span><span class="kpi-value">20 posts · 8 vídeos</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Planejamento de publicações</div>
+        <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div style="flex:1"><div class="row-title">Instagram</div><div class="row-sub">12 posts · 4 reels · 8 stories</div></div><span class="pill pill-pub">Em andamento</span></div>
+        <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div style="flex:1"><div class="row-title">LinkedIn</div><div class="row-sub">4 posts · 2 artigos</div></div><span class="pill pill-pub">Em andamento</span></div>
+        <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div style="flex:1"><div class="row-title">TikTok</div><div class="row-sub">4 vídeos curtos</div></div><span class="pill pill-apr">Aprovado</span></div>
+        <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">FB</div><div style="flex:1"><div class="row-title">Facebook</div><div class="row-sub">4 posts · impulsionamento</div></div><span class="pill pill-pend">Aguardando</span></div>
+      </div>
+    </div>
+
+    <!-- APROVAÇÃO -->
+    <div class="page" id="page-approve">
+      <div class="ph"><h1>Aprovar peças</h1><p>Campanha: Lançamento Verão 2026 · 3 aguardando</p></div>
+      <div class="approval-grid">
+        <div class="al">
+          <div class="al-head"><strong>Lançamento Verão</strong>5 formatos</div>
+          <div style="padding:.25rem .875rem .25rem;font-size:9px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em">pendentes</div>
+          <div class="fmt-item active" data-fmt="ig-feed" onclick="swFmt(this)"><div class="fi-dot" style="background:#E84040"></div>IG feed<span class="fi-badge" style="background:var(--color-background-warning);color:var(--color-text-warning)">aguardando</span></div>
+          <div class="fmt-item" data-fmt="ig-reels" onclick="swFmt(this)"><div class="fi-dot" style="background:#E84040"></div>IG reels<span class="fi-badge" style="background:var(--color-background-warning);color:var(--color-text-warning)">aguardando</span></div>
+          <div class="fmt-item" data-fmt="ig-story" onclick="swFmt(this)"><div class="fi-dot" style="background:#E84040"></div>IG story<span class="fi-badge" style="background:var(--color-background-success);color:var(--color-text-success)">aprovado</span></div>
+          <div class="fmt-item" data-fmt="linkedin" onclick="swFmt(this)"><div class="fi-dot" style="background:#2563A0"></div>LinkedIn<span class="fi-badge" style="background:var(--color-background-warning);color:var(--color-text-warning)">aguardando</span></div>
+          <div class="fmt-item" data-fmt="tiktok" onclick="swFmt(this)"><div class="fi-dot" style="background:#444"></div>TikTok<span class="fi-badge" style="background:var(--color-background-info);color:var(--color-text-info)">agendado</span></div>
+        </div>
+        <div class="ac">
+          <div class="ac-top">
+            <span id="ap-net" style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:#FDECEA;color:#B91C1C">Instagram</span>
+            <span id="ap-fmt" style="font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:3px 7px;border-radius:4px">Feed 1:1</span>
+            <span style="margin-left:auto;font-size:10px;color:var(--color-text-secondary)">v2 · atual</span>
+          </div>
+          <div class="preview-zone" id="ap-preview"></div>
+        </div>
+        <div class="ar">
+          <div class="ar-sec">
+            <div class="ar-lbl">Horário recomendado</div>
+            <div class="rec-box"><div class="rec-dt" id="ap-recdt">20/03/2026 às 10h00</div><div class="rec-why" id="ap-recwhy">Engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias.</div></div>
+            <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:.3rem">Engajamento por horário</div>
+            <div class="bar-row"><span class="bar-time">08–09h</span><div class="bar-track"><div class="bar-fill" id="b0" style="width:40%"></div></div><span class="bar-pct" id="p0">40%</span></div>
+            <div class="bar-row"><span class="bar-time">10–11h</span><div class="bar-track"><div class="bar-fill" id="b1" style="width:100%"></div></div><span class="bar-pct" id="p1" style="color:var(--color-text-success);font-weight:500">100%</span></div>
+            <div class="bar-row"><span class="bar-time">12–13h</span><div class="bar-track"><div class="bar-fill" id="b2" style="width:72%"></div></div><span class="bar-pct" id="p2">72%</span></div>
+            <div class="bar-row"><span class="bar-time">18–19h</span><div class="bar-track"><div class="bar-fill" id="b3" style="width:88%"></div></div><span class="bar-pct" id="p3">88%</span></div>
+            <div class="bar-row"><span class="bar-time">21–22h</span><div class="bar-track"><div class="bar-fill" id="b4" style="width:65%"></div></div><span class="bar-pct" id="p4">65%</span></div>
+          </div>
+          <div class="ar-sec">
+            <div class="ar-lbl">Sugerir outra data</div>
+            <div class="di"><input type="date" id="ap-date" value="2026-03-20" onchange="apChk()"><input type="time" id="ap-time" value="10:00" onchange="apChk()"></div>
+            <div class="conf-box" id="conf-box">
+              <div class="conf-title">Conflito detectado</div>
+              <div class="conf-body" id="conf-msg"></div>
+              <div class="conf-btns"><button class="conf-btn" onclick="resolve('adj')">Ajustar +2h</button><button class="conf-btn pri" onclick="resolve('keep')">Manter assim</button></div>
+            </div>
+          </div>
+          <div class="ar-cmt">
+            <div class="ar-lbl">Comentário</div>
+            <textarea id="ap-cmt" placeholder="Observação, feedback ou referência..."></textarea>
+          </div>
+          <div class="ar-acts">
+            <div class="result-box" id="ap-res"><div class="rb-title" id="ap-rt"></div><div class="rb-sub" id="ap-rs"></div></div>
+            <button class="btn-p" onclick="doAct('apr')">Aprovar publicação</button>
+            <button class="btn-s" onclick="doAct('adj')">Solicitar ajuste</button>
+            <button class="btn-d" onclick="doAct('rej')">Reprovar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDÁRIO -->
+    <div class="page" id="page-calendar">
+      <div class="ph"><h1>Calendário editorial</h1><p>Toque em um dia para ver os posts programados</p></div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:.875rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:.375rem">
+            <button onclick="calNav(-1)" style="padding:3px 9px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans)">←</button>
+            <span id="cal-month" style="font-size:14px;font-weight:500;color:var(--color-text-primary);min-width:110px">Março 2026</span>
+            <button onclick="calNav(1)" style="padding:3px 9px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans)">→</button>
+          </div>
+          <div style="display:flex;gap:.5rem;margin-left:auto;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary)"><div style="width:8px;height:8px;border-radius:50%;background:#639922"></div>Publicado</div>
+            <div style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary)"><div style="width:8px;height:8px;border-radius:50%;background:#378ADD"></div>Aprovado</div>
+            <div style="display:flex;align-items:center;gap:3px;font-size:11px;color:var(--color-text-secondary)"><div style="width:8px;height:8px;border-radius:50%;background:#BA7517"></div>Aguardando</div>
+          </div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="day-detail" id="day-detail">
+          <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:.625rem" id="dd-title"></div>
+          <div id="dd-items"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="page" id="page-history">
+      <div class="ph"><h1>Histórico de aprovações</h1><p>Registro completo de todas as interações com canal e timestamp</p></div>
+      <div class="hist-filters">
+        <button class="hf active" onclick="hFilt('all',this)">Todos</button>
+        <button class="hf" onclick="hFilt('approved',this)">Aprovados</button>
+        <button class="hf" onclick="hFilt('adjusted',this)">Ajustes</button>
+        <button class="hf" onclick="hFilt('published',this)">Publicados</button>
+        <button class="hf" onclick="hFilt('rejected',this)">Reprovados</button>
+      </div>
+      <div id="hist-list">
+        <div class="hist-entry" data-type="published">
+          <div class="he-icon" style="background:var(--color-background-success)">✓</div>
+          <div class="he-body">
+            <span class="he-ch ch-portal">Portal Aproove</span>
+            <div class="he-title">Post Instagram Feed — Verão 2026</div>
+            <div class="he-meta">Aprovado por você (João Ferreira) · v2 · Campanha: Verão 2026</div>
+            <div class="he-audit">Aprovado via Portal por João Ferreira em 10/03/2026 às 17:03 · v2 · sha256:9c1e4f…b28d</div>
+          </div>
+          <div class="he-right"><span class="pill pill-pub">Publicado</span><div class="he-date">15/03/2026<br>10h00</div></div>
+        </div>
+        <div class="hist-entry" data-type="approved">
+          <div class="he-icon" style="background:var(--color-background-info)">✓</div>
+          <div class="he-body">
+            <span class="he-ch ch-wa">WhatsApp · +55 11 9xxxx-4321</span>
+            <div class="he-title">TikTok — Verão 2026</div>
+            <div class="he-meta">Aprovado por você via WhatsApp · v1 · Campanha: Verão 2026</div>
+            <div class="he-audit">Aprovado via WhatsApp do contato João Ferreira em 12/03/2026 às 09:14 · v1</div>
+          </div>
+          <div class="he-right"><span class="pill pill-apr">Aprovado</span><div class="he-date">20/03/2026<br>19h00</div></div>
+        </div>
+        <div class="hist-entry" data-type="adjusted">
+          <div class="he-icon" style="background:var(--color-background-warning)">✎</div>
+          <div class="he-body">
+            <span class="he-ch ch-portal">Portal Aproove</span>
+            <div class="he-title">LinkedIn — Verão 2026</div>
+            <div class="he-meta">Ajuste solicitado por você · v1 · "Muda o CTA para Saiba mais"</div>
+            <div class="he-audit">Ajuste via Portal · João Ferreira · 11/03/2026 14:22 · v1</div>
+          </div>
+          <div class="he-right"><span class="pill pill-adj">Em ajuste</span><div class="he-date">20/03/2026<br>08h00</div></div>
+        </div>
+        <div class="hist-entry" data-type="published">
+          <div class="he-icon" style="background:var(--color-background-success)">✓</div>
+          <div class="he-body">
+            <span class="he-ch ch-wa">WhatsApp · +55 11 9xxxx-4321</span>
+            <div class="he-title">IG Story — Verão 2026</div>
+            <div class="he-meta">Aprovado por você via WhatsApp · v1 · Campanha: Verão 2026</div>
+            <div class="he-audit">Aprovado via WhatsApp de João Ferreira em 08/03/2026 às 09:22 · v1</div>
+          </div>
+          <div class="he-right"><span class="pill pill-pub">Publicado</span><div class="he-date">10/03/2026<br>09h00</div></div>
+        </div>
+        <div class="hist-entry" data-type="rejected">
+          <div class="he-icon" style="background:var(--color-background-danger)">✕</div>
+          <div class="he-body">
+            <span class="he-ch ch-portal">Portal Aproove</span>
+            <div class="he-title">IG Reels — Carnaval 2026</div>
+            <div class="he-meta">Reprovado por você · v1 · "Vídeo fora do tom da marca"</div>
+            <div class="he-audit">Reprovado via Portal · João Ferreira · 05/03/2026 16:41 · v1</div>
+          </div>
+          <div class="he-right"><span class="pill pill-rej">Reprovado</span><div class="he-date">05/03/2026<br>—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCEIRO -->
+    <div class="page" id="page-financial">
+      <div class="ph"><h1>Financeiro</h1><p>Plano ativo, histórico de pagamentos e opções de upgrade</p></div>
+      <div class="fin-plan">
+        <div><div class="fp-name">Plano Professional</div><div class="fp-price">R$ 497<span>/mês</span></div><div class="fp-tag">Renovação em 01/04/2026</div></div>
+        <span class="fp-status">Ativo</span>
+      </div>
+      <div class="g3">
+        <div class="metric"><div class="lbl">Posts incluídos</div><div class="val">200</div><div class="sub">18 usados este mês</div></div>
+        <div class="metric"><div class="lbl">Armazenamento</div><div class="val">25 GB</div><div class="sub">4,2 GB utilizados</div></div>
+        <div class="metric"><div class="lbl">Usuários</div><div class="val">10</div><div class="sub">3 ativos</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Histórico de pagamentos</div>
+        <div class="pay-row"><span class="kpi-label">Mar 2026</span><span>R$ 497,00</span><span style="color:var(--color-text-success);font-size:11px">Pago</span></div>
+        <div class="pay-row"><span class="kpi-label">Fev 2026</span><span>R$ 497,00</span><span style="color:var(--color-text-success);font-size:11px">Pago</span></div>
+        <div class="pay-row"><span class="kpi-label">Jan 2026</span><span>R$ 497,00</span><span style="color:var(--color-text-success);font-size:11px">Pago</span></div>
+        <div class="pay-row"><span class="kpi-label">Dez 2025</span><span>R$ 497,00</span><span style="color:var(--color-text-success);font-size:11px">Pago</span></div>
+      </div>
+      <div class="card" style="border:2px solid var(--color-border-info)">
+        <div style="background:var(--color-background-info);color:var(--color-text-info);font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md);display:inline-block;margin-bottom:.625rem">Upgrade disponível</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">Plano Agency</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">Ilimitado · White label · API · Suporte dedicado</div></div>
+          <div style="text-align:right"><div style="font-size:16px;font-weight:500;color:var(--color-text-primary)">R$ 997<span style="font-size:11px;font-weight:400;color:var(--color-text-secondary)">/mês</span></div><button style="margin-top:5px;padding:4px 12px;font-size:11px;border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);background:var(--color-background-info);color:var(--color-text-info);cursor:pointer;font-family:var(--font-sans)">Solicitar upgrade</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIGURAÇÕES -->
+    <div class="page" id="page-settings">
+      <div class="ph"><h1>Configurações</h1><p>Usuários, canais de notificação e preferências da conta</p></div>
+      <div class="card" style="margin-bottom:.75rem">
+        <div class="card-title">Canal de aprovação preferencial</div>
+        <div class="cfg-row">
+          <div><div class="cfg-label">Notificação via Portal</div><div class="cfg-sub">Receba push no app quando houver peça para aprovar</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cfg-row">
+          <div><div class="cfg-label">Notificação via WhatsApp</div><div class="cfg-sub">+55 11 9xxxx-4321 · aprovação direta pela conversa</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="cfg-row">
+          <div><div class="cfg-label">Notificação por e-mail</div><div class="cfg-sub">joao.ferreira@marca.com.br</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:.75rem">
+        <div class="card-title">Usuários da conta</div>
+        <div class="cfg-row">
+          <div style="display:flex;align-items:center;gap:8px"><div class="sb-av">JF</div><div><div class="cfg-label">João Ferreira</div><div class="cfg-sub">Master · joao@marca.com.br</div></div></div>
+          <span class="pill pill-pub">Master</span>
+        </div>
+        <div class="cfg-row">
+          <div style="display:flex;align-items:center;gap:8px"><div class="sb-av" style="background:var(--color-background-warning);color:var(--color-text-warning)">MC</div><div><div class="cfg-label">Maria Costa</div><div class="cfg-sub">Aprovadora · maria@marca.com.br</div></div></div>
+          <span class="pill pill-pend">Aprovadora</span>
+        </div>
+        <div style="margin-top:.75rem"><button style="padding:6px 14px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans)">+ Convidar usuário</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title">LGPD e privacidade</div>
+        <div class="cfg-row">
+          <div><div class="cfg-label">Consentimento para WhatsApp</div><div class="cfg-sub">Aceito em 01/01/2026 · versão 2.1 dos termos</div></div>
+          <span style="font-size:11px;color:var(--color-text-success)">Ativo</span>
+        </div>
+        <div class="cfg-row">
+          <div><div class="cfg-label">Exportar meus dados</div><div class="cfg-sub">Download do histórico completo em JSON</div></div>
+          <button style="padding:4px 10px;font-size:11px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans)">Exportar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var calY=2026,calM=2;
+var POSTS={
+  '2026-2-10':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pub',c:'Ofertas Fev'}],
+  '2026-2-18':[{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'pub',c:'Carnaval'}],
+  '2026-3-10':[{n:'IG Story',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'09h',s:'pub',c:'Verão'},{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pub',c:'Verão'}],
+  '2026-3-15':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Verão'},{n:'IG Reels',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'18h',s:'pend',c:'Verão'},{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Verão'}],
+  '2026-3-20':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'apr',c:'Verão'},{n:'IG Story',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'09h',s:'apr',c:'Verão'},{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'pub',c:'Verão'},{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Verão'}],
+  '2026-3-25':[{n:'IG Reels',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'18h',s:'pend',c:'Verão'},{n:'Facebook',net:'FB',nb:'#DBEAFE',nc:'#1D4ED8',time:'11h',s:'pend',c:'Verão'}],
+  '2026-4-5':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Abril'}],
+  '2026-4-12':[{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Abril'},{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'pend',c:'Abril'}]
+};
+
+var AP={
+  'ig-feed':{net:'Instagram',nb:'#FDECEA',nc:'#B91C1C',fmt:'Feed 1:1',recDt:'20/03/2026 às 10h00',recWhy:'Engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias.',bars:[40,100,72,88,65],iD:'2026-03-20',iT:'10:00',cD:'2026-03-20',cT:'10:00',cMsg:'Já existe um post de <b>Instagram</b> para <b>20/03 às 10h00</b>. Dois posts simultâneos reduzem o alcance de ambos.'},
+  'ig-reels':{net:'Instagram',nb:'#FDECEA',nc:'#B91C1C',fmt:'Reels 9:16',recDt:'20/03/2026 às 18h00',recWhy:'Reels têm pico às 18h–20h: 2,8× mais plays.',bars:[30,60,55,100,80],iD:'2026-03-20',iT:'18:00',cD:null,cMsg:''},
+  'ig-story':{net:'Instagram',nb:'#FDECEA',nc:'#B91C1C',fmt:'Story 9:16',recDt:'20/03/2026 às 09h00',recWhy:'Stories: maior abertura entre 08h–10h.',bars:[100,85,60,70,55],iD:'2026-03-20',iT:'09:00',cD:null,cMsg:''},
+  'linkedin':{net:'LinkedIn',nb:'#DBEAFE',nc:'#1D4ED8',fmt:'Post feed',recDt:'20/03/2026 às 08h00',recWhy:'LinkedIn: maior engajamento entre 07h30–09h em dias úteis.',bars:[100,75,65,40,20],iD:'2026-03-20',iT:'08:00',cD:'2026-03-20',cT:'08:00',cMsg:'Já existe um post de <b>LinkedIn</b> para <b>20/03 às 08h00</b>. Considere espaçar 3h entre publicações.'},
+  'tiktok':{net:'TikTok',nb:'#F3F4F6',nc:'#111',fmt:'Vídeo 9:16',recDt:'20/03/2026 às 19h00',recWhy:'TikTok: pico de distribuição entre 19h–21h para este perfil.',bars:[20,35,50,85,100],iD:'2026-03-20',iT:'19:00',cD:null,cMsg:''}
+};
+var curFmt='ig-feed',dismissed=false;
+
+function buildPreview(fmt){
+  var a=document.getElementById('ap-preview');
+  if(fmt==='ig-feed'){
+    a.innerHTML='<div class="phone"><div class="ph-bar"><div class="ph-av" style="background:#FDECEA;color:#B91C1C">MK</div><div><div class="ph-nm">marcaoficial</div><div class="ph-sub">São Paulo</div></div><div style="margin-left:auto;font-size:12px;color:var(--color-text-secondary)">···</div></div><div class="post-area" style="aspect-ratio:1"><div class="post-inner"><div class="post-icon">☀️</div><div class="post-title">Verão chegou.</div><div class="post-stl">Nova coleção</div></div></div><div class="ig-acts"><span>♡</span><span>○</span><span>↗</span><span style="margin-left:auto">⊟</span></div><div class="ig-cap"><span class="u">marcaoficial</span> Verão chegou e a nossa nova coleção também! Link na bio.<div class="tags">#verão2026 #moda</div></div><div class="ig-date">20/03/2026 às 10h00</div></div>';
+  }else if(fmt==='ig-reels'){
+    a.innerHTML='<div class="phone"><div style="position:relative"><div class="post-area dark-area" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-icon">🎬</div><div class="post-title" style="color:white">Reels · 15s</div></div></div><div class="dk-cap"><div style="font-size:10px;color:white;font-weight:500;margin-bottom:2px">marcaoficial</div><div style="font-size:10px;color:rgba(255,255,255,.85)">Verão chegou! ☀️ Corre ver!</div><div style="font-size:9px;color:rgba(255,255,255,.6)">#verão2026 #moda</div></div><div class="dk-side"><div style="text-align:center"><div style="font-size:14px;color:white">♡</div><div style="font-size:9px;color:white">1,2k</div></div><div style="font-size:13px;color:white">○</div><div style="font-size:13px;color:white">↗</div></div></div><div class="ig-date" style="background:var(--color-background-primary)">20/03/2026 às 18h00</div></div>';
+  }else if(fmt==='ig-story'){
+    a.innerHTML='<div class="phone"><div style="position:relative"><div class="post-area dark-area" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-icon">☀️</div><div class="post-title" style="color:white;font-size:14px">Nova coleção</div><div class="post-stl" style="color:rgba(255,255,255,.8)">Verão chegou</div></div></div><div class="story-bars"><div class="story-bar" style="background:white"></div><div class="story-bar" style="background:rgba(255,255,255,.4)"></div><div class="story-bar" style="background:rgba(255,255,255,.4)"></div></div><div class="story-head"><div class="ph-av" style="width:18px;height:18px;font-size:8px;background:#FDECEA;color:#B91C1C;border:1px solid white">MK</div><div style="font-size:9px;color:white;font-weight:500">marcaoficial</div></div><div class="story-cta">Ver coleção</div></div><div class="ig-date" style="background:var(--color-background-primary);color:var(--color-text-success)">Aprovado · 20/03/2026 às 09h00</div></div>';
+  }else if(fmt==='linkedin'){
+    a.innerHTML='<div class="phone"><div class="li-hdr"><div class="li-av">MK</div><div><div class="ph-nm">Marca Oficial</div><div class="ph-sub">12.400 seguidores</div></div></div><div class="ig-cap" style="padding:7px 9px">Verão chegou! Peças exclusivas para o profissional que quer estilo e conforto.</div><div class="post-area" style="aspect-ratio:16/9"><div class="post-inner"><div class="post-icon">☀️</div><div class="post-stl">Banner 1200×628</div></div></div><div style="padding:4px 9px 6px;font-size:10px;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary)">👍 348 · 42 comentários</div><div class="ig-date">20/03/2026 às 08h00</div></div>';
+  }else if(fmt==='tiktok'){
+    a.innerHTML='<div class="phone"><div style="position:relative"><div class="post-area dark-area" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-icon">☀️</div><div class="post-title" style="color:white">TikTok · 30s</div></div></div><div class="tk-top"><div style="font-size:9px;color:rgba(255,255,255,.6)">Seguindo</div><div style="font-size:9px;color:white;font-weight:500;border-bottom:1.5px solid white;padding-bottom:1px">Para você</div><div style="font-size:9px;color:rgba(255,255,255,.6)">Ao vivo</div></div><div class="dk-cap"><div style="font-size:10px;color:white;font-weight:500;margin-bottom:2px">@marcaoficial</div><div style="font-size:10px;color:rgba(255,255,255,.9)">Verão chegou! ☀️ Corre ver!</div><div style="font-size:9px;color:rgba(255,255,255,.6);margin-top:2px">#verão2026 #fyp</div><div style="font-size:9px;color:white;margin-top:2px">♪ Música original</div></div><div class="dk-side"><div style="text-align:center"><div style="font-size:15px;color:white">♡</div><div style="font-size:9px;color:white">24k</div></div><div style="text-align:center"><div style="font-size:13px;color:white">○</div><div style="font-size:9px;color:white">891</div></div><div style="font-size:13px;color:white">↗</div></div></div><div class="ig-date" style="background:var(--color-background-primary);color:var(--color-text-info)">Agendado · 20/03/2026 às 19h00</div></div>';
+  }
+}
+
+function swFmt(el){
+  document.querySelectorAll('.fmt-item').forEach(function(x){x.classList.remove('active')});
+  el.classList.add('active');
+  curFmt=el.getAttribute('data-fmt');
+  dismissed=false;
+  var d=AP[curFmt];
+  document.getElementById('ap-net').textContent=d.net;
+  document.getElementById('ap-net').style.background=d.nb;
+  document.getElementById('ap-net').style.color=d.nc;
+  document.getElementById('ap-fmt').textContent=d.fmt;
+  document.getElementById('ap-recdt').textContent=d.recDt;
+  document.getElementById('ap-recwhy').textContent=d.recWhy;
+  document.getElementById('ap-date').value=d.iD;
+  document.getElementById('ap-time').value=d.iT;
+  document.getElementById('conf-box').classList.remove('on');
+  document.getElementById('ap-res').style.display='none';
+  document.getElementById('ap-cmt').value='';
+  for(var i=0;i<5;i++){
+    document.getElementById('b'+i).style.width=d.bars[i]+'%';
+    var p=document.getElementById('p'+i);
+    p.textContent=d.bars[i]+'%';
+    p.style.color=d.bars[i]===100?'var(--color-text-success)':'var(--color-text-secondary)';
+    p.style.fontWeight=d.bars[i]===100?'500':'400';
+  }
+  buildPreview(curFmt);
+  apChk();
+}
+
+function apChk(){
+  if(dismissed)return;
+  var d=AP[curFmt];
+  if(!d.cD){document.getElementById('conf-box').classList.remove('on');return;}
+  if(document.getElementById('ap-date').value===d.cD&&document.getElementById('ap-time').value===d.cT){
+    document.getElementById('conf-msg').innerHTML=d.cMsg;
+    document.getElementById('conf-box').classList.add('on');
+  }else{document.getElementById('conf-box').classList.remove('on');}
+}
+
+function resolve(a){
+  if(a==='adj'){var t=document.getElementById('ap-time');var h=(parseInt(t.value.split(':')[0])+2)%24;t.value=(h<10?'0':'')+h+':00';dismissed=false;apChk();}
+  else{dismissed=true;document.getElementById('conf-box').classList.remove('on');}
+}
+
+function doAct(type){
+  var d=AP[curFmt];
+  var dt=document.getElementById('ap-date').value.split('-').reverse().join('/');
+  var tm=document.getElementById('ap-time').value+'h';
+  var cmt=document.getElementById('ap-cmt').value.trim();
+  var r=document.getElementById('ap-res');
+  r.className='result-box';
+  if(type==='adj'&&!cmt){r.classList.add('rb-warn');r.style.display='block';document.getElementById('ap-rt').textContent='Comentário necessário';document.getElementById('ap-rs').textContent='Descreva o que precisa mudar antes de enviar.';return;}
+  if(type==='apr'){r.classList.add('rb-suc');document.getElementById('ap-rt').textContent='Aprovado — '+d.fmt;document.getElementById('ap-rs').textContent='Agendado para '+dt+' às '+tm;}
+  else if(type==='adj'){r.classList.add('rb-warn');document.getElementById('ap-rt').textContent='Ajuste solicitado — '+d.fmt;document.getElementById('ap-rs').textContent='Time notificado. Data sugerida: '+dt+' às '+tm;}
+  else{r.classList.add('rb-dan');document.getElementById('ap-rt').textContent='Reprovado — '+d.fmt;document.getElementById('ap-rs').textContent='Peça retornou ao time com o motivo registrado.';}
+  r.style.display='block';
+}
+
+function renderCal(){
+  document.getElementById('cal-month').textContent=MONTHS[calM]+' '+calY;
+  var g=document.getElementById('cal-grid');g.innerHTML='';
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(function(d){var el=document.createElement('div');el.className='cal-dow';el.textContent=d;g.appendChild(el);});
+  var first=new Date(calY,calM,1).getDay();
+  var days=new Date(calY,calM+1,0).getDate();
+  var today=new Date();
+  for(var i=0;i<first;i++){var e=document.createElement('div');e.className='cal-cell empty';g.appendChild(e);}
+  for(var d=1;d<=days;d++){
+    var cell=document.createElement('div');cell.className='cal-cell';
+    var isT=today.getFullYear()===calY&&today.getMonth()===calM&&today.getDate()===d;
+    if(isT)cell.className+=' today';
+    var dn=document.createElement('div');dn.className='day-num';dn.textContent=d;cell.appendChild(dn);
+    var key=calY+'-'+calM+'-'+d;
+    var posts=POSTS[key]||[];var shown=0;
+    posts.forEach(function(p){if(shown>=2)return;var pill=document.createElement('div');pill.className='cal-pill '+(p.s==='pub'?'cp-pub':p.s==='apr'?'cp-apr':p.s==='rej'?'cp-rej':'cp-pend');pill.textContent=p.n;cell.appendChild(pill);shown++;});
+    if(posts.length>2){var m=document.createElement('div');m.className='cp-more';m.textContent='+'+(posts.length-2)+' mais';cell.appendChild(m);}
+    if(posts.length>0){(function(dd,kk){cell.onclick=function(){showDay(dd,kk);};})(d,key);}
+    g.appendChild(cell);
+  }
+  document.getElementById('day-detail').classList.remove('on');
+}
+
+function showDay(d,key){
+  var posts=POSTS[key]||[];
+  document.getElementById('dd-title').textContent=d+' de '+MONTHS[calM]+' — '+posts.length+' publicação'+(posts.length>1?'ões':'');
+  var items=document.getElementById('dd-items');items.innerHTML='';
+  posts.forEach(function(p){
+    var sc=p.s==='pub'?'#639922':p.s==='apr'?'#378ADD':p.s==='rej'?'#E24B4A':'#BA7517';
+    var sl=p.s==='pub'?'Publicado':p.s==='apr'?'Aprovado':p.s==='rej'?'Reprovado':'A aprovar';
+    var sp=p.s==='pub'?'pill-pub':p.s==='apr'?'pill-apr':p.s==='rej'?'pill-rej':'pill-pend';
+    var row=document.createElement('div');row.className='dd-row';
+    row.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:'+sc+';flex-shrink:0"></div><div class="net-tag" style="background:'+p.nb+';color:'+p.nc+'">'+p.net+'</div><div style="flex:1"><div style="font-size:12px;font-weight:500;color:var(--color-text-primary)">'+p.n+'</div><div style="font-size:11px;color:var(--color-text-secondary)">'+p.c+'</div></div><div style="font-size:11px;color:var(--color-text-secondary);flex-shrink:0">'+p.time+'</div><span class="pill '+sp+'">'+sl+'</span>';
+    items.appendChild(row);
+  });
+  document.getElementById('day-detail').classList.add('on');
+}
+
+function calNav(dir){calM+=dir;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCal();}
+
+function hFilt(type,btn){
+  document.querySelectorAll('.hf').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  document.querySelectorAll('.hist-entry').forEach(function(e){e.classList.toggle('hidden',type!=='all'&&e.getAttribute('data-type')!==type);});
+}
+
+function goPage(id,el){
+  document.querySelectorAll('.sb-item').forEach(function(x){x.classList.remove('active')});
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});
+  if(el)el.classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
+}
+
+buildPreview('ig-feed');
+renderCal();
+</script>

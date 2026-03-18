@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Aprovação de conteúdo sem caos</title>
+<meta name="description" content="Do planejamento à publicação, tudo organizado. O sistema de aprovação de conteúdo para agências e times de marketing que levam o trabalho a sério.">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111110;
+  --ink2: #4a4a47;
+  --ink3: #9a9a96;
+  --paper: #faf9f6;
+  --paper2: #f2f1ec;
+  --paper3: #e8e7e0;
+  --line: rgba(17,17,16,0.1);
+  --line2: rgba(17,17,16,0.18);
+  --green: #2a5f2a;
+  --green-l: #edf5ed;
+  --amber: #7a4a0a;
+  --amber-l: #fdf2e2;
+  --accent: #111110;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+::selection { background: var(--ink); color: var(--paper); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 3px; }
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: .4;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 0 2rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(250,249,246,0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  transition: all .2s;
+}
+.nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+.nav-mark {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-mark svg { width: 15px; height: 15px; }
+.nav-wordmark { font-size: 16px; font-weight: 500; color: var(--ink); letter-spacing: -.02em; }
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+.nav-links a { font-size: 14px; color: var(--ink2); text-decoration: none; transition: color .15s; }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity .15s;
+  font-family: inherit;
+  letter-spacing: -.01em;
+}
+.nav-cta:hover { opacity: .85; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 2rem 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--paper2);
+  border: 1px solid var(--line2);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--ink2);
+  margin-bottom: 2.5rem;
+  animation: fadeUp .6s ease both;
+}
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+.hero-headline {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  color: var(--ink);
+  margin-bottom: 1.75rem;
+  max-width: 820px;
+  animation: fadeUp .6s .1s ease both;
+}
+.hero-headline em {
+  font-style: italic;
+  color: var(--ink2);
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--ink2);
+  max-width: 520px;
+  line-height: 1.65;
+  margin-bottom: 3rem;
+  font-weight: 300;
+  animation: fadeUp .6s .2s ease both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 4rem;
+  animation: fadeUp .6s .3s ease both;
+}
+.btn-hero-primary {
+  padding: 14px 32px;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -.01em;
+  transition: all .15s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-hero-primary:hover { opacity: .85; transform: translateY(-1px); }
+.btn-hero-secondary {
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 400;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-hero-secondary:hover { background: var(--paper2); border-color: var(--ink); }
+
+.hero-social-proof {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeUp .6s .4s ease both;
+}
+.avatars { display: flex; }
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  background: var(--paper3);
+  margin-left: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink2);
+}
+.avatar:first-child { margin-left: 0; }
+.social-text { font-size: 13px; color: var(--ink3); }
+.social-text strong { color: var(--ink2); font-weight: 500; }
+
+/* ── HERO VISUAL ── */
+.hero-visual {
+  width: 100%;
+  max-width: 900px;
+  margin: 4rem auto 0;
+  animation: fadeUp .8s .5s ease both;
+  position: relative;
+}
+.hero-screen {
+  background: var(--paper);
+  border: 1px solid var(--line2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06), 0 24px 64px rgba(0,0,0,.05);
+}
+.screen-bar {
+  background: var(--ink);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.screen-dots { display: flex; gap: 5px; }
+.screen-dot { width: 9px; height: 9px; border-radius: 50%; }
+.screen-url {
+  flex: 1;
+  background: rgba(255,255,255,.1);
+  border-radius: 5px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  font-family: 'DM Mono', monospace;
+  text-align: center;
+}
+.screen-body {
+  display: grid;
+  grid-template-columns: 180px 1fr 220px;
+  min-height: 320px;
+  background: var(--paper2);
+}
+.screen-sidebar {
+  background: var(--paper);
+  border-right: 1px solid var(--line);
+  padding: .75rem 0;
+}
+.ss-header {
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: .5rem;
+}
+.ss-logo-row { display: flex; align-items: center; gap: 7px; margin-bottom: 3px; }
+.ss-logo-mark { width: 20px; height: 20px; border-radius: 5px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+.ss-logo-mark svg { width: 11px; height: 11px; }
+.ss-logo-name { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -.02em; }
+.ss-client { font-size: 10px; color: var(--ink3); }
+.ss-item { display: flex; align-items: center; gap: 7px; padding: 6px 1rem; font-size: 11px; color: var(--ink3); cursor: default; }
+.ss-item.active { color: var(--ink); font-weight: 500; border-left: 2px solid var(--ink); background: var(--paper2); }
+.ss-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: .4; }
+.ss-item.active .ss-dot { opacity: 1; }
+.screen-center {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-right: 1px solid var(--line);
+}
+.sc-top {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sc-net { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: #FDECEA; color: #B91C1C; }
+.sc-fmt { font-size: 10px; color: var(--ink3); background: var(--paper2); padding: 2px 7px; border-radius: 4px; }
+.sc-v { margin-left: auto; font-size: 10px; color: var(--ink3); }
+.sc-preview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--paper2);
+}
+.mock-phone {
+  width: 120px;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line2);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.mp-bar { background: var(--paper2); padding: 6px 8px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--line); }
+.mp-av { width: 16px; height: 16px; border-radius: 50%; background: #FDECEA; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 700; color: #B91C1C; flex-shrink: 0; }
+.mp-name { font-size: 8px; font-weight: 600; color: var(--ink); }
+.mp-img { aspect-ratio: 1; background: linear-gradient(135deg, var(--paper2) 0%, var(--paper3) 100%); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.mp-likes { font-size: 7px; font-weight: 600; padding: 3px 6px; color: var(--ink); }
+.mp-cap { padding: 2px 6px 5px; font-size: 7px; color: var(--ink); line-height: 1.4; }
+.mp-date { padding: 0 6px 5px; font-size: 7px; color: var(--ink3); }
+.screen-right {
+  background: var(--paper2);
+  display: flex;
+  flex-direction: column;
+}
+.sr-top {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.sr-label { font-size: 9px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px; }
+.sr-recbox {
+  background: #edf5ed;
+  border: 1px solid rgba(42,95,42,.2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin-bottom: 5px;
+}
+.sr-recdate { font-size: 11px; font-weight: 600; color: var(--green); margin-bottom: 1px; }
+.sr-recwhy { font-size: 9px; color: var(--green); line-height: 1.4; }
+.mini-bar { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; font-size: 9px; }
+.mb-lbl { color: var(--ink3); width: 28px; flex-shrink: 0; }
+.mb-track { flex: 1; height: 3px; background: var(--paper3); border-radius: 2px; overflow: hidden; }
+.mb-fill { height: 3px; border-radius: 2px; background: var(--green); }
+.mb-pct { color: var(--ink3); width: 20px; text-align: right; flex-shrink: 0; }
+.sr-bottom { padding: 8px 12px; margin-top: auto; border-top: 1px solid var(--line); }
+.btn-apr-mini {
+  display: block;
+  width: 100%;
+  padding: 7px;
+  font-size: 10px;
+  font-weight: 500;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 4px;
+  cursor: default;
+  font-family: inherit;
+}
+.btn-adj-mini {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  font-size: 10px;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line2);
+  border-radius: 6px;
+  text-align: center;
+  cursor: default;
+  font-family: inherit;
+}
+.screen-float-badge {
+  position: absolute;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: float 3s ease-in-out infinite;
+  white-space: nowrap;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.badge-approved { bottom: -20px; right: -20px; }
+.badge-wpp { top: 40px; left: -30px; animation-delay: 1.5s; }
+.badge-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── SECTIONS ── */
+section { padding: 6rem 2rem; }
+.container { max-width: 1100px; margin: 0 auto; }
+.container-sm { max-width: 720px; margin: 0 auto; }
+
+/* ── PROBLEM ── */
+.problem-section { background: var(--ink); color: var(--paper); }
+.problem-label { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1.5rem; display: flex; align-items: center; gap: .5rem; }
+.problem-label::before { content: ''; width: 24px; height: 1px; background: var(--ink3); }
+.problem-headline {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  margin-bottom: 3rem;
+}
+.problem-headline em { font-style: italic; color: rgba(250,249,246,.5); }
+.problem-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+.problem-item {
+  padding: 1.5rem;
+  border: 1px solid rgba(250,249,246,.1);
+  border-radius: 12px;
+  transition: border-color .2s;
+}
+.problem-item:hover { border-color: rgba(250,249,246,.25); }
+.problem-item-icon { font-size: 22px; margin-bottom: .75rem; }
+.problem-item-title { font-size: 15px; font-weight: 500; color: var(--paper); margin-bottom: .5rem; letter-spacing: -.01em; }
+.problem-item-text { font-size: 14px; color: rgba(250,249,246,.5); line-height: 1.6; }
+
+/* ── HOW IT WORKS ── */
+.how-section { background: var(--paper); }
+.section-label { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.section-headline {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  margin-bottom: 1rem;
+}
+.section-sub { font-size: 17px; color: var(--ink2); font-weight: 300; margin-bottom: 3.5rem; max-width: 520px; line-height: 1.65; }
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+.step-card {
+  position: relative;
+  padding: 2rem 1.5rem 1.5rem;
+  background: var(--paper2);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  transition: transform .2s, border-color .2s;
+}
+.step-card:hover { transform: translateY(-3px); border-color: var(--line2); }
+.step-num {
+  position: absolute;
+  top: -14px;
+  left: 1.5rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+}
+.step-icon { font-size: 26px; margin-bottom: 1rem; }
+.step-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: .5rem; letter-spacing: -.01em; }
+.step-text { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+
+/* ── FEATURES ── */
+.features-section { background: var(--paper2); }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.feature-card {
+  padding: 1.75rem;
+  background: var(--paper);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  transition: all .2s;
+}
+.feature-card:hover { border-color: var(--line2); transform: translateY(-2px); box-shadow: 0 4px 24px rgba(0,0,0,.04); }
+.feature-card.featured {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+  grid-column: span 2;
+}
+.feature-tag { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.feature-card.featured .feature-tag { color: rgba(250,249,246,.4); }
+.feature-title { font-size: 18px; font-weight: 500; letter-spacing: -.02em; margin-bottom: .75rem; color: var(--ink); }
+.feature-card.featured .feature-title { color: var(--paper); }
+.feature-text { font-size: 14px; color: var(--ink2); line-height: 1.7; }
+.feature-card.featured .feature-text { color: rgba(250,249,246,.65); }
+.feature-list { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 6px; }
+.feature-list-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: rgba(250,249,246,.65); }
+.feature-list-item::before { content: '—'; color: rgba(250,249,246,.3); flex-shrink: 0; margin-top: 1px; }
+
+/* ── WHO IT'S FOR ── */
+.who-section { background: var(--paper); }
+.who-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+.who-card {
+  padding: 2rem 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  transition: all .2s;
+  background: var(--paper);
+}
+.who-card:hover { border-color: var(--ink); }
+.who-icon { font-size: 28px; margin-bottom: 1rem; }
+.who-title { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: .5rem; letter-spacing: -.01em; }
+.who-text { font-size: 13px; color: var(--ink2); line-height: 1.65; }
+.who-tag { display: inline-block; margin-top: 1rem; font-size: 11px; padding: 3px 10px; border-radius: 20px; background: var(--paper2); color: var(--ink3); border: 1px solid var(--line); }
+
+/* ── PLANS ── */
+.plans-section { background: var(--paper2); }
+.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+.plan-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all .2s;
+  position: relative;
+}
+.plan-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.06); }
+.plan-card.featured {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.03);
+}
+.plan-card.featured:hover { transform: scale(1.03) translateY(-3px); }
+.plan-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--paper); color: var(--ink); font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 20px; border: 1px solid var(--line2); white-space: nowrap; }
+.plan-name { font-size: 13px; font-weight: 500; color: var(--ink2); margin-bottom: 4px; }
+.plan-card.featured .plan-name { color: rgba(250,249,246,.5); }
+.plan-price { font-family: 'Instrument Serif', serif; font-size: 3.5rem; font-weight: 400; letter-spacing: -.05em; color: var(--ink); line-height: 1; margin-bottom: 3px; }
+.plan-card.featured .plan-price { color: var(--paper); }
+.plan-per { font-size: 14px; color: var(--ink3); margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+.plan-card.featured .plan-per { color: rgba(250,249,246,.4); border-bottom-color: rgba(250,249,246,.1); }
+.plan-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 2rem; }
+.plan-feat { font-size: 13px; color: var(--ink2); display: flex; gap: 8px; align-items: flex-start; }
+.plan-card.featured .plan-feat { color: rgba(250,249,246,.65); }
+.plan-feat::before { content: '✓'; color: var(--green); font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+.plan-card.featured .plan-feat::before { color: rgba(250,249,246,.5); }
+.btn-plan {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -.01em;
+  transition: all .15s;
+  text-decoration: none;
+  border: 1px solid var(--line2);
+  background: transparent;
+  color: var(--ink);
+}
+.btn-plan:hover { background: var(--paper2); border-color: var(--ink); }
+.btn-plan.featured {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--paper);
+}
+.btn-plan.featured:hover { opacity: .9; }
+.plans-note { text-align: center; margin-top: 2rem; font-size: 13px; color: var(--ink3); }
+
+/* ── TESTIMONIALS ── */
+.testimonials-section { background: var(--paper); }
+.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.testimonial-card {
+  padding: 2rem;
+  background: var(--paper2);
+  border-radius: 16px;
+  border: 1px solid var(--line);
+}
+.testimonial-stars { font-size: 14px; margin-bottom: 1rem; letter-spacing: 2px; color: var(--amber); }
+.testimonial-text { font-family: 'Instrument Serif', serif; font-size: 1.1rem; font-style: italic; color: var(--ink); line-height: 1.6; margin-bottom: 1.25rem; }
+.testimonial-author { display: flex; align-items: center; gap: 10px; }
+.t-av { width: 36px; height: 36px; border-radius: 50%; background: var(--paper3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--ink2); border: 1px solid var(--line); }
+.t-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+.t-role { font-size: 12px; color: var(--ink3); }
+
+/* ── CTA ── */
+.cta-section {
+  background: var(--ink);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: rgba(250,249,246,.03);
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.cta-label { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(250,249,246,.3); margin-bottom: 1.5rem; }
+.cta-headline {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 400;
+  letter-spacing: -.03em;
+  color: var(--paper);
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+.cta-sub { font-size: 17px; color: rgba(250,249,246,.5); margin-bottom: 3rem; max-width: 480px; margin-left: auto; margin-right: auto; font-weight: 300; line-height: 1.65; }
+.cta-form {
+  display: flex;
+  gap: 12px;
+  max-width: 440px;
+  margin: 0 auto 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cta-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 13px 18px;
+  font-size: 14px;
+  background: rgba(250,249,246,.1);
+  border: 1px solid rgba(250,249,246,.15);
+  border-radius: 10px;
+  color: var(--paper);
+  font-family: inherit;
+  transition: border-color .15s;
+  outline: none;
+}
+.cta-input::placeholder { color: rgba(250,249,246,.3); }
+.cta-input:focus { border-color: rgba(250,249,246,.4); }
+.btn-cta-submit {
+  padding: 13px 28px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--paper);
+  color: var(--ink);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -.01em;
+  transition: all .15s;
+}
+.btn-cta-submit:hover { opacity: .9; transform: translateY(-1px); }
+.cta-disclaimer { font-size: 12px; color: rgba(250,249,246,.3); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ink);
+  border-top: 1px solid rgba(250,249,246,.08);
+  padding: 3rem 2rem;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-logo { display: flex; align-items: center; gap: 8px; }
+.footer-mark { width: 24px; height: 24px; border-radius: 6px; background: rgba(250,249,246,.1); display: flex; align-items: center; justify-content: center; }
+.footer-mark svg { width: 13px; height: 13px; }
+.footer-name { font-size: 14px; font-weight: 500; color: rgba(250,249,246,.7); letter-spacing: -.01em; }
+.footer-links { display: flex; gap: 1.75rem; flex-wrap: wrap; }
+.footer-links a { font-size: 13px; color: rgba(250,249,246,.35); text-decoration: none; transition: color .15s; }
+.footer-links a:hover { color: rgba(250,249,246,.7); }
+.footer-copy { font-size: 12px; color: rgba(250,249,246,.25); }
+
+/* ── DIVIDER ── */
+.section-divider { width: 100%; height: 1px; background: var(--line); }
+
+/* ── MARQUEE ── */
+.marquee-section { padding: 2rem 0; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--paper2); }
+.marquee-track {
+  display: flex;
+  gap: 3rem;
+  animation: marquee 20s linear infinite;
+  width: max-content;
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee-item { font-size: 13px; color: var(--ink3); white-space: nowrap; display: flex; align-items: center; gap: .75rem; }
+.marquee-item::before { content: '✓'; color: var(--ink3); }
+.marquee-sep { color: var(--paper3); }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .plans-grid { grid-template-columns: 1fr; }
+  .plan-card.featured { transform: none; }
+  .feature-card.featured { grid-column: span 1; }
+  .screen-body { grid-template-columns: 1fr; }
+  .screen-sidebar, .screen-right { display: none; }
+  .badge-wpp { display: none; }
+  .badge-approved { bottom: -10px; right: -10px; }
+}
+@media (max-width: 480px) {
+  section { padding: 4rem 1.25rem; }
+  nav { padding: 0 1.25rem; }
+}
+
+/* Toast */
+.toast-success {
+  display: none;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 999;
+  animation: slideUp .3s ease;
+  white-space: nowrap;
+}
+@keyframes slideUp { from { opacity:0;transform:translateX(-50%) translateY(10px); } to { opacity:1;transform:translateX(-50%) translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-mark">
+      <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="13" height="13" rx="3" stroke="white" stroke-width="1.4"/><path d="M4 7.8l2.4 2.4L11 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <span class="nav-wordmark">Aproove</span>
+  </a>
+  <div class="nav-links">
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#funcionalidades">Funcionalidades</a>
+    <a href="#planos">Planos</a>
+    <a href="#quem-usa">Para quem</a>
+  </div>
+  <a href="#comecar" class="nav-cta">Começar grátis</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    Aprovação de conteúdo profissional
+  </div>
+  <h1 class="hero-headline">
+    Chega de aprovação<br>
+    <em>por WhatsApp perdida</em>
+  </h1>
+  <p class="hero-sub">
+    O Aproove organiza o planejamento, produção e aprovação de campanhas de marketing. Do briefing à publicação, tudo rastreado — com registro formal de cada decisão.
+  </p>
+  <div class="hero-actions">
+    <a href="#comecar" class="btn-hero-primary">Começar grátis — 14 dias</a>
+    <a href="#como-funciona" class="btn-hero-secondary">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 4.5L9 7L5.5 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Ver demo
+    </a>
+  </div>
+  <div class="hero-social-proof">
+    <div class="avatars">
+      <div class="avatar">AG</div>
+      <div class="avatar">MK</div>
+      <div class="avatar">RS</div>
+      <div class="avatar">PL</div>
+    </div>
+    <p class="social-text"><strong>Agências e times</strong> já usam o Aproove</p>
+  </div>
+
+  <!-- SCREEN MOCKUP -->
+  <div class="hero-visual">
+    <div class="hero-screen">
+      <div class="screen-bar">
+        <div class="screen-dots">
+          <div class="screen-dot" style="background:#E84040"></div>
+          <div class="screen-dot" style="background:#E8A040"></div>
+          <div class="screen-dot" style="background:#40C040"></div>
+        </div>
+        <div class="screen-url">aproove.app/aprovacoes</div>
+      </div>
+      <div class="screen-body">
+        <div class="screen-sidebar">
+          <div class="ss-header">
+            <div class="ss-logo-row">
+              <div class="ss-logo-mark"><svg viewBox="0 0 11 11" fill="none"><rect x=".5" y=".5" width="10" height="10" rx="2.5" stroke="white" stroke-width="1"/><path d="M2.5 5.5l2 2L8.5 3.5" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="ss-logo-name">Aproove</span>
+            </div>
+            <div class="ss-client">Marca Verão S/A</div>
+          </div>
+          <div class="ss-item active"><div class="ss-dot"></div>Aprovar peças</div>
+          <div class="ss-item"><div class="ss-dot"></div>Calendário</div>
+          <div class="ss-item"><div class="ss-dot"></div>Histórico</div>
+          <div class="ss-item"><div class="ss-dot"></div>Downloads</div>
+          <div class="ss-item"><div class="ss-dot"></div>Relatório</div>
+        </div>
+        <div class="screen-center">
+          <div class="sc-top">
+            <span class="sc-net">Instagram</span>
+            <span class="sc-fmt">Feed 1:1</span>
+            <span class="sc-v">v2 · atual</span>
+          </div>
+          <div class="sc-preview">
+            <div class="mock-phone">
+              <div class="mp-bar">
+                <div class="mp-av">MK</div>
+                <div class="mp-name">marcaoficial</div>
+              </div>
+              <div class="mp-img">☀️</div>
+              <div class="mp-likes">1.284 curtidas</div>
+              <div class="mp-cap"><strong>marcaoficial</strong> Verão chegou! Nova coleção disponível.</div>
+              <div class="mp-date">20/03 às 10h00</div>
+            </div>
+          </div>
+        </div>
+        <div class="screen-right">
+          <div class="sr-top">
+            <div class="sr-label">Horário recomendado</div>
+            <div class="sr-recbox">
+              <div class="sr-recdate">20/03 às 10h00</div>
+              <div class="sr-recwhy">Engajamento 3,2× acima da média às 10–11h nos últimos 90 dias.</div>
+            </div>
+            <div class="mini-bar"><span class="mb-lbl">08h</span><div class="mb-track"><div class="mb-fill" style="width:40%"></div></div><span class="mb-pct">40%</span></div>
+            <div class="mini-bar"><span class="mb-lbl">10h</span><div class="mb-track"><div class="mb-fill" style="width:100%"></div></div><span class="mb-pct" style="color:var(--green);font-weight:600">100%</span></div>
+            <div class="mini-bar"><span class="mb-lbl">18h</span><div class="mb-track"><div class="mb-fill" style="width:88%"></div></div><span class="mb-pct">88%</span></div>
+          </div>
+          <div class="sr-bottom">
+            <button class="btn-apr-mini">Aprovar publicação</button>
+            <button class="btn-adj-mini">Solicitar ajuste</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-float-badge badge-approved">
+      <div class="badge-icon" style="background:#edf5ed">✓</div>
+      Aprovado via WhatsApp · 10:45
+    </div>
+    <div class="screen-float-badge badge-wpp">
+      <div class="badge-icon" style="background:#e5f7e5;font-size:14px">📱</div>
+      3 peças aguardando
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee">
+    <div class="marquee-item">Aprovação via WhatsApp</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Mockup por rede social</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Registro imutável com hash</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Revisão ortográfica com IA</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Agendamento automático</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Calendário editorial</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Relatório com IA</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Download em pacote</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Distribuição para equipe</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">ROI da campanha</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Aprovação via WhatsApp</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Mockup por rede social</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Registro imutável com hash</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Revisão ortográfica com IA</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Agendamento automático</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Calendário editorial</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Relatório com IA</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Download em pacote</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">Distribuição para equipe</div>
+    <div class="marquee-sep">·</div>
+    <div class="marquee-item">ROI da campanha</div>
+    <div class="marquee-sep">·</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section">
+  <div class="container reveal">
+    <div class="problem-label">O problema</div>
+    <h2 class="problem-headline">
+      Aprovação por WhatsApp é<br>
+      <em>caos disfarçado de praticidade</em>
+    </h2>
+    <div class="problem-list">
+      <div class="problem-item">
+        <div class="problem-item-icon">💬</div>
+        <div class="problem-item-title">Aprovações perdidas no feed</div>
+        <div class="problem-item-text">O cliente disse "ok" em alguma mensagem. Mas qual versão? Qual data? Ninguém sabe ao certo.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-item-icon">🔁</div>
+        <div class="problem-item-title">Retrabalho sem fim</div>
+        <div class="problem-item-text">O feedback chegou em três mensagens separadas, dois dias depois. O designer já tinha passado para o próximo projeto.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-item-icon">📎</div>
+        <div class="problem-item-title">Versões espalhadas em tudo</div>
+        <div class="problem-item-text">Google Drive, Wetransfer, e-mail, Trello, planilha. Ninguém sabe qual arquivo é o final e quando foi aprovado.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-item-icon">⚠️</div>
+        <div class="problem-item-title">Sem prova de aprovação</div>
+        <div class="problem-item-text">O cliente diz que não aprovou aquele post. A agência jura que sim. E agora? Não tem registro, não tem prova.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="como-funciona">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Como funciona</div>
+      <h2 class="section-headline">Do briefing à publicação<br>em um único lugar</h2>
+      <p class="section-sub">O Aproove organiza cada etapa do fluxo de conteúdo. A agência trabalha com controle. O cliente aprova com facilidade. Nenhuma mensagem se perde.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon">◈</div>
+        <div class="step-title">Crie a campanha</div>
+        <div class="step-text">Defina objetivo, redes sociais, formatos e grade editorial. A IA sugere caminhos com base no briefing.</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">02</div>
+        <div class="step-icon">✍️</div>
+        <div class="step-title">Produza o conteúdo</div>
+        <div class="step-text">Social media escreve as copies. Designer sobe as artes. Cada peça tem briefing estruturado, prazo e status.</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">03</div>
+        <div class="step-icon">🔍</div>
+        <div class="step-title">IA revisa antes do cliente</div>
+        <div class="step-text">Verificação ortográfica automática no texto e na arte. Erros são apontados antes de sair da agência.</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">04</div>
+        <div class="step-icon">✓</div>
+        <div class="step-title">Cliente aprova</div>
+        <div class="step-text">Via portal ou WhatsApp. Vê o mockup real, sugere data, comenta. Cada aprovação registrada com canal, nome e hora.</div>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">05</div>
+        <div class="step-icon">🚀</div>
+        <div class="step-title">Publica automaticamente</div>
+        <div class="step-text">Aprovado — publicado. Sem ação manual. No horário recomendado pelos dados reais da conta.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="funcionalidades">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Funcionalidades</div>
+      <h2 class="section-headline">Tudo que a agência<br>precisava ter</h2>
+    </div>
+    <div class="features-grid" style="margin-top:3rem">
+      <div class="feature-card featured reveal">
+        <div class="feature-tag">Diferencial exclusivo</div>
+        <div class="feature-title">Aprovação via WhatsApp com registro jurídico</div>
+        <div class="feature-text">O cliente aprova como está acostumado. O Aproove captura a resposta e gera o registro formal: canal, identidade, timestamp e hash SHA-256 de integridade.</div>
+        <div class="feature-list">
+          <div class="feature-list-item">Registro: "Aprovado via WhatsApp por João Ferreira em 10/03/2026 às 17:03 · v2"</div>
+          <div class="feature-list-item">Número mascarado no display, criptografado no banco</div>
+          <div class="feature-list-item">Histórico imutável exportável em PDF</div>
+        </div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-tag">IA integrada</div>
+        <div class="feature-title">Revisão ortográfica antes do cliente ver</div>
+        <div class="feature-text">A IA verifica o texto da legenda e o conteúdo dentro da arte antes de qualquer envio. Erros são apontados ao social media — nunca chegam ao cliente.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-tag">Inteligência de dados</div>
+        <div class="feature-title">Horário recomendado por dados reais</div>
+        <div class="feature-text">Para cada rede e formato, o sistema exibe o melhor horário com base no histórico de engajamento real da conta conectada. Com justificativa.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-tag">Produção organizada</div>
+        <div class="feature-title">Mockup por rede social</div>
+        <div class="feature-text">O cliente não aprova uma arte solta. Aprova o post como ele vai aparecer no feed, story, reels ou carrossel — com a legenda, o CTA e o horário visíveis.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-tag">Relatórios</div>
+        <div class="feature-title">ROI da campanha com análise de IA</div>
+        <div class="feature-text">Cruza dados de desempenho das redes com resultado financeiro informado pelo cliente. A IA identifica o que funcionou e sugere o que mudar na próxima campanha.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-tag">Distribuição</div>
+        <div class="feature-title">Envio para equipe de vendas</div>
+        <div class="feature-text">Peça aprovada? Selecione quem da equipe recebe, pelo WhatsApp ou e-mail. Com rastreamento de quem abriu e baixou. Versão desatualizada? Notificação automática.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="who-section" id="quem-usa">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Para quem</div>
+      <h2 class="section-headline">Feito para quem<br>trabalha com conteúdo</h2>
+      <p class="section-sub">Do freelancer solo à grande agência. O Aproove escala com você.</p>
+    </div>
+    <div class="who-grid" style="margin-top:3rem">
+      <div class="who-card reveal">
+        <div class="who-icon">🧑‍💻</div>
+        <div class="who-title">Eugências</div>
+        <div class="who-text">Uma pessoa, vários clientes. O Aproove organiza tudo sem precisar de um time. Usuários freelancers ilimitados no projeto.</div>
+        <div class="who-tag">Solopreneur</div>
+      </div>
+      <div class="who-card reveal">
+        <div class="who-icon">🏢</div>
+        <div class="who-title">Agências de marketing</div>
+        <div class="who-text">Da pequena à grande, o Aproove centraliza campanhas, clientes e aprovações em um único ambiente operacional.</div>
+        <div class="who-tag">Agências</div>
+      </div>
+      <div class="who-card reveal">
+        <div class="who-icon">📊</div>
+        <div class="who-title">Times de marketing</div>
+        <div class="who-text">Aprovação interna sem e-mail e reunião. O diretor aprova com um clique e tem registro de tudo. Fluxo da equipe visível para a liderança.</div>
+        <div class="who-tag">Empresas</div>
+      </div>
+      <div class="who-card reveal">
+        <div class="who-icon">🤝</div>
+        <div class="who-title">Aproovers</div>
+        <div class="who-text">Agências que usam o Aproove com sua própria marca, entregando um processo profissional de aprovação para os clientes como diferencial competitivo.</div>
+        <div class="who-tag">White label</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-section" id="planos">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label">Planos</div>
+      <h2 class="section-headline">Simples. Transparente.<br>Sem surpresas.</h2>
+      <p class="section-sub" style="margin:1rem auto 0">Usuários aprovadores dos clientes nunca contam nas licenças. Sem limite de clientes aprovadores.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card reveal">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">197</div>
+        <div class="plan-per">R$ / mês · para começar com organização</div>
+        <div class="plan-features">
+          <div class="plan-feat">Até 5 clientes ativos</div>
+          <div class="plan-feat">50 peças por mês</div>
+          <div class="plan-feat">5 GB armazenamento</div>
+          <div class="plan-feat">3 usuários internos</div>
+          <div class="plan-feat">Histórico 6 meses</div>
+          <div class="plan-feat">IG, FB, LinkedIn</div>
+        </div>
+        <a href="#comecar" class="btn-plan">Começar grátis</a>
+      </div>
+      <div class="plan-card featured reveal">
+        <div class="plan-popular">Mais popular</div>
+        <div class="plan-name">Professional</div>
+        <div class="plan-price" style="color:var(--paper)">497</div>
+        <div class="plan-per">R$ / mês · para agências em crescimento</div>
+        <div class="plan-features">
+          <div class="plan-feat">Até 20 clientes ativos</div>
+          <div class="plan-feat">200 peças por mês</div>
+          <div class="plan-feat">25 GB armazenamento</div>
+          <div class="plan-feat">10 usuários internos</div>
+          <div class="plan-feat">Histórico 12 meses</div>
+          <div class="plan-feat">Todas as redes + agendamento</div>
+          <div class="plan-feat">Revisão ortográfica com IA</div>
+          <div class="plan-feat">Relatório com análise de IA</div>
+        </div>
+        <a href="#comecar" class="btn-plan featured">Começar grátis</a>
+      </div>
+      <div class="plan-card reveal">
+        <div class="plan-name">Agency</div>
+        <div class="plan-price">997</div>
+        <div class="plan-per">R$ / mês · para operações de alto volume</div>
+        <div class="plan-features">
+          <div class="plan-feat">Clientes ilimitados</div>
+          <div class="plan-feat">Peças ilimitadas</div>
+          <div class="plan-feat">100 GB armazenamento</div>
+          <div class="plan-feat">Usuários ilimitados</div>
+          <div class="plan-feat">Histórico 24 meses</div>
+          <div class="plan-feat">White label + sua marca</div>
+          <div class="plan-feat">API access</div>
+          <div class="plan-feat">Suporte dedicado</div>
+        </div>
+        <a href="#comecar" class="btn-plan">Falar com time</a>
+      </div>
+    </div>
+    <p class="plans-note reveal">Armazenamento extra: R$ 19/mês por 10 GB · Peças além do limite: R$ 2,90/peça · WhatsApp API: add-on R$ 49/mês</p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:3rem">
+      <div class="section-label">O que dizem</div>
+      <h2 class="section-headline">Quem usa, não volta<br>para o WhatsApp</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"A gente gastava horas por semana rastreando aprovações em mensagem. Com o Aproove, o cliente aprova no WhatsApp e tudo já aparece organizado na plataforma. Mudou a operação inteira."</p>
+        <div class="testimonial-author">
+          <div class="t-av">AS</div>
+          <div><div class="t-name">Ana Silva</div><div class="t-role">Diretora de atendimento · Agência Flux</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"Meu cliente perguntou se eu tinha desenvolvido o sistema. Quando expliquei que era o Aproove com a minha marca, ele ficou impressionado. Isso só reforçou o posicionamento da minha agência."</p>
+        <div class="testimonial-author">
+          <div class="t-av">RM</div>
+          <div><div class="t-name">Rafael Mendes</div><div class="t-role">Sócio fundador · Aproover certificado</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"O relatório com ROI mudou a conversa de renovação. Antes a discussão era sobre preço. Agora mostro o retorno e o cliente quer aumentar o investimento."</p>
+        <div class="testimonial-author">
+          <div class="t-av">JC</div>
+          <div><div class="t-name">Juliana Costa</div><div class="t-role">Head de marketing · Varejo nacional</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="comecar">
+  <div class="container-sm">
+    <div class="cta-label">Comece hoje</div>
+    <h2 class="cta-headline">Sua operação<br>começa agora</h2>
+    <p class="cta-sub">14 dias grátis. Sem cartão de crédito. Cancele quando quiser.</p>
+    <form class="cta-form" onsubmit="submitForm(event)">
+      <input class="cta-input" type="email" id="email-input" placeholder="seu@email.com" required>
+      <button class="btn-cta-submit" type="submit">Entrar na lista</button>
+    </form>
+    <p class="cta-disclaimer">Ao se cadastrar você concorda com os termos de uso e política de privacidade.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-mark">
+        <svg viewBox="0 0 13 13" fill="none"><rect x=".5" y=".5" width="12" height="12" rx="3" stroke="rgba(250,249,246,.5)" stroke-width="1.2"/><path d="M3 6.5l2.2 2.2L10 4.5" stroke="rgba(250,249,246,.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="footer-name">Aproove</span>
+    </div>
+    <div class="footer-links">
+      <a href="#">Produto</a>
+      <a href="#">Planos</a>
+      <a href="#">Blog</a>
+      <a href="https://instagram.com/aproove.app" target="_blank">Instagram</a>
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+    </div>
+    <p class="footer-copy">© 2026 Aproove · aproove.app</p>
+  </div>
+</footer>
+
+<div class="toast-success" id="toast">🎉 Você está na lista! Entraremos em contato em breve.</div>
+
+<script>
+// Scroll reveal
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+// Form submit
+function submitForm(e) {
+  e.preventDefault();
+  var email = document.getElementById('email-input').value;
+  var toast = document.getElementById('toast');
+  toast.style.display = 'block';
+  document.getElementById('email-input').value = '';
+  setTimeout(function() { toast.style.display = 'none'; }, 4000);
+}
+
+// Nav scroll
+window.addEventListener('scroll', function() {
+  var nav = document.querySelector('nav');
+  if (window.scrollY > 20) {
+    nav.style.boxShadow = '0 1px 0 rgba(17,17,16,0.08)';
+  } else {
+    nav.style.boxShadow = 'none';
+  }
+});
+
+// Stagger reveal on load
+document.querySelectorAll('.reveal').forEach(function(el, i) {
+  el.style.transitionDelay = (i * 0.04) + 's';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Portal da Agência</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f6f2;--bg2:#efede8;--bg3:#e4e2db;
+  --surface:#ffffff;
+  --ink:#1a1a18;--ink2:#5a5a56;--ink3:#9a9a94;
+  --border:rgba(26,26,24,.1);--border2:rgba(26,26,24,.18);
+  --green:#2a5f2a;--green-bg:#edf5ed;--green-bd:rgba(42,95,42,.25);
+  --amber:#7a4a0a;--amber-bg:#fdf2e2;--amber-bd:rgba(122,74,10,.25);
+  --blue:#0d4a8a;--blue-bg:#e8f0fb;--blue-bd:rgba(13,74,138,.25);
+  --red:#8a1a1a;--red-bg:#fbeaea;--red-bd:rgba(138,26,26,.25);
+  --purple:#4a2d8a;--purple-bg:#f0eafb;--purple-bd:rgba(74,45,138,.25);
+  --r:9px;--r-lg:14px;--r-xl:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--ink);line-height:1.5}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:228px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-top{padding:1rem 1rem .75rem;border-bottom:1px solid var(--border)}
+.sb-brand{display:flex;align-items:center;gap:8px;margin-bottom:.875rem}
+.sb-mark{width:28px;height:28px;border-radius:7px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-mark svg{width:15px;height:15px}
+.sb-name{font-size:15px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.sb-tag{font-size:10px;color:var(--ink3)}
+
+/* PROFILE SWITCHER */
+.profile-switcher{position:relative}
+.ps-btn{width:100%;padding:.5rem .75rem;background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;gap:.5rem;cursor:pointer;transition:all .12s;font-family:inherit}
+.ps-btn:hover{border-color:var(--ink)}
+.ps-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.ps-info{flex:1;text-align:left}
+.ps-name{font-size:12px;font-weight:500;color:var(--ink);display:block}
+.ps-role{font-size:10px;color:var(--ink3);display:block}
+.ps-arrow{font-size:10px;color:var(--ink3)}
+.ps-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:50;overflow:hidden;display:none}
+.ps-dropdown.open{display:block}
+.ps-option{display:flex;align-items:center;gap:.625rem;padding:.625rem .875rem;cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border)}
+.ps-option:last-child{border-bottom:none}
+.ps-option:hover{background:var(--bg)}
+.ps-option.active{background:var(--bg2)}
+.ps-opt-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.ps-opt-name{font-size:12px;font-weight:500;color:var(--ink)}
+.ps-opt-role{font-size:10px;color:var(--ink3)}
+
+.sb-nav{flex:1;overflow-y:auto;padding:.375rem 0}
+.sb-section{padding:.5rem 1rem .2rem;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
+.sb-item{display:flex;align-items:center;gap:8px;padding:7px 1rem;font-size:12.5px;color:var(--ink2);cursor:pointer;border-left:2px solid transparent;transition:all .12s;position:relative}
+.sb-item:hover{background:var(--bg);color:var(--ink)}
+.sb-item.active{background:var(--bg);color:var(--ink);border-left-color:var(--ink);font-weight:500}
+.sb-icon{width:15px;text-align:center;flex-shrink:0;font-size:13px}
+.sb-badge{margin-left:auto;font-size:10px;background:var(--amber-bg);color:var(--amber);padding:1px 6px;border-radius:10px;font-weight:600;border:1px solid var(--amber-bd)}
+.sb-badge.info{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-bd)}
+.sb-badge.ok{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+
+.sb-bottom{padding:.875rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sb-agency{font-size:11px;color:var(--ink3)}
+.sb-agency strong{display:block;font-size:12px;font-weight:500;color:var(--ink2)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+.page{display:none;padding:1.75rem 2rem;animation:fadeIn .18s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.ph{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.ph-left h1{font-size:20px;font-weight:600;letter-spacing:-.02em;margin-bottom:3px}
+.ph-left p{font-size:12.5px;color:var(--ink2)}
+.ph-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
+.card-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:.75rem;letter-spacing:.01em}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:.75rem;margin-bottom:.75rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:.75rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:.75rem}
+
+.metric{background:var(--bg2);border-radius:var(--r);padding:.75rem 1rem;border:1px solid var(--border)}
+.metric .m-lbl{font-size:11px;color:var(--ink2);margin-bottom:3px;font-weight:500}
+.metric .m-val{font-size:24px;font-weight:600;letter-spacing:-.03em;color:var(--ink)}
+.metric .m-sub{font-size:11px;color:var(--ink3);margin-top:2px}
+.metric.good .m-val{color:var(--green)}
+.metric.warn .m-val{color:var(--amber)}
+.metric.danger .m-val{color:var(--red)}
+
+/* PILLS */
+.pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.02em}
+.pl-pub{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.pl-apr{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.pl-pend{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.pl-adj{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.pl-rej{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.pl-prod{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd)}
+.pl-rev{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.pl-brief{background:var(--bg2);color:var(--ink2);border:1px solid var(--border2)}
+
+/* BUTTONS */
+.btn{padding:8px 16px;font-size:12.5px;border-radius:var(--r);cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s;letter-spacing:.01em}
+.btn-primary{background:var(--ink);color:var(--surface);border:none}
+.btn-primary:hover{opacity:.85}
+.btn-secondary{background:var(--surface);color:var(--ink);border:1px solid var(--border2)}
+.btn-secondary:hover{background:var(--bg2)}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-success{background:var(--green);color:white;border:none}
+.btn-success:hover{opacity:.85}
+
+/* INFO BOXES */
+.ib{border-radius:var(--r);padding:.625rem .875rem;font-size:12px;line-height:1.55;margin-bottom:.75rem}
+.ib-suc{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.ib-warn{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.ib-info{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.ib-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd)}
+.ib-neutral{background:var(--bg2);color:var(--ink2);border:1px solid var(--border)}
+
+/* ALERT */
+.alert-bar{background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:var(--r-lg);padding:.75rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+.ab-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.ab-text{font-size:12.5px;color:var(--amber);flex:1}
+.ab-text strong{font-weight:600}
+.ab-action{margin-left:auto;flex-shrink:0}
+
+/* ROWS */
+.row{display:flex;align-items:center;gap:.625rem;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.row:last-child{border-bottom:none}
+.row-info{flex:1;min-width:0}
+.row-title{font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{font-size:11px;color:var(--ink2)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.net-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0}
+
+/* CALENDAR */
+.cal-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.cal-nav{display:flex;align-items:center;gap:.5rem}
+.cal-nav button{padding:4px 10px;font-size:12px;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--ink);cursor:pointer;font-family:inherit}
+.cal-month{font-size:16px;font-weight:600;letter-spacing:-.02em;min-width:130px}
+.cal-legend{display:flex;gap:.75rem;margin-left:auto;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--ink2)}
+.client-filter{display:flex;gap:5px;align-items:center;margin-bottom:.75rem;flex-wrap:wrap}
+.cf-label{font-size:11px;color:var(--ink3);margin-right:3px}
+.cf-chip{padding:3px 10px;font-size:11px;border:1px solid var(--border2);border-radius:20px;background:var(--surface);color:var(--ink2);cursor:pointer;font-family:inherit;transition:all .12s}
+.cf-chip:hover,.cf-chip.active{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--ink3);padding:4px 0;text-transform:uppercase;letter-spacing:.05em}
+.cal-cell{min-height:80px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:5px;cursor:pointer;transition:border-color .12s}
+.cal-cell:hover{border-color:var(--border2)}
+.cal-cell.today{border-color:#3b82f6;background:#eff6ff}
+.cal-cell.empty{background:var(--bg2);cursor:default}
+.cal-cell.empty:hover{border-color:var(--border)}
+.cal-day-num{font-size:10px;color:var(--ink3);margin-bottom:3px}
+.cal-cell.today .cal-day-num{color:#1d4ed8;font-weight:600}
+.cal-pill{font-size:9px;padding:1px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;font-weight:500}
+.cp-pub{background:var(--green-bg);color:var(--green)}
+.cp-apr{background:var(--blue-bg);color:var(--blue)}
+.cp-pend{background:var(--amber-bg);color:var(--amber)}
+.cp-adj{background:var(--red-bg);color:var(--red)}
+.cp-more{font-size:9px;color:var(--ink3)}
+.day-detail{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-top:.75rem;display:none}
+.day-detail.on{display:block}
+
+/* PRODUCTION QUEUE */
+.queue-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:.875rem 1.25rem;margin-bottom:.5rem;display:flex;align-items:flex-start;gap:.875rem;transition:border-color .12s}
+.queue-item:hover{border-color:var(--border2)}
+.qi-left{flex:1;min-width:0}
+.qi-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.375rem;flex-wrap:wrap}
+.qi-title{font-size:13px;font-weight:500;color:var(--ink)}
+.qi-meta{font-size:11px;color:var(--ink2);margin-bottom:.5rem}
+.qi-briefing{background:var(--bg2);border-radius:var(--r);padding:.5rem .75rem;font-size:12px;color:var(--ink2);line-height:1.5;border-left:2px solid var(--border2)}
+.qi-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:.5rem}
+.qi-tag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--bg2);color:var(--ink3);border:1px solid var(--border)}
+.qi-right{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:.375rem}
+.qi-deadline{font-size:11px;color:var(--ink3)}
+.qi-deadline.urgent{color:var(--red);font-weight:500}
+.upload-btn{padding:6px 12px;font-size:11px;font-weight:500;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--ink);cursor:pointer;font-family:inherit;transition:all .12s}
+.upload-btn:hover{background:var(--bg2);border-color:var(--ink)}
+.upload-btn.done{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.upload-input{display:none}
+
+/* COPY EDITOR */
+.copy-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:.75rem;overflow:hidden;transition:border-color .12s}
+.copy-item:hover{border-color:var(--border2)}
+.ci-header{padding:.75rem 1.25rem;display:flex;align-items:center;gap:.625rem;border-bottom:1px solid var(--border);background:var(--bg)}
+.ci-body{padding:1rem 1.25rem}
+.ci-legend{font-size:11px;color:var(--ink2);margin-bottom:.375rem;font-weight:500}
+.copy-textarea{width:100%;border:1px solid var(--border2);border-radius:var(--r);padding:.625rem .875rem;font-size:12.5px;font-family:inherit;color:var(--ink);background:var(--surface);resize:none;min-height:80px;line-height:1.6}
+.copy-textarea:focus{outline:none;border-color:var(--ink)}
+.char-count{font-size:10px;color:var(--ink3);text-align:right;margin-top:3px}
+.char-count.warn{color:var(--amber)}
+.char-count.over{color:var(--red)}
+.ai-check{display:flex;align-items:center;gap:6px;padding:.5rem .75rem;border-radius:var(--r);font-size:11px;margin-top:.5rem;cursor:pointer;transition:all .12s;border:1px solid var(--border);background:var(--bg);width:fit-content}
+.ai-check:hover{border-color:var(--ink)}
+.ai-check.checking{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.ai-check.ok{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.ai-check.error{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.ai-badge-icon{font-size:13px}
+
+/* CLIENTS TABLE */
+.clients-table{width:100%;border-collapse:collapse}
+.ct-head th{text-align:left;padding:.5rem 1rem;font-size:11px;font-weight:600;color:var(--ink3);border-bottom:1px solid var(--border);background:var(--bg)}
+.ct-row td{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:middle}
+.ct-row:last-child td{border-bottom:none}
+.ct-row:hover td{background:var(--bg)}
+.ct-client{display:flex;align-items:center;gap:.625rem}
+.ct-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.ct-name{font-weight:500;color:var(--ink)}
+.ct-plan{font-size:11px;color:var(--ink3)}
+.usage-bar{height:4px;background:var(--bg3);border-radius:2px;width:80px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+.usage-fill{height:4px;border-radius:2px;background:var(--green)}
+.usage-fill.warn{background:var(--amber)}
+.usage-fill.danger{background:var(--red)}
+
+/* CAMPAIGN DETAIL */
+.camp-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.5rem;margin-bottom:.75rem}
+.ch-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.ch-title{font-size:20px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.ch-client{font-size:13px;color:var(--ink2);margin-top:2px}
+.ch-meta{display:flex;gap:1.5rem;flex-wrap:wrap}
+.ch-meta-item{display:flex;flex-direction:column;gap:2px}
+.ch-meta-label{font-size:10px;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.ch-meta-value{font-size:13px;font-weight:500;color:var(--ink)}
+
+/* PIECE STATUS BOARD */
+.status-cols{display:grid;grid-template-columns:repeat(5,1fr);gap:.625rem;overflow-x:auto}
+.status-col{background:var(--bg2);border-radius:var(--r-lg);padding:.75rem;min-width:160px}
+.sc-label{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:.625rem;display:flex;align-items:center;justify-content:space-between}
+.sc-count{background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:10px;padding:1px 6px;color:var(--ink3)}
+.piece-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.625rem .75rem;margin-bottom:.375rem;cursor:pointer;transition:all .12s}
+.piece-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.pc-net{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;display:inline-block;margin-bottom:3px}
+.pc-title{font-size:11px;font-weight:500;color:var(--ink);margin-bottom:2px;line-height:1.3}
+.pc-date{font-size:10px;color:var(--ink3)}
+.pc-client{font-size:10px;color:var(--ink3);margin-top:2px}
+
+/* FORMS */
+.frow{display:flex;flex-direction:column;gap:4px;margin-bottom:.75rem}
+.frow label{font-size:11px;font-weight:500;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.frow input,.frow select,.frow textarea{padding:8px 10px;font-size:12.5px;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--ink);font-family:inherit;width:100%}
+.frow input:focus,.frow select:focus,.frow textarea:focus{outline:none;border-color:var(--ink)}
+.frow textarea{resize:none;min-height:80px}
+.net-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.net-opt{padding:5px 12px;font-size:12px;border:1px solid var(--border2);border-radius:var(--r);cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .12s;user-select:none}
+.net-opt:hover{border-color:var(--ink);color:var(--ink)}
+.net-opt.sel{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* TOAST */
+.toast{display:none;position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 22px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;white-space:nowrap;animation:slideUp .25s ease}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* AUDIT LOG */
+.log-entry{padding:.75rem 0;border-bottom:1px solid var(--border)}
+.log-entry:last-child{border-bottom:none}
+.le-header{display:flex;align-items:center;gap:.5rem;margin-bottom:3px;flex-wrap:wrap}
+.le-action{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.le-meta{font-size:11px;color:var(--ink2)}
+.le-hash{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:2px}
+.le-comment{font-size:12px;color:var(--ink2);background:var(--bg2);border-radius:5px;padding:6px 10px;border-left:2px solid var(--border2);line-height:1.5;margin-top:5px;font-style:italic}
+
+/* SETTINGS */
+.cfg-row{display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)}
+.cfg-row:last-child{border-bottom:none}
+.cfg-lbl{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.cfg-sub{font-size:11px;color:var(--ink2)}
+.toggle{width:34px;height:19px;border-radius:10px;background:var(--bg3);position:relative;cursor:pointer;transition:background .15s;flex-shrink:0;border:1px solid var(--border2)}
+.toggle.on{background:var(--green);border-color:var(--green)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:white;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(15px)}
+
+/* STEP WIZARD */
+.step-bar{display:flex;margin-bottom:1.5rem}
+.step-wi{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.step-wi::after{content:'';position:absolute;top:13px;left:50%;width:100%;height:1px;background:var(--border);z-index:0}
+.step-wi:last-child::after{display:none}
+.step-n{width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--ink2);position:relative;z-index:1;transition:all .2s;font-family:'DM Mono',monospace}
+.step-n.active{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.step-n.done{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.step-lbl{font-size:10px;color:var(--ink3);margin-top:4px}
+.form-step{display:none}.form-step.active{display:block}
+
+/* APPROOVER BADGE */
+.aproover-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd);border-radius:20px;font-size:11px;font-weight:600}
+
+@media(max-width:800px){.g3,.g4{grid-template-columns:1fr 1fr}.status-cols{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.app{flex-direction:column;height:auto}.sidebar{width:100%;height:auto}.main{overflow-y:visible}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-top">
+    <div class="sb-brand">
+      <div class="sb-mark">
+        <svg viewBox="0 0 15 15" fill="none"><rect x="1" y="1" width="13" height="13" rx="3" stroke="white" stroke-width="1.4"/><path d="M4 7.8l2.4 2.4L11 5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="sb-name">Aproove</div>
+        <div class="sb-tag">Portal da agência</div>
+      </div>
+    </div>
+    <div class="profile-switcher">
+      <button class="ps-btn" onclick="toggleDropdown()">
+        <div class="ps-av" id="ps-av" style="background:var(--blue-bg);color:var(--blue)">GM</div>
+        <div class="ps-info">
+          <span class="ps-name" id="ps-name">Ana Gestora</span>
+          <span class="ps-role" id="ps-role">Gestor / Admin</span>
+        </div>
+        <span class="ps-arrow">⌄</span>
+      </button>
+      <div class="ps-dropdown" id="ps-dropdown">
+        <div class="ps-option active" onclick="switchProfile('gestor')">
+          <div class="ps-opt-av" style="background:var(--blue-bg);color:var(--blue)">GM</div>
+          <div><div class="ps-opt-name">Ana Gestora</div><div class="ps-opt-role">Gestor / Admin</div></div>
+        </div>
+        <div class="ps-option" onclick="switchProfile('planejador')">
+          <div class="ps-opt-av" style="background:var(--purple-bg);color:var(--purple)">PL</div>
+          <div><div class="ps-opt-name">Carlos Planejador</div><div class="ps-opt-role">Planejador / Atendimento</div></div>
+        </div>
+        <div class="ps-option" onclick="switchProfile('social')">
+          <div class="ps-opt-av" style="background:var(--green-bg);color:var(--green)">SM</div>
+          <div><div class="ps-opt-name">Julia Social Media</div><div class="ps-opt-role">Social Media</div></div>
+        </div>
+        <div class="ps-option" onclick="switchProfile('designer')">
+          <div class="ps-opt-av" style="background:var(--amber-bg);color:var(--amber)">DS</div>
+          <div><div class="ps-opt-name">Pedro Designer</div><div class="ps-opt-role">Designer / Audiovisual</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-nav" id="sb-nav"></div>
+
+  <div class="sb-bottom">
+    <div class="sb-agency">
+      <strong>Agência Nova Era</strong>
+      Plano Professional
+    </div>
+    <span class="aproover-badge">Aproover</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-area">
+
+<!-- ═══════ GESTOR PAGES ═══════ -->
+
+<!-- Dashboard Gestor -->
+<div class="page active" id="page-g-dashboard">
+  <div class="ph">
+    <div class="ph-left"><h1>Dashboard</h1><p>Visão geral de toda a operação · 15 de março de 2026</p></div>
+    <div class="ph-actions">
+      <button class="btn btn-primary" onclick="navTo('g-nova-camp')">+ Nova campanha</button>
+    </div>
+  </div>
+  <div class="alert-bar">
+    <div class="ab-dot"></div>
+    <div class="ab-text"><strong>5 peças aguardando aprovação do cliente</strong> — publicação nos próximos 5 dias. 2 sem resposta há mais de 48h.</div>
+    <button class="btn btn-secondary btn-sm ab-action" onclick="navTo('g-aprovacoes')">Ver peças</button>
+  </div>
+  <div class="g4">
+    <div class="metric warn"><div class="m-lbl">Aguardando cliente</div><div class="m-val">5</div><div class="m-sub">2 atrasadas +48h</div></div>
+    <div class="metric"><div class="m-lbl">Em produção</div><div class="m-val">8</div><div class="m-sub">3 designers · 5 social media</div></div>
+    <div class="metric good"><div class="m-lbl">Aprovados este mês</div><div class="m-val">34</div><div class="m-sub">em 6 campanhas ativas</div></div>
+    <div class="metric"><div class="m-lbl">Publicados</div><div class="m-val">28</div><div class="m-sub">em 4 redes sociais</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Atividade recente</div>
+      <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Verão 2026 — Feed aprovado</div><div class="row-sub">João Ferreira via WhatsApp · há 2h</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">Black Friday — Ajuste solicitado</div><div class="row-sub">"Muda o CTA" · há 4h · Pedro Designer notificado</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div class="row-info"><div class="row-title">Coleção Inverno — Arte enviada</div><div class="row-sub">Pedro Designer · aguardando revisão</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Carnaval — Story reprovado</div><div class="row-sub">"Fora do tom" · retornou para Julia SM</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">Verão 2026 — Post publicado</div><div class="row-sub">15/03 às 08h00 · automático</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Status por cliente</div>
+      <div class="row"><div class="row-info"><div class="row-title">Marca Verão S/A</div><div class="row-sub">3 aguardando · 1 em ajuste</div></div><div class="usage-bar"><div class="usage-fill warn" style="width:72%"></div></div><span style="font-size:11px;color:var(--ink2)">72%</span></div>
+      <div class="row"><div class="row-info"><div class="row-title">Tech Solutions Ltda</div><div class="row-sub">1 aguardando · 2 aprovados</div></div><div class="usage-bar"><div class="usage-fill" style="width:45%"></div></div><span style="font-size:11px;color:var(--ink2)">45%</span></div>
+      <div class="row"><div class="row-info"><div class="row-title">Restaurante Bella Vita</div><div class="row-sub">0 pendentes · tudo aprovado</div></div><div class="usage-bar"><div class="usage-fill" style="width:90%"></div></div><span style="font-size:11px;color:var(--amber)">90%</span></div>
+      <div class="row"><div class="row-info"><div class="row-title">Clínica Saúde Total</div><div class="row-sub">1 aguardando · 0 em ajuste</div></div><div class="usage-bar"><div class="usage-fill" style="width:30%"></div></div><span style="font-size:11px;color:var(--ink2)">30%</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Campanhas -->
+<div class="page" id="page-g-campanhas">
+  <div class="ph">
+    <div class="ph-left"><h1>Campanhas</h1><p>6 campanhas ativas em 4 clientes</p></div>
+    <div class="ph-actions">
+      <button class="btn btn-secondary" onclick="navTo('g-clientes')">Ver clientes</button>
+      <button class="btn btn-primary" onclick="navTo('g-nova-camp')">+ Nova campanha</button>
+    </div>
+  </div>
+  <div class="client-filter">
+    <span class="cf-label">Cliente:</span>
+    <button class="cf-chip active" onclick="filterClient('all',this)">Todos</button>
+    <button class="cf-chip" onclick="filterClient('verão',this)">Marca Verão</button>
+    <button class="cf-chip" onclick="filterClient('tech',this)">Tech Solutions</button>
+    <button class="cf-chip" onclick="filterClient('bella',this)">Bella Vita</button>
+    <button class="cf-chip" onclick="filterClient('saude',this)">Saúde Total</button>
+  </div>
+  <div id="camp-list">
+    <div class="camp-row card" data-client="verão" style="display:flex;align-items:center;gap:.875rem;cursor:pointer" onclick="navTo('g-camp-detail')">
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px">Lançamento Verão 2026</div><div style="font-size:11px;color:var(--ink2)">Marca Verão S/A · Jan–Mar 2026 · IG, LI, TK, FB</div></div>
+      <span class="pill pl-pub">Ativa</span>
+      <div style="font-size:11px;color:var(--ink2)">18/20 peças</div>
+      <button class="btn btn-secondary btn-sm">Abrir</button>
+    </div>
+    <div class="camp-row card" data-client="verão" style="display:flex;align-items:center;gap:.875rem;cursor:pointer">
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px">Black Friday 2026</div><div style="font-size:11px;color:var(--ink2)">Marca Verão S/A · Nov 2026 · IG, FB, TK</div></div>
+      <span class="pill pl-brief">Planejamento</span>
+      <div style="font-size:11px;color:var(--ink2)">2/40 peças</div>
+      <button class="btn btn-secondary btn-sm">Abrir</button>
+    </div>
+    <div class="camp-row card" data-client="tech" style="display:flex;align-items:center;gap:.875rem;cursor:pointer">
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px">Lançamento SaaS Q2</div><div style="font-size:11px;color:var(--ink2)">Tech Solutions Ltda · Abr–Jun 2026 · LI, IG</div></div>
+      <span class="pill pl-pub">Ativa</span>
+      <div style="font-size:11px;color:var(--ink2)">9/15 peças</div>
+      <button class="btn btn-secondary btn-sm">Abrir</button>
+    </div>
+    <div class="camp-row card" data-client="bella" style="display:flex;align-items:center;gap:.875rem;cursor:pointer">
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px">Cardápio Primavera</div><div style="font-size:11px;color:var(--ink2)">Bella Vita · Mar–Abr 2026 · IG, FB</div></div>
+      <span class="pill pl-apr">Concluída</span>
+      <div style="font-size:11px;color:var(--ink2)">20/20 peças</div>
+      <button class="btn btn-secondary btn-sm">Abrir</button>
+    </div>
+    <div class="camp-row card" data-client="saude" style="display:flex;align-items:center;gap:.875rem;cursor:pointer">
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px">Campanha Março Saúde</div><div style="font-size:11px;color:var(--ink2)">Clínica Saúde Total · Mar 2026 · IG, LI</div></div>
+      <span class="pill pl-pub">Ativa</span>
+      <div style="font-size:11px;color:var(--ink2)">6/10 peças</div>
+      <button class="btn btn-secondary btn-sm">Abrir</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detalhe campanha -->
+<div class="page" id="page-g-camp-detail">
+  <div class="ph">
+    <div class="ph-left">
+      <button class="btn btn-secondary btn-sm" onclick="navTo('g-campanhas')" style="margin-bottom:.5rem">← Campanhas</button>
+      <h1>Lançamento Verão 2026</h1>
+      <p>Marca Verão S/A · Jan–Mar 2026 · IG · LI · TikTok · FB</p>
+    </div>
+    <div class="ph-actions">
+      <button class="btn btn-secondary btn-sm" onclick="showToast('Relatório gerado e salvo')">Exportar relatório</button>
+      <button class="btn btn-primary btn-sm" onclick="showToast('Peça enviada para aprovação do cliente')">Enviar para aprovação</button>
+    </div>
+  </div>
+  <div class="camp-header">
+    <div class="ch-top">
+      <div>
+        <div class="ch-title">Lançamento Verão 2026</div>
+        <div class="ch-client">Marca Verão S/A · Responsável: Carlos Planejador</div>
+      </div>
+      <span class="pill pl-pub">Ativa</span>
+    </div>
+    <div class="ch-meta">
+      <div class="ch-meta-item"><div class="ch-meta-label">Período</div><div class="ch-meta-value">Jan–Mar 2026</div></div>
+      <div class="ch-meta-item"><div class="ch-meta-label">Objetivo</div><div class="ch-meta-value">Lançamento de produto</div></div>
+      <div class="ch-meta-item"><div class="ch-meta-label">Peças</div><div class="ch-meta-value">18 de 20</div></div>
+      <div class="ch-meta-item"><div class="ch-meta-label">Aprovadas</div><div class="ch-meta-value">12</div></div>
+      <div class="ch-meta-item"><div class="ch-meta-label">Publicadas</div><div class="ch-meta-value">8</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Board de status das peças</div>
+    <div class="status-cols">
+      <div class="status-col">
+        <div class="sc-label">Em briefing <span class="sc-count">2</span></div>
+        <div class="piece-card"><div class="pc-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="pc-title">Post feed Semana 4</div><div class="pc-date">20/03 · 10h</div></div>
+        <div class="piece-card"><div class="pc-net" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="pc-title">Artigo Coleção</div><div class="pc-date">22/03 · 08h</div></div>
+      </div>
+      <div class="status-col">
+        <div class="sc-label">Em produção <span class="sc-count">3</span></div>
+        <div class="piece-card"><div class="pc-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="pc-title">Reels Semana 4</div><div class="pc-date">20/03 · 18h</div><div class="pc-client">Pedro Designer</div></div>
+        <div class="piece-card"><div class="pc-net" style="background:#F3F4F6;color:#333">TK</div><div class="pc-title">Vídeo TikTok 3</div><div class="pc-date">21/03 · 19h</div><div class="pc-client">Pedro Designer</div></div>
+        <div class="piece-card"><div class="pc-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="pc-title">Story Semana 4</div><div class="pc-date">20/03 · 09h</div><div class="pc-client">Julia SM</div></div>
+      </div>
+      <div class="status-col">
+        <div class="sc-label">Aguardando cliente <span class="sc-count">5</span></div>
+        <div class="piece-card" style="border-color:var(--amber-bd)"><div class="pc-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="pc-title">Post feed Sem3</div><div class="pc-date">15/03 · 10h</div><div class="pc-client" style="color:var(--amber)">48h sem resposta</div></div>
+        <div class="piece-card"><div class="pc-net" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="pc-title">Post LI Sem3</div><div class="pc-date">15/03 · 08h</div></div>
+        <div class="piece-card"><div class="pc-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="pc-title">Reels Sem3</div><div class="pc-date">15/03 · 18h</div></div>
+      </div>
+      <div class="status-col">
+        <div class="sc-label">Aprovado <span class="sc-count">4</span></div>
+        <div class="piece-card"><div class="pc-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="pc-title">Story Sem3</div><div class="pc-date">15/03 · 09h</div></div>
+        <div class="piece-card"><div class="pc-net" style="background:#F3F4F6;color:#333">TK</div><div class="pc-title">TikTok 2</div><div class="pc-date">20/03 · 19h</div></div>
+      </div>
+      <div class="status-col">
+        <div class="sc-label">Publicado <span class="sc-count">8</span></div>
+        <div class="piece-card" style="opacity:.7"><div class="pc-net" style="background:var(--green-bg);color:var(--green)">IG</div><div class="pc-title">Post feed Sem1</div><div class="pc-date">Publicado 02/01</div></div>
+        <div class="piece-card" style="opacity:.7"><div class="pc-net" style="background:var(--green-bg);color:var(--green)">LI</div><div class="pc-title">Post LI Sem1</div><div class="pc-date">Publicado 03/01</div></div>
+        <div class="piece-card" style="opacity:.7"><div class="pc-net" style="background:var(--green-bg);color:var(--green)">TK</div><div class="pc-title">TikTok 1</div><div class="pc-date">Publicado 05/01</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Nova campanha -->
+<div class="page" id="page-g-nova-camp">
+  <div class="ph">
+    <div class="ph-left"><h1>Nova campanha</h1><p>Preencha as etapas para criar a campanha no sistema</p></div>
+  </div>
+  <div class="step-bar" id="nc-steps">
+    <div class="step-wi"><div class="step-n active" id="nc-1">1</div><div class="step-lbl">Campanha</div></div>
+    <div class="step-wi"><div class="step-n" id="nc-2">2</div><div class="step-lbl">Briefing</div></div>
+    <div class="step-wi"><div class="step-n" id="nc-3">3</div><div class="step-lbl">Redes</div></div>
+    <div class="step-wi"><div class="step-n" id="nc-4">4</div><div class="step-lbl">Grade</div></div>
+    <div class="step-wi"><div class="step-n" id="nc-5">5</div><div class="step-lbl">Confirmar</div></div>
+  </div>
+  <div id="nc-form">
+    <div class="form-step active" id="nc-s1">
+      <div class="card">
+        <div class="g2">
+          <div class="frow"><label>Nome da campanha</label><input type="text" placeholder="Ex: Lançamento Coleção Inverno 2026"></div>
+          <div class="frow"><label>Cliente</label><select><option>Marca Verão S/A</option><option>Tech Solutions Ltda</option><option>Bella Vita</option><option>Clínica Saúde Total</option></select></div>
+        </div>
+        <div class="g2">
+          <div class="frow"><label>Data de início</label><input type="date" value="2026-04-01"></div>
+          <div class="frow"><label>Data de encerramento</label><input type="date" value="2026-06-30"></div>
+        </div>
+        <div class="frow"><label>Objetivo estratégico</label>
+          <select><option>Lançamento de produto</option><option>Posicionamento de marca</option><option>Geração de leads</option><option>Ganhar seguidores</option><option>Aumentar ROI</option><option>Engajamento</option></select>
+        </div>
+        <div class="frow"><label>Responsável interno</label>
+          <select><option>Carlos Planejador</option><option>Ana Gestora</option></select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="ncStep(2)">Próximo →</button></div>
+    </div>
+    <div class="form-step" id="nc-s2">
+      <div class="card">
+        <div class="frow"><label>Briefing da campanha</label><textarea placeholder="Descreva o conceito, público-alvo, tom de voz, referências e informações relevantes para o planejamento..." style="min-height:120px"></textarea></div>
+        <div class="g2">
+          <div class="frow"><label>KPI principal</label><select><option>Alcance mensal</option><option>Taxa de engajamento</option><option>Leads gerados</option><option>Novos seguidores</option><option>ROI</option></select></div>
+          <div class="frow"><label>Meta do KPI</label><input type="text" placeholder="Ex: 50.000 pessoas / mês"></div>
+        </div>
+        <div class="frow"><label>Key Visual (KV) da campanha</label>
+          <div style="border:1.5px dashed var(--border2);border-radius:var(--r-lg);padding:1.25rem;text-align:center;cursor:pointer;font-size:12px;color:var(--ink3)" onclick="showToast('Upload de KV realizado')">
+            Clique para fazer upload do KV · PNG, JPG, PDF
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between"><button class="btn btn-secondary" onclick="ncStep(1)">← Voltar</button><button class="btn btn-primary" onclick="ncStep(3)">Próximo →</button></div>
+    </div>
+    <div class="form-step" id="nc-s3">
+      <div class="card">
+        <div class="frow"><label>Redes sociais</label>
+          <div class="net-grid">
+            <div class="net-opt sel" onclick="this.classList.toggle('sel')">Instagram</div>
+            <div class="net-opt" onclick="this.classList.toggle('sel')">LinkedIn</div>
+            <div class="net-opt sel" onclick="this.classList.toggle('sel')">TikTok</div>
+            <div class="net-opt" onclick="this.classList.toggle('sel')">Facebook</div>
+            <div class="net-opt" onclick="this.classList.toggle('sel')">YouTube</div>
+            <div class="net-opt" onclick="this.classList.toggle('sel')">Pinterest</div>
+            <div class="net-opt" onclick="this.classList.toggle('sel')">X (Twitter)</div>
+            <div class="net-opt" onclick="this.classList.toggle('sel')">Google Ads</div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="frow"><label>Posts por mês</label><select><option>Até 10</option><option selected>10 a 20</option><option>20 a 40</option><option>Acima de 40</option></select></div>
+          <div class="frow"><label>Vídeos por mês</label><select><option>Nenhum</option><option selected>2 a 4</option><option>4 a 8</option><option>Acima de 8</option></select></div>
+        </div>
+        <div class="frow"><label>Canal de aprovação do cliente</label>
+          <select><option>Portal Aproove</option><option selected>WhatsApp + Portal</option><option>Apenas WhatsApp</option></select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between"><button class="btn btn-secondary" onclick="ncStep(2)">← Voltar</button><button class="btn btn-primary" onclick="ncStep(4)">Próximo →</button></div>
+    </div>
+    <div class="form-step" id="nc-s4">
+      <div class="card">
+        <h3 style="font-size:13px;font-weight:500;margin-bottom:.875rem">Grade gerada automaticamente · Ajuste conforme necessário</h3>
+        <div class="ib ib-purple">A IA sugeriu uma grade de 20 posts baseada no briefing. Revise e ajuste antes de confirmar.</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem;background:var(--bg2);border-radius:var(--r);font-size:12px">
+            <span class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</span>
+            <span style="flex:1;font-weight:500">Post feed · Abertura de campanha</span>
+            <span style="color:var(--ink3)">01/04 · 10h</span>
+            <span class="pill pl-brief">Social Media</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem;background:var(--bg2);border-radius:var(--r);font-size:12px">
+            <span class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</span>
+            <span style="flex:1;font-weight:500">Story · Apresentação KV</span>
+            <span style="color:var(--ink3)">01/04 · 09h</span>
+            <span class="pill pl-brief">Designer</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem;background:var(--bg2);border-radius:var(--r);font-size:12px">
+            <span class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</span>
+            <span style="flex:1;font-weight:500">Post · Conteúdo institucional</span>
+            <span style="color:var(--ink3)">02/04 · 08h</span>
+            <span class="pill pl-brief">Social Media</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.625rem;padding:.5rem;background:var(--bg2);border-radius:var(--r);font-size:12px">
+            <span class="net-tag" style="background:#F3F4F6;color:#333">TK</span>
+            <span style="flex:1;font-weight:500">Vídeo 30s · Abertura</span>
+            <span style="color:var(--ink3)">03/04 · 19h</span>
+            <span class="pill pl-brief">Audiovisual</span>
+          </div>
+          <div style="font-size:11px;color:var(--ink3);text-align:center;padding:.5rem">+ 16 posts adicionais gerados pela IA</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between"><button class="btn btn-secondary" onclick="ncStep(3)">← Voltar</button><button class="btn btn-primary" onclick="ncStep(5)">Revisar →</button></div>
+    </div>
+    <div class="form-step" id="nc-s5">
+      <div class="card">
+        <h3 style="font-size:13px;font-weight:500;margin-bottom:.75rem">Resumo da campanha</h3>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--ink2)">
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Campanha:</span><span style="font-weight:500;color:var(--ink)">Coleção Inverno 2026</span></div>
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Cliente:</span><span>Marca Verão S/A</span></div>
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Período:</span><span>01/04/2026 a 30/06/2026</span></div>
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Objetivo:</span><span>Lançamento de produto</span></div>
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Redes:</span><span>Instagram · TikTok</span></div>
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Grade gerada:</span><span>20 posts · 4 vídeos</span></div>
+          <div style="display:flex;gap:.5rem"><span style="min-width:130px;color:var(--ink3)">Aprovação:</span><span>WhatsApp + Portal</span></div>
+        </div>
+      </div>
+      <div class="ib ib-warn">Ao criar, a campanha aparece para o planejador e social media com as tarefas distribuídas automaticamente.</div>
+      <div style="display:flex;justify-content:space-between">
+        <button class="btn btn-secondary" onclick="ncStep(4)">← Voltar</button>
+        <button class="btn btn-primary" onclick="createCamp()">Criar campanha</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Calendário gestor -->
+<div class="page" id="page-g-calendario">
+  <div class="ph"><div class="ph-left"><h1>Calendário editorial</h1><p>Visão de todos os clientes e campanhas</p></div></div>
+  <div class="client-filter">
+    <span class="cf-label">Cliente:</span>
+    <button class="cf-chip active" onclick="filterCalClient('all',this)">Todos</button>
+    <button class="cf-chip" onclick="filterCalClient('verão',this)">Marca Verão</button>
+    <button class="cf-chip" onclick="filterCalClient('tech',this)">Tech Solutions</button>
+    <button class="cf-chip" onclick="filterCalClient('bella',this)">Bella Vita</button>
+  </div>
+  <div class="card">
+    <div class="cal-header">
+      <div class="cal-nav">
+        <button onclick="calNav(-1)">←</button>
+        <span class="cal-month" id="cal-month-g">Março 2026</span>
+        <button onclick="calNav(1)">→</button>
+      </div>
+      <div class="cal-legend">
+        <div class="leg"><div class="dot" style="background:var(--green)"></div>Publicado</div>
+        <div class="leg"><div class="dot" style="background:var(--blue)"></div>Aprovado</div>
+        <div class="leg"><div class="dot" style="background:var(--amber)"></div>A aprovar</div>
+        <div class="leg"><div class="dot" style="background:var(--red)"></div>Em ajuste</div>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid-g"></div>
+    <div class="day-detail" id="day-detail-g">
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.75rem" id="dd-title-g"></div>
+      <div id="dd-items-g"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Aprovações gestor -->
+<div class="page" id="page-g-aprovacoes">
+  <div class="ph"><div class="ph-left"><h1>Aprovações</h1><p>Revisão interna antes de enviar ao cliente</p></div></div>
+  <div class="ib ib-info">Revise cada peça antes de enviar ao cliente. Você pode solicitar ajuste interno sem o cliente ver ainda.</div>
+  <div style="display:flex;flex-direction:column;gap:.5rem">
+    <div class="queue-item">
+      <div class="qi-left">
+        <div class="qi-header"><span class="net-tag" style="background:#FDECEA;color:#B91C1C">IG Feed</span><span class="pill pl-rev">Revisão interna</span><span style="font-size:11px;color:var(--ink3)">Verão 2026 · 20/03 às 10h</span></div>
+        <div class="qi-title">Post feed Semana 4 — Verão 2026</div>
+        <div class="qi-meta">Copy: Julia SM · Arte: Pedro Designer · v1</div>
+        <div class="qi-briefing">"Verão chegou e a nossa nova coleção também! ☀️ Peças exclusivas para você arrasar. Acesse o link na bio. #verão2026 #moda"</div>
+      </div>
+      <div class="qi-right">
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Ajuste interno solicitado — Julia SM notificada')">Ajuste interno</button>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Peça enviada para aprovação do cliente via WhatsApp')">Enviar ao cliente</button>
+      </div>
+    </div>
+    <div class="queue-item">
+      <div class="qi-left">
+        <div class="qi-header"><span class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LinkedIn</span><span class="pill pl-rev">Revisão interna</span><span style="font-size:11px;color:var(--ink3)">Verão 2026 · 20/03 às 08h</span></div>
+        <div class="qi-title">Post LinkedIn Semana 4 — Verão 2026</div>
+        <div class="qi-meta">Copy: Julia SM · Arte: Pedro Designer · v1</div>
+        <div class="qi-briefing">"Verão chegou e lançamos nossa nova coleção! Peças pensadas para o profissional moderno. Confira nos comentários."</div>
+      </div>
+      <div class="qi-right">
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Ajuste interno solicitado')">Ajuste interno</button>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Peça enviada ao cliente')">Enviar ao cliente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Clientes -->
+<div class="page" id="page-g-clientes">
+  <div class="ph"><div class="ph-left"><h1>Clientes</h1><p>4 clientes ativos · pacotes e uso</p></div><div class="ph-actions"><button class="btn btn-primary" onclick="showToast('Tela de novo cliente em breve')">+ Novo cliente</button></div></div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="clients-table" style="width:100%">
+      <thead class="ct-head"><tr><th>Cliente</th><th>Plano</th><th>Uso do pacote</th><th>Campanhas</th><th>Peças/mês</th><th>Canal aprovação</th><th></th></tr></thead>
+      <tbody>
+        <tr class="ct-row"><td><div class="ct-client"><div class="ct-av" style="background:#FDECEA;color:#B91C1C">MV</div><div><div class="ct-name">Marca Verão S/A</div><div class="ct-plan">João Ferreira · joao@marcaverao.com</div></div></div></td><td><span class="pill pl-rev">Professional</span></td><td><div class="usage-bar"><div class="usage-fill warn" style="width:72%"></div></div>72%</td><td>2 ativas</td><td>18/20</td><td><span class="pill pl-wa" style="background:#E8F5E9;color:#2E7D32;border:1px solid rgba(46,125,50,.2)">WA + Portal</span></td><td><button class="btn btn-secondary btn-sm" onclick="showToast('Abrindo configurações do cliente')">Editar</button></td></tr>
+        <tr class="ct-row"><td><div class="ct-client"><div class="ct-av" style="background:#DBEAFE;color:#1D4ED8">TS</div><div><div class="ct-name">Tech Solutions Ltda</div><div class="ct-plan">Maria Costa · maria@techsol.com</div></div></div></td><td><span class="pill pl-rev">Professional</span></td><td><div class="usage-bar"><div class="usage-fill" style="width:45%"></div></div>45%</td><td>1 ativa</td><td>9/20</td><td><span class="pill pl-pub" style="font-size:10px">Portal</span></td><td><button class="btn btn-secondary btn-sm">Editar</button></td></tr>
+        <tr class="ct-row"><td><div class="ct-client"><div class="ct-av" style="background:#E8F5E9;color:#2E7D32">BV</div><div><div class="ct-name">Bella Vita</div><div class="ct-plan">Roberto Lima · roberto@bellavita.com</div></div></div></td><td><span class="pill pl-brief">Starter</span></td><td><div class="usage-bar"><div class="usage-fill danger" style="width:90%"></div></div><span style="color:var(--red)">90%</span></td><td>1 ativa</td><td>18/20</td><td><span class="pill pl-wa" style="background:#E8F5E9;color:#2E7D32;border:1px solid rgba(46,125,50,.2)">WA + Portal</span></td><td><button class="btn btn-secondary btn-sm">Editar</button></td></tr>
+        <tr class="ct-row"><td><div class="ct-client"><div class="ct-av" style="background:#F3E5F5;color:#6A1B9A">ST</div><div><div class="ct-name">Clínica Saúde Total</div><div class="ct-plan">Ana Souza · ana@saudetotal.com</div></div></div></td><td><span class="pill pl-brief">Starter</span></td><td><div class="usage-bar"><div class="usage-fill" style="width:30%"></div></div>30%</td><td>1 ativa</td><td>6/20</td><td><span class="pill pl-pub" style="font-size:10px">Portal</span></td><td><button class="btn btn-secondary btn-sm">Editar</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ib ib-warn">Bella Vita está em 90% do pacote. Considere propor upgrade para evitar limitação antes do fim do mês.</div>
+</div>
+
+<!-- Auditoria gestor -->
+<div class="page" id="page-g-auditoria">
+  <div class="ph"><div class="ph-left"><h1>Auditoria</h1><p>Registro completo e imutável de todas as interações</p></div><div class="ph-actions"><button class="btn btn-secondary btn-sm" onclick="showToast('Exportando log completo em PDF...')">Exportar PDF</button></div></div>
+  <div class="card">
+    <div class="log-entry">
+      <div class="le-header"><span class="le-action pl-apr pill">Aprovado</span><span class="pill" style="background:#E8F5E9;color:#2E7D32;border:1px solid rgba(46,125,50,.2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">WhatsApp · +55 11 9xxxx-4321</span></div>
+      <div class="le-meta">Por <strong>João Ferreira (Cliente)</strong> · Post IG Feed Verão · 10/03/2026 às 17:03 · v2</div>
+      <div class="le-comment">"Perfeito! Aprovado."</div>
+      <div class="le-hash">sha256:9c1e4f7a...b28d · Aprovado via WhatsApp do contato João Ferreira (+55 11 9xxxx-4321) em 10/03/2026 às 17:03 · v2</div>
+    </div>
+    <div class="log-entry">
+      <div class="le-header"><span class="le-action pl-adj pill">Ajuste solicitado</span><span class="pill pl-pub" style="font-size:10px">Portal Aproove</span></div>
+      <div class="le-meta">Por <strong>Maria Costa (Cliente)</strong> · Post LinkedIn Black Friday · 11/03/2026 às 14:22 · v1</div>
+      <div class="le-comment">"Muda o CTA para 'Saiba mais' e ajusta a cor do botão para laranja."</div>
+      <div class="le-hash">sha256:3a7f2b9c...e14d · Ajuste via Portal · Maria Costa · 11/03/2026 14:22</div>
+    </div>
+    <div class="log-entry">
+      <div class="le-header"><span class="le-action pl-pub pill">Publicado</span><span class="pill pl-brief" style="font-size:10px">Sistema automático</span></div>
+      <div class="le-meta">Post IG Feed Verão · publicado em 15/03/2026 às 10:00 · automático pós-aprovação</div>
+      <div class="le-hash">sha256:7b2d9a1c...f3e8 · Publicação automática via Meta API · 15/03/2026 10:00:04</div>
+    </div>
+    <div class="log-entry">
+      <div class="le-header"><span class="le-action pl-rej pill">Reprovado</span><span class="pill pl-pub" style="font-size:10px">Portal Aproove</span></div>
+      <div class="le-meta">Por <strong>Ana Souza (Cliente)</strong> · Reels IG Carnaval · 05/03/2026 às 16:41 · v1</div>
+      <div class="le-comment">"Vídeo fora do tom da marca. Precisa ser mais sério."</div>
+      <div class="le-hash">sha256:2c8e5d4b...a1f9 · Reprovado via Portal · Ana Souza · 05/03/2026 16:41</div>
+    </div>
+  </div>
+</div>
+
+<!-- Configurações -->
+<div class="page" id="page-g-config">
+  <div class="ph"><div class="ph-left"><h1>Configurações</h1><p>Agência, usuários e integrações</p></div></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Dados da agência</div>
+      <div class="cfg-row"><div><div class="cfg-lbl">Nome</div><div class="cfg-sub">Agência Nova Era</div></div><button class="btn btn-secondary btn-sm" onclick="showToast('Editar nome da agência')">Editar</button></div>
+      <div class="cfg-row"><div><div class="cfg-lbl">Plano</div><div class="cfg-sub">Professional · R$ 497/mês</div></div><button class="btn btn-secondary btn-sm" onclick="showToast('Ver planos disponíveis')">Upgrade</button></div>
+      <div class="cfg-row"><div><div class="cfg-lbl">White label (Aproover)</div><div class="cfg-sub">Logo e domínio personalizados</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="cfg-row"><div><div class="cfg-lbl">WhatsApp Business API</div><div class="cfg-sub">+55 11 3000-0000 · Zenvia</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Usuários internos</div>
+      <div class="row"><div class="ct-av" style="background:var(--blue-bg);color:var(--blue);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0">GM</div><div class="row-info"><div class="row-title">Ana Gestora</div><div class="row-sub">Gestor / Admin</div></div><span class="pill pl-pub">Admin</span></div>
+      <div class="row"><div class="ct-av" style="background:var(--purple-bg);color:var(--purple);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0">PL</div><div class="row-info"><div class="row-title">Carlos Planejador</div><div class="row-sub">Planejador / Atendimento</div></div><span class="pill pl-rev">Plano.</span></div>
+      <div class="row"><div class="ct-av" style="background:var(--green-bg);color:var(--green);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0">SM</div><div class="row-info"><div class="row-title">Julia Social Media</div><div class="row-sub">Social Media</div></div><span class="pill pl-brief">SM</span></div>
+      <div class="row"><div class="ct-av" style="background:var(--amber-bg);color:var(--amber);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0">DS</div><div class="row-info"><div class="row-title">Pedro Designer</div><div class="row-sub">Designer / Audiovisual</div></div><span class="pill pl-brief">Design</span></div>
+      <div style="margin-top:.75rem"><button class="btn btn-secondary btn-sm">+ Convidar usuário</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PLANEJADOR PAGES ═══════ -->
+<div class="page" id="page-p-dashboard">
+  <div class="ph"><div class="ph-left"><h1>Minhas campanhas</h1><p>Carlos Planejador · 4 campanhas sob sua responsabilidade</p></div><div class="ph-actions"><button class="btn btn-primary" onclick="navTo('g-nova-camp')">+ Nova campanha</button></div></div>
+  <div class="g4">
+    <div class="metric"><div class="m-lbl">Campanhas ativas</div><div class="m-val">4</div></div>
+    <div class="metric warn"><div class="m-lbl">Aguardando cliente</div><div class="m-val">5</div><div class="m-sub">2 atrasadas</div></div>
+    <div class="metric"><div class="m-lbl">Em produção</div><div class="m-val">8</div></div>
+    <div class="metric good"><div class="m-lbl">Publicados no mês</div><div class="m-val">28</div></div>
+  </div>
+  <div class="card"><div class="card-title">Campanhas ativas</div>
+    <div class="row"><div class="row-info"><div class="row-title">Lançamento Verão 2026 — Marca Verão S/A</div><div class="row-sub">18/20 peças · 3 aguardando cliente</div></div><span class="pill pl-pub">Ativa</span><button class="btn btn-secondary btn-sm" onclick="navTo('g-camp-detail')" style="margin-left:.5rem">Abrir</button></div>
+    <div class="row"><div class="row-info"><div class="row-title">Lançamento SaaS Q2 — Tech Solutions</div><div class="row-sub">9/15 peças · 1 aguardando cliente</div></div><span class="pill pl-pub">Ativa</span><button class="btn btn-secondary btn-sm" style="margin-left:.5rem">Abrir</button></div>
+    <div class="row"><div class="row-info"><div class="row-title">Campanha Março Saúde — Clínica Saúde Total</div><div class="row-sub">6/10 peças · 1 aguardando cliente</div></div><span class="pill pl-pub">Ativa</span><button class="btn btn-secondary btn-sm" style="margin-left:.5rem">Abrir</button></div>
+  </div>
+</div>
+
+<div class="page" id="page-p-atendimento">
+  <div class="ph"><div class="ph-left"><h1>Atendimento ao cliente</h1><p>Acompanhe feedbacks e comunicação com cada cliente</p></div></div>
+  <div class="alert-bar"><div class="ab-dot"></div><div class="ab-text"><strong>2 peças sem resposta do cliente há mais de 48h.</strong> Considere entrar em contato para não atrasar a publicação.</div></div>
+  <div class="card"><div class="card-title">Peças aguardando resposta</div>
+    <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Post feed Semana 4 — Marca Verão S/A</div><div class="row-sub" style="color:var(--red)">Sem resposta há 52h · publicação em 5 dias</div></div><button class="btn btn-secondary btn-sm" onclick="showToast('Lembrete enviado via WhatsApp para João Ferreira')">Enviar lembrete</button></div>
+    <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">Post LinkedIn — Tech Solutions</div><div class="row-sub" style="color:var(--amber)">Sem resposta há 26h · publicação em 5 dias</div></div><button class="btn btn-secondary btn-sm" onclick="showToast('Lembrete enviado para Maria Costa')">Enviar lembrete</button></div>
+  </div>
+  <div class="card"><div class="card-title">Ajustes solicitados pelos clientes</div>
+    <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">Post LinkedIn Black Friday — Marca Verão</div><div class="row-sub">"Muda o CTA para 'Saiba mais'" · Julia SM notificada</div></div><span class="pill pl-adj">Em ajuste</span></div>
+  </div>
+</div>
+
+<!-- ═══════ SOCIAL MEDIA PAGES ═══════ -->
+<div class="page" id="page-sm-dashboard">
+  <div class="ph"><div class="ph-left"><h1>Minhas tarefas</h1><p>Julia Social Media · copies e briefings pendentes</p></div></div>
+  <div class="g3">
+    <div class="metric warn"><div class="m-lbl">Copies pendentes</div><div class="m-val">6</div><div class="m-sub">2 com prazo hoje</div></div>
+    <div class="metric"><div class="m-lbl">Briefings enviados</div><div class="m-val">3</div><div class="m-sub">aguardando designer</div></div>
+    <div class="metric good"><div class="m-lbl">Concluídas hoje</div><div class="m-val">4</div></div>
+  </div>
+  <div class="ib ib-warn">2 copies com prazo hoje: IG Feed Semana 4 e TikTok Vídeo 3. Finalize antes das 18h.</div>
+</div>
+
+<div class="page" id="page-sm-copies">
+  <div class="ph"><div class="ph-left"><h1>Editor de copies</h1><p>Escreva e revise com verificação ortográfica de IA</p></div></div>
+
+  <div class="copy-item">
+    <div class="ci-header">
+      <span class="net-tag" style="background:#FDECEA;color:#B91C1C">IG Feed</span>
+      <span style="font-size:12px;font-weight:500;color:var(--ink)">Post feed Semana 4 — Verão 2026</span>
+      <span style="font-size:11px;color:var(--ink3)">20/03 às 10h · Marca Verão S/A</span>
+      <span class="pill pl-pend" style="margin-left:auto">Pendente</span>
+    </div>
+    <div class="ci-body">
+      <div class="ci-legend">Legenda do post (máx. 2.200 caracteres · ideal: até 150)</div>
+      <textarea class="copy-textarea" id="copy-ig" oninput="updateCount('copy-ig','count-ig',2200)" placeholder="Escreva a legenda aqui...">Verão chegou e a nossa nova coleção também! ☀️ Peças exclusivas para você arrasar na estação mais quente do ano. Acesse o link na bio e garanta os seus favoritos. 🛍️</textarea>
+      <div class="char-count" id="count-ig">165 / 2200 caracteres</div>
+      <div class="ci-legend" style="margin-top:.75rem">Hashtags</div>
+      <textarea class="copy-textarea" style="min-height:50px" placeholder="#verão2026 #moda #novacoleção">#verão2026 #moda #novacoleção #estilo #fashion #tendências</textarea>
+      <div class="ci-legend" style="margin-top:.75rem">CTA</div>
+      <textarea class="copy-textarea" style="min-height:44px" placeholder="Ex: Acesse o link na bio">Link na bio · Garanta o seu</textarea>
+      <div style="display:flex;gap:.625rem;margin-top:.75rem;flex-wrap:wrap">
+        <button class="ai-check" id="ai-ig" onclick="runAiCheck('ai-ig','copy-ig')">
+          <span class="ai-badge-icon">✦</span>
+          Verificar com IA
+        </button>
+        <div style="flex:1"></div>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Copy salva como rascunho')">Salvar rascunho</button>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Copy enviada para revisão do gestor')">Enviar para revisão</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="copy-item">
+    <div class="ci-header">
+      <span class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LinkedIn</span>
+      <span style="font-size:12px;font-weight:500;color:var(--ink)">Post feed Semana 4 — Verão 2026</span>
+      <span style="font-size:11px;color:var(--ink3)">20/03 às 08h · Marca Verão S/A</span>
+      <span class="pill pl-pend" style="margin-left:auto">Pendente</span>
+    </div>
+    <div class="ci-body">
+      <div class="ci-legend">Texto do post (LinkedIn recomenda: 150–300 caracteres)</div>
+      <textarea class="copy-textarea" id="copy-li" oninput="updateCount('copy-li','count-li',700)">Verão chegou e lançamos nossa nova coleção! Peças pensadas para o profissional que quer estilo e conforto mesmo nos dias mais quentes. Confira o link nos comentários.</textarea>
+      <div class="char-count ok" id="count-li">165 / 700 caracteres</div>
+      <div style="display:flex;gap:.625rem;margin-top:.75rem;flex-wrap:wrap">
+        <button class="ai-check ok" id="ai-li" onclick="showToast('✓ IA verificou — Sem erros encontrados')">
+          <span class="ai-badge-icon">✦</span>
+          IA verificou — sem erros
+        </button>
+        <div style="flex:1"></div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Copy enviada para revisão')">Enviar para revisão</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-sm-calendario">
+  <div class="ph"><div class="ph-left"><h1>Meu calendário</h1><p>Todas as minhas tarefas de copy por data</p></div></div>
+  <div class="card">
+    <div class="cal-header">
+      <div class="cal-nav">
+        <button onclick="calNavSM(-1)">←</button>
+        <span class="cal-month" id="cal-month-sm">Março 2026</span>
+        <button onclick="calNavSM(1)">→</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid-sm"></div>
+    <div class="day-detail" id="day-detail-sm">
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.75rem" id="dd-title-sm"></div>
+      <div id="dd-items-sm"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-sm-briefings">
+  <div class="ph"><div class="ph-left"><h1>Briefings de arte</h1><p>Crie solicitações estruturadas para o designer</p></div></div>
+  <div class="card">
+    <h3 style="font-size:13px;font-weight:500;margin-bottom:.75rem">Novo briefing de arte</h3>
+    <div class="g2">
+      <div class="frow"><label>Rede social</label><select><option>Instagram Feed 1:1</option><option>Instagram Story 9:16</option><option>Instagram Reels 9:16</option><option>LinkedIn 1200×628</option><option>TikTok 9:16</option><option>WhatsApp 1:1</option></select></div>
+      <div class="frow"><label>Campanha</label><select><option>Lançamento Verão 2026</option><option>Black Friday 2026</option><option>Lançamento SaaS Q2</option></select></div>
+    </div>
+    <div class="frow"><label>Objetivo da peça</label><select><option>Awareness / Abertura</option><option>Engajamento</option><option>Venda direta</option><option>Institucional</option><option>Data comemorativa</option></select></div>
+    <div class="frow"><label>Briefing criativo</label><textarea placeholder="Descreva o que deve aparecer na arte, cores, elementos obrigatórios, texto a incluir, referências..." style="min-height:100px"></textarea></div>
+    <div class="g2">
+      <div class="frow"><label>Prazo de entrega</label><input type="date" value="2026-03-18"></div>
+      <div class="frow"><label>Prioridade</label><select><option>Normal</option><option>Alta</option><option>Urgente</option></select></div>
+    </div>
+    <div class="frow"><label>Referência visual (opcional)</label>
+      <div style="border:1.5px dashed var(--border2);border-radius:var(--r);padding:1rem;text-align:center;cursor:pointer;font-size:12px;color:var(--ink3)" onclick="showToast('Referência visual anexada')">Upload de imagem de referência</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:.25rem">
+      <button class="btn btn-secondary" onclick="showToast('Rascunho salvo')">Salvar rascunho</button>
+      <button class="btn btn-primary" onclick="showToast('Briefing enviado para Pedro Designer')">Enviar para designer</button>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">Briefings enviados</div>
+    <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Reels Semana 4 — Verão 2026</div><div class="row-sub">Enviado há 2h · Pedro Designer</div></div><span class="pill pl-prod">Em produção</span></div>
+    <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div class="row-info"><div class="row-title">Vídeo TikTok 3 — Verão 2026</div><div class="row-sub">Enviado há 1 dia · Pedro Designer</div></div><span class="pill pl-prod">Em produção</span></div>
+    <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Story Semana 4 — Verão 2026</div><div class="row-sub">Enviado há 1 dia · Pedro Designer</div></div><span class="pill pl-apr">Entregue</span></div>
+  </div>
+</div>
+
+<!-- ═══════ DESIGNER PAGES ═══════ -->
+<div class="page" id="page-ds-dashboard">
+  <div class="ph"><div class="ph-left"><h1>Minha fila</h1><p>Pedro Designer · demandas de arte e vídeo</p></div></div>
+  <div class="g3">
+    <div class="metric warn"><div class="m-lbl">Demandas abertas</div><div class="m-val">5</div><div class="m-sub">2 com prazo hoje</div></div>
+    <div class="metric danger"><div class="m-lbl">Urgentes</div><div class="m-val">1</div><div class="m-sub">prazo em 3h</div></div>
+    <div class="metric good"><div class="m-lbl">Entregues esta semana</div><div class="m-val">8</div></div>
+  </div>
+  <div class="ib ib-warn">1 demanda urgente: Reels Semana 4 com prazo às 18h de hoje.</div>
+</div>
+
+<div class="page" id="page-ds-fila">
+  <div class="ph"><div class="ph-left"><h1>Fila de produção</h1><p>Demandas de arte e vídeo em aberto · ordenadas por prazo</p></div></div>
+
+  <div class="queue-item" style="border-color:var(--red-bd)">
+    <div class="qi-left">
+      <div class="qi-header"><span class="net-tag" style="background:#FDECEA;color:#B91C1C">IG Reels</span><span class="pill pl-rej">Urgente</span><span style="font-size:11px;color:var(--red)">Prazo: hoje às 18h</span></div>
+      <div class="qi-title">Reels Semana 4 — Verão 2026</div>
+      <div class="qi-meta">Solicitado por Julia SM · Marca Verão S/A · 9:16 · MP4 ≤200MB</div>
+      <div class="qi-briefing">Reels 15–30s mostrando a nova coleção de verão em movimento. Usar música alegre e colorida. Finalizar com logo e CTA "Link na bio". Tom: jovem e moderno. Referência: @marcafashion.</div>
+      <div class="qi-tags">
+        <span class="qi-tag">9:16</span><span class="qi-tag">MP4</span><span class="qi-tag">30s</span><span class="qi-tag">Verão</span><span class="qi-tag">Lançamento</span>
+      </div>
+    </div>
+    <div class="qi-right">
+      <div class="qi-deadline urgent">Hoje · 18h00</div>
+      <button class="upload-btn" id="upload-btn-1" onclick="simulateUpload('upload-btn-1','Reels Semana 4')">↑ Fazer upload</button>
+    </div>
+  </div>
+
+  <div class="queue-item">
+    <div class="qi-left">
+      <div class="qi-header"><span class="net-tag" style="background:#F3F4F6;color:#333">TikTok</span><span class="pill pl-prod">Em produção</span><span style="font-size:11px;color:var(--ink3)">Prazo: amanhã às 12h</span></div>
+      <div class="qi-title">Vídeo TikTok 3 — Verão 2026</div>
+      <div class="qi-meta">Solicitado por Julia SM · Marca Verão S/A · 9:16 · MP4 ≤200MB</div>
+      <div class="qi-briefing">Vídeo TikTok 15s estilo dinâmico com transições rápidas. Produto em destaque nos primeiros 3 segundos. Legenda na tela: "Nova coleção ☀️". Sem música (usar da biblioteca do TikTok).</div>
+      <div class="qi-tags"><span class="qi-tag">9:16</span><span class="qi-tag">MP4</span><span class="qi-tag">15s</span><span class="qi-tag">Dinâmico</span></div>
+    </div>
+    <div class="qi-right">
+      <div class="qi-deadline">Amanhã · 12h</div>
+      <button class="upload-btn" id="upload-btn-2" onclick="simulateUpload('upload-btn-2','TikTok 3')">↑ Fazer upload</button>
+    </div>
+  </div>
+
+  <div class="queue-item">
+    <div class="qi-left">
+      <div class="qi-header"><span class="net-tag" style="background:#FDECEA;color:#B91C1C">IG Feed</span><span class="pill pl-brief">Em briefing</span><span style="font-size:11px;color:var(--ink3)">Prazo: 20/03</span></div>
+      <div class="qi-title">Post feed Semana 4 — Verão 2026</div>
+      <div class="qi-meta">Solicitado por Julia SM · Marca Verão S/A · 1080×1080 · JPG/PNG</div>
+      <div class="qi-briefing">Post estático do produto principal da coleção de verão. Fundo claro. Logo no canto inferior direito. Incluir texto: "Nova Coleção". Paleta: bege, terracota, azul-areia.</div>
+      <div class="qi-tags"><span class="qi-tag">1:1</span><span class="qi-tag">JPG</span><span class="qi-tag">Estático</span><span class="qi-tag">Produto</span></div>
+    </div>
+    <div class="qi-right">
+      <div class="qi-deadline">20/03</div>
+      <button class="upload-btn" id="upload-btn-3" onclick="simulateUpload('upload-btn-3','Post feed Semana 4')">↑ Fazer upload</button>
+    </div>
+  </div>
+
+  <div class="queue-item">
+    <div class="qi-left">
+      <div class="qi-header"><span class="net-tag" style="background:#E8F5E9;color:#2E7D32">WhatsApp</span><span class="pill pl-brief">Em briefing</span><span style="font-size:11px;color:var(--ink3)">Prazo: 20/03</span></div>
+      <div class="qi-title">Arte WhatsApp — Promoção Verão</div>
+      <div class="qi-meta">Solicitado por Julia SM · Marca Verão S/A · 800×800 · JPG ≤5MB</div>
+      <div class="qi-briefing">Arte otimizada para WhatsApp (equipe de vendas). Mostrar produto + preço destacado + CTA "Fale conosco". Formato quadrado, fundo claro, leitura rápida.</div>
+      <div class="qi-tags"><span class="qi-tag">1:1</span><span class="qi-tag">800px</span><span class="qi-tag">WhatsApp</span><span class="qi-tag">Vendas</span></div>
+    </div>
+    <div class="qi-right">
+      <div class="qi-deadline">20/03</div>
+      <button class="upload-btn" id="upload-btn-4" onclick="simulateUpload('upload-btn-4','Arte WhatsApp')">↑ Fazer upload</button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-ds-entregues">
+  <div class="ph"><div class="ph-left"><h1>Entregues</h1><p>Artes e vídeos já enviados · histórico da semana</p></div></div>
+  <div class="card"><div class="card-title">Esta semana</div>
+    <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Story Semana 4 — Verão 2026</div><div class="row-sub">Entregue 13/03 às 14h · aprovado pelo gestor</div></div><span class="pill pl-apr">Aprovado</span></div>
+    <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">Banner LinkedIn — Verão 2026</div><div class="row-sub">Entregue 12/03 às 11h · aguardando revisão</div></div><span class="pill pl-rev">Em revisão</span></div>
+    <div class="row"><div class="net-tag" style="background:#EEEDFE;color:#4a2d8a">AP</div><div class="row-info"><div class="row-title">Apresentação Coleção Verão</div><div class="row-sub">Entregue 11/03 às 16h · aprovado e publicado</div></div><span class="pill pl-pub">Publicado</span></div>
+    <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div class="row-info"><div class="row-title">TikTok 2 — Verão 2026</div><div class="row-sub">Entregue 10/03 às 10h · aprovado pelo cliente</div></div><span class="pill pl-apr">Aprovado</span></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── PROFILES ──
+var PROFILES = {
+  gestor: {
+    name:'Ana Gestora', role:'Gestor / Admin',
+    av:'GM', avBg:'var(--blue-bg)', avColor:'var(--blue)',
+    nav:[
+      {section:'Principal'},
+      {id:'g-dashboard', icon:'⊞', label:'Dashboard', badge:''},
+      {id:'g-campanhas', icon:'◈', label:'Campanhas'},
+      {id:'g-nova-camp', icon:'+', label:'Nova campanha', badge:'novo', badgeType:'info'},
+      {id:'g-calendario', icon:'◫', label:'Calendário'},
+      {id:'g-aprovacoes', icon:'✓', label:'Revisão interna', badge:'2', badgeType:''},
+      {section:'Gestão'},
+      {id:'g-clientes', icon:'◉', label:'Clientes'},
+      {id:'g-auditoria', icon:'◎', label:'Auditoria'},
+      {id:'g-config', icon:'⚙', label:'Configurações'},
+    ],
+    defaultPage: 'g-dashboard'
+  },
+  planejador: {
+    name:'Carlos Planejador', role:'Planejador / Atendimento',
+    av:'PL', avBg:'var(--purple-bg)', avColor:'var(--purple)',
+    nav:[
+      {section:'Minhas tarefas'},
+      {id:'p-dashboard', icon:'⊞', label:'Dashboard'},
+      {id:'g-campanhas', icon:'◈', label:'Campanhas'},
+      {id:'g-nova-camp', icon:'+', label:'Nova campanha'},
+      {id:'g-calendario', icon:'◫', label:'Calendário'},
+      {section:'Atendimento'},
+      {id:'p-atendimento', icon:'◉', label:'Clientes e feedbacks', badge:'2'},
+      {id:'g-auditoria', icon:'◎', label:'Auditoria'},
+    ],
+    defaultPage: 'p-dashboard'
+  },
+  social: {
+    name:'Julia Social Media', role:'Social Media',
+    av:'SM', avBg:'var(--green-bg)', avColor:'var(--green)',
+    nav:[
+      {section:'Minhas tarefas'},
+      {id:'sm-dashboard', icon:'⊞', label:'Dashboard', badge:'6'},
+      {id:'sm-copies', icon:'✍', label:'Editor de copies'},
+      {id:'sm-calendario', icon:'◫', label:'Meu calendário'},
+      {section:'Briefings'},
+      {id:'sm-briefings', icon:'◈', label:'Briefings para designer'},
+    ],
+    defaultPage: 'sm-dashboard'
+  },
+  designer: {
+    name:'Pedro Designer', role:'Designer / Audiovisual',
+    av:'DS', avBg:'var(--amber-bg)', avColor:'var(--amber)',
+    nav:[
+      {section:'Produção'},
+      {id:'ds-dashboard', icon:'⊞', label:'Dashboard', badge:'5'},
+      {id:'ds-fila', icon:'◫', label:'Fila de produção', badge:'5'},
+      {id:'ds-entregues', icon:'✓', label:'Entregues', badge:'8', badgeType:'ok'},
+    ],
+    defaultPage: 'ds-dashboard'
+  }
+};
+var curProfile = 'gestor';
+
+function switchProfile(p) {
+  curProfile = p;
+  var pr = PROFILES[p];
+  document.getElementById('ps-av').style.background = pr.avBg;
+  document.getElementById('ps-av').style.color = pr.avColor;
+  document.getElementById('ps-av').textContent = pr.av;
+  document.getElementById('ps-name').textContent = pr.name;
+  document.getElementById('ps-role').textContent = pr.role;
+  document.querySelectorAll('.ps-option').forEach(function(o) { o.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  document.getElementById('ps-dropdown').classList.remove('open');
+  renderNav(pr);
+  navTo(pr.defaultPage);
+}
+
+function toggleDropdown() {
+  document.getElementById('ps-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.profile-switcher')) {
+    document.getElementById('ps-dropdown').classList.remove('open');
+  }
+});
+
+function renderNav(pr) {
+  var nav = document.getElementById('sb-nav');
+  nav.innerHTML = '';
+  pr.nav.forEach(function(item) {
+    if (item.section) {
+      var s = document.createElement('div');
+      s.className = 'sb-section';
+      s.textContent = item.section;
+      nav.appendChild(s);
+    } else {
+      var el = document.createElement('div');
+      el.className = 'sb-item';
+      el.setAttribute('data-page', item.id);
+      el.innerHTML = '<span class="sb-icon">' + item.icon + '</span>' + item.label +
+        (item.badge ? '<span class="sb-badge' + (item.badgeType ? ' ' + item.badgeType : '') + '">' + item.badge + '</span>' : '');
+      el.onclick = function() { navTo(item.id); };
+      nav.appendChild(el);
+    }
+  });
+}
+
+function navTo(pageId) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var pg = document.getElementById('page-' + pageId);
+  if (pg) pg.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(function(i) {
+    i.classList.toggle('active', i.getAttribute('data-page') === pageId);
+  });
+}
+
+// ── NOVA CAMPANHA STEPS ──
+function ncStep(n) {
+  document.querySelectorAll('.form-step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('nc-s' + n).classList.add('active');
+  for (var i = 1; i <= 5; i++) {
+    var el = document.getElementById('nc-' + i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+}
+function createCamp() {
+  showToast('Campanha criada! Tarefas distribuídas para o time.');
+  navTo(PROFILES[curProfile].defaultPage);
+}
+
+// ── CALENDAR ──
+var MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var calYG=2026,calMG=2;
+var CAL_DATA={
+  '2026-3-10':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pub',c:'Verão',cl:'verão'},{n:'LI Post',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pub',c:'Verão',cl:'verão'}],
+  '2026-3-15':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Verão',cl:'verão'},{n:'IG Reels',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'18h',s:'pend',c:'Verão',cl:'verão'},{n:'LI Post',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'SaaS',cl:'tech'}],
+  '2026-3-20':[{n:'IG Story',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'09h',s:'apr',c:'Verão',cl:'verão'},{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'apr',c:'Verão',cl:'verão'},{n:'FB Post',net:'FB',nb:'#DBEAFE',nc:'#1D4ED8',time:'11h',s:'pend',c:'Bella',cl:'bella'}],
+  '2026-3-25':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Verão',cl:'verão'},{n:'IG Reels',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'18h',s:'adj',c:'BF',cl:'verão'}],
+  '2026-4-1':[{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Inverno',cl:'verão'}]
+};
+var calFilterCl='all';
+function renderCalG(){
+  document.getElementById('cal-month-g').textContent=MONTHS[calMG]+' '+calYG;
+  buildCal('cal-grid-g',calYG,calMG,'day-detail-g','dd-title-g','dd-items-g',calFilterCl);
+}
+function buildCal(gridId,y,m,detId,titId,itemsId,clFilter){
+  var g=document.getElementById(gridId);g.innerHTML='';
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(function(d){var e=document.createElement('div');e.className='cal-dow';e.textContent=d;g.appendChild(e);});
+  var first=new Date(y,m,1).getDay();var days=new Date(y,m+1,0).getDate();var today=new Date();
+  for(var i=0;i<first;i++){var e=document.createElement('div');e.className='cal-cell empty';g.appendChild(e);}
+  for(var d=1;d<=days;d++){
+    var cell=document.createElement('div');cell.className='cal-cell';
+    if(today.getFullYear()===y&&today.getMonth()===m&&today.getDate()===d)cell.className+=' today';
+    var dn=document.createElement('div');dn.className='cal-day-num';dn.textContent=d;cell.appendChild(dn);
+    var key=y+'-'+m+'-'+d;
+    var posts=(CAL_DATA[key]||[]).filter(function(p){return clFilter==='all'||p.cl===clFilter;});
+    var shown=0;
+    posts.forEach(function(p){if(shown>=2)return;var pill=document.createElement('div');pill.className='cal-pill '+(p.s==='pub'?'cp-pub':p.s==='apr'?'cp-apr':p.s==='adj'?'cp-adj':'cp-pend');pill.textContent=p.n;cell.appendChild(pill);shown++;});
+    if(posts.length>2){var more=document.createElement('div');more.className='cp-more';more.textContent='+'+(posts.length-2)+' mais';cell.appendChild(more);}
+    if(posts.length>0){(function(dd,kk){cell.style.cursor='pointer';cell.onclick=function(){showDayG(dd,kk,detId,titId,itemsId,clFilter);};})(d,key);}
+    g.appendChild(cell);
+  }
+  document.getElementById(detId).classList.remove('on');
+}
+function showDayG(d,key,detId,titId,itemsId,clFilter){
+  var posts=(CAL_DATA[key]||[]).filter(function(p){return clFilter==='all'||p.cl===clFilter;});
+  document.getElementById(titId).textContent=d+' de '+MONTHS[calMG]+' — '+posts.length+' publicação'+(posts.length>1?'ões':'');
+  var items=document.getElementById(itemsId);items.innerHTML='';
+  posts.forEach(function(p){
+    var sc=p.s==='pub'?'var(--green)':p.s==='apr'?'var(--blue)':p.s==='adj'?'var(--red)':'var(--amber)';
+    var sl=p.s==='pub'?'Publicado':p.s==='apr'?'Aprovado':p.s==='adj'?'Em ajuste':'A aprovar';
+    var sp=p.s==='pub'?'pl-pub':p.s==='apr'?'pl-apr':p.s==='adj'?'pl-adj':'pl-pend';
+    var row=document.createElement('div');row.className='row';
+    row.innerHTML='<div class="dot" style="background:'+sc+'"></div><div class="net-tag" style="background:'+p.nb+';color:'+p.nc+'">'+p.net+'</div><div class="row-info"><div class="row-title">'+p.n+' — '+p.c+'</div></div><div style="font-size:11px;color:var(--ink3)">'+p.time+'</div><span class="pill '+sp+'">'+sl+'</span>';
+    items.appendChild(row);
+  });
+  document.getElementById(detId).classList.add('on');
+}
+function calNav(dir){calMG+=dir;if(calMG>11){calMG=0;calYG++;}if(calMG<0){calMG=11;calYG--;}renderCalG();}
+function filterCalClient(cl,btn){document.querySelectorAll('.client-filter .cf-chip').forEach(function(c){c.classList.remove('active')});btn.classList.add('active');calFilterCl=cl;renderCalG();}
+function filterClient(cl,btn){document.querySelectorAll('.client-filter .cf-chip').forEach(function(c){c.classList.remove('active')});btn.classList.add('active');document.querySelectorAll('.camp-row').forEach(function(r){r.style.display=(cl==='all'||r.getAttribute('data-client')===cl)?'flex':'none'});}
+
+// SM Calendar
+var calYSM=2026,calMSM=2;
+var CAL_SM={'2026-3-15':[{n:'IG Feed copy',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Verão'}],'2026-3-20':[{n:'LI Post copy',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Verão'},{n:'IG Story copy',nb:'#FDECEA',nc:'#B91C1C',time:'09h',s:'apr',c:'Verão'}]};
+function renderCalSM(){document.getElementById('cal-month-sm').textContent=MONTHS[calMSM]+' '+calYSM;buildCal('cal-grid-sm',calYSM,calMSM,'day-detail-sm','dd-title-sm','dd-items-sm','all');}
+function calNavSM(dir){calMSM+=dir;if(calMSM>11){calMSM=0;calYSM++;}if(calMSM<0){calMSM=11;calYSM--;}renderCalSM();}
+
+// ── COPY EDITOR ──
+function updateCount(textareaId,countId,max){
+  var len=document.getElementById(textareaId).value.length;
+  var el=document.getElementById(countId);
+  el.textContent=len+' / '+max+' caracteres';
+  el.className='char-count'+(len>max?' over':len>max*0.9?' warn':'');
+}
+function runAiCheck(btnId,textareaId){
+  var btn=document.getElementById(btnId);
+  btn.className='ai-check checking';
+  btn.innerHTML='<span class="ai-badge-icon">✦</span> Verificando...';
+  setTimeout(function(){
+    var text=document.getElementById(textareaId).value;
+    var hasError=text.includes('arrasar')&&Math.random()>0.5;
+    if(hasError){
+      btn.className='ai-check error';
+      btn.innerHTML='<span class="ai-badge-icon">✦</span> 1 alerta encontrado — "arrazando" → "arrasando"?';
+    } else {
+      btn.className='ai-check ok';
+      btn.innerHTML='<span class="ai-badge-icon">✦</span> IA verificou — sem erros encontrados';
+    }
+  },1400);
+}
+
+// ── UPLOAD SIMULATOR ──
+function simulateUpload(btnId,name){
+  var btn=document.getElementById(btnId);
+  var orig=btn.textContent;
+  btn.textContent='Enviando...';btn.disabled=true;
+  setTimeout(function(){
+    btn.textContent='✓ '+name+' enviado';
+    btn.className='upload-btn done';btn.disabled=false;
+    showToast(name+' enviado para revisão do gestor');
+  },1200);
+}
+
+// ── TOAST ──
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.style.display='none';},3000);
+}
+
+// ── INIT ──
+renderNav(PROFILES.gestor);
+renderCalG();
+renderCalSM();
+</script>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Conceito do Projeto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111110;
+  --ink2: #4a4a47;
+  --ink3: #9a9a96;
+  --paper: #faf9f6;
+  --paper2: #f2f1ec;
+  --paper3: #e8e7e0;
+  --line: rgba(17,17,16,0.08);
+  --line2: rgba(17,17,16,0.15);
+  --green: #2a5f2a; --green-bg: #edf5ed;
+  --amber: #7a4a0a; --amber-bg: #fdf2e2;
+  --blue: #0d4a8a; --blue-bg: #e8f0fb;
+  --red: #8a1a1a; --red-bg: #fbeaea;
+  --purple: #4a1d7a; --purple-bg: #f3eefb;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.65; }
+
+/* NAV */
+.doc-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,249,246,0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line2);
+  padding: 0 2rem; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.doc-nav-brand { font-size: 13px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+.doc-nav-brand .mark { width: 22px; height: 22px; background: var(--ink); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; }
+.doc-nav-brand .mark svg { width: 12px; height: 12px; }
+.doc-nav-links { display: flex; gap: 1.5rem; }
+.doc-nav-links a { font-size: 12px; color: var(--ink3); text-decoration: none; transition: color .15s; }
+.doc-nav-links a:hover, .doc-nav-links a.active { color: var(--ink); }
+.doc-badge { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; background: var(--paper3); color: var(--ink2); padding: 3px 8px; border-radius: 4px; }
+
+/* LAYOUT */
+.page { max-width: 860px; margin: 0 auto; padding: 80px 2rem 6rem; }
+
+/* COVER */
+.cover { padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 3rem; }
+.cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.cover-title { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; margin-bottom: .75rem; }
+.cover-sub { font-size: 16px; color: var(--ink2); font-weight: 300; max-width: 560px; line-height: 1.6; margin-bottom: 1.5rem; }
+.cover-meta { display: flex; gap: 1.5rem; }
+.cover-meta-item { font-size: 11px; color: var(--ink3); }
+.cover-meta-item strong { color: var(--ink2); font-weight: 500; }
+
+/* SECTION */
+.section { margin-bottom: 3.5rem; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+.section-title { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin-bottom: .75rem; }
+.section-body { color: var(--ink2); max-width: 680px; }
+.section-body p { margin-bottom: .75rem; }
+.section-body p:last-child { margin-bottom: 0; }
+
+/* HIGHLIGHT BOX */
+.highlight { background: var(--paper2); border: 1px solid var(--line2); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.highlight.green { background: var(--green-bg); border-color: rgba(42,95,42,.2); }
+.highlight.amber { background: var(--amber-bg); border-color: rgba(122,74,10,.2); }
+.highlight.blue { background: var(--blue-bg); border-color: rgba(13,74,138,.2); }
+.highlight-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem; }
+.highlight.green .highlight-label { color: var(--green); }
+.highlight.amber .highlight-label { color: var(--amber); }
+.highlight.blue .highlight-label { color: var(--blue); }
+.highlight-body { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.highlight-body strong { color: var(--ink); }
+
+/* PROBLEM LIST */
+.problem-list { display: grid; gap: 1rem; margin: 1.5rem 0; }
+.problem-item { display: flex; gap: 1rem; padding: 1rem 1.25rem; background: var(--paper2); border-radius: 10px; border: 1px solid var(--line); }
+.problem-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.problem-text h4 { font-size: 13px; font-weight: 600; margin-bottom: .25rem; }
+.problem-text p { font-size: 12px; color: var(--ink2); }
+
+/* AUDIENCE GRID */
+.audience-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.audience-card { padding: 1.25rem; background: var(--paper2); border: 1px solid var(--line); border-radius: 12px; }
+.audience-card h4 { font-size: 13px; font-weight: 600; margin-bottom: .5rem; }
+.audience-card p { font-size: 12px; color: var(--ink2); line-height: 1.5; }
+.audience-card .aud-tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; margin-bottom: .75rem; }
+.audience-card.primary .aud-tag { background: var(--ink); color: var(--paper); }
+.audience-card.secondary .aud-tag { background: var(--paper3); color: var(--ink2); }
+
+/* MINDMAP */
+.mindmap { margin: 2rem 0; }
+.mindmap-center { text-align: center; margin-bottom: 2rem; }
+.mindmap-core { display: inline-block; padding: .75rem 1.5rem; background: var(--ink); color: var(--paper); border-radius: 10px; font-weight: 600; font-size: 15px; }
+.mindmap-branches { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.branch { border: 1px solid var(--line2); border-radius: 12px; padding: 1rem 1.25rem; background: var(--paper); }
+.branch-title { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink); margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+.branch ul { list-style: none; display: flex; flex-direction: column; gap: .35rem; }
+.branch ul li { font-size: 12px; color: var(--ink2); padding-left: .75rem; position: relative; }
+.branch ul li::before { content: '—'; position: absolute; left: 0; color: var(--ink3); }
+
+/* VALUE PROPS */
+.vp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.vp-item { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--line); }
+.vp-item h4 { font-size: 13px; font-weight: 600; margin-bottom: .4rem; }
+.vp-item p { font-size: 12px; color: var(--ink2); }
+.vp-item.v1 { background: var(--green-bg); border-color: rgba(42,95,42,.15); }
+.vp-item.v2 { background: var(--blue-bg); border-color: rgba(13,74,138,.15); }
+.vp-item.v3 { background: var(--amber-bg); border-color: rgba(122,74,10,.15); }
+.vp-item.v4 { background: var(--purple-bg); border-color: rgba(74,29,122,.15); }
+
+/* POSSIBILITIES */
+.poss-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1.5rem 0; }
+.poss-item { padding: .875rem 1rem; background: var(--paper2); border: 1px solid var(--line); border-radius: 10px; }
+.poss-item .poss-phase { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: .35rem; }
+.poss-item h4 { font-size: 12px; font-weight: 600; margin-bottom: .25rem; }
+.poss-item p { font-size: 11px; color: var(--ink2); }
+
+/* FOOTER */
+.doc-footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.doc-footer-left { font-size: 11px; color: var(--ink3); }
+.doc-footer-right { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+@media (max-width: 640px) {
+  .audience-grid, .vp-grid, .poss-grid { grid-template-columns: 1fr; }
+  .mindmap-branches { grid-template-columns: 1fr; }
+  .cover-title { font-size: 28px; }
+  .doc-nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="doc-nav">
+  <div class="doc-nav-brand">
+    <span class="mark"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    Aproove
+  </div>
+  <nav class="doc-nav-links">
+    <a href="conceito.html" class="active">Conceito</a>
+    <a href="investimento.html">Investimento</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="modelo_negocio.html">Modelo de Negócio</a>
+  </nav>
+  <span class="doc-badge">DOCUMENTAÇÃO INTERNA</span>
+</nav>
+
+<main class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-tag">Conceito do Projeto · Versão 1.0</div>
+    <h1 class="cover-title">Aproove</h1>
+    <p class="cover-sub">Aprovação de conteúdo sem caos. Do briefing à publicação, tudo rastreado, aprovado e seguro — em um único lugar.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>Status</strong> · Conceito validado</div>
+      <div class="cover-meta-item"><strong>Atualizado</strong> · Março 2026</div>
+      <div class="cover-meta-item"><strong>Fase</strong> · Proto-produto</div>
+    </div>
+  </div>
+
+  <!-- O PROBLEMA -->
+  <div class="section">
+    <div class="section-label">01 · O Problema</div>
+    <h2 class="section-title">Aprovações acontecem no caos</h2>
+    <div class="section-body">
+      <p>Toda agência de marketing enfrenta o mesmo problema: o processo de aprovação de conteúdo é conduzido em ferramentas que não foram feitas para isso. O resultado é caos operacional, retrabalho constante e risco de publicação com erros.</p>
+    </div>
+
+    <div class="problem-list">
+      <div class="problem-item">
+        <div class="problem-icon">📱</div>
+        <div class="problem-text">
+          <h4>Aprovação via WhatsApp</h4>
+          <p>Mensagens se perdem, versões antigas ficam misturadas com as novas, e não há registro formal de quem aprovou o quê e quando.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-icon">📧</div>
+        <div class="problem-text">
+          <h4>Threads de e-mail intermináveis</h4>
+          <p>"Aprovado" em e-mails não tem validade legal, o histórico fica fragmentado entre caixas de entrada e ninguém sabe qual é a versão final.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-icon">📄</div>
+        <div class="problem-text">
+          <h4>PDFs e planilhas compartilhados</h4>
+          <p>Falta de contexto visual, sem mockup da peça real, múltiplas versões do arquivo circulando, sem controle de alterações.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-icon">⏰</div>
+        <div class="problem-text">
+          <h4>Perda de prazo de publicação</h4>
+          <p>Sem um sistema centralizado, é comum a peça chegar no dia da publicação sem aprovação formal, gerando publicações erradas ou atraso na entrega.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight amber">
+      <div class="highlight-label">Impacto real</div>
+      <div class="highlight-body">Agências com carteira acima de 5 clientes relatam gastar <strong>entre 30% e 40% do tempo operacional</strong> em retrabalho e follow-up de aprovações — horas que deveriam ser investidas em estratégia e criação.</div>
+    </div>
+  </div>
+
+  <!-- A SOLUÇÃO -->
+  <div class="section">
+    <div class="section-label">02 · A Solução</div>
+    <h2 class="section-title">Um único lugar para tudo</h2>
+    <div class="section-body">
+      <p>Aproove é uma plataforma SaaS B2B que centraliza todo o fluxo de aprovação de conteúdo de redes sociais entre agências e seus clientes. Do planejamento da campanha até o agendamento da publicação, com rastreabilidade completa.</p>
+    </div>
+
+    <div class="vp-grid">
+      <div class="vp-item v1">
+        <h4>Rastreabilidade total</h4>
+        <p>Cada aprovação é registrada com timestamp, usuário e IP — imutável e auditável.</p>
+      </div>
+      <div class="vp-item v2">
+        <h4>Mockup visual nativo</h4>
+        <p>O cliente vê a peça exatamente como vai aparecer no Instagram, LinkedIn, TikTok ou Facebook — antes de aprovar.</p>
+      </div>
+      <div class="vp-item v3">
+        <h4>Fluxo estruturado</h4>
+        <p>Briefing → Produção → Revisão interna → Aprovação do cliente → Agendamento. Cada etapa com responsável e prazo.</p>
+      </div>
+      <div class="vp-item v4">
+        <h4>Histórico de versões</h4>
+        <p>Todas as versões de cada peça ficam registradas com o comentário do cliente e o que mudou em cada iteração.</p>
+      </div>
+    </div>
+
+    <div class="highlight green">
+      <div class="highlight-label">Proposta de valor central</div>
+      <div class="highlight-body">Aproove transforma o processo de aprovação de conteúdo de um ponto de dor em uma <strong>vantagem competitiva da agência</strong>: o cliente tem uma experiência profissional de revisão, e a agência tem proteção jurídica, rastreabilidade e eficiência operacional.</div>
+    </div>
+  </div>
+
+  <!-- PÚBLICO-ALVO -->
+  <div class="section">
+    <div class="section-label">03 · Público-Alvo</div>
+    <h2 class="section-title">Quem usa e quem paga</h2>
+
+    <div class="audience-grid">
+      <div class="audience-card primary">
+        <div class="aud-tag">Primário · Paga</div>
+        <h4>Agências de marketing digital</h4>
+        <p>Gerenciam múltiplos clientes, múltiplas redes e múltiplos formatos simultaneamente. Precisam de processo, organização e proteção.</p>
+      </div>
+      <div class="audience-card primary">
+        <div class="aud-tag">Primário · Paga</div>
+        <h4>Times de marketing in-house</h4>
+        <p>Empresas médias com time interno de marketing que fazem aprovação com diretores ou stakeholders de outras áreas.</p>
+      </div>
+      <div class="audience-card secondary">
+        <div class="aud-tag">Secundário · Acessa</div>
+        <h4>Clientes / Aprovadores</h4>
+        <p>Acessam via link único. Não precisam criar conta. Veem mockup, aprovam ou solicitam ajuste. Experiência simplificada.</p>
+      </div>
+    </div>
+
+    <div class="highlight blue">
+      <div class="highlight-label">Tamanho do mercado endereçável no Brasil</div>
+      <div class="highlight-body">
+        Existem mais de <strong>15.000 agências de comunicação registradas</strong> no Brasil (ABCom 2024). Deste total, estima-se que ~40% (6.000) têm entre 3 e 30 clientes ativos — perfil ideal para o Aproove. A maioria ainda usa WhatsApp ou e-mail para aprovações.
+      </div>
+    </div>
+  </div>
+
+  <!-- MAPA DE IDEIAS -->
+  <div class="section">
+    <div class="section-label">04 · Mapa de Ideias</div>
+    <h2 class="section-title">Ecossistema da plataforma</h2>
+
+    <div class="mindmap">
+      <div class="mindmap-center">
+        <div class="mindmap-core">APROOVE</div>
+      </div>
+      <div class="mindmap-branches">
+        <div class="branch">
+          <div class="branch-title">🎯 Funcionalidades Core (MVP)</div>
+          <ul>
+            <li>Planejamento de campanha</li>
+            <li>Gestão de peças por rede/formato</li>
+            <li>Upload de arte + copywriting</li>
+            <li>Mockup visual por rede social</li>
+            <li>Portal de aprovação do cliente</li>
+            <li>Histórico de versões</li>
+            <li>Fluxo de status rastreável</li>
+            <li>Dashboard de acompanhamento</li>
+          </ul>
+        </div>
+        <div class="branch">
+          <div class="branch-title">👥 Papéis e Permissões</div>
+          <ul>
+            <li>Planejador (cria campanhas)</li>
+            <li>Social Media (escreve copy)</li>
+            <li>Designer (sobe artes)</li>
+            <li>Gerente (revisa internamente)</li>
+            <li>Admin (gestão geral)</li>
+            <li>Cliente (aprova externamente)</li>
+          </ul>
+        </div>
+        <div class="branch">
+          <div class="branch-title">🔌 Integrações Futuras</div>
+          <ul>
+            <li>Meta Business Suite (publicação)</li>
+            <li>LinkedIn API (agendamento)</li>
+            <li>TikTok for Business</li>
+            <li>Google Drive / Dropbox</li>
+            <li>Slack / Teams (notificações)</li>
+            <li>Zapier / Make (automação)</li>
+          </ul>
+        </div>
+        <div class="branch">
+          <div class="branch-title">🤖 IA e Automação</div>
+          <ul>
+            <li>Sugestão de copy por IA</li>
+            <li>Análise de sentimento do feedback</li>
+            <li>Recomendação de horário de publicação</li>
+            <li>Detecção de padrões de reprovação</li>
+            <li>Geração automática de relatório</li>
+          </ul>
+        </div>
+        <div class="branch">
+          <div class="branch-title">📊 Analytics (Fase 2)</div>
+          <ul>
+            <li>Taxa de aprovação por cliente</li>
+            <li>Tempo médio de ciclo de aprovação</li>
+            <li>Versões necessárias por campanha</li>
+            <li>Performance por tipo de conteúdo</li>
+            <li>Relatório exportável para cliente</li>
+          </ul>
+        </div>
+        <div class="branch">
+          <div class="branch-title">💼 Modelo de Negócio</div>
+          <ul>
+            <li>SaaS por agência (planos mensais)</li>
+            <li>Limite por clientes/campanhas/usuários</li>
+            <li>White-label (plano Enterprise)</li>
+            <li>Add-ons: storage extra, IA, relatórios</li>
+            <li>Revenda por parceiros/agências</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSSIBILIDADES FUTURAS -->
+  <div class="section">
+    <div class="section-label">05 · Possibilidades Futuras</div>
+    <h2 class="section-title">Onde o Aproove pode chegar</h2>
+    <div class="section-body">
+      <p>O núcleo de aprovação de conteúdo é a porta de entrada. Uma vez consolidado, a plataforma pode expandir significativamente seu escopo.</p>
+    </div>
+
+    <div class="poss-grid">
+      <div class="poss-item">
+        <div class="poss-phase">Fase 2 · 2026</div>
+        <h4>Publicação direta</h4>
+        <p>Integração com APIs das redes sociais para publicar diretamente após aprovação.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-phase">Fase 2 · 2026</div>
+        <h4>White-label</h4>
+        <p>Agências usam o Aproove com sua própria marca, logo e domínio personalizado.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-phase">Fase 2 · 2026</div>
+        <h4>Relatórios avançados</h4>
+        <p>Dashboard de performance por cliente, por campanha e por período exportável em PDF.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-phase">Fase 3 · 2027</div>
+        <h4>Copywriting com IA</h4>
+        <p>Sugestão de legendas, CTAs e hashtags com base no objetivo da campanha e histórico do cliente.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-phase">Fase 3 · 2027</div>
+        <h4>App mobile</h4>
+        <p>Clientes aprovam pelo celular com notificação push. Agências acompanham o status em tempo real.</p>
+      </div>
+      <div class="poss-item">
+        <div class="poss-phase">Fase 3 · 2027</div>
+        <h4>Marketplace de templates</h4>
+        <p>Agências compartilham e vendem templates de campanha para outras agências na plataforma.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIFERENCIAÇÃO -->
+  <div class="section">
+    <div class="section-label">06 · Posicionamento</div>
+    <h2 class="section-title">Por que Aproove e não outra ferramenta?</h2>
+    <div class="section-body">
+      <p>Ferramentas como Trello, Notion, Asana ou Google Drive são ferramentas genéricas de gestão ou armazenamento. Nenhuma foi construída especificamente para o fluxo de aprovação de conteúdo de redes sociais com mockup visual, LGPD e rastreabilidade jurídica.</p>
+      <p>Ferramentas como ContentStudio ou Hootsuite focam em publicação e agendamento, não em aprovação estruturada com o cliente final.</p>
+    </div>
+    <div class="highlight blue">
+      <div class="highlight-label">Posicionamento único</div>
+      <div class="highlight-body">
+        Aproove é a <strong>única ferramenta brasileira</strong> construída especificamente para o fluxo de aprovação agência-cliente de conteúdo de redes sociais, com mockup nativo, LGPD compliance, rastreabilidade imutável e experiência de cliente simplificada (sem necessidade de conta).
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <div class="doc-footer-left">Aproove · Documento Interno · Conceito do Projeto · Atualizado Março 2026</div>
+    <div class="doc-footer-right">v0.0.1</div>
+  </footer>
+
+</main>
+</body>
+</html>

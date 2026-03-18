@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Protótipo Completo</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f6f2;
+    --bg3: #f0efe9;
+    --text: #1a1a18;
+    --text2: #6b6a64;
+    --text3: #9b9a94;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --r-md: 8px;
+    --r-lg: 12px;
+    --success-bg: #eaf3de; --success-text: #27500a; --success-border: rgba(99,153,34,0.3);
+    --warn-bg: #faeeda;    --warn-text: #633806;   --warn-border: rgba(186,117,23,0.3);
+    --info-bg: #e6f1fb;    --info-text: #0c447c;   --info-border: rgba(55,138,221,0.3);
+    --danger-bg: #fcebeb;  --danger-text: #791f1f; --danger-border: rgba(226,75,74,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; background: var(--bg2); color: var(--text); }
+
+  /* ── APP SHELL ── */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+  .app-sidebar { width: 220px; background: var(--bg); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .app-main { flex: 1; overflow-y: auto; background: var(--bg2); }
+
+  /* ── SIDEBAR ── */
+  .sb-logo { padding: 1.25rem 1.25rem 1rem; display: flex; align-items: center; gap: 8px; border-bottom: 0.5px solid var(--border); }
+  .sb-logo-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--text); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sb-logo-icon svg { width: 18px; height: 18px; }
+  .sb-logo-name { font-size: 16px; font-weight: 600; color: var(--text); }
+  .sb-logo-version { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .sb-section { padding: .75rem 1rem .25rem; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; }
+  .sb-item { display: flex; align-items: center; gap: 8px; padding: 7px 1rem; font-size: 13px; color: var(--text2); cursor: pointer; border-left: 2px solid transparent; transition: all .12s; }
+  .sb-item:hover { background: var(--bg2); color: var(--text); }
+  .sb-item.active { background: var(--bg2); color: var(--text); border-left-color: var(--text); font-weight: 500; }
+  .sb-item .sb-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .sb-badge { margin-left: auto; font-size: 10px; background: var(--warn-bg); color: var(--warn-text); padding: 1px 6px; border-radius: 10px; font-weight: 600; }
+  .sb-bottom { margin-top: auto; padding: 1rem; border-top: 0.5px solid var(--border); }
+  .sb-user { display: flex; align-items: center; gap: 8px; }
+  .sb-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--info-bg); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--info-text); flex-shrink: 0; }
+  .sb-user-name { font-size: 12px; font-weight: 500; color: var(--text); }
+  .sb-user-role { font-size: 10px; color: var(--text3); }
+
+  /* ── PAGE VIEWS ── */
+  .page { display: none; padding: 1.5rem; }
+  .page.active { display: block; }
+  .page-header { margin-bottom: 1.5rem; }
+  .page-title { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: var(--text2); }
+
+  /* ── CARDS ── */
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r-lg); padding: 1rem 1.25rem; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: .75rem; }
+
+  /* ── GRID ── */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(0,1fr)); gap: .75rem; margin-bottom: .75rem; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem; margin-bottom: .75rem; }
+  .grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin-bottom: 1rem; }
+
+  /* ── METRIC CARDS ── */
+  .metric { background: var(--bg2); border-radius: var(--r-md); padding: .875rem 1rem; }
+  .metric-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .metric-value { font-size: 24px; font-weight: 600; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .metric-good { color: var(--success-text); }
+  .metric-warn { color: var(--warn-text); }
+
+  /* ── PILLS / BADGES ── */
+  .pill { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .pill-pub { background: var(--success-bg); color: var(--success-text); }
+  .pill-apr { background: var(--info-bg); color: var(--info-text); }
+  .pill-pend { background: var(--warn-bg); color: var(--warn-text); }
+  .pill-adj { background: var(--warn-bg); color: var(--warn-text); }
+  .pill-rej { background: var(--danger-bg); color: var(--danger-text); }
+  .pill-wa { background: #e8f5e9; color: #2e7d32; }
+  .pill-portal { background: var(--info-bg); color: var(--info-text); }
+  .pill-email { background: #f3e5f5; color: #6a1b9a; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; margin-bottom: 1rem; border-bottom: 0.5px solid var(--border); padding-bottom: .5rem; flex-wrap: wrap; }
+  .tab-btn { padding: 6px 14px; font-size: 12px; cursor: pointer; border-radius: var(--r-md); border: 0.5px solid var(--border); background: var(--bg); color: var(--text2); transition: all .12s; }
+  .tab-btn:hover { background: var(--bg2); }
+  .tab-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* ── BUTTONS ── */
+  .btn { padding: 8px 16px; font-size: 13px; border-radius: var(--r-md); cursor: pointer; font-family: inherit; transition: all .12s; }
+  .btn-primary { background: var(--text); color: var(--bg); border: none; font-weight: 500; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-secondary { background: var(--bg); color: var(--text); border: 0.5px solid var(--border2); }
+  .btn-secondary:hover { background: var(--bg2); }
+  .btn-danger { background: transparent; color: var(--danger-text); border: none; font-size: 12px; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+  /* ── INFO BOXES ── */
+  .info-box { border-radius: var(--r-md); padding: .625rem .875rem; font-size: 12px; line-height: 1.5; margin-bottom: .75rem; }
+  .ib-success { background: var(--success-bg); color: var(--success-text); border: 0.5px solid var(--success-border); }
+  .ib-warn { background: var(--warn-bg); color: var(--warn-text); border: 0.5px solid var(--warn-border); }
+  .ib-info { background: var(--info-bg); color: var(--info-text); border: 0.5px solid var(--info-border); }
+  .ib-danger { background: var(--danger-bg); color: var(--danger-text); border: 0.5px solid var(--danger-border); }
+
+  /* ── STATUS DOT ── */
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-pub { background: #639922; }
+  .dot-apr { background: #378add; }
+  .dot-pend { background: #ba7517; }
+  .dot-adj { background: #e07a5f; }
+  .dot-rej { background: #e24b4a; }
+
+  /* ════════════════════════════════
+     DASHBOARD
+  ════════════════════════════════ */
+  .dash-alert { background: var(--warn-bg); border: 0.5px solid var(--warn-border); border-radius: var(--r-lg); padding: .875rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .75rem; }
+  .da-icon { font-size: 18px; }
+  .da-text { font-size: 13px; color: var(--warn-text); }
+  .da-text strong { font-weight: 600; }
+  .da-action { margin-left: auto; }
+
+  .activity-row { display: flex; align-items: center; gap: .75rem; padding: .625rem 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+  .activity-row:last-child { border-bottom: none; }
+  .ar-net { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+  .ar-info { flex: 1; min-width: 0; }
+  .ar-title { font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ar-sub { font-size: 11px; color: var(--text2); }
+  .ar-time { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+
+  /* ════════════════════════════════
+     MULTI-FORMAT APPROVAL
+  ════════════════════════════════ */
+  .approval-shell { display: grid; grid-template-columns: 180px 1fr 260px; border: 0.5px solid var(--border); border-radius: var(--r-lg); overflow: hidden; min-height: 640px; background: var(--bg); }
+  .asl { background: var(--bg2); border-right: 0.5px solid var(--border); }
+  .asl-header { padding: .75rem 1rem; border-bottom: 0.5px solid var(--border); }
+  .asl-camp { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
+  .asl-title { font-size: 12px; font-weight: 600; color: var(--text); }
+  .fmt-item { display: flex; align-items: center; gap: 7px; padding: 8px 1rem; cursor: pointer; border-left: 2px solid transparent; font-size: 12px; color: var(--text2); transition: all .12s; }
+  .fmt-item:hover { background: var(--bg); color: var(--text); }
+  .fmt-item.active { background: var(--bg); color: var(--text); border-left-color: var(--text); font-weight: 500; }
+  .fmt-net-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .fmt-badge { margin-left: auto; font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+
+  .asc { background: var(--bg); display: flex; flex-direction: column; }
+  .asc-top { padding: .75rem 1rem; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: .5rem; }
+  .asc-net { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .asc-fmt { font-size: 11px; color: var(--text2); background: var(--bg2); padding: 3px 8px; border-radius: 4px; }
+  .preview-area { flex: 1; background: var(--bg3); display: flex; align-items: flex-start; justify-content: center; padding: 1.25rem; }
+  .phone-mock { background: var(--bg); border: 0.5px solid var(--border2); border-radius: 18px; overflow: hidden; width: 210px; }
+  .pm-bar { padding: 8px 10px; display: flex; align-items: center; gap: 6px; border-bottom: 0.5px solid var(--border); }
+  .pm-av { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .pm-name { font-size: 11px; font-weight: 600; }
+  .pm-sub { font-size: 9px; color: var(--text3); }
+  .pm-more { margin-left: auto; font-size: 12px; color: var(--text2); }
+  .post-visual { width: 100%; display: flex; align-items: center; justify-content: center; background: var(--bg2); position: relative; }
+  .post-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 16px; }
+  .post-emoji { font-size: 34px; line-height: 1; }
+  .post-ttl { font-size: 12px; font-weight: 600; color: var(--text); text-align: center; }
+  .post-stl { font-size: 10px; color: var(--text2); text-align: center; }
+  .dark-visual { background: #111; }
+  .dark-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px 22px; }
+  .dark-side { position: absolute; bottom: 20px; right: 6px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .story-bars { position: absolute; top: 6px; left: 8px; right: 8px; display: flex; gap: 3px; }
+  .story-bar { flex: 1; height: 2px; border-radius: 1px; }
+  .story-head { position: absolute; top: 16px; left: 8px; display: flex; align-items: center; gap: 5px; }
+  .story-cta { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: white; color: #111; font-size: 10px; font-weight: 600; padding: 5px 16px; border-radius: 20px; white-space: nowrap; }
+  .tk-tabs { position: absolute; top: 8px; left: 0; right: 0; display: flex; justify-content: space-around; padding: 0 8px; }
+  .ig-actions { display: flex; gap: 8px; padding: 6px 10px 3px; font-size: 13px; color: var(--text2); }
+  .ig-likes { font-size: 10px; font-weight: 600; color: var(--text); padding: 0 10px 2px; }
+  .post-caption { padding: 0 10px 6px; font-size: 10px; color: var(--text); line-height: 1.5; }
+  .post-caption .u { font-weight: 600; }
+  .post-caption .tags { color: #3b82f6; font-size: 9px; margin-top: 2px; }
+  .post-date { padding: 4px 10px 8px; font-size: 9px; color: var(--text2); }
+  .post-date b { color: var(--text); }
+
+  .asr { background: var(--bg2); border-left: 0.5px solid var(--border); display: flex; flex-direction: column; }
+  .asr-sec { padding: .75rem 1rem; border-bottom: 0.5px solid var(--border); }
+  .asr-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .5rem; }
+  .rec-box { background: var(--success-bg); border: 0.5px solid var(--success-border); border-radius: var(--r-md); padding: .5rem .75rem; margin-bottom: .5rem; }
+  .rec-date { font-size: 13px; font-weight: 600; color: var(--success-text); margin-bottom: 2px; }
+  .rec-why { font-size: 10px; color: var(--success-text); line-height: 1.4; }
+  .bar-row { display: flex; align-items: center; gap: 5px; padding: 3px 0; border-bottom: 0.5px solid var(--border); font-size: 10px; }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-time { color: var(--text2); width: 34px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .bar-fill { height: 4px; border-radius: 2px; background: #639922; }
+  .bar-pct { width: 26px; text-align: right; flex-shrink: 0; font-size: 10px; color: var(--text2); }
+
+  .date-inputs { display: flex; gap: 5px; margin-bottom: .5rem; }
+  .date-inputs input { flex: 1; padding: 5px 7px; font-size: 11px; border: 0.5px solid var(--border2); border-radius: var(--r-md); background: var(--bg); color: var(--text); font-family: inherit; }
+  .date-inputs input:focus { outline: none; border-color: var(--text); }
+  .conflict-box { background: var(--warn-bg); border: 0.5px solid var(--warn-border); border-radius: var(--r-md); padding: .5rem .75rem; margin-bottom: .5rem; display: none; }
+  .conflict-box.on { display: block; }
+  .cb-title { font-size: 11px; font-weight: 600; color: var(--warn-text); margin-bottom: 3px; }
+  .cb-body { font-size: 10px; color: var(--warn-text); line-height: 1.4; margin-bottom: .375rem; }
+  .cb-btns { display: flex; gap: 5px; }
+  .cb-btn { padding: 3px 9px; font-size: 10px; border-radius: var(--r-md); cursor: pointer; border: 0.5px solid var(--warn-border); background: transparent; color: var(--warn-text); font-family: inherit; }
+  .cb-btn.pri { background: var(--warn-text); color: var(--bg); }
+
+  .asr-comment { flex: 1; padding: .75rem 1rem; }
+  .asr-comment textarea { width: 100%; border: 0.5px solid var(--border2); border-radius: var(--r-md); padding: 6px 8px; font-size: 11px; font-family: inherit; color: var(--text); background: var(--bg); resize: none; height: 64px; }
+  .asr-comment textarea:focus { outline: none; border-color: var(--text); }
+  .asr-actions { padding: .75rem 1rem; border-top: 0.5px solid var(--border); }
+  .result-banner { border-radius: var(--r-md); padding: .5rem .75rem; margin-bottom: .5rem; display: none; }
+  .result-banner.suc { background: var(--success-bg); border: 0.5px solid var(--success-border); }
+  .result-banner.warn { background: var(--warn-bg); border: 0.5px solid var(--warn-border); }
+  .result-banner.dan { background: var(--danger-bg); border: 0.5px solid var(--danger-border); }
+  .rb-title { font-size: 11px; font-weight: 600; }
+  .result-banner.suc .rb-title { color: var(--success-text); }
+  .result-banner.warn .rb-title { color: var(--warn-text); }
+  .result-banner.dan .rb-title { color: var(--danger-text); }
+  .rb-sub { font-size: 10px; margin-top: 2px; }
+  .result-banner.suc .rb-sub { color: var(--success-text); }
+  .result-banner.warn .rb-sub { color: var(--warn-text); }
+  .result-banner.dan .rb-sub { color: var(--danger-text); }
+
+  /* ════════════════════════════════
+     CALENDAR
+  ════════════════════════════════ */
+  .cal-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .cal-nav { display: flex; align-items: center; gap: .5rem; }
+  .cal-nav button { padding: 4px 10px; font-size: 12px; border: 0.5px solid var(--border2); border-radius: var(--r-md); background: var(--bg); color: var(--text); cursor: pointer; font-family: inherit; }
+  .cal-month-label { font-size: 16px; font-weight: 600; color: var(--text); min-width: 140px; }
+  .cal-legend { display: flex; gap: .75rem; margin-left: auto; flex-wrap: wrap; }
+  .leg { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+  .cal-dow { text-align: center; font-size: 10px; font-weight: 600; color: var(--text3); padding: 4px 0; text-transform: uppercase; letter-spacing: .05em; }
+  .cal-cell { min-height: 80px; background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r-md); padding: 5px; cursor: pointer; transition: border-color .12s; }
+  .cal-cell:hover { border-color: var(--border2); }
+  .cal-cell.today { border-color: #378add; background: var(--info-bg); }
+  .cal-cell.empty { background: var(--bg2); cursor: default; }
+  .cal-cell.empty:hover { border-color: var(--border); }
+  .cal-day-num { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .cal-cell.today .cal-day-num { color: var(--info-text); font-weight: 600; }
+  .cal-pill { font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .cp-pub { background: var(--success-bg); color: var(--success-text); }
+  .cp-apr { background: var(--info-bg); color: var(--info-text); }
+  .cp-pend { background: var(--warn-bg); color: var(--warn-text); }
+  .cp-more { font-size: 9px; color: var(--text3); }
+  .day-detail { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-top: .75rem; display: none; }
+  .day-detail.on { display: block; }
+  .dd-row { display: flex; align-items: center; gap: .625rem; padding: .5rem 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
+  .dd-row:last-child { border-bottom: none; }
+  .dd-net { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 3px; flex-shrink: 0; }
+  .dd-name { font-weight: 500; color: var(--text); flex: 1; }
+  .dd-sub { font-size: 11px; color: var(--text2); }
+  .dd-time { font-size: 11px; color: var(--text2); margin-left: auto; flex-shrink: 0; }
+
+  /* ════════════════════════════════
+     HISTORY
+  ════════════════════════════════ */
+  .hist-filters { display: flex; gap: .375rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .hf { padding: 4px 12px; font-size: 11px; border: 0.5px solid var(--border2); border-radius: 20px; background: var(--bg); color: var(--text2); cursor: pointer; font-family: inherit; transition: all .12s; }
+  .hf:hover, .hf.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .hist-item { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r-lg); padding: .875rem 1.25rem; margin-bottom: .5rem; display: flex; gap: .875rem; }
+  .hist-item.hidden { display: none; }
+  .hi-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+  .hi-body { flex: 1; min-width: 0; }
+  .hi-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .hi-meta { font-size: 11px; color: var(--text2); margin-bottom: .375rem; line-height: 1.4; }
+  .hi-audit { font-size: 10px; color: var(--text3); background: var(--bg2); border-radius: 4px; padding: 4px 8px; font-family: 'SF Mono', Consolas, monospace; line-height: 1.4; }
+  .hi-right { flex-shrink: 0; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .hi-date { font-size: 10px; color: var(--text3); line-height: 1.4; }
+
+  /* ════════════════════════════════
+     MOBILE PREVIEW
+  ════════════════════════════════ */
+  .mobile-showcase { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+  .phone-frame { background: var(--bg2); border-radius: 24px; padding: 8px; border: 0.5px solid var(--border2); width: 240px; flex-shrink: 0; }
+  .phone-body { background: var(--bg); border-radius: 18px; overflow: hidden; }
+  .mob-topbar { background: var(--text); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .mob-brand { display: flex; align-items: center; gap: 6px; }
+  .mob-brand-icon { width: 22px; height: 22px; border-radius: 5px; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+  .mob-brand-icon svg { width: 13px; height: 13px; }
+  .mob-brand span { font-size: 13px; font-weight: 600; color: var(--bg); }
+  .mob-notif { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 600; }
+  .mob-subtabs { display: flex; border-bottom: 0.5px solid var(--border); }
+  .mob-stab { flex: 1; padding: 7px 4px; text-align: center; font-size: 10px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; }
+  .mob-stab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+  .mob-content { padding: .625rem; }
+  .mob-sec { font-size: 9px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .375rem; margin-top: .375rem; }
+  .mob-card { background: var(--bg2); border-radius: var(--r-md); padding: .5rem .625rem; margin-bottom: .375rem; display: flex; align-items: center; gap: .5rem; }
+  .mob-net { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .mob-info { flex: 1; min-width: 0; }
+  .mob-title { font-size: 10px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mob-sub { font-size: 9px; color: var(--text2); }
+  .mob-status { font-size: 8px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+  .mob-bottomnav { display: flex; border-top: 0.5px solid var(--border); background: var(--bg); }
+  .mob-navitem { flex: 1; padding: 7px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+  .mob-navicon { font-size: 13px; color: var(--text3); }
+  .mob-navlabel { font-size: 7px; color: var(--text3); }
+  .mob-navitem.active .mob-navicon, .mob-navitem.active .mob-navlabel { color: var(--text); }
+
+  /* ════════════════════════════════
+     WHATSAPP VIEW
+  ════════════════════════════════ */
+  .wa-frame { background: var(--bg2); border-radius: 24px; padding: 8px; border: 0.5px solid var(--border2); width: 240px; flex-shrink: 0; }
+  .wa-body { background: var(--bg); border-radius: 18px; overflow: hidden; }
+  .wa-topbar { background: #075e54; padding: 10px 12px; display: flex; align-items: center; gap: 7px; }
+  .wa-av { width: 28px; height: 28px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #075e54; flex-shrink: 0; }
+  .wa-name { font-size: 12px; font-weight: 600; color: white; }
+  .wa-status { font-size: 9px; color: rgba(255,255,255,.7); }
+  .wa-chat { background: #ece5dd; padding: 10px 8px; min-height: 340px; display: flex; flex-direction: column; gap: 7px; }
+  .wm { max-width: 90%; border-radius: 8px; padding: 6px 9px; font-size: 10px; line-height: 1.5; }
+  .wm.bot { background: white; align-self: flex-start; color: #111; }
+  .wm.usr { background: #dcf8c6; align-self: flex-end; color: #111; }
+  .wm-time { font-size: 8px; color: #888; text-align: right; margin-top: 2px; }
+  .wm-check { color: #53bdeb; }
+  .wm-link { display: block; background: #f0f0f0; border-radius: 5px; padding: 5px 7px; margin-top: 5px; border-left: 3px solid #25d366; }
+  .wml-title { font-size: 10px; font-weight: 600; color: #111; margin-bottom: 1px; }
+  .wml-sub { font-size: 8px; color: #555; }
+  .wml-url { font-size: 8px; color: #075e54; }
+  .wa-quick { background: #ece5dd; padding: 6px 8px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .wq-btn { background: white; border: none; border-radius: 14px; padding: 4px 10px; font-size: 9px; color: #075e54; cursor: pointer; font-family: inherit; font-weight: 500; }
+  .wa-inputbar { background: white; padding: 6px 10px; display: flex; align-items: center; gap: 6px; }
+  .wa-input-field { flex: 1; background: #f0f0f0; border-radius: 14px; padding: 5px 10px; font-size: 10px; color: #aaa; }
+
+  /* ════════════════════════════════
+     AUDIT
+  ════════════════════════════════ */
+  .audit-entry { padding: .875rem 0; border-bottom: 0.5px solid var(--border); }
+  .audit-entry:last-child { border-bottom: none; }
+  .ae-header { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; flex-wrap: wrap; }
+  .ae-action { display: inline-flex; align-items: center; font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 600; }
+  .ae-meta { font-size: 12px; color: var(--text2); }
+  .ae-meta strong { color: var(--text); font-weight: 500; }
+  .ae-comment { font-size: 12px; color: var(--text2); background: var(--bg2); border-radius: 5px; padding: 6px 10px; border-left: 2px solid var(--border2); line-height: 1.5; margin-top: 5px; }
+  .ae-hash { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: 'SF Mono', Consolas, monospace; }
+
+  /* ════════════════════════════════
+     PLANS
+  ════════════════════════════════ */
+  .plan-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--r-lg); padding: 1.25rem; }
+  .plan-card.featured { border: 2px solid #378add; }
+  .plan-name { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 3px; }
+  .plan-price { font-size: 26px; font-weight: 700; color: var(--text); }
+  .plan-price span { font-size: 12px; font-weight: 400; color: var(--text2); }
+  .plan-tag { font-size: 11px; color: var(--text3); margin-bottom: .875rem; padding-bottom: .75rem; border-bottom: 0.5px solid var(--border); }
+  .plan-item { font-size: 12px; color: var(--text2); padding: 3px 0; display: flex; gap: 6px; }
+  .plan-item::before { content: "—"; color: var(--border2); flex-shrink: 0; }
+  .pop-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--info-bg); color: var(--info-text); font-weight: 600; margin-bottom: .625rem; }
+
+  /* ════════════════════════════════
+     RESPONSIVE
+  ════════════════════════════════ */
+  @media (max-width: 900px) {
+    .app-sidebar { width: 180px; }
+    .approval-shell { grid-template-columns: 160px 1fr 220px; }
+    .grid4 { grid-template-columns: repeat(2,1fr); }
+    .grid3 { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 700px) {
+    .app { flex-direction: column; height: auto; }
+    .app-sidebar { width: 100%; height: auto; border-right: none; border-bottom: 0.5px solid var(--border); }
+    .sb-item { display: inline-flex; border-left: none; border-bottom: 2px solid transparent; padding: 6px 10px; }
+    .sb-item.active { border-left: none; border-bottom-color: var(--text); }
+    .app-main { overflow-y: visible; }
+    .approval-shell { grid-template-columns: 1fr; }
+    .asl, .asr { display: none; }
+    .grid3 { grid-template-columns: 1fr; }
+    .grid4 { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <div class="app-sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="16" height="16" rx="4" stroke="white" stroke-width="1.5"/><path d="M5 9.2l2.8 2.8L13 6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="sb-logo-name">Aproove</div>
+        <div class="sb-logo-version">MVP v1.0</div>
+      </div>
+    </div>
+
+    <div class="sb-section">Principal</div>
+    <div class="sb-item active" onclick="nav('dashboard',this)"><span class="sb-icon">⊞</span>Dashboard<span class="sb-badge">3</span></div>
+    <div class="sb-item" onclick="nav('approval',this)"><span class="sb-icon">✓</span>Aprovações<span class="sb-badge">5</span></div>
+    <div class="sb-item" onclick="nav('calendar',this)"><span class="sb-icon">◫</span>Calendário</div>
+    <div class="sb-item" onclick="nav('history',this)"><span class="sb-icon">☰</span>Histórico</div>
+    <div class="sb-item" onclick="nav('audit',this)"><span class="sb-icon">◎</span>Auditoria</div>
+
+    <div class="sb-section">Configurações</div>
+    <div class="sb-item" onclick="nav('plans',this)"><span class="sb-icon">◈</span>Planos</div>
+    <div class="sb-item" onclick="nav('mobile',this)"><span class="sb-icon">☐</span>App mobile</div>
+    <div class="sb-item" onclick="nav('whatsapp',this)"><span class="sb-icon">◉</span>WhatsApp cliente</div>
+
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">AG</div>
+        <div>
+          <div class="sb-user-name">Ana Gestora</div>
+          <div class="sb-user-role">Gestora de marketing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ═══ -->
+  <div class="app-main">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Visão geral · 15 de março de 2026</div>
+      </div>
+
+      <div class="dash-alert">
+        <div class="da-icon">⚠️</div>
+        <div class="da-text"><strong>3 peças aguardando aprovação</strong> com publicação nos próximos 5 dias. Cliente ainda não respondeu.</div>
+        <div class="da-action"><button class="btn btn-secondary btn-sm" onclick="nav('approval',document.querySelector('[onclick*=approval]'))">Ver peças</button></div>
+      </div>
+
+      <div class="grid4">
+        <div class="metric"><div class="metric-label">Aguardando aprovação</div><div class="metric-value metric-warn">5</div><div class="metric-sub">3 vencem em 5 dias</div></div>
+        <div class="metric"><div class="metric-label">Aprovados este mês</div><div class="metric-value metric-good">18</div><div class="metric-sub">↑ 4 vs mês anterior</div></div>
+        <div class="metric"><div class="metric-label">Publicados este mês</div><div class="metric-value">12</div><div class="metric-sub">em 4 campanhas ativas</div></div>
+        <div class="metric"><div class="metric-label">Em ajuste</div><div class="metric-value">2</div><div class="metric-sub">retorno esperado hoje</div></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Atividade recente</div>
+          <div class="activity-row">
+            <div class="ar-net" style="background:#FDECEA;color:#B91C1C">IG</div>
+            <div class="ar-info"><div class="ar-title">Post feed — Lançamento Verão</div><div class="ar-sub">Aprovado por João Ferreira via WhatsApp</div></div>
+            <div class="ar-time">há 2h</div>
+          </div>
+          <div class="activity-row">
+            <div class="ar-net" style="background:#DBEAFE;color:#1D4ED8">LI</div>
+            <div class="ar-info"><div class="ar-title">Post LinkedIn — Verão 2026</div><div class="ar-sub">Ajuste solicitado: "Muda o CTA"</div></div>
+            <div class="ar-time">há 4h</div>
+          </div>
+          <div class="activity-row">
+            <div class="ar-net" style="background:#FDECEA;color:#B91C1C">IG</div>
+            <div class="ar-info"><div class="ar-title">Story — Lançamento Verão</div><div class="ar-sub">Aprovado via Portal por Carlos Mendes</div></div>
+            <div class="ar-time">ontem</div>
+          </div>
+          <div class="activity-row">
+            <div class="ar-net" style="background:#F3F4F6;color:#333">TK</div>
+            <div class="ar-info"><div class="ar-title">TikTok — Carnaval 2026</div><div class="ar-sub">Reprovado: "Fora do tom da marca"</div></div>
+            <div class="ar-time">10/03</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Próximas publicações</div>
+          <div class="activity-row">
+            <div class="dot dot-apr" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>
+            <div class="ar-info"><div class="ar-title">IG Story — Verão 2026</div><div class="ar-sub">20/03/2026 às 09h00</div></div>
+            <span class="pill pill-apr">Aprovado</span>
+          </div>
+          <div class="activity-row">
+            <div class="dot dot-pend"></div>
+            <div class="ar-info"><div class="ar-title">IG Feed — Verão 2026</div><div class="ar-sub">20/03/2026 às 10h00</div></div>
+            <span class="pill pill-pend">Aguardando</span>
+          </div>
+          <div class="activity-row">
+            <div class="dot dot-pend"></div>
+            <div class="ar-info"><div class="ar-title">LinkedIn — Verão 2026</div><div class="ar-sub">20/03/2026 às 08h00</div></div>
+            <span class="pill pill-pend">Aguardando</span>
+          </div>
+          <div class="activity-row">
+            <div class="dot dot-apr"></div>
+            <div class="ar-info"><div class="ar-title">IG Reels — Verão 2026</div><div class="ar-sub">20/03/2026 às 18h00</div></div>
+            <span class="pill pill-adj">Em ajuste</span>
+          </div>
+          <div class="activity-row">
+            <div class="dot dot-pend"></div>
+            <div class="ar-info"><div class="ar-title">TikTok — Black Friday</div><div class="ar-sub">25/11/2026 às 19h00</div></div>
+            <span class="pill pill-pend">Aguardando</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── APROVAÇÕES ── -->
+    <div class="page" id="page-approval">
+      <div class="page-header">
+        <div class="page-title">Aprovações</div>
+        <div class="page-sub">Campanha: Lançamento Verão 2026 · 5 formatos · mesma mensagem</div>
+      </div>
+      <div class="approval-shell">
+        <!-- Sidebar formatos -->
+        <div class="asl">
+          <div class="asl-header">
+            <div class="asl-camp">Campanha</div>
+            <div class="asl-title">Lançamento Verão 2026</div>
+          </div>
+          <div style="padding:.25rem 1rem .25rem;font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:.25rem">5 formatos</div>
+          <div class="fmt-item active" data-fmt="ig-feed" onclick="swFmt(this)">
+            <div class="fmt-net-dot" style="background:#e84040"></div>IG feed
+            <span class="fmt-badge" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+          </div>
+          <div class="fmt-item" data-fmt="ig-reels" onclick="swFmt(this)">
+            <div class="fmt-net-dot" style="background:#e84040"></div>IG reels
+            <span class="fmt-badge" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+          </div>
+          <div class="fmt-item" data-fmt="ig-story" onclick="swFmt(this)">
+            <div class="fmt-net-dot" style="background:#e84040"></div>IG story
+            <span class="fmt-badge" style="background:var(--success-bg);color:var(--success-text)">aprovado</span>
+          </div>
+          <div class="fmt-item" data-fmt="linkedin" onclick="swFmt(this)">
+            <div class="fmt-net-dot" style="background:#2563a0"></div>LinkedIn
+            <span class="fmt-badge" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+          </div>
+          <div class="fmt-item" data-fmt="tiktok" onclick="swFmt(this)">
+            <div class="fmt-net-dot" style="background:#444"></div>TikTok
+            <span class="fmt-badge" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+          </div>
+        </div>
+        <!-- Preview central -->
+        <div class="asc">
+          <div class="asc-top">
+            <span class="asc-net" id="ap-net" style="background:#FDECEA;color:#B91C1C">Instagram</span>
+            <span class="asc-fmt" id="ap-fmt">Feed 1:1</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--text3)">v2 · atual</span>
+          </div>
+          <div class="preview-area" id="ap-preview"></div>
+        </div>
+        <!-- Sidebar direita -->
+        <div class="asr">
+          <div class="asr-sec">
+            <div class="asr-label">Horário recomendado</div>
+            <div class="rec-box">
+              <div class="rec-date" id="ap-recdate">20/03/2026 às 10h00</div>
+              <div class="rec-why" id="ap-recwhy">Engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias desta conta.</div>
+            </div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:.375rem">Engajamento por horário (90 dias)</div>
+            <div class="bar-row"><span class="bar-time">08–09h</span><div class="bar-track"><div class="bar-fill" id="ap-b0" style="width:40%"></div></div><span class="bar-pct" id="ap-p0">40%</span></div>
+            <div class="bar-row"><span class="bar-time">10–11h</span><div class="bar-track"><div class="bar-fill" id="ap-b1" style="width:100%"></div></div><span class="bar-pct" id="ap-p1" style="color:var(--success-text);font-weight:700">100%</span></div>
+            <div class="bar-row"><span class="bar-time">12–13h</span><div class="bar-track"><div class="bar-fill" id="ap-b2" style="width:72%"></div></div><span class="bar-pct" id="ap-p2">72%</span></div>
+            <div class="bar-row"><span class="bar-time">18–19h</span><div class="bar-track"><div class="bar-fill" id="ap-b3" style="width:88%"></div></div><span class="bar-pct" id="ap-p3">88%</span></div>
+            <div class="bar-row"><span class="bar-time">21–22h</span><div class="bar-track"><div class="bar-fill" id="ap-b4" style="width:65%"></div></div><span class="bar-pct" id="ap-p4">65%</span></div>
+          </div>
+          <div class="asr-sec">
+            <div class="asr-label">Sugerir outra data</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:.4rem">Horário recomendado pré-selecionado. Altere se quiser propor outro momento.</div>
+            <div class="date-inputs">
+              <input type="date" id="ap-date" value="2026-03-20" onchange="apChk()">
+              <input type="time" id="ap-time" value="10:00" onchange="apChk()">
+            </div>
+            <div class="conflict-box" id="ap-conflict">
+              <div class="cb-title">Conflito detectado</div>
+              <div class="cb-body" id="ap-conflictmsg"></div>
+              <div class="cb-btns">
+                <button class="cb-btn" onclick="apResolve('adj')">Ajustar horário</button>
+                <button class="cb-btn pri" onclick="apResolve('keep')">Manter mesmo assim</button>
+              </div>
+            </div>
+          </div>
+          <div class="asr-comment">
+            <div class="asr-label">Comentário</div>
+            <textarea id="ap-cmt" placeholder="Observação ou justificativa..."></textarea>
+          </div>
+          <div class="asr-actions">
+            <div class="result-banner" id="ap-result"><div class="rb-title" id="ap-rt"></div><div class="rb-sub" id="ap-rs"></div></div>
+            <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="apAct('apr')">Aprovar esta publicação</button>
+            <button class="btn btn-secondary" style="width:100%;margin-bottom:6px" onclick="apAct('adj')">Solicitar ajuste</button>
+            <button class="btn btn-danger" style="width:100%" onclick="apAct('rej')">Reprovar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CALENDÁRIO ── -->
+    <div class="page" id="page-calendar">
+      <div class="page-header">
+        <div class="page-title">Calendário editorial</div>
+        <div class="page-sub">Clique em qualquer dia com posts para ver os detalhes</div>
+      </div>
+      <div class="card">
+        <div class="cal-header">
+          <div class="cal-nav">
+            <button onclick="calNav(-1)">←</button>
+            <span class="cal-month-label" id="cal-month">Março 2026</span>
+            <button onclick="calNav(1)">→</button>
+          </div>
+          <div class="cal-legend">
+            <div class="leg"><div class="dot dot-pub"></div> Publicado</div>
+            <div class="leg"><div class="dot dot-apr"></div> Aprovado</div>
+            <div class="leg"><div class="dot dot-pend"></div> A aprovar</div>
+          </div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="day-detail" id="day-detail">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.75rem" id="dd-title">Posts do dia</div>
+          <div id="dd-items"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTÓRICO ── -->
+    <div class="page" id="page-history">
+      <div class="page-header">
+        <div class="page-title">Histórico de aprovações</div>
+        <div class="page-sub">Todos os eventos registrados com canal, identidade e timestamp</div>
+      </div>
+      <div class="hist-filters">
+        <button class="hf active" onclick="histFilter('all',this)">Todos</button>
+        <button class="hf" onclick="histFilter('published',this)">Publicados</button>
+        <button class="hf" onclick="histFilter('approved',this)">Aprovados</button>
+        <button class="hf" onclick="histFilter('adjusted',this)">Ajustes</button>
+        <button class="hf" onclick="histFilter('rejected',this)">Reprovados</button>
+      </div>
+      <div id="hist-list">
+        <div class="hist-item" data-type="published">
+          <div class="hi-icon" style="background:var(--success-bg)">✓</div>
+          <div class="hi-body">
+            <span class="pill pill-wa" style="margin-bottom:5px;display:inline-block">WhatsApp · +55 11 9xxxx-4321</span>
+            <div class="hi-title">Post Instagram Feed — Lançamento Verão 2026</div>
+            <div class="hi-meta">Aprovado por <strong>João Ferreira</strong> · v2 · Campanha: Lançamento Verão</div>
+            <div class="hi-audit">Aprovado via WhatsApp do contato João Ferreira (+55 11 9xxxx-4321) em 10/03/2026 às 17:03 · v2 · sha256:9c1e4f7a...b28d</div>
+          </div>
+          <div class="hi-right"><span class="pill pill-pub">Publicado</span><div class="hi-date">15/03/2026<br>10h00</div></div>
+        </div>
+        <div class="hist-item" data-type="approved">
+          <div class="hi-icon" style="background:var(--info-bg)">✓</div>
+          <div class="hi-body">
+            <span class="pill pill-portal" style="margin-bottom:5px;display:inline-block">Portal Aproove</span>
+            <div class="hi-title">Story Instagram — Lançamento Verão 2026</div>
+            <div class="hi-meta">Aprovado por <strong>Carlos Mendes</strong> · v1 · Campanha: Lançamento Verão</div>
+            <div class="hi-audit">Aprovado via Portal · Carlos Mendes · 10/03/2026 às 11:05 · v1 · sha256:3a7f2b9c...e14d</div>
+          </div>
+          <div class="hi-right"><span class="pill pill-apr">Aprovado</span><div class="hi-date">20/03/2026<br>09h00</div></div>
+        </div>
+        <div class="hist-item" data-type="adjusted">
+          <div class="hi-icon" style="background:var(--warn-bg)">✎</div>
+          <div class="hi-body">
+            <span class="pill pill-wa" style="margin-bottom:5px;display:inline-block">WhatsApp · +55 11 9xxxx-8872</span>
+            <div class="hi-title">Reels Instagram — Black Friday 2026</div>
+            <div class="hi-meta">Ajuste solicitado por <strong>Maria Costa</strong> · v1 · Campanha: Black Friday</div>
+            <div class="hi-audit">Ajuste solicitado via WhatsApp de Maria Costa em 11/03/2026 às 14:22 · "Muda cor do botão para laranja" · v1</div>
+          </div>
+          <div class="hi-right"><span class="pill pill-adj">Em ajuste</span><div class="hi-date">25/11/2026<br>18h00</div></div>
+        </div>
+        <div class="hist-item" data-type="published">
+          <div class="hi-icon" style="background:var(--success-bg)">✓</div>
+          <div class="hi-body">
+            <span class="pill pill-email" style="margin-bottom:5px;display:inline-block">E-mail · c.mendes@empresa.com</span>
+            <div class="hi-title">Post Facebook — Ofertas Março</div>
+            <div class="hi-meta">Aprovado por <strong>Carlos Mendes</strong> · v2 · Campanha: Ofertas Março</div>
+            <div class="hi-audit">Aprovado via E-mail por Carlos Mendes (c.mendes@empresa.com) em 08/03/2026 às 09:22 · v2</div>
+          </div>
+          <div class="hi-right"><span class="pill pill-pub">Publicado</span><div class="hi-date">10/03/2026<br>10h00</div></div>
+        </div>
+        <div class="hist-item" data-type="rejected">
+          <div class="hi-icon" style="background:var(--danger-bg)">✕</div>
+          <div class="hi-body">
+            <span class="pill pill-portal" style="margin-bottom:5px;display:inline-block">Portal Aproove</span>
+            <div class="hi-title">TikTok — Campanha Carnaval 2026</div>
+            <div class="hi-meta">Reprovado por <strong>Ana Lima</strong> · v1 · Campanha: Carnaval 2026</div>
+            <div class="hi-audit">Reprovado via Portal · Ana Lima · 05/03/2026 às 16:41 · "Vídeo fora do tom da marca" · v1</div>
+          </div>
+          <div class="hi-right"><span class="pill pill-rej">Reprovado</span><div class="hi-date">05/03/2026<br>—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AUDITORIA ── -->
+    <div class="page" id="page-audit">
+      <div class="page-header">
+        <div class="page-title">Auditoria — Post Instagram Feed</div>
+        <div class="page-sub">Linha do tempo imutável com canal, identidade e hash de integridade</div>
+      </div>
+      <div class="card" style="margin-bottom:.75rem">
+        <div class="audit-entry">
+          <div class="ae-header"><span class="ae-action pill-pend" style="background:var(--info-bg);color:var(--info-text)">Enviado para aprovação</span><span class="pill pill-portal">Portal Aproove</span></div>
+          <div class="ae-meta">Por <strong>Ana Souza (Social Media)</strong> · 10/03/2026 às 14:48 · versão v1</div>
+          <div class="ae-hash">hash: sha256:3a7f2b9c...e14d · IP: 189.xxx.xxx.12</div>
+        </div>
+        <div class="audit-entry">
+          <div class="ae-header"><span class="ae-action pill-pend" style="background:var(--bg2);color:var(--text2)">Link visualizado</span><span class="pill pill-wa">WhatsApp · +55 11 9xxxx-4321</span></div>
+          <div class="ae-meta">Por <strong>João Ferreira (Cliente)</strong> · 10/03/2026 às 15:12</div>
+        </div>
+        <div class="audit-entry">
+          <div class="ae-header"><span class="ae-action" style="background:var(--warn-bg);color:var(--warn-text)">Ajuste solicitado</span><span class="pill pill-wa">WhatsApp · +55 11 9xxxx-4321</span></div>
+          <div class="ae-meta">Por <strong>João Ferreira (Cliente)</strong> · 10/03/2026 às 15:19</div>
+          <div class="ae-comment">"Muda a cor do botão para laranja e o texto do CTA para 'Saiba mais'. Segue print de referência."</div>
+          <div class="ae-hash">registrado via webhook WhatsApp · mensagem capturada · +55 11 9xxxx-4321</div>
+        </div>
+        <div class="audit-entry">
+          <div class="ae-header"><span class="ae-action" style="background:var(--info-bg);color:var(--info-text)">Nova versão enviada</span><span class="pill pill-portal">Portal Aproove</span></div>
+          <div class="ae-meta">Por <strong>Pedro Lima (Designer)</strong> · 10/03/2026 às 16:40 · versão v2</div>
+          <div class="ae-comment">Botão alterado para laranja (#FF6B2B). CTA atualizado para "Saiba mais".</div>
+        </div>
+        <div class="audit-entry">
+          <div class="ae-header"><span class="ae-action" style="background:var(--success-bg);color:var(--success-text)">Aprovado</span><span class="pill pill-wa">WhatsApp · +55 11 9xxxx-4321</span></div>
+          <div class="ae-meta">Por <strong>João Ferreira (Cliente)</strong> · 10/03/2026 às 17:03 · versão v2</div>
+          <div class="ae-comment">"Perfeito! Aprovado."</div>
+          <div class="ae-hash">Aprovado via WhatsApp do contato João Ferreira (+55 11 9xxxx-4321) em 10/03/2026 às 17:03 · v2 · sha256:9c1e4f7a...b28d</div>
+        </div>
+      </div>
+      <div class="info-box ib-success"><strong>Registro formal:</strong> Aprovado via WhatsApp do contato João Ferreira em 10/03/2026 às 17:03 · versão v2 · Campanha Lançamento Verão 2026 · Instagram Feed · agendado para 15/03/2026 às 10h00.</div>
+      <div class="info-box ib-info">Todos os eventos são imutáveis. O hash SHA-256 garante integridade do registro. Número de telefone armazenado criptografado e exibido mascarado.</div>
+    </div>
+
+    <!-- ── PLANOS ── -->
+    <div class="page" id="page-plans">
+      <div class="page-header">
+        <div class="page-title">Planos e precificação</div>
+        <div class="page-sub">Modelo SaaS com limites por volume de uso e armazenamento</div>
+      </div>
+      <div class="grid3" style="margin-bottom:1rem">
+        <div class="plan-card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">R$ 197<span>/mês</span></div>
+          <div class="plan-tag">Freelancers e pequenas agências</div>
+          <div class="plan-item">Até 5 clientes ativos</div>
+          <div class="plan-item">50 peças por mês</div>
+          <div class="plan-item">5 GB armazenamento</div>
+          <div class="plan-item">3 usuários internos</div>
+          <div class="plan-item">Histórico 6 meses</div>
+          <div class="plan-item">IG, FB, LinkedIn</div>
+        </div>
+        <div class="plan-card featured">
+          <div class="pop-badge">Mais popular</div>
+          <div class="plan-name">Professional</div>
+          <div class="plan-price">R$ 497<span>/mês</span></div>
+          <div class="plan-tag">Agências em crescimento</div>
+          <div class="plan-item">Até 20 clientes ativos</div>
+          <div class="plan-item">200 peças por mês</div>
+          <div class="plan-item">25 GB armazenamento</div>
+          <div class="plan-item">10 usuários internos</div>
+          <div class="plan-item">Histórico 12 meses</div>
+          <div class="plan-item">Todas as redes + agendamento</div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-name">Agency</div>
+          <div class="plan-price">R$ 997<span>/mês</span></div>
+          <div class="plan-tag">Agências grandes · Enterprise</div>
+          <div class="plan-item">Clientes ilimitados</div>
+          <div class="plan-item">Peças ilimitadas</div>
+          <div class="plan-item">100 GB armazenamento</div>
+          <div class="plan-item">Usuários ilimitados</div>
+          <div class="plan-item">Histórico 24 meses</div>
+          <div class="plan-item">API + White label + Suporte</div>
+        </div>
+      </div>
+      <div class="info-box ib-warn">Armazenamento extra: R$ 19/mês por 10 GB. Peças além do limite: R$ 2,90/peça. Canal WhatsApp API: add-on R$ 49/mês. Histórico estendido: R$ 49/mês por +12 meses.</div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Custo operacional estimado — Plano Professional</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.8">
+            <div style="display:flex;justify-content:space-between;border-bottom:0.5px solid var(--border);padding:4px 0"><span>Armazenamento 25 GB</span><span style="font-weight:500;color:var(--text)">R$ 30/mês</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:0.5px solid var(--border);padding:4px 0"><span>Banco de dados</span><span style="font-weight:500;color:var(--text)">R$ 12/mês</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:0.5px solid var(--border);padding:4px 0"><span>Banda + previews</span><span style="font-weight:500;color:var(--text)">R$ 20/mês</span></div>
+            <div style="display:flex;justify-content:space-between;border-bottom:0.5px solid var(--border);padding:4px 0"><span>Processamento mockups</span><span style="font-weight:500;color:var(--text)">R$ 18/mês</span></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0"><span>Infraestrutura + auth</span><span style="font-weight:500;color:var(--text)">R$ 10/mês</span></div>
+            <div style="display:flex;justify-content:space-between;border-top:0.5px solid var(--border);padding:6px 0;margin-top:4px"><span style="font-weight:600">Custo total</span><span style="font-weight:600;color:var(--text)">R$ 90/mês</span></div>
+            <div style="display:flex;justify-content:space-between;padding:3px 0"><span style="color:var(--success-text)">Margem bruta (receita R$497)</span><span style="font-weight:600;color:var(--success-text)">~82%</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Crescimento de armazenamento</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:.75rem">200 peças/mês × 2 MB média = 400 MB/mês por cliente Professional. Com histórico 12 meses = ~5 GB de crescimento anual por cliente.</p>
+          <div class="info-box ib-warn" style="margin-bottom:0">Vídeos consomem 10–50× mais que imagens. No MVP, limitar vídeos a 200 MB por arquivo com contagem dobrada no limite mensal.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── APP MOBILE ── -->
+    <div class="page" id="page-mobile">
+      <div class="page-header">
+        <div class="page-title">App mobile</div>
+        <div class="page-sub">Versão iOS e Android — interface do gestor e do cliente aprovador</div>
+      </div>
+      <div class="mobile-showcase">
+        <div class="phone-frame">
+          <div class="phone-body">
+            <div class="mob-topbar">
+              <div class="mob-brand">
+                <div class="mob-brand-icon"><svg viewBox="0 0 13 13" fill="none"><rect x=".5" y=".5" width="12" height="12" rx="3" stroke="var(--text)" stroke-width="1.2"/><path d="M3 6.5l2.2 2.2L10 4.5" stroke="var(--text)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <span>Aproove</span>
+              </div>
+              <div class="mob-notif">3</div>
+            </div>
+            <div class="mob-subtabs">
+              <div class="mob-stab active">Pendentes</div>
+              <div class="mob-stab">Aprovados</div>
+              <div class="mob-stab">Publicados</div>
+            </div>
+            <div class="mob-content">
+              <div class="mob-sec">Para aprovar hoje</div>
+              <div class="mob-card">
+                <div class="mob-net" style="background:#FDECEA;color:#B91C1C">IG</div>
+                <div class="mob-info"><div class="mob-title">Post feed — Verão 2026</div><div class="mob-sub">20/03 · 10h00 · v2</div></div>
+                <span class="mob-status" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+              </div>
+              <div class="mob-card">
+                <div class="mob-net" style="background:#FDECEA;color:#B91C1C">IG</div>
+                <div class="mob-info"><div class="mob-title">Reels — Verão 2026</div><div class="mob-sub">20/03 · 18h00 · v1</div></div>
+                <span class="mob-status" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+              </div>
+              <div class="mob-card">
+                <div class="mob-net" style="background:#DBEAFE;color:#1D4ED8">LI</div>
+                <div class="mob-info"><div class="mob-title">Post LinkedIn — Verão 2026</div><div class="mob-sub">20/03 · 08h00 · v1</div></div>
+                <span class="mob-status" style="background:var(--warn-bg);color:var(--warn-text)">aguardando</span>
+              </div>
+              <div class="mob-sec" style="margin-top:.5rem">Aprovados recentes</div>
+              <div class="mob-card">
+                <div class="mob-net" style="background:#FDECEA;color:#B91C1C">IG</div>
+                <div class="mob-info"><div class="mob-title">Story — Verão 2026</div><div class="mob-sub">20/03 · 09h00 · via Portal</div></div>
+                <span class="mob-status" style="background:var(--success-bg);color:var(--success-text)">aprovado</span>
+              </div>
+            </div>
+            <div class="mob-bottomnav">
+              <div class="mob-navitem active"><div class="mob-navicon">⊞</div><div class="mob-navlabel">Dashboard</div></div>
+              <div class="mob-navitem"><div class="mob-navicon">◫</div><div class="mob-navlabel">Calendário</div></div>
+              <div class="mob-navitem"><div class="mob-navicon">✓</div><div class="mob-navlabel">Aprovar</div></div>
+              <div class="mob-navitem"><div class="mob-navicon">☰</div><div class="mob-navlabel">Histórico</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div class="card" style="margin-bottom:.75rem">
+            <div class="card-title">Funcionalidades mobile</div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.6">App responsivo completo para iOS e Android — sem funcionalidade reduzida. Gestor e cliente têm acesso total pelo celular.</p>
+          </div>
+          <div class="card" style="margin-bottom:.75rem">
+            <div class="card-title">Notificações push</div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.6">Cliente recebe push quando há peça aguardando. Toca na notificação e cai direto na tela de mockup + aprovação. Zero atrito entre receber e aprovar.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Aprovação por swipe</div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.6">Swipe direito para aprovar, swipe esquerdo para solicitar ajuste. Segurar abre campo de comentário. Toda interação registrada com canal "app-mobile" e timestamp.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── WHATSAPP ── -->
+    <div class="page" id="page-whatsapp">
+      <div class="page-header">
+        <div class="page-title">WhatsApp cliente</div>
+        <div class="page-sub">Simulação da conversa de aprovação — clique nos botões para interagir</div>
+      </div>
+      <div class="mobile-showcase">
+        <div class="wa-frame">
+          <div class="wa-body">
+            <div class="wa-topbar">
+              <div style="font-size:15px;color:white;cursor:pointer;opacity:.8">←</div>
+              <div class="wa-av">AP</div>
+              <div><div class="wa-name">Aproove</div><div class="wa-status">online</div></div>
+              <div style="margin-left:auto;display:flex;gap:10px;font-size:13px;color:rgba(255,255,255,.8)"><span>☎</span><span>⋮</span></div>
+            </div>
+            <div class="wa-chat" id="wa-chat">
+              <div class="wm bot">
+                Olá, <strong>João</strong>! 👋 Você tem <strong>3 peças</strong> aguardando aprovação na campanha <em>Lançamento Verão 2026</em>.
+                <div class="wm-time">10:31 ✓✓</div>
+              </div>
+              <div class="wm bot">
+                <strong>1 de 3 — Instagram Feed</strong>
+                <div class="wm-link">
+                  <div class="wml-title">Post feed 1:1 · 20/03 às 10h00</div>
+                  <div class="wml-sub">Campanha: Lançamento Verão 2026</div>
+                  <div class="wml-url">aproove.app/a/xK9mP2 · toque para ver o mockup</div>
+                </div>
+                <div class="wm-time">10:31 ✓✓</div>
+              </div>
+            </div>
+            <div class="wa-quick" id="wa-quick">
+              <button class="wq-btn" onclick="waStep('approve')">✅ Aprovar</button>
+              <button class="wq-btn" onclick="waStep('adjust')">✏️ Solicitar ajuste</button>
+              <button class="wq-btn" onclick="waStep('link')">🔗 Ver mockup</button>
+            </div>
+            <div class="wa-inputbar"><div class="wa-input-field">Mensagem</div><span style="font-size:14px;color:#aaa">🎤</span></div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div class="card" style="margin-bottom:.75rem">
+            <div class="card-title">Como funciona</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.8">
+              <div style="padding:3px 0;border-bottom:0.5px solid var(--border)">1. Aproove detecta peça pronta e dispara mensagem automática</div>
+              <div style="padding:3px 0;border-bottom:0.5px solid var(--border)">2. Mensagem tem campanha, formato, data e link do mockup</div>
+              <div style="padding:3px 0;border-bottom:0.5px solid var(--border)">3. Botões rápidos: Aprovar · Ajuste · Ver mockup</div>
+              <div style="padding:3px 0;border-bottom:0.5px solid var(--border)">4. Resposta capturada via webhook e registrada no Aproove</div>
+              <div style="padding:3px 0;border-bottom:0.5px solid var(--border)">5. Confirmação automática com registro formal</div>
+              <div style="padding:3px 0">6. Sequência numerada para múltiplas peças (1 de 3, 2 de 3…)</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Registro formal gerado</div>
+            <div style="font-family:'SF Mono',Consolas,monospace;font-size:10px;background:var(--bg2);padding:.625rem .75rem;border-radius:var(--r-md);color:var(--text2);line-height:1.6">
+              Aprovado via WhatsApp do contato<br>João Ferreira (+55 11 9xxxx-4321)<br>em 15/03/2026 às 10:45<br>Post Instagram Feed · v2<br>Campanha: Lançamento Verão 2026
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── NAVIGATION ──
+function nav(page, el) {
+  document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+}
+
+// ── APPROVAL FORMATS ──
+var AP_DATA = {
+  'ig-feed':  { net:'Instagram', nb:'#FDECEA', nc:'#B91C1C', fmt:'Feed 1:1',  recDate:'20/03/2026 às 10h00', recWhy:'Engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias.', bars:[40,100,72,88,65], iDate:'2026-03-20', iTime:'10:00', cDate:'2026-03-20', cTime:'10:00', cMsg:'Já existe um post de <b>Instagram Feed</b> agendado para <b>20/03/2026 às 10h00</b> ("Oferta relâmpago"). Dois posts simultâneos reduzem o alcance de ambos.' },
+  'ig-reels': { net:'Instagram', nb:'#FDECEA', nc:'#B91C1C', fmt:'Reels 9:16', recDate:'20/03/2026 às 18h00', recWhy:'Reels têm pico de visualização entre 18h–20h: 2,8× mais plays.', bars:[30,60,55,100,80], iDate:'2026-03-20', iTime:'18:00', cDate:null, cMsg:'' },
+  'ig-story': { net:'Instagram', nb:'#FDECEA', nc:'#B91C1C', fmt:'Story 9:16', recDate:'20/03/2026 às 09h00', recWhy:'Stories têm maior abertura entre 08h–10h, quando o público verifica o celular.', bars:[100,85,60,70,55], iDate:'2026-03-20', iTime:'09:00', cDate:null, cMsg:'' },
+  'linkedin': { net:'LinkedIn',  nb:'#DBEAFE', nc:'#1D4ED8', fmt:'Post feed',  recDate:'20/03/2026 às 08h00', recWhy:'LinkedIn tem maior engajamento entre 07h30–09h em dias úteis.', bars:[100,75,65,40,20], iDate:'2026-03-20', iTime:'08:00', cDate:'2026-03-20', cTime:'08:00', cMsg:'Já existe um post de <b>LinkedIn</b> agendado para <b>20/03/2026 às 08h00</b> ("Case de sucesso"). Considere espaçar ao menos 3h entre publicações.' },
+  'tiktok':   { net:'TikTok',    nb:'#F3F4F6', nc:'#111111', fmt:'Vídeo 9:16', recDate:'20/03/2026 às 19h00', recWhy:'TikTok tem pico de distribuição entre 19h–21h para este perfil (18–34 anos, BR).', bars:[20,35,50,85,100], iDate:'2026-03-20', iTime:'19:00', cDate:null, cMsg:'' }
+};
+var apCur = 'ig-feed', apDismissed = false;
+
+function buildPreview(fmt) {
+  var area = document.getElementById('ap-preview');
+  if (fmt === 'ig-feed') {
+    area.innerHTML = '<div class="phone-mock"><div class="pm-bar"><div class="pm-av" style="background:#FDECEA;color:#B91C1C">MK</div><div><div class="pm-name">marcaoficial</div><div class="pm-sub">São Paulo</div></div><div class="pm-more">···</div></div><div class="post-visual" style="aspect-ratio:1"><div class="post-inner"><div class="post-emoji">☀️</div><div class="post-ttl">Verão chegou.</div><div class="post-stl">Nova coleção disponível</div></div></div><div class="ig-actions"><span>♡</span><span>○</span><span>↗</span><span style="margin-left:auto">⊟</span></div><div class="ig-likes">1.284 curtidas</div><div class="post-caption"><span class="u">marcaoficial</span> Verão chegou e a nossa nova coleção também! Acesse o link na bio.<div class="tags">#verão2026 #moda #novacoleção</div></div><div class="post-date">Programado: <b>20/03/2026 às 10h00</b></div></div>';
+  } else if (fmt === 'ig-reels') {
+    area.innerHTML = '<div class="phone-mock"><div style="position:relative"><div class="post-visual dark-visual" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-emoji">🎬</div><div class="post-ttl" style="color:white">Reels · 15s</div><div class="post-stl" style="color:rgba(255,255,255,.6)">Verão chegou</div></div></div><div class="dark-caption"><div style="font-size:10px;color:white;font-weight:600;margin-bottom:2px">marcaoficial</div><div style="font-size:10px;color:rgba(255,255,255,.85);line-height:1.4">Verão chegou e a nossa nova coleção também! ☀️</div><div style="font-size:9px;color:rgba(255,255,255,.6);margin-top:2px">#verão2026 #moda</div></div><div class="dark-side"><div style="text-align:center"><div style="font-size:15px;color:white">♡</div><div style="font-size:9px;color:white">1,2k</div></div><div style="font-size:13px;color:white">○</div><div style="font-size:13px;color:white">↗</div></div></div><div class="post-date" style="background:var(--bg)">Programado: <b>20/03/2026 às 18h00</b></div></div>';
+  } else if (fmt === 'ig-story') {
+    area.innerHTML = '<div class="phone-mock"><div style="position:relative"><div class="post-visual dark-visual" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-emoji">☀️</div><div class="post-ttl" style="color:white;font-size:15px">Nova coleção</div><div class="post-stl" style="color:rgba(255,255,255,.8)">Verão chegou</div></div></div><div class="story-bars"><div class="story-bar" style="background:white"></div><div class="story-bar" style="background:rgba(255,255,255,.4)"></div><div class="story-bar" style="background:rgba(255,255,255,.4)"></div></div><div class="story-head"><div class="pm-av" style="width:20px;height:20px;font-size:8px;background:#FDECEA;color:#B91C1C;border:1.5px solid white">MK</div><div style="font-size:10px;color:white;font-weight:600">marcaoficial</div></div><div class="story-cta">Ver coleção</div></div><div class="post-date" style="background:var(--bg)">Programado: <b>20/03/2026 às 09h00</b> · <span style="color:var(--success-text)">Aprovado</span></div></div>';
+  } else if (fmt === 'linkedin') {
+    area.innerHTML = '<div class="phone-mock"><div class="pm-bar"><div class="pm-av" style="background:#DBEAFE;color:#1D4ED8;border-radius:4px">MK</div><div><div class="pm-name">Marca Oficial</div><div class="pm-sub">Moda · 12.400 seguidores</div></div><div class="pm-more">···</div></div><div class="post-caption" style="padding:8px 10px">Verão chegou e lançamos nossa nova coleção! Peças para o profissional que quer estilo e conforto. Confira nos comentários.</div><div class="post-visual" style="aspect-ratio:16/9"><div class="post-inner"><div class="post-emoji">☀️</div><div class="post-stl">Banner 1200×628</div></div></div><div style="padding:5px 10px;font-size:10px;color:var(--text2);border-top:0.5px solid var(--border)">👍 348 · 42 comentários · 18 compartilhamentos</div><div class="post-date">Programado: <b>20/03/2026 às 08h00</b></div></div>';
+  } else if (fmt === 'tiktok') {
+    area.innerHTML = '<div class="phone-mock"><div style="position:relative"><div class="post-visual dark-visual" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-emoji">☀️</div><div class="post-ttl" style="color:white">TikTok · 30s</div></div></div><div class="tk-tabs"><div style="font-size:10px;color:rgba(255,255,255,.6)">Seguindo</div><div style="font-size:10px;color:white;font-weight:600;border-bottom:1.5px solid white;padding-bottom:2px">Para você</div><div style="font-size:10px;color:rgba(255,255,255,.6)">Ao vivo</div></div><div class="dark-caption"><div style="font-size:10px;color:white;font-weight:600;margin-bottom:2px">@marcaoficial</div><div style="font-size:10px;color:rgba(255,255,255,.9);line-height:1.4">Verão chegou! ☀️ Corre ver as peças!</div><div style="font-size:9px;color:rgba(255,255,255,.6);margin-top:2px">#verão2026 #moda #fyp</div><div style="font-size:9px;color:white;margin-top:3px">♪ Música original</div></div><div class="dark-side"><div style="text-align:center"><div class="pm-av" style="width:24px;height:24px;font-size:9px;background:#FDECEA;color:#B91C1C;border:1.5px solid white">MK</div></div><div style="text-align:center"><div style="font-size:16px;color:white">♡</div><div style="font-size:9px;color:white">24k</div></div><div style="text-align:center"><div style="font-size:13px;color:white">○</div><div style="font-size:9px;color:white">891</div></div><div style="text-align:center"><div style="font-size:13px;color:white">↗</div></div></div></div><div class="post-date" style="background:var(--bg)">Programado: <b>20/03/2026 às 19h00</b></div></div>';
+  }
+}
+
+function swFmt(el) {
+  document.querySelectorAll('.fmt-item').forEach(function(i){ i.classList.remove('active'); });
+  el.classList.add('active');
+  apCur = el.getAttribute('data-fmt');
+  apDismissed = false;
+  var d = AP_DATA[apCur];
+  document.getElementById('ap-net').textContent = d.net;
+  document.getElementById('ap-net').style.background = d.nb;
+  document.getElementById('ap-net').style.color = d.nc;
+  document.getElementById('ap-fmt').textContent = d.fmt;
+  document.getElementById('ap-recdate').textContent = d.recDate;
+  document.getElementById('ap-recwhy').textContent = d.recWhy;
+  document.getElementById('ap-date').value = d.iDate;
+  document.getElementById('ap-time').value = d.iTime;
+  document.getElementById('ap-conflict').classList.remove('on');
+  document.getElementById('ap-result').style.display = 'none';
+  document.getElementById('ap-cmt').value = '';
+  for (var i = 0; i < 5; i++) {
+    document.getElementById('ap-b' + i).style.width = d.bars[i] + '%';
+    var p = document.getElementById('ap-p' + i);
+    p.textContent = d.bars[i] + '%';
+    p.style.color = d.bars[i] === 100 ? 'var(--success-text)' : 'var(--text2)';
+    p.style.fontWeight = d.bars[i] === 100 ? '700' : '400';
+  }
+  buildPreview(apCur);
+  apChk();
+}
+
+function apChk() {
+  if (apDismissed) return;
+  var d = AP_DATA[apCur];
+  if (!d.cDate) { document.getElementById('ap-conflict').classList.remove('on'); return; }
+  if (document.getElementById('ap-date').value === d.cDate && document.getElementById('ap-time').value === d.cTime) {
+    document.getElementById('ap-conflictmsg').innerHTML = d.cMsg;
+    document.getElementById('ap-conflict').classList.add('on');
+  } else {
+    document.getElementById('ap-conflict').classList.remove('on');
+  }
+}
+
+function apResolve(action) {
+  if (action === 'adj') {
+    var t = document.getElementById('ap-time');
+    var h = (parseInt(t.value.split(':')[0]) + 2) % 24;
+    t.value = (h < 10 ? '0' : '') + h + ':00';
+    apDismissed = false; apChk();
+  } else { apDismissed = true; document.getElementById('ap-conflict').classList.remove('on'); }
+}
+
+function apAct(type) {
+  var d = AP_DATA[apCur];
+  var dt = document.getElementById('ap-date').value.split('-').reverse().join('/');
+  var tm = document.getElementById('ap-time').value + 'h';
+  var cmt = document.getElementById('ap-cmt').value.trim();
+  var r = document.getElementById('ap-result');
+  r.className = 'result-banner';
+  if (type === 'adj' && !cmt) { r.classList.add('warn'); r.style.display = 'block'; document.getElementById('ap-rt').textContent = 'Comentário necessário'; document.getElementById('ap-rs').textContent = 'Descreva o que precisa ser ajustado.'; return; }
+  if (type === 'apr') { r.classList.add('suc'); document.getElementById('ap-rt').textContent = 'Aprovado — ' + d.fmt; document.getElementById('ap-rs').textContent = 'Agendado para ' + dt + ' às ' + tm; }
+  else if (type === 'adj') { r.classList.add('warn'); document.getElementById('ap-rt').textContent = 'Ajuste solicitado — ' + d.fmt; document.getElementById('ap-rs').textContent = 'Feedback enviado. Data sugerida: ' + dt + ' às ' + tm; }
+  else { r.classList.add('dan'); document.getElementById('ap-rt').textContent = 'Reprovado — ' + d.fmt; document.getElementById('ap-rs').textContent = 'Peça retornou ao time.'; }
+  r.style.display = 'block';
+}
+
+// ── CALENDAR ──
+var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var calYear = 2026, calMonth = 2;
+var CAL_POSTS = {
+  '2026-2-5':  [{ n:'IG Feed', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'10h00', status:'pub', camp:'Ofertas Fev' }],
+  '2026-2-10': [{ n:'LinkedIn', net:'LI', nb:'#DBEAFE', nc:'#1D4ED8', time:'08h00', status:'pub', camp:'Ofertas Fev' }, { n:'IG Story', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'09h00', status:'pub', camp:'Ofertas Fev' }],
+  '2026-2-18': [{ n:'TikTok', net:'TK', nb:'#F3F4F6', nc:'#333', time:'19h00', status:'pub', camp:'Carnaval 2026' }],
+  '2026-3-10': [{ n:'FB Post', net:'FB', nb:'#DBEAFE', nc:'#1D4ED8', time:'10h00', status:'pub', camp:'Ofertas Mar' }, { n:'IG Feed', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'12h00', status:'pub', camp:'Ofertas Mar' }],
+  '2026-3-15': [{ n:'IG Feed', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'10h00', status:'pend', camp:'Lançamento Verão' }, { n:'IG Reels', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'18h00', status:'pend', camp:'Lançamento Verão' }, { n:'LinkedIn', net:'LI', nb:'#DBEAFE', nc:'#1D4ED8', time:'08h00', status:'pend', camp:'Lançamento Verão' }],
+  '2026-3-20': [{ n:'IG Story', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'09h00', status:'apr', camp:'Lançamento Verão' }, { n:'IG Feed', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'10h00', status:'apr', camp:'Lançamento Verão' }, { n:'LinkedIn', net:'LI', nb:'#DBEAFE', nc:'#1D4ED8', time:'08h00', status:'apr', camp:'Lançamento Verão' }, { n:'IG Reels', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'18h00', status:'pend', camp:'Lançamento Verão' }],
+  '2026-3-25': [{ n:'TikTok', net:'TK', nb:'#F3F4F6', nc:'#333', time:'19h00', status:'pend', camp:'Black Friday' }, { n:'FB Post', net:'FB', nb:'#DBEAFE', nc:'#1D4ED8', time:'11h00', status:'pend', camp:'Black Friday' }],
+  '2026-4-3':  [{ n:'IG Feed', net:'IG', nb:'#FDECEA', nc:'#B91C1C', time:'10h00', status:'pend', camp:'Abril' }],
+  '2026-4-10': [{ n:'LinkedIn', net:'LI', nb:'#DBEAFE', nc:'#1D4ED8', time:'08h00', status:'pend', camp:'Abril' }, { n:'TikTok', net:'TK', nb:'#F3F4F6', nc:'#333', time:'19h00', status:'pend', camp:'Abril' }]
+};
+
+function renderCal() {
+  document.getElementById('cal-month').textContent = MONTHS[calMonth] + ' ' + calYear;
+  var g = document.getElementById('cal-grid'); g.innerHTML = '';
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(function(d){ var el = document.createElement('div'); el.className = 'cal-dow'; el.textContent = d; g.appendChild(el); });
+  var first = new Date(calYear, calMonth, 1).getDay();
+  var days = new Date(calYear, calMonth + 1, 0).getDate();
+  var today = new Date();
+  for (var i = 0; i < first; i++) { var e = document.createElement('div'); e.className = 'cal-cell empty'; g.appendChild(e); }
+  for (var d = 1; d <= days; d++) {
+    var cell = document.createElement('div'); cell.className = 'cal-cell';
+    var isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
+    if (isToday) cell.className += ' today';
+    var dn = document.createElement('div'); dn.className = 'cal-day-num'; dn.textContent = d; cell.appendChild(dn);
+    var key = calYear + '-' + calMonth + '-' + d;
+    var posts = CAL_POSTS[key] || []; var shown = 0;
+    posts.forEach(function(p){ if (shown >= 2) return; var pill = document.createElement('div'); pill.className = 'cal-pill ' + (p.status==='pub'?'cp-pub':p.status==='apr'?'cp-apr':'cp-pend'); pill.textContent = p.n; cell.appendChild(pill); shown++; });
+    if (posts.length > 2) { var m = document.createElement('div'); m.className = 'cp-more'; m.textContent = '+' + (posts.length - 2) + ' mais'; cell.appendChild(m); }
+    if (posts.length > 0) { (function(dd, kk){ cell.style.cursor='pointer'; cell.onclick = function(){ showDay(dd, kk); }; })(d, key); }
+    g.appendChild(cell);
+  }
+  document.getElementById('day-detail').classList.remove('on');
+}
+
+function showDay(d, key) {
+  var posts = CAL_POSTS[key] || [];
+  document.getElementById('dd-title').textContent = d + ' de ' + MONTHS[calMonth] + ' — ' + posts.length + ' publicação' + (posts.length > 1 ? 'ões' : '');
+  var items = document.getElementById('dd-items'); items.innerHTML = '';
+  posts.forEach(function(p) {
+    var sc = p.status==='pub'?'#639922':p.status==='apr'?'#378add':'#ba7517';
+    var sl = p.status==='pub'?'Publicado':p.status==='apr'?'Aprovado':'A aprovar';
+    var sp = p.status==='pub'?'pill-pub':p.status==='apr'?'pill-apr':'pill-pend';
+    var row = document.createElement('div'); row.className = 'dd-row';
+    row.innerHTML = '<div class="dot" style="background:' + sc + '"></div><div class="dd-net" style="background:' + p.nb + ';color:' + p.nc + '">' + p.net + '</div><div><div class="dd-name">' + p.n + '</div><div class="dd-sub">' + p.camp + '</div></div><div class="dd-time">' + p.time + '</div><span class="pill ' + sp + '">' + sl + '</span>';
+    items.appendChild(row);
+  });
+  document.getElementById('day-detail').classList.add('on');
+}
+
+function calNav(dir) { calMonth += dir; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
+
+// ── HISTORY FILTER ──
+function histFilter(type, btn) {
+  document.querySelectorAll('.hf').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.hist-item').forEach(function(e){ e.classList.toggle('hidden', type !== 'all' && e.getAttribute('data-type') !== type); });
+}
+
+// ── WHATSAPP SIMULATION ──
+var waPhase = 0;
+function waStep(action) {
+  var chat = document.getElementById('wa-chat');
+  function addMsg(cls, html) { var m = document.createElement('div'); m.className = 'wm ' + cls; m.innerHTML = html; chat.appendChild(m); chat.scrollTop = chat.scrollHeight; }
+  if (action === 'approve' && waPhase === 0) {
+    addMsg('usr', 'Aprovado ✅<div class="wm-time">10:45 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function(){ addMsg('bot', '✅ <strong>Instagram Feed aprovado.</strong><br><br>Registro: Aprovado via WhatsApp por João Ferreira em 15/03/2026 às 10:45.<br><br>Agendado para <strong>20/03/2026 às 10h00</strong>.<div class="wm-time">10:45 ✓✓</div>'); }, 400);
+    setTimeout(function(){ addMsg('bot', '<strong>2 de 3 — Instagram Reels</strong><div class="wm-link"><div class="wml-title">Reels 9:16 · 20/03 às 18h00</div><div class="wml-sub">Campanha: Lançamento Verão 2026</div><div class="wml-url">aproove.app/a/yT3nQ8</div></div><div class="wm-time">10:45 ✓✓</div>'); document.getElementById('wa-quick').innerHTML = '<button class="wq-btn" onclick="waStep(\'approve2\')">✅ Aprovar</button><button class="wq-btn" onclick="waStep(\'adjust2\')">✏️ Solicitar ajuste</button><button class="wq-btn" onclick="waStep(\'link\')">🔗 Ver mockup</button>'; }, 900); waPhase = 1;
+  } else if (action === 'approve2' && waPhase === 1) {
+    addMsg('usr', 'Aprovado ✅<div class="wm-time">10:47 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function(){ addMsg('bot', '✅ <strong>Instagram Reels aprovado.</strong><br>Agendado para 20/03/2026 às 18h00.<div class="wm-time">10:47 ✓✓</div>'); addMsg('bot', '<strong>3 de 3 — LinkedIn</strong><div class="wm-link"><div class="wml-title">Post feed · 20/03 às 08h00</div><div class="wml-sub">Campanha: Lançamento Verão 2026</div><div class="wml-url">aproove.app/a/zR5pL1</div></div><div class="wm-time">10:47 ✓✓</div>'); document.getElementById('wa-quick').innerHTML = '<button class="wq-btn" onclick="waStep(\'approve3\')">✅ Aprovar</button><button class="wq-btn" onclick="waStep(\'adjust3\')">✏️ Solicitar ajuste</button>'; }, 400); waPhase = 2;
+  } else if (action === 'approve3' && waPhase === 2) {
+    addMsg('usr', 'Aprovado ✅<div class="wm-time">10:49 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function(){ addMsg('bot', '✅ Tudo aprovado! As 3 peças foram agendadas.<br><br>Obrigado, João. Qualquer dúvida, é só responder aqui.<div class="wm-time">10:49 ✓✓</div>'); document.getElementById('wa-quick').innerHTML = '<span style="font-size:10px;color:#888;padding:4px 8px">Todas as peças respondidas ✓</span>'; }, 400); waPhase = 3;
+  } else if (action === 'adjust2' && waPhase === 1) {
+    addMsg('usr', 'O vídeo tá cortando no início, precisa ajustar<div class="wm-time">10:48 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function(){ addMsg('bot', '✏️ Feedback registrado:<br><em>"O vídeo tá cortando no início"</em><br><br>Time notificado. Assim que a v2 estiver pronta você recebe aqui.<div class="wm-time">10:48 ✓✓</div>'); document.getElementById('wa-quick').innerHTML = '<span style="font-size:10px;color:#888;padding:4px 8px">Aguardando nova versão do time</span>'; }, 400); waPhase = 3;
+  } else if (action === 'adjust3' && waPhase === 2) {
+    addMsg('usr', 'Precisa ajustar o texto — muito longo para LinkedIn<div class="wm-time">10:49 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function(){ addMsg('bot', '✏️ Feedback registrado para LinkedIn. Time notificado.<div class="wm-time">10:49 ✓✓</div>'); document.getElementById('wa-quick').innerHTML = '<span style="font-size:10px;color:#888;padding:4px 8px">Aguardando nova versão</span>'; }, 400); waPhase = 3;
+  } else if (action === 'link') {
+    addMsg('bot', 'Acesse o mockup completo aqui:<br><a href="#" style="color:#075e54;font-size:10px">aproove.app/a/xK9mP2</a><div class="wm-time">agora ✓✓</div>');
+  }
+}
+
+// ── INIT ──
+buildPreview('ig-feed');
+renderCal();
+</script>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Panorama de Investimento</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111110; --ink2: #4a4a47; --ink3: #9a9a96;
+  --paper: #faf9f6; --paper2: #f2f1ec; --paper3: #e8e7e0;
+  --line: rgba(17,17,16,0.08); --line2: rgba(17,17,16,0.15);
+  --green: #2a5f2a; --green-bg: #edf5ed;
+  --amber: #7a4a0a; --amber-bg: #fdf2e2;
+  --blue: #0d4a8a; --blue-bg: #e8f0fb;
+  --red: #8a1a1a; --red-bg: #fbeaea;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.65; }
+
+.doc-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,249,246,0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line2); padding: 0 2rem; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.doc-nav-brand { font-size: 13px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+.doc-nav-brand .mark { width: 22px; height: 22px; background: var(--ink); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; }
+.doc-nav-brand .mark svg { width: 12px; height: 12px; }
+.doc-nav-links { display: flex; gap: 1.5rem; }
+.doc-nav-links a { font-size: 12px; color: var(--ink3); text-decoration: none; transition: color .15s; }
+.doc-nav-links a:hover, .doc-nav-links a.active { color: var(--ink); }
+.doc-badge { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; background: var(--paper3); color: var(--ink2); padding: 3px 8px; border-radius: 4px; }
+
+.page { max-width: 860px; margin: 0 auto; padding: 80px 2rem 6rem; }
+
+.cover { padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 3rem; }
+.cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.cover-title { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; margin-bottom: .75rem; }
+.cover-sub { font-size: 16px; color: var(--ink2); font-weight: 300; max-width: 560px; line-height: 1.6; margin-bottom: 1.5rem; }
+.cover-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.cover-meta-item { font-size: 11px; color: var(--ink3); }
+.cover-meta-item strong { color: var(--ink2); font-weight: 500; }
+
+.section { margin-bottom: 3.5rem; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+.section-title { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin-bottom: .75rem; }
+.section-body { color: var(--ink2); max-width: 680px; }
+.section-body p { margin-bottom: .75rem; }
+
+/* SUMMARY CARDS */
+.summary-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.sum-card { padding: 1.25rem; background: var(--paper2); border: 1px solid var(--line); border-radius: 12px; }
+.sum-card .label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem; }
+.sum-card .value { font-size: 26px; font-weight: 700; letter-spacing: -.03em; font-family: 'DM Mono', monospace; margin-bottom: .25rem; }
+.sum-card .desc { font-size: 11px; color: var(--ink2); }
+.sum-card.total { background: var(--ink); border-color: var(--ink); }
+.sum-card.total .label { color: rgba(255,255,255,.45); }
+.sum-card.total .value { color: white; }
+.sum-card.total .desc { color: rgba(255,255,255,.6); }
+
+/* TABLES */
+.inv-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 13px; }
+.inv-table thead th { padding: .5rem .75rem; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--line2); }
+.inv-table thead th:last-child { text-align: right; }
+.inv-table tbody td { padding: .75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.inv-table tbody td:last-child { text-align: right; font-family: 'DM Mono', monospace; font-size: 12px; white-space: nowrap; }
+.inv-table tbody tr:last-child td { border-bottom: none; }
+.inv-table .subtotal td { font-weight: 600; border-top: 1px solid var(--line2); }
+.inv-table .category { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); padding: 1rem .75rem .35rem; border-bottom: none; }
+.inv-table .category td { padding-top: 1.25rem; color: var(--ink3); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+.badge-low { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: var(--green-bg); color: var(--green); }
+.badge-med { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: var(--amber-bg); color: var(--amber); }
+.badge-high { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; background: var(--red-bg); color: var(--red); }
+
+/* HIGHLIGHT */
+.highlight { background: var(--paper2); border: 1px solid var(--line2); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.highlight.green { background: var(--green-bg); border-color: rgba(42,95,42,.2); }
+.highlight.amber { background: var(--amber-bg); border-color: rgba(122,74,10,.2); }
+.highlight.blue { background: var(--blue-bg); border-color: rgba(13,74,138,.2); }
+.highlight-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+.highlight.green .highlight-label { color: var(--green); }
+.highlight.amber .highlight-label { color: var(--amber); }
+.highlight.blue .highlight-label { color: var(--blue); }
+.highlight-body { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.highlight-body strong { color: var(--ink); }
+
+/* BURN RATE */
+.burn-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.burn-card { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--line); background: var(--paper2); }
+.burn-card h4 { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.burn-line { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; border-bottom: 1px solid var(--line); font-size: 12px; }
+.burn-line:last-child { border-bottom: none; }
+.burn-line .burn-label { color: var(--ink2); }
+.burn-line .burn-val { font-family: 'DM Mono', monospace; font-size: 11px; }
+.burn-total-line { display: flex; justify-content: space-between; align-items: center; padding: .75rem 0 0; margin-top: .25rem; font-weight: 600; font-size: 13px; }
+.burn-total-line .burn-val { font-family: 'DM Mono', monospace; }
+
+.doc-footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.doc-footer-left { font-size: 11px; color: var(--ink3); }
+.doc-footer-right { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+@media (max-width: 640px) {
+  .summary-row, .burn-row { grid-template-columns: 1fr; }
+  .cover-title { font-size: 28px; }
+  .doc-nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="doc-nav">
+  <div class="doc-nav-brand">
+    <span class="mark"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    Aproove
+  </div>
+  <nav class="doc-nav-links">
+    <a href="conceito.html">Conceito</a>
+    <a href="investimento.html" class="active">Investimento</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="modelo_negocio.html">Modelo de Negócio</a>
+  </nav>
+  <span class="doc-badge">DOCUMENTAÇÃO INTERNA</span>
+</nav>
+
+<main class="page">
+
+  <div class="cover">
+    <div class="cover-tag">Panorama de Investimento · Versão 1.0</div>
+    <h1 class="cover-title">Investimento</h1>
+    <p class="cover-sub">Tudo o que foi investido para o Aproove chegar até aqui, e tudo o que será necessário para escalar com controle e sustentabilidade.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>Fase atual</strong> · Conceito / Proto-produto</div>
+      <div class="cover-meta-item"><strong>Atualizado</strong> · Março 2026</div>
+      <div class="cover-meta-item"><strong>Base</strong> · Estimativas conservadoras em R$</div>
+    </div>
+  </div>
+
+  <!-- RESUMO EXECUTIVO -->
+  <div class="section">
+    <div class="section-label">Resumo Executivo</div>
+    <div class="summary-row">
+      <div class="sum-card">
+        <div class="label">Investido até hoje</div>
+        <div class="value">R$ 7.850</div>
+        <div class="desc">Equivalente em horas e ferramentas — fase conceito</div>
+      </div>
+      <div class="sum-card">
+        <div class="label">Para lançar o MVP</div>
+        <div class="value">R$ 45.000</div>
+        <div class="desc">Desenvolvimento + infra + marketing inicial (3 meses)</div>
+      </div>
+      <div class="sum-card total">
+        <div class="label">Total até tração</div>
+        <div class="value">R$ 80.000</div>
+        <div class="desc">Estimativa para 6 meses até break-even operacional</div>
+      </div>
+    </div>
+
+    <div class="highlight amber">
+      <div class="highlight-label">Nota metodológica</div>
+      <div class="highlight-body">Os valores de "horas investidas" são calculados com base em tarifas de mercado para cada tipo de trabalho (IA/consultoria: R$150/h, design: R$80/h, estratégia: R$120/h). O objetivo não é registrar custo contábil, mas <strong>entender o valor real gerado</strong> e o que seria necessário replicar com profissionais externos.</div>
+    </div>
+  </div>
+
+  <!-- INVESTIDO ATÉ HOJE -->
+  <div class="section">
+    <div class="section-label">01 · Investido até hoje — Fase Conceito</div>
+    <h2 class="section-title">O que já existe tem valor</h2>
+    <div class="section-body">
+      <p>Antes de uma linha de código ser escrita no backend, uma quantidade significativa de trabalho intelectual e de prototipagem já foi realizada. Este é o inventário real do que existe.</p>
+    </div>
+
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Descrição</th>
+          <th>Horas est.</th>
+          <th>Valor est.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="category"><td colspan="4">Estratégia e Conceito</td></tr>
+        <tr>
+          <td><strong>Definição do produto</strong></td>
+          <td>Problema, solução, público, diferencial, posicionamento</td>
+          <td>8h</td>
+          <td>R$ 960</td>
+        </tr>
+        <tr>
+          <td><strong>Modelo de negócio</strong></td>
+          <td>Planos, preços, CAC, LTV, projeções, métricas</td>
+          <td>6h</td>
+          <td>R$ 720</td>
+        </tr>
+        <tr>
+          <td><strong>Arquitetura técnica</strong></td>
+          <td>Stack, data models, fluxos, LGPD, roles, integrações</td>
+          <td>5h</td>
+          <td>R$ 750</td>
+        </tr>
+        <tr class="category"><td colspan="4">Design e Prototipagem</td></tr>
+        <tr>
+          <td><strong>Landing page</strong></td>
+          <td>Design completo em HTML (conceito, copy, visual)</td>
+          <td>8h</td>
+          <td>R$ 640</td>
+        </tr>
+        <tr>
+          <td><strong>Portal da agência</strong></td>
+          <td>Dashboard, sidebar, gestão de campanhas e peças</td>
+          <td>12h</td>
+          <td>R$ 960</td>
+        </tr>
+        <tr>
+          <td><strong>Portal do cliente</strong></td>
+          <td>Tela de aprovação, mockup visual, histórico</td>
+          <td>10h</td>
+          <td>R$ 800</td>
+        </tr>
+        <tr>
+          <td><strong>Área do gestor</strong></td>
+          <td>Visão consolidada de campanhas e equipe</td>
+          <td>8h</td>
+          <td>R$ 640</td>
+        </tr>
+        <tr>
+          <td><strong>Mockup multi-formato</strong></td>
+          <td>Simulações de Instagram, LinkedIn, TikTok, Facebook</td>
+          <td>5h</td>
+          <td>R$ 400</td>
+        </tr>
+        <tr class="category"><td colspan="4">Documentação</td></tr>
+        <tr>
+          <td><strong>Documento técnico mestre</strong></td>
+          <td>Spec completo com fluxos, dados, integrações</td>
+          <td>6h</td>
+          <td>R$ 480</td>
+        </tr>
+        <tr>
+          <td><strong>Prompt de desenvolvimento</strong></td>
+          <td>Prompt detalhado para construção do MVP</td>
+          <td>4h</td>
+          <td>R$ 480</td>
+        </tr>
+        <tr>
+          <td><strong>DOCUMENTAÇÃO inicial</strong></td>
+          <td>Conceito, investimento, roadmap, modelo de negócio</td>
+          <td>5h</td>
+          <td>R$ 600</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="2"><strong>TOTAL FASE CONCEITO</strong></td>
+          <td><strong>77h</strong></td>
+          <td><strong>R$ 7.430</strong></td>
+        </tr>
+        <tr>
+          <td colspan="2">Ferramentas e domínio (Claude AI, domínio)</td>
+          <td>—</td>
+          <td>R$ 420</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="2"><strong>TOTAL INVESTIDO ATÉ HOJE</strong></td>
+          <td>—</td>
+          <td><strong>R$ 7.850</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PARA CONSTRUIR O MVP -->
+  <div class="section">
+    <div class="section-label">02 · Para construir e lançar o MVP</div>
+    <h2 class="section-title">Investimento para os primeiros 3 meses</h2>
+    <div class="section-body">
+      <p>O MVP funcional precisa de: desenvolvimento backend + frontend, infraestrutura de produção, e as primeiras ações de marketing para chegar aos primeiros clientes pagantes.</p>
+    </div>
+
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th>Descrição</th>
+          <th>Custo mensal</th>
+          <th>3 meses</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="category"><td colspan="4">Desenvolvimento</td></tr>
+        <tr>
+          <td><strong>Dev Full-stack</strong> <span class="badge-high">essencial</span></td>
+          <td>1 desenvolvedor sênior (React + Node + Supabase), ~160h/mês</td>
+          <td>R$ 10.000</td>
+          <td>R$ 30.000</td>
+        </tr>
+        <tr class="category"><td colspan="4">Infraestrutura</td></tr>
+        <tr>
+          <td><strong>Hosting</strong> <span class="badge-low">baixo</span></td>
+          <td>Vercel Pro ou Render (frontend + backend)</td>
+          <td>R$ 120</td>
+          <td>R$ 360</td>
+        </tr>
+        <tr>
+          <td><strong>Database</strong> <span class="badge-low">baixo</span></td>
+          <td>Supabase Pro (PostgreSQL + Auth + Storage)</td>
+          <td>R$ 140</td>
+          <td>R$ 420</td>
+        </tr>
+        <tr>
+          <td><strong>Storage de arquivos</strong> <span class="badge-low">baixo</span></td>
+          <td>Cloudinary ou Supabase Storage (artes, vídeos)</td>
+          <td>R$ 200</td>
+          <td>R$ 600</td>
+        </tr>
+        <tr>
+          <td><strong>Email transacional</strong> <span class="badge-low">baixo</span></td>
+          <td>Resend ou Sendgrid (notificações de aprovação)</td>
+          <td>R$ 50</td>
+          <td>R$ 150</td>
+        </tr>
+        <tr>
+          <td><strong>Domínio + SSL</strong> <span class="badge-low">baixo</span></td>
+          <td>aproove.com.br (registro anual)</td>
+          <td>R$ 15</td>
+          <td>R$ 45</td>
+        </tr>
+        <tr class="category"><td colspan="4">Marketing e Aquisição</td></tr>
+        <tr>
+          <td><strong>Meta Ads</strong> <span class="badge-med">médio</span></td>
+          <td>Campanhas de awareness e conversão para agências</td>
+          <td>R$ 1.500</td>
+          <td>R$ 4.500</td>
+        </tr>
+        <tr>
+          <td><strong>LinkedIn Ads</strong> <span class="badge-med">médio</span></td>
+          <td>Segmentação por cargo: gerente de marketing, dono de agência</td>
+          <td>R$ 800</td>
+          <td>R$ 2.400</td>
+        </tr>
+        <tr>
+          <td><strong>Conteúdo / SEO</strong> <span class="badge-med">médio</span></td>
+          <td>Blog, landing pages, estratégia orgânica</td>
+          <td>R$ 500</td>
+          <td>R$ 1.500</td>
+        </tr>
+        <tr class="category"><td colspan="4">Operacional</td></tr>
+        <tr>
+          <td><strong>Ferramentas</strong> <span class="badge-low">baixo</span></td>
+          <td>Claude AI, Figma, Linear, Notion, etc.</td>
+          <td>R$ 350</td>
+          <td>R$ 1.050</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="2"><strong>TOTAL PARA MVP (3 meses)</strong></td>
+          <td><strong>~R$ 13.675/mês</strong></td>
+          <td><strong>R$ 41.025</strong></td>
+        </tr>
+        <tr>
+          <td colspan="2">Reserva de contingência (10%)</td>
+          <td>—</td>
+          <td>R$ 4.103</td>
+        </tr>
+        <tr class="subtotal">
+          <td colspan="2"><strong>TOTAL COM RESERVA</strong></td>
+          <td>—</td>
+          <td><strong>R$ 45.128</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BURN RATE PÓS-LANÇAMENTO -->
+  <div class="section">
+    <div class="section-label">03 · Após o lançamento — Burn rate mensal</div>
+    <h2 class="section-title">Custo recorrente operacional</h2>
+    <div class="section-body">
+      <p>Uma vez lançado, estes são os custos mensais para manter e escalar a plataforma. O objetivo é atingir break-even operacional em até 6 meses após o lançamento.</p>
+    </div>
+
+    <div class="burn-row">
+      <div class="burn-card">
+        <h4>Fase Lançamento (M1–M3)</h4>
+        <div class="burn-line"><span class="burn-label">Desenvolvimento (1 dev)</span><span class="burn-val">R$ 10.000</span></div>
+        <div class="burn-line"><span class="burn-label">Infraestrutura</span><span class="burn-val">R$ 525</span></div>
+        <div class="burn-line"><span class="burn-label">Marketing</span><span class="burn-val">R$ 2.800</span></div>
+        <div class="burn-line"><span class="burn-label">Ferramentas e operacional</span><span class="burn-val">R$ 350</span></div>
+        <div class="burn-total-line"><span>Total mensal</span><span class="burn-val">R$ 13.675</span></div>
+      </div>
+      <div class="burn-card">
+        <h4>Fase Crescimento (M4–M12)</h4>
+        <div class="burn-line"><span class="burn-label">Dev sênior + 1 suporte</span><span class="burn-val">R$ 16.000</span></div>
+        <div class="burn-line"><span class="burn-label">Infraestrutura (escala)</span><span class="burn-val">R$ 1.200</span></div>
+        <div class="burn-line"><span class="burn-label">Marketing (acelerado)</span><span class="burn-val">R$ 5.000</span></div>
+        <div class="burn-line"><span class="burn-label">CS / Suporte</span><span class="burn-val">R$ 2.500</span></div>
+        <div class="burn-line"><span class="burn-label">Ferramentas e operacional</span><span class="burn-val">R$ 600</span></div>
+        <div class="burn-total-line"><span>Total mensal</span><span class="burn-val">R$ 25.300</span></div>
+      </div>
+    </div>
+
+    <div class="highlight green">
+      <div class="highlight-label">Break-even operacional</div>
+      <div class="highlight-body">
+        Com burn rate de R$ 13.675/mês na fase de lançamento, o break-even é atingido com <strong>~46 clientes no plano Pro (R$ 297/mês)</strong> ou <strong>~20 clientes no plano Business (R$ 697/mês)</strong>. A meta é atingir break-even operacional até o 6º mês pós-lançamento.
+      </div>
+    </div>
+  </div>
+
+  <!-- PROVISÕES DE ESCALA -->
+  <div class="section">
+    <div class="section-label">04 · Provisões para escala</div>
+    <h2 class="section-title">O que será necessário ao crescer</h2>
+
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Gatilho de escala</th>
+          <th>Custo estimado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Storage adicional</strong></td>
+          <td>Ao atingir 500 campanhas ativas / mês</td>
+          <td>+R$ 500–1.200/mês</td>
+        </tr>
+        <tr>
+          <td><strong>CDN dedicada</strong></td>
+          <td>Ao ter clientes fora do Brasil</td>
+          <td>+R$ 300–800/mês</td>
+        </tr>
+        <tr>
+          <td><strong>2º desenvolvedor</strong></td>
+          <td>Ao atingir 100 clientes ativos</td>
+          <td>+R$ 8.000/mês</td>
+        </tr>
+        <tr>
+          <td><strong>Customer Success</strong></td>
+          <td>Ao atingir 50 clientes pagantes</td>
+          <td>R$ 2.500–4.000/mês</td>
+        </tr>
+        <tr>
+          <td><strong>Gerente de marketing</strong></td>
+          <td>Ao atingir R$ 30k MRR</td>
+          <td>R$ 4.000–6.000/mês</td>
+        </tr>
+        <tr>
+          <td><strong>Integração APIs sociais</strong></td>
+          <td>Ao validar demanda (Fase 2)</td>
+          <td>R$ 15.000–30.000 (dev)</td>
+        </tr>
+        <tr>
+          <td><strong>App mobile</strong></td>
+          <td>Ao atingir R$ 50k MRR</td>
+          <td>R$ 40.000–80.000 (dev)</td>
+        </tr>
+        <tr>
+          <td><strong>Infraestrutura enterprise</strong></td>
+          <td>Clientes >1.000 usuários ativos</td>
+          <td>+R$ 2.000–5.000/mês</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-left">Aproove · Documento Interno · Panorama de Investimento · Atualizado Março 2026</div>
+    <div class="doc-footer-right">v0.0.1</div>
+  </footer>
+
+</main>
+</body>
+</html>

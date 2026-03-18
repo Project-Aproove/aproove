@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Portal do Gestor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f5f1;--bg2:#edecea;--bg3:#e2e0d8;
+  --surface:#fff;--ink:#181816;--ink2:#545450;--ink3:#98988f;
+  --border:rgba(24,24,22,.09);--border2:rgba(24,24,22,.17);
+  --green:#2a5f2a;--gbg:#edf5ed;--gbd:rgba(42,95,42,.22);
+  --amber:#7a4a0a;--abg:#fdf2e2;--abd:rgba(122,74,10,.22);
+  --blue:#0d4a8a;--bbg:#e8f0fb;--bbd:rgba(13,74,138,.22);
+  --red:#8a1a1a;--rbg:#fbeaea;--rbd:rgba(138,26,26,.22);
+  --purple:#4a2d8a;--pbg:#f0eafb;--pbd:rgba(74,45,138,.22);
+  --teal:#0a6a5a;--tbg:#e2f5f1;--tbd:rgba(10,106,90,.22);
+  --r:9px;--rlg:14px;--rxl:20px;
+  --shadow:0 1px 3px rgba(0,0,0,.05),0 2px 8px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--ink);line-height:1.5;overflow:hidden;height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+
+.shell{display:flex;height:100vh}
+
+/* ── SIDEBAR ── */
+.sb{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-brand{padding:.875rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sb-mark{width:26px;height:26px;border-radius:6px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-mark svg{width:14px;height:14px}
+.sb-wm{font-size:14px;font-weight:600;letter-spacing:-.02em}
+.sb-wl{font-size:9px;color:var(--ink3)}
+.sb-user{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.sb-av{width:26px;height:26px;border-radius:50%;background:var(--bbg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;border:1px solid var(--bbd)}
+.sb-un{font-size:12px;font-weight:500}
+.sb-ur{font-size:10px;color:var(--ink3)}
+.sb-nav{flex:1;overflow-y:auto;padding:.25rem 0}
+.sb-sec{padding:.5rem 1rem .15rem;font-size:9.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
+.sb-it{display:flex;align-items:center;gap:8px;padding:6.5px 1rem;font-size:12px;color:var(--ink2);cursor:pointer;border-left:2px solid transparent;transition:all .11s;position:relative}
+.sb-it:hover{background:var(--bg);color:var(--ink)}
+.sb-it.on{background:var(--bg);color:var(--ink);border-left-color:var(--ink);font-weight:500}
+.sb-ico{width:14px;text-align:center;flex-shrink:0;font-size:12px}
+.sb-bd{margin-left:auto;font-size:9px;font-weight:700;padding:1px 5px;border-radius:9px}
+.bd-amber{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.bd-blue{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)}
+.bd-green{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.bd-red{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.sb-footer{padding:.75rem 1rem;border-top:1px solid var(--border)}
+.sb-plan{font-size:10px;color:var(--ink3)}
+.sb-plan strong{display:block;font-size:11px;color:var(--ink2);font-weight:500}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+.page{display:none;padding:1.5rem 1.75rem;animation:fi .16s ease}
+.page.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.ph h1{font-size:19px;font-weight:600;letter-spacing:-.025em;margin-bottom:2px}
+.ph p{font-size:12px;color:var(--ink2)}
+.ph-acts{display:flex;gap:.375rem;flex-wrap:wrap}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:.875rem 1.125rem;margin-bottom:.625rem}
+.ct{font-size:11.5px;font-weight:600;color:var(--ink);margin-bottom:.625rem;letter-spacing:.01em}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:.625rem;margin-bottom:.625rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.625rem;margin-bottom:.625rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.625rem;margin-bottom:.625rem}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:.625rem;margin-bottom:.625rem}
+
+/* METRICS */
+.met{background:var(--bg2);border-radius:var(--r);padding:.625rem .875rem;border:1px solid var(--border)}
+.met .ml{font-size:10.5px;color:var(--ink2);margin-bottom:2px;font-weight:500}
+.met .mv{font-size:22px;font-weight:600;letter-spacing:-.03em}
+.met .ms{font-size:10px;color:var(--ink3);margin-top:1px}
+.met.good .mv{color:var(--green)}.met.warn .mv{color:var(--amber)}.met.danger .mv{color:var(--red)}
+.met.hi{background:var(--gbg);border-color:var(--gbd)}.met.hi .ml,.met.hi .mv,.met.hi .ms{color:var(--green)}
+
+/* PILLS */
+.pill{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.02em;white-space:nowrap}
+.pl-pub{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)}
+.pl-apr{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.pl-pend{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.pl-adj{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.pl-rej{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.pl-prod{background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+.pl-brief{background:var(--bg2);color:var(--ink2);border:1px solid var(--border2)}
+.pl-teal{background:var(--tbg);color:var(--teal);border:1px solid var(--tbd)}
+
+/* BUTTONS */
+.btn{padding:7px 14px;font-size:12px;border-radius:var(--r);cursor:pointer;font-family:inherit;font-weight:500;transition:all .11s;letter-spacing:.01em;display:inline-flex;align-items:center;gap:5px}
+.btn-p{background:var(--ink);color:#fff;border:none}.btn-p:hover{opacity:.84}
+.btn-s{background:var(--surface);color:var(--ink);border:1px solid var(--border2)}.btn-s:hover{background:var(--bg2)}
+.btn-g{background:var(--green);color:#fff;border:none}.btn-g:hover{opacity:.85}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10px}
+
+/* IB */
+.ib{border-radius:var(--r);padding:.5rem .75rem;font-size:11.5px;line-height:1.55;margin-bottom:.625rem}
+.ib-suc{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.ib-warn{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.ib-info{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)}
+.ib-purple{background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+.ib-neutral{background:var(--bg2);color:var(--ink2);border:1px solid var(--border)}
+.ib-teal{background:var(--tbg);color:var(--teal);border:1px solid var(--tbd)}
+
+/* ALERT */
+.alert{background:var(--abg);border:1px solid var(--abd);border-radius:var(--rlg);padding:.625rem 1rem;margin-bottom:.875rem;display:flex;align-items:center;gap:.625rem}
+.al-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.al-txt{font-size:12px;color:var(--amber);flex:1}.al-txt strong{font-weight:600}
+
+/* ROW */
+.row{display:flex;align-items:center;gap:.5rem;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:12px}
+.row:last-child{border-bottom:none}
+.ri{flex:1;min-width:0}.rt{font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rs{font-size:11px;color:var(--ink2)}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ntag{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0}
+
+/* TOAST */
+.toast{display:none;position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 20px;border-radius:100px;font-size:12.5px;font-weight:500;z-index:999;white-space:nowrap;animation:su .2s ease}
+@keyframes su{from{opacity:0;transform:translateX(-50%) translateY(6px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ══════════════════════════
+   TEAM DASHBOARD
+══════════════════════════ */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem;margin-bottom:.875rem}
+.tm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;transition:border-color .12s,box-shadow .12s}
+.tm-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.tm-head{padding:.75rem 1rem;display:flex;align-items:center;gap:.625rem;border-bottom:1px solid var(--border)}
+.tm-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.tm-name{font-size:13px;font-weight:500;color:var(--ink)}
+.tm-role{font-size:10.5px;color:var(--ink3)}
+.tm-status{margin-left:auto;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.ts-free{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.ts-busy{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.ts-full{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.tm-body{padding:.75rem 1rem}
+.cap-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.cap-label{font-size:10.5px;color:var(--ink2);min-width:80px}
+.cap-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.cap-fill{height:5px;border-radius:3px;transition:width .4s ease}
+.cap-val{font-size:10.5px;font-weight:500;width:28px;text-align:right}
+.tm-tasks{margin-top:.5rem}
+.tm-task-row{display:flex;align-items:center;gap:.375rem;padding:3px 0;border-bottom:1px solid var(--border);font-size:11px}
+.tm-task-row:last-child{border-bottom:none}
+.tm-task-name{flex:1;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm-task-time{color:var(--ink3);flex-shrink:0;font-family:'DM Mono',monospace;font-size:10px}
+.tm-foot{padding:.5rem 1rem;border-top:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.tm-avg{font-size:10.5px;color:var(--ink2)}.tm-avg strong{color:var(--ink);font-weight:600}
+
+/* REDESIGN MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal{background:var(--surface);border-radius:var(--rxl);border:1px solid var(--border2);padding:1.5rem;width:460px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.modal-title{font-size:15px;font-weight:600;letter-spacing:-.02em;margin-bottom:1rem;color:var(--ink)}
+.modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:var(--ink3);line-height:1}
+
+/* TIME ANALYTICS */
+.ta-row{display:flex;align-items:center;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:12px}
+.ta-row:last-child{border-bottom:none}
+.ta-type{flex:1;color:var(--ink2)}
+.ta-bar-wrap{width:120px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.ta-bar{height:6px;border-radius:3px;background:var(--blue)}
+.ta-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);min-width:44px;text-align:right}
+.ta-trend{font-size:10px;min-width:30px;text-align:right}
+
+/* ══════════════════════════
+   REPORTS + REQUESTS
+══════════════════════════ */
+.req-entry{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:.875rem 1.125rem;margin-bottom:.5rem;display:flex;gap:.75rem;transition:border-color .12s;cursor:pointer}
+.req-entry:hover{border-color:var(--border2)}
+.re-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.re-body{flex:1;min-width:0}
+.re-title{font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.re-meta{font-size:11px;color:var(--ink2);line-height:1.4}
+.re-right{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+
+/* INLINE EDITOR */
+.inline-edit{background:var(--bg);border:1px solid var(--border2);border-radius:var(--rlg);padding:.875rem 1.125rem;margin-top:.5rem;display:none}
+.inline-edit.on{display:block}
+.ie-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:4px}
+.ie-textarea{width:100%;padding:7px 9px;font-size:12px;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--ink);font-family:inherit;resize:none;min-height:64px}
+.ie-textarea:focus{outline:none;border-color:var(--ink)}
+
+/* REPORT */
+.kbar-outer{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:3px}
+.kbar{height:5px;border-radius:3px}
+.chart-row{display:flex;align-items:center;gap:8px;font-size:11.5px;margin-bottom:4px}
+.cl{width:68px;flex-shrink:0;color:var(--ink2);text-align:right}
+.ct-wrap{flex:1;height:16px;background:var(--bg2);border-radius:var(--r);overflow:hidden}
+.ct-fill{height:16px;border-radius:var(--r);display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9.5px;font-weight:600;color:#fff;min-width:24px}
+.cv{width:36px;text-align:right;font-weight:500;font-size:11.5px}
+.ai-block{border-radius:var(--rlg);padding:.875rem 1.125rem;margin-bottom:.5rem;border-left:3px solid}
+.ai-g{background:var(--gbg);border-color:var(--green)}.ai-w{background:var(--abg);border-color:var(--amber)}.ai-t{background:var(--pbg);border-color:var(--purple)}
+.ai-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.ai-g .ai-lbl{color:var(--green)}.ai-w .ai-lbl{color:var(--amber)}.ai-t .ai-lbl{color:var(--purple)}
+.ai-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.ai-body{font-size:11.5px;color:var(--ink2);line-height:1.6}
+.ai-btn{display:inline-block;margin-top:.375rem;font-size:10.5px;font-weight:500;padding:2px 9px;border-radius:20px;cursor:pointer;border:none;font-family:inherit}
+.ai-g .ai-btn{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.ai-w .ai-btn{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.ai-t .ai-btn{background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+
+/* ══════════════════════════
+   PROPOSAL GENERATOR
+══════════════════════════ */
+.step-bar{display:flex;margin-bottom:1.25rem}
+.step-w{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.step-w::after{content:'';position:absolute;top:12px;left:50%;width:100%;height:1px;background:var(--border);z-index:0}
+.step-w:last-child::after{display:none}
+.step-n{width:24px;height:24px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--ink2);position:relative;z-index:1;transition:all .18s;font-family:'DM Mono',monospace}
+.step-n.act{background:var(--ink);color:#fff;border-color:var(--ink)}
+.step-n.done{background:var(--gbg);color:var(--green);border-color:var(--gbd)}
+.step-l{font-size:9.5px;color:var(--ink3);margin-top:3px}
+.fs{display:none}.fs.on{display:block}
+.frow{display:flex;flex-direction:column;gap:3px;margin-bottom:.625rem}
+.frow label{font-size:10.5px;font-weight:500;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.frow input,.frow select,.frow textarea{padding:7px 9px;font-size:12.5px;border:1px solid var(--border2);border-radius:var(--r);background:var(--surface);color:var(--ink);font-family:inherit;width:100%}
+.frow input:focus,.frow select:focus,.frow textarea:focus{outline:none;border-color:var(--ink)}
+.frow textarea{resize:none;min-height:72px}
+
+/* PROPOSAL PREVIEW */
+.prop-preview{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rxl);overflow:hidden;box-shadow:var(--shadow)}
+.pp-header{background:var(--ink);padding:1.5rem 2rem;color:#fff}
+.pp-logo{font-size:18px;font-weight:600;letter-spacing:-.02em;margin-bottom:.25rem;opacity:.9}
+.pp-subtitle{font-size:12px;opacity:.5}
+.pp-title{font-size:22px;font-weight:600;letter-spacing:-.03em;margin:1rem 0 .375rem}
+.pp-client-name{font-size:14px;opacity:.7}
+.pp-body{padding:1.5rem 2rem}
+.pp-section{margin-bottom:1.25rem}
+.pp-sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.5rem}
+.pp-service-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem .75rem;background:var(--bg);border-radius:var(--r);margin-bottom:.25rem;font-size:12.5px}
+.pp-service-name{color:var(--ink);font-weight:500}
+.pp-service-price{color:var(--green);font-weight:600;font-family:'DM Mono',monospace}
+.pp-total{background:var(--ink);color:#fff;border-radius:var(--rlg);padding:.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
+.pp-total-label{font-size:13px;font-weight:500}
+.pp-total-val{font-size:20px;font-weight:600;letter-spacing:-.03em;font-family:'DM Mono',monospace}
+.pp-link-bar{background:var(--bg2);border-top:1px solid var(--border);padding:.75rem 1.25rem;display:flex;align-items:center;gap:.625rem}
+.pp-link-url{flex:1;font-size:11px;color:var(--blue);font-family:'DM Mono',monospace;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:5px 9px}
+
+/* ══════════════════════════
+   ADD CLIENT
+══════════════════════════ */
+.client-form-grid{display:grid;grid-template-columns:1fr 300px;gap:1rem;align-items:start}
+.net-grid{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px}
+.net-opt{padding:4px 11px;font-size:11.5px;border:1px solid var(--border2);border-radius:var(--r);cursor:pointer;background:var(--surface);color:var(--ink2);transition:all .11s;user-select:none}
+.net-opt:hover{border-color:var(--ink);color:var(--ink)}
+.net-opt.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.access-row{display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.access-row:last-child{border-bottom:none}
+.ar-lbl{font-size:12.5px;font-weight:500;color:var(--ink)}
+.ar-sub{font-size:11px;color:var(--ink2)}
+.toggle{width:32px;height:18px;border-radius:9px;background:var(--bg3);position:relative;cursor:pointer;transition:background .14s;flex-shrink:0;border:1px solid var(--border2)}
+.toggle.on{background:var(--green);border-color:var(--green)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .14s;box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.toggle.on::after{transform:translateX(14px)}
+
+/* ══════════════════════════
+   COMMERCIAL PRESENTATION
+══════════════════════════ */
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;margin-bottom:.875rem}
+.mod-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.125rem;cursor:pointer;transition:all .14s;position:relative;overflow:hidden}
+.mod-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mod-card.selected{border:2px solid var(--ink)}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mod-card.c1::before{background:var(--green)}.mod-card.c2::before{background:var(--blue)}.mod-card.c3::before{background:var(--purple)}.mod-card.c4::before{background:var(--amber)}.mod-card.c5::before{background:var(--teal)}.mod-card.c6::before{background:var(--red)}
+.mod-icon{font-size:22px;margin-bottom:.5rem}
+.mod-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.25rem;letter-spacing:-.01em}
+.mod-desc{font-size:11.5px;color:var(--ink2);line-height:1.55;margin-bottom:.625rem}
+.mod-benefits{display:flex;flex-direction:column;gap:3px}
+.mb-item{font-size:11px;color:var(--ink2);display:flex;gap:5px}
+.mb-item::before{content:'—';color:var(--border2);flex-shrink:0}
+.mod-price-tag{display:inline-block;margin-top:.625rem;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--bg2);color:var(--ink3);border:1px solid var(--border)}
+
+/* COMMERCIAL DECK */
+.deck-slide{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rxl);overflow:hidden;margin-bottom:.75rem;box-shadow:var(--shadow)}
+.ds-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border)}
+.ds-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.375rem}
+.ds-title{font-size:18px;font-weight:600;letter-spacing:-.025em;color:var(--ink);margin-bottom:.25rem}
+.ds-sub{font-size:12.5px;color:var(--ink2)}
+.ds-body{padding:1.25rem 1.5rem}
+.ds-feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.625rem}
+.ds-feat{background:var(--bg2);border-radius:var(--r);padding:.625rem .75rem;border:1px solid var(--border)}
+.dsf-icon{font-size:16px;margin-bottom:3px}
+.dsf-name{font-size:11.5px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.dsf-text{font-size:10.5px;color:var(--ink2);line-height:1.4}
+
+/* ══════════════════════════
+   WHITE LABEL
+══════════════════════════ */
+.wl-config{display:grid;grid-template-columns:1fr 320px;gap:1rem;align-items:start}
+.wl-preview-phone{background:var(--bg3);border-radius:22px;padding:7px;border:1px solid var(--border2);width:260px}
+.wlp-inner{background:var(--surface);border-radius:16px;overflow:hidden}
+.wlp-bar{padding:9px 12px;display:flex;align-items:center;gap:7px}
+.wlp-mark{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.wlp-name{font-size:12px;font-weight:600}
+.wlp-tag{font-size:9px;opacity:.6}
+.wlp-nav{padding:.375rem;display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--border)}
+.wlp-nitem{padding:4px 8px;font-size:9px;border-radius:5px;cursor:default;white-space:nowrap;transition:all .12s}
+.wlp-nitem.act{font-weight:600}
+.wlp-content{padding:.625rem .75rem}
+.wlp-hero{border-radius:var(--r);padding:.75rem;margin-bottom:.5rem}
+.wlp-hero-t{font-size:12px;font-weight:600;margin-bottom:2px}
+.wlp-hero-s{font-size:10px;opacity:.6}
+.wlp-cards{display:grid;grid-template-columns:1fr 1fr;gap:.25rem;margin-bottom:.5rem}
+.wlp-card{background:var(--bg2);border-radius:5px;padding:.375rem .5rem;border:1px solid var(--border)}
+.wlp-card-t{font-size:9px;font-weight:600;color:var(--ink2)}
+.wlp-card-v{font-size:15px;font-weight:600;color:var(--ink)}
+.wlp-footer{display:flex;justify-content:space-around;padding:.5rem .625rem;border-top:1px solid var(--border);background:var(--bg)}
+.wlp-fi{display:flex;flex-direction:column;align-items:center;gap:1px;cursor:default}
+.wlp-fi-icon{font-size:13px}
+.wlp-fi-lbl{font-size:7px;color:var(--ink3)}
+
+/* WA PREVIEW */
+.wa-preview{background:#ECE5DD;border-radius:var(--r);padding:.625rem;margin-bottom:.5rem}
+.wap-bubble{background:#fff;border-radius:8px 8px 8px 2px;padding:6px 9px;max-width:85%;font-size:10px;line-height:1.5;color:#111}
+.wap-sender{font-size:9px;font-weight:600;margin-bottom:2px}
+.wap-time{font-size:8px;color:#888;text-align:right;margin-top:1px}
+
+/* EMAIL PREVIEW */
+.email-preview{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:.5rem}
+.ep-bar{background:var(--bg3);padding:.5rem .75rem;font-size:10px;color:var(--ink3);border-bottom:1px solid var(--border)}
+.ep-header{padding:.75rem 1rem;border-bottom:1px solid var(--border)}
+.ep-logo{font-size:13px;font-weight:600;margin-bottom:.25rem}
+.ep-subject{font-size:11px;font-weight:500;color:var(--ink)}
+.ep-from{font-size:10px;color:var(--ink3)}
+.ep-body{padding:.625rem 1rem;font-size:11px;color:var(--ink2);line-height:1.5}
+.ep-btn{display:inline-block;padding:6px 14px;border-radius:6px;font-size:10px;font-weight:600;color:#fff;margin-top:.375rem}
+
+/* ══════════════════════════
+   ENTERPRISE / UNITS
+══════════════════════════ */
+.unit-tree{margin-bottom:.875rem}
+.unit-root{background:var(--ink);color:#fff;border-radius:var(--rlg);padding:.875rem 1.125rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.75rem}
+.ur-name{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.ur-sub{font-size:11px;opacity:.5}
+.units-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem;margin-left:1.5rem;position:relative}
+.units-grid::before{content:'';position:absolute;left:-.875rem;top:-8px;bottom:0;width:1px;background:var(--border2)}
+.unit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:.75rem;cursor:pointer;transition:all .12s;position:relative}
+.unit-card::before{content:'';position:absolute;left:-1.375rem;top:50%;width:.75rem;height:1px;background:var(--border2)}
+.unit-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.uc-name{font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.uc-loc{font-size:10.5px;color:var(--ink3);margin-bottom:.5rem}
+.uc-stats{display:flex;gap:.625rem;flex-wrap:wrap}
+.uc-stat{font-size:10px;padding:1px 6px;border-radius:3px}
+
+/* INTEGRATIONS */
+.int-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:.875rem 1.125rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.875rem;transition:border-color .12s}
+.int-card:hover{border-color:var(--border2)}
+.int-logo{width:42px;height:42px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--border)}
+.int-info{flex:1;min-width:0}
+.int-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.int-desc{font-size:11.5px;color:var(--ink2);line-height:1.4}
+.int-status{display:flex;flex-direction:column;align-items:flex-end;gap:.375rem;flex-shrink:0}
+.int-connected{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.int-available{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--ink3);border:1px solid var(--border)}
+.int-soon{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+.flow-diagram{display:flex;align-items:center;gap:.375rem;padding:.625rem .875rem;background:var(--bg2);border-radius:var(--rlg);border:1px solid var(--border);margin-bottom:.625rem;flex-wrap:wrap}
+.flow-node{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:.375rem .75rem;font-size:11.5px;font-weight:500;color:var(--ink)}
+.flow-arrow{font-size:14px;color:var(--ink3)}
+.flow-node.active-node{background:var(--ink);color:#fff;border-color:var(--ink)}
+.flow-node.ext{background:var(--bbg);color:var(--blue);border-color:var(--bbd)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-brand">
+    <div class="sb-mark"><svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="white" stroke-width="1.3"/><path d="M3.5 7.5l2.2 2.2L10.5 5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><div class="sb-wm">Aproove</div><div class="sb-wl">Portal do Gestor</div></div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av">AG</div>
+    <div><div class="sb-un">Ana Gestora</div><div class="sb-ur">Gestor · Admin</div></div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-sec">Operação</div>
+    <div class="sb-it on" onclick="go('dashboard',this)"><span class="sb-ico">⊞</span>Dashboard</div>
+    <div class="sb-it" onclick="go('team',this)"><span class="sb-ico">◉</span>Gestão do time<span class="sb-bd bd-amber">5 tarefas</span></div>
+    <div class="sb-it" onclick="go('requests',this)"><span class="sb-ico">✎</span>Solicitações<span class="sb-bd bd-amber">3</span></div>
+    <div class="sb-it" onclick="go('reports',this)"><span class="sb-ico">▣</span>Relatórios</div>
+    <div class="sb-sec">Comercial</div>
+    <div class="sb-it" onclick="go('proposal',this)"><span class="sb-ico">◈</span>Gerar proposta</div>
+    <div class="sb-it" onclick="go('add-client',this)"><span class="sb-ico">+</span>Incluir cliente</div>
+    <div class="sb-it" onclick="go('commercial',this)"><span class="sb-ico">◫</span>Apresentação</div>
+    <div class="sb-sec">Plataforma</div>
+    <div class="sb-it" onclick="go('whitelabel',this)"><span class="sb-ico">◎</span>White label</div>
+    <div class="sb-it" onclick="go('enterprise',this)"><span class="sb-ico">◧</span>Empresas/Unidades</div>
+    <div class="sb-it" onclick="go('integrations',this)"><span class="sb-ico">⇄</span>Integrações<span class="sb-bd bd-green">Mlabs ativo</span></div>
+  </div>
+  <div class="sb-footer">
+    <div class="sb-plan"><strong>Agência Nova Era</strong>Plano Agency · Aproover</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- DASHBOARD -->
+<div class="page on" id="p-dashboard">
+  <div class="ph"><div><h1>Dashboard operacional</h1><p>Visão completa do time, clientes e campanhas ativas</p></div>
+    <div class="ph-acts"><button class="btn btn-s btn-sm" onclick="go('reports',document.querySelector('[onclick*=reports]'))">Ver relatórios</button><button class="btn btn-p btn-sm" onclick="go('add-client',document.querySelector('[onclick*=add-client]'))">+ Incluir cliente</button></div>
+  </div>
+  <div class="alert"><div class="al-dot"></div><div class="al-txt"><strong>Pedro Designer com esteira lotada.</strong> 5 tarefas abertas · estimativa 14h de trabalho. Considere redistribuir para Lucas Designer.</div><button class="btn btn-s btn-sm" onclick="go('team',document.querySelector('[onclick*=team]'))" style="margin-left:auto">Gerenciar time</button></div>
+  <div class="g5">
+    <div class="met warn"><div class="ml">Aguardando cliente</div><div class="mv">5</div><div class="ms">2 atrasadas +48h</div></div>
+    <div class="met danger"><div class="ml">Time sobrecarregado</div><div class="mv">1</div><div class="ms">Pedro Designer</div></div>
+    <div class="met"><div class="ml">Campanhas ativas</div><div class="mv">6</div><div class="ms">4 clientes</div></div>
+    <div class="met good"><div class="ml">Aprovados no mês</div><div class="mv">34</div></div>
+    <div class="met"><div class="ml">Publicados</div><div class="mv">28</div><div class="ms">via Mlabs</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ct">Status dos clientes</div>
+      <div class="row"><div class="ri"><div class="rt">Marca Verão S/A</div><div class="rs">3 aguardando · 1 em ajuste</div></div><div style="width:72px;margin-right:.25rem"><div style="font-size:10px;color:var(--ink3);margin-bottom:2px;text-align:right">72%</div><div class="kbar-outer"><div class="kbar" style="width:72%;background:var(--amber)"></div></div></div></div>
+      <div class="row"><div class="ri"><div class="rt">Tech Solutions Ltda</div><div class="rs">1 aguardando · tudo ok</div></div><div style="width:72px;margin-right:.25rem"><div style="font-size:10px;color:var(--ink3);margin-bottom:2px;text-align:right">45%</div><div class="kbar-outer"><div class="kbar" style="width:45%;background:var(--green)"></div></div></div></div>
+      <div class="row"><div class="ri"><div class="rt">Bella Vita</div><div class="rs">0 pendentes · 90% do pacote usado</div></div><div style="width:72px;margin-right:.25rem"><div style="font-size:10px;color:var(--red);margin-bottom:2px;text-align:right;font-weight:600">90%</div><div class="kbar-outer"><div class="kbar" style="width:90%;background:var(--red)"></div></div></div></div>
+      <div class="row"><div class="ri"><div class="rt">Clínica Saúde Total</div><div class="rs">1 aguardando · 30% do pacote</div></div><div style="width:72px;margin-right:.25rem"><div style="font-size:10px;color:var(--ink3);margin-bottom:2px;text-align:right">30%</div><div class="kbar-outer"><div class="kbar" style="width:30%;background:var(--green)"></div></div></div></div>
+    </div>
+    <div class="card"><div class="ct">Últimas atividades</div>
+      <div class="row"><div class="ntag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="ri"><div class="rt">Verão — Feed aprovado via WA</div><div class="rs">João Ferreira · há 2h</div></div></div>
+      <div class="row"><div class="ntag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="ri"><div class="rt">Black Friday — Ajuste solicitado</div><div class="rs">"Muda o CTA" · há 4h · Pedro notificado</div></div></div>
+      <div class="row"><div class="ntag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="ri"><div class="rt">Verão — Reels publicado via Mlabs</div><div class="rs">15/03 18h00 · automático</div></div></div>
+      <div class="row"><div class="ntag" style="background:#F3F4F6;color:#333">TK</div><div class="ri"><div class="rt">Inverno — Arte entregue por Pedro</div><div class="rs">Aguardando revisão interna</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM MANAGEMENT -->
+<div class="page" id="p-team">
+  <div class="ph"><div><h1>Gestão do time</h1><p>Esteira de cada profissional · capacidade · tempo médio · redesignação</p></div>
+    <div class="ph-acts"><button class="btn btn-s btn-sm" onclick="showModal()">Redesignar tarefa</button></div>
+  </div>
+  <div class="team-grid">
+    <!-- Pedro Designer - FULL -->
+    <div class="tm-card">
+      <div class="tm-head">
+        <div class="tm-av" style="background:var(--abg);color:var(--amber)">PD</div>
+        <div><div class="tm-name">Pedro Designer</div><div class="tm-role">Designer / Audiovisual</div></div>
+        <div class="tm-status ts-full">Lotado</div>
+      </div>
+      <div class="tm-body">
+        <div class="cap-row"><span class="cap-label">Capacidade</span><div class="cap-bar"><div class="cap-fill" style="width:94%;background:var(--red)"></div></div><span class="cap-val" style="color:var(--red)">94%</span></div>
+        <div class="cap-row"><span class="cap-label">Tarefas abertas</span><div class="cap-bar"><div class="cap-fill" style="width:100%;background:var(--red)"></div></div><span class="cap-val" style="color:var(--red)">5</span></div>
+        <div class="cap-row"><span class="cap-label">Horas estimadas</span><div class="cap-bar"><div class="cap-fill" style="width:88%;background:var(--amber)"></div></div><span class="cap-val">~14h</span></div>
+        <div class="tm-tasks">
+          <div class="tm-task-row"><div class="ntag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="tm-task-name">Reels Semana 4 — Verão</div><div class="tm-task-time">~3h</div><button class="btn btn-s btn-xs" onclick="showModal('Reels Semana 4')">→</button></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#F3F4F6;color:#333">TK</div><div class="tm-task-name">Vídeo TikTok 3 — Verão</div><div class="tm-task-time">~2h</div><button class="btn btn-s btn-xs" onclick="showModal('Vídeo TikTok 3')">→</button></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="tm-task-name">Feed Semana 4 — Verão</div><div class="tm-task-time">~2h</div><button class="btn btn-s btn-xs" onclick="showModal('Feed Semana 4')">→</button></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#E8F5E9;color:#2E7D32">WA</div><div class="tm-task-name">Arte WhatsApp — Verão</div><div class="tm-task-time">~1.5h</div><button class="btn btn-s btn-xs" onclick="showModal('Arte WhatsApp')">→</button></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#EEEDFE;color:#4a2d8a">AP</div><div class="tm-task-name">Apresentação — SaaS Q2</div><div class="tm-task-time">~4h</div><button class="btn btn-s btn-xs" onclick="showModal('Apresentação SaaS')">→</button></div>
+        </div>
+      </div>
+      <div class="tm-foot"><span class="tm-avg">Tempo médio: <strong>2h18 por peça</strong></span><button class="btn btn-s btn-xs" onclick="showToast('Abrindo histórico de Pedro Designer')">Histórico</button></div>
+    </div>
+    <!-- Lucas Designer - BUSY -->
+    <div class="tm-card">
+      <div class="tm-head">
+        <div class="tm-av" style="background:var(--bbg);color:var(--blue)">LD</div>
+        <div><div class="tm-name">Lucas Designer</div><div class="tm-role">Designer</div></div>
+        <div class="tm-status ts-busy">Disponível</div>
+      </div>
+      <div class="tm-body">
+        <div class="cap-row"><span class="cap-label">Capacidade</span><div class="cap-bar"><div class="cap-fill" style="width:45%;background:var(--green)"></div></div><span class="cap-val" style="color:var(--green)">45%</span></div>
+        <div class="cap-row"><span class="cap-label">Tarefas abertas</span><div class="cap-bar"><div class="cap-fill" style="width:40%;background:var(--green)"></div></div><span class="cap-val">2</span></div>
+        <div class="cap-row"><span class="cap-label">Horas estimadas</span><div class="cap-bar"><div class="cap-fill" style="width:35%;background:var(--green)"></div></div><span class="cap-val">~4h</span></div>
+        <div class="tm-tasks">
+          <div class="tm-task-row"><div class="ntag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="tm-task-name">Banner LinkedIn — Black Friday</div><div class="tm-task-time">~2h</div></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="tm-task-name">Story — Saúde Total</div><div class="tm-task-time">~1.5h</div></div>
+        </div>
+      </div>
+      <div class="tm-foot"><span class="tm-avg">Tempo médio: <strong>1h52 por peça</strong></span><button class="btn btn-s btn-xs" onclick="showToast('Abrindo histórico de Lucas Designer')">Histórico</button></div>
+    </div>
+    <!-- Julia SM -->
+    <div class="tm-card">
+      <div class="tm-head">
+        <div class="tm-av" style="background:var(--gbg);color:var(--green)">JS</div>
+        <div><div class="tm-name">Julia Social Media</div><div class="tm-role">Social Media</div></div>
+        <div class="tm-status ts-busy">Em dia</div>
+      </div>
+      <div class="tm-body">
+        <div class="cap-row"><span class="cap-label">Capacidade</span><div class="cap-bar"><div class="cap-fill" style="width:68%;background:var(--amber)"></div></div><span class="cap-val" style="color:var(--amber)">68%</span></div>
+        <div class="cap-row"><span class="cap-label">Copies pendentes</span><div class="cap-bar"><div class="cap-fill" style="width:60%;background:var(--amber)"></div></div><span class="cap-val">6</span></div>
+        <div class="tm-tasks">
+          <div class="tm-task-row"><div class="ntag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="tm-task-name">Copy feed Sem4 — Verão</div><div class="tm-task-time">~45m</div></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="tm-task-name">Copy LinkedIn — Verão</div><div class="tm-task-time">~30m</div></div>
+          <div class="tm-task-row"><div class="ntag" style="background:#F3F4F6;color:#333">TK</div><div class="tm-task-name">Legenda TikTok 3</div><div class="tm-task-time">~20m</div></div>
+        </div>
+      </div>
+      <div class="tm-foot"><span class="tm-avg">Tempo médio: <strong>38min por copy</strong></span><button class="btn btn-s btn-xs">Histórico</button></div>
+    </div>
+    <!-- Carlos Planejador -->
+    <div class="tm-card">
+      <div class="tm-head">
+        <div class="tm-av" style="background:var(--pbg);color:var(--purple)">CP</div>
+        <div><div class="tm-name">Carlos Planejador</div><div class="tm-role">Planejador / Atendimento</div></div>
+        <div class="tm-status ts-free">Ok</div>
+      </div>
+      <div class="tm-body">
+        <div class="cap-row"><span class="cap-label">Capacidade</span><div class="cap-bar"><div class="cap-fill" style="width:30%;background:var(--green)"></div></div><span class="cap-val" style="color:var(--green)">30%</span></div>
+        <div class="cap-row"><span class="cap-label">Campanhas ativas</span><div class="cap-bar"><div class="cap-fill" style="width:40%;background:var(--green)"></div></div><span class="cap-val">4</span></div>
+        <div class="tm-tasks">
+          <div class="tm-task-row"><div class="ntag" style="background:var(--abg);color:var(--amber)">⚠</div><div class="tm-task-name">Lembrete cliente Bella Vita</div><div class="tm-task-time">hoje</div></div>
+        </div>
+      </div>
+      <div class="tm-foot"><span class="tm-avg">Atendendo <strong>4 clientes</strong></span><button class="btn btn-s btn-xs">Histórico</button></div>
+    </div>
+  </div>
+
+  <!-- TIME ANALYTICS -->
+  <div class="card"><div class="ct">Tempo médio histórico por tipo de peça — base para precificação</div>
+    <div class="ib ib-purple">Estes dados são calculados automaticamente pelo sistema com base no histórico real de produção. Use como referência ao montar propostas — precificação por hora de trabalho.</div>
+    <div class="g2">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:.5rem">Designer / Audiovisual</div>
+        <div class="ta-row"><span class="ta-type">Post estático feed</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:35%"></div></div><span class="ta-val">1h48m</span><span class="ta-trend" style="color:var(--green)">↓ melhor</span></div>
+        <div class="ta-row"><span class="ta-type">Carrossel (5 cards)</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:60%"></div></div><span class="ta-val">3h12m</span><span class="ta-trend" style="color:var(--ink3)">→</span></div>
+        <div class="ta-row"><span class="ta-type">Story animado</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:45%"></div></div><span class="ta-val">2h20m</span><span class="ta-trend" style="color:var(--ink3)">→</span></div>
+        <div class="ta-row"><span class="ta-type">Reels (até 30s)</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:100%"></div></div><span class="ta-val">4h45m</span><span class="ta-trend" style="color:var(--amber)">↑ longo</span></div>
+        <div class="ta-row"><span class="ta-type">Vídeo TikTok</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:88%"></div></div><span class="ta-val">4h10m</span><span class="ta-trend" style="color:var(--amber)">↑</span></div>
+        <div class="ta-row"><span class="ta-type">Arte WhatsApp</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:28%"></div></div><span class="ta-val">1h20m</span><span class="ta-trend" style="color:var(--green)">↓</span></div>
+        <div class="ta-row"><span class="ta-type">Apresentação (20 slides)</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:75%"></div></div><span class="ta-val">3h50m</span><span class="ta-trend" style="color:var(--ink3)">→</span></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:.5rem">Social Media / Copy</div>
+        <div class="ta-row"><span class="ta-type">Copy post Instagram</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:22%"></div></div><span class="ta-val">35m</span><span class="ta-trend" style="color:var(--green)">↓</span></div>
+        <div class="ta-row"><span class="ta-type">Copy LinkedIn</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:30%"></div></div><span class="ta-val">48m</span><span class="ta-trend" style="color:var(--ink3)">→</span></div>
+        <div class="ta-row"><span class="ta-type">Roteiro Reels/TikTok</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:55%"></div></div><span class="ta-val">1h28m</span><span class="ta-trend" style="color:var(--ink3)">→</span></div>
+        <div class="ta-row"><span class="ta-type">Briefing completo campanha</span><div class="ta-bar-wrap"><div class="ta-bar" style="width:70%"></div></div><span class="ta-val">2h10m</span><span class="ta-trend" style="color:var(--amber)">↑</span></div>
+        <div style="margin-top:1rem;padding:.625rem .875rem;background:var(--gbg);border-radius:var(--r);border:1px solid var(--gbd)">
+          <div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:3px">Campanha 20 posts · estimativa</div>
+          <div style="font-size:13px;font-weight:600;color:var(--green)">Designer: ~42h · Social Media: ~14h</div>
+          <div style="font-size:11px;color:var(--green);margin-top:2px;opacity:.8">Base para precificação: total ~56h de produção</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REDESIGN MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-title" id="modal-title">Redesignar tarefa</div>
+    <div class="ib ib-warn" id="modal-task-info">Tarefa: Reels Semana 4 · atualmente com Pedro Designer (esteira lotada)</div>
+    <div class="frow"><label>Redesignar para</label>
+      <select id="redesign-to"><option>Lucas Designer — 45% capacidade, 2 tarefas</option><option>Contratar freelancer externo</option><option>Manter com Pedro (aceitar atraso)</option></select>
+    </div>
+    <div class="frow"><label>Prazo ajustado</label><input type="date" value="2026-03-20"></div>
+    <div class="frow"><label>Observação para o designer</label><textarea placeholder="Informe o contexto da redesignação...">Esteira do Pedro está lotada. Por favor priorizar esta entrega até o prazo informado.</textarea></div>
+    <div style="display:flex;justify-content:flex-end;gap:.5rem;margin-top:.25rem">
+      <button class="btn btn-s" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-p" onclick="confirmRedesign()">Confirmar redesignação</button>
+    </div>
+  </div>
+</div>
+
+<!-- REQUESTS / EDIT -->
+<div class="page" id="p-requests">
+  <div class="ph"><div><h1>Solicitações</h1><p>Abra, edite e acompanhe todas as solicitações abertas</p></div>
+    <div class="ph-acts"><button class="btn btn-p btn-sm" onclick="showToast('Nova solicitação criada')">+ Nova solicitação</button></div>
+  </div>
+  <div class="g2" style="margin-bottom:.75rem">
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+      <button class="btn btn-s btn-sm" style="border-radius:20px;background:var(--ink);color:#fff;border-color:var(--ink)">Todas</button>
+      <button class="btn btn-s btn-sm" style="border-radius:20px">Em produção</button>
+      <button class="btn btn-s btn-sm" style="border-radius:20px">Aguardando cliente</button>
+      <button class="btn btn-s btn-sm" style="border-radius:20px">Em ajuste</button>
+    </div>
+  </div>
+  <div id="req-list">
+    <div class="req-entry" onclick="toggleEdit('edit-1',this)">
+      <div class="re-icon" style="background:var(--abg)">⏱</div>
+      <div class="re-body">
+        <div class="re-title">Reels Semana 4 — Verão 2026 · IG</div>
+        <div class="re-meta">Marca Verão S/A · Pedro Designer · prazo 20/03 · em produção</div>
+        <div class="inline-edit" id="edit-1">
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.625rem">
+            <button class="btn btn-s btn-sm" onclick="event.stopPropagation()">Redesignar →</button>
+            <button class="btn btn-s btn-sm" onclick="event.stopPropagation()">Alterar prazo</button>
+            <button class="btn btn-p btn-sm" onclick="event.stopPropagation();showToast('Solicitação atualizada')">Salvar edição</button>
+          </div>
+          <div class="ie-label">Briefing / instrução</div>
+          <textarea class="ie-textarea" onclick="event.stopPropagation()">Reels 15–30s mostrando a nova coleção de verão em movimento. Usar música alegre. CTA "Link na bio". Tom: jovem e moderno.</textarea>
+          <div class="ie-label" style="margin-top:.5rem">Observação interna</div>
+          <textarea class="ie-textarea" style="min-height:44px" onclick="event.stopPropagation()" placeholder="Nota para o time..."></textarea>
+        </div>
+      </div>
+      <div class="re-right"><span class="pill pl-prod">Em produção</span><span style="font-size:10px;color:var(--ink3)">20/03</span></div>
+    </div>
+    <div class="req-entry" onclick="toggleEdit('edit-2',this)">
+      <div class="re-icon" style="background:var(--abg)">💬</div>
+      <div class="re-body">
+        <div class="re-title">Post LinkedIn — Black Friday 2026</div>
+        <div class="re-meta">Marca Verão S/A · "Muda o CTA" · Pedro Designer notificado · em ajuste</div>
+        <div class="inline-edit" id="edit-2">
+          <div class="ib ib-warn" style="margin-bottom:.5rem">Feedback do cliente: "Muda o CTA para 'Saiba mais' e deixa o botão laranja."</div>
+          <div class="ie-label">Instrução atualizada para o designer</div>
+          <textarea class="ie-textarea" onclick="event.stopPropagation()">Alterar CTA para "Saiba mais". Botão na cor laranja (#FF6B2B). Manter o resto do layout igual à v1.</textarea>
+          <div style="display:flex;gap:.5rem;margin-top:.5rem">
+            <button class="btn btn-s btn-sm" onclick="event.stopPropagation()">Cancelar</button>
+            <button class="btn btn-p btn-sm" onclick="event.stopPropagation();showToast('Instrução enviada para Pedro Designer')">Enviar para designer</button>
+          </div>
+        </div>
+      </div>
+      <div class="re-right"><span class="pill pl-adj">Em ajuste</span><span style="font-size:10px;color:var(--ink3)">20/03</span></div>
+    </div>
+    <div class="req-entry" onclick="toggleEdit('edit-3',this)">
+      <div class="re-icon" style="background:var(--gbg)">✓</div>
+      <div class="re-body">
+        <div class="re-title">Arte WhatsApp — Promoção Verão</div>
+        <div class="re-meta">Marca Verão S/A · Pedro Designer · aprovado e agendado · via Mlabs</div>
+        <div class="inline-edit" id="edit-3">
+          <div class="ib ib-suc">Aprovado por João Ferreira via WhatsApp em 13/03 às 10:45 · agendado para 20/03 às 10h via Mlabs.</div>
+          <div style="display:flex;gap:.5rem;margin-top:.5rem">
+            <button class="btn btn-s btn-sm" onclick="event.stopPropagation();showToast('Auditoria completa aberta')">Ver auditoria</button>
+            <button class="btn btn-s btn-sm" onclick="event.stopPropagation();showToast('Download da arte iniciado')">Baixar arte</button>
+          </div>
+        </div>
+      </div>
+      <div class="re-right"><span class="pill pl-apr">Aprovado</span><span style="font-size:10px;color:var(--ink3)">20/03</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="page" id="p-reports">
+  <div class="ph"><div><h1>Relatórios</h1><p>Desempenho, ROI e análise de IA por campanha</p></div>
+    <div class="ph-acts">
+      <button class="btn btn-s btn-sm" onclick="showToast('Link de compartilhamento copiado')">↗ Compartilhar</button>
+      <button class="btn btn-s btn-sm" onclick="showToast('Gerando PDF completo...')">↓ PDF</button>
+      <button class="btn btn-s btn-sm" onclick="showToast('Gerando apresentação PPT...')">↓ PPT</button>
+    </div>
+  </div>
+  <div class="g5">
+    <div class="met hi"><div class="ml">ROI campanha</div><div class="mv">14,9×</div><div class="ms">R$8.5k → R$127k</div></div>
+    <div class="met good"><div class="ml">Engajamento IG</div><div class="mv">3,8%</div><div class="ms">Meta 3,5% ✓</div></div>
+    <div class="met good"><div class="ml">Novos seguidores</div><div class="mv">612</div><div class="ms">Meta 500 ✓</div></div>
+    <div class="met warn"><div class="ml">Leads gerados</div><div class="mv">74</div><div class="ms">Meta 100 · 74%</div></div>
+    <div class="met"><div class="ml">Posts publicados</div><div class="mv">18/20</div><div class="ms">via Mlabs</div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ct">KPIs vs metas</div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:2px"><span style="color:var(--ink2)">Alcance</span><span style="font-weight:500">48.320/50.000</span></div><div class="kbar-outer"><div class="kbar" style="width:97%;background:#3b82f6"></div></div></div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:2px"><span style="color:var(--ink2)">Engajamento ✓</span><span style="font-weight:500;color:var(--green)">3,8%/3,5%</span></div><div class="kbar-outer"><div class="kbar" style="width:100%;background:var(--green)"></div></div></div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:2px"><span style="color:var(--ink2)">Leads</span><span style="font-weight:500;color:var(--red)">74/100</span></div><div class="kbar-outer"><div class="kbar" style="width:74%;background:var(--red)"></div></div></div>
+    </div>
+    <div class="card"><div class="ct">Desempenho por rede</div>
+      <div class="chart-row"><span class="cl">Instagram</span><div class="ct-wrap"><div class="ct-fill" style="width:88%;background:#E84040">3,8%</div></div><span class="cv">88%</span></div>
+      <div class="chart-row"><span class="cl">TikTok</span><div class="ct-wrap"><div class="ct-fill" style="width:72%;background:#333">2,1%</div></div><span class="cv">72%</span></div>
+      <div class="chart-row"><span class="cl">LinkedIn</span><div class="ct-wrap"><div class="ct-fill" style="width:55%;background:#2563A0">1,4%</div></div><span class="cv">55%</span></div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:.625rem;margin:.625rem 0">
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+    <div style="font-size:10.5px;font-weight:600;color:var(--purple);background:var(--pbg);padding:3px 12px;border-radius:20px;border:1px solid var(--pbd)">Análise IA · Aproove Intelligence</div>
+    <div style="flex:1;height:1px;background:var(--border)"></div>
+  </div>
+  <div class="ai-block ai-g"><div class="ai-lbl">ROI excepcional</div><div class="ai-title">Cada R$ 1 investido retornou R$ 14,90 em receita</div><div class="ai-body">R$ 8.500 investidos geraram R$ 127.400. ROI 14,9× acima do benchmark de 3–5× para moda premium. Semanas com 3+ posts tiveram receita média 2,1× maior.</div><button class="ai-btn" onclick="showToast('Insight salvo como referência')">Usar como referência →</button></div>
+  <div class="ai-block ai-w"><div class="ai-lbl">Gargalo no funil</div><div class="ai-title">Conversão de acesso para lead está em 1,9% — benchmark é 3,5%</div><div class="ai-body">3.840 acessos geraram apenas 74 leads. Melhorar landing page ou ativar formulário WhatsApp no Story pode dobrar a conversão sem custo adicional de mídia.</div><button class="ai-btn" onclick="showToast('Solicitação enviada à equipe de performance')">Solicitar ajuste →</button></div>
+  <div class="ai-block ai-t"><div class="ai-lbl">Oportunidade</div><div class="ai-title">LinkedIn tem potencial não explorado — horário errado</div><div class="ai-body">Posts publicados em horários de IG (10h e 18h). LinkedIn performa melhor 07h30–09h em dias úteis. Ajustar horário pode dobrar o engajamento sem produzir mais conteúdo.</div><button class="ai-btn" onclick="showToast('Ajuste de horário aplicado nas próximas publicações')">Aplicar nas próximas →</button></div>
+</div>
+
+<!-- PROPOSAL -->
+<div class="page" id="p-proposal">
+  <div class="ph"><div><h1>Gerar proposta comercial</h1><p>Proposta personalizada com export PDF e link web</p></div></div>
+  <div class="g2">
+    <div>
+      <div class="step-bar" id="prop-steps">
+        <div class="step-w"><div class="step-n act" id="ps-1">1</div><div class="step-l">Cliente</div></div>
+        <div class="step-w"><div class="step-n" id="ps-2">2</div><div class="step-l">Serviços</div></div>
+        <div class="step-w"><div class="step-n" id="ps-3">3</div><div class="step-l">Valores</div></div>
+        <div class="step-w"><div class="step-n" id="ps-4">4</div><div class="step-l">Gerar</div></div>
+      </div>
+      <div class="fs on" id="prop-s1">
+        <div class="card">
+          <div class="frow"><label>Nome do prospecto</label><input type="text" id="prop-client" placeholder="Ex: Empresa ABC Ltda" oninput="updatePreview()"></div>
+          <div class="g2">
+            <div class="frow"><label>Segmento</label><select id="prop-seg"><option>Moda / Varejo</option><option>Alimentação / Restaurante</option><option>Saúde / Clínica</option><option>Tecnologia / SaaS</option><option>Imobiliário</option><option>Serviços</option><option>Outro</option></select></div>
+            <div class="frow"><label>Contato</label><input type="text" placeholder="Nome do responsável"></div>
+          </div>
+          <div class="frow"><label>Necessidade principal</label><textarea placeholder="Descreva brevemente o que o cliente precisa..." style="min-height:60px"></textarea></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end"><button class="btn btn-p" onclick="propStep(2)">Próximo →</button></div>
+      </div>
+      <div class="fs" id="prop-s2">
+        <div class="card">
+          <div class="ct">Selecione os serviços incluídos na proposta</div>
+          <div style="display:flex;flex-direction:column;gap:.375rem">
+            <label style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px"><input type="checkbox" id="svc-social" checked> Gestão de redes sociais (posts mensais)</label>
+            <label style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px"><input type="checkbox" id="svc-video" checked> Produção de vídeo (Reels / TikTok)</label>
+            <label style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px"><input type="checkbox" id="svc-copy"> Criação de copy e roteiros</label>
+            <label style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px"><input type="checkbox" id="svc-trafego"> Gestão de tráfego pago</label>
+            <label style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px"><input type="checkbox"> Estratégia e planejamento</label>
+            <label style="display:flex;align-items:center;gap:.625rem;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--r);cursor:pointer;font-size:12.5px"><input type="checkbox"> Relatórios mensais com IA</label>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between"><button class="btn btn-s" onclick="propStep(1)">← Voltar</button><button class="btn btn-p" onclick="propStep(3)">Próximo →</button></div>
+      </div>
+      <div class="fs" id="prop-s3">
+        <div class="card">
+          <div class="g2">
+            <div class="frow"><label>Gestão redes sociais</label><input type="text" id="v-social" value="R$ 2.800" oninput="updatePreview()"></div>
+            <div class="frow"><label>Produção de vídeo</label><input type="text" id="v-video" value="R$ 1.200" oninput="updatePreview()"></div>
+            <div class="frow"><label>Setup e onboarding</label><input type="text" id="v-setup" value="R$ 500"></div>
+            <div class="frow"><label>Desconto</label><input type="text" id="v-desc" value="—"></div>
+          </div>
+          <div class="frow"><label>Validade da proposta</label><input type="date" value="2026-04-15"></div>
+          <div class="frow"><label>Condições de pagamento</label><select><option>Mensal recorrente</option><option>Trimestral (5% desconto)</option><option>Semestral (10% desconto)</option><option>Anual (15% desconto)</option></select></div>
+        </div>
+        <div style="display:flex;justify-content:space-between"><button class="btn btn-s" onclick="propStep(2)">← Voltar</button><button class="btn btn-p" onclick="propStep(4)">Gerar proposta →</button></div>
+      </div>
+      <div class="fs" id="prop-s4">
+        <div class="ib ib-suc">Proposta gerada! Exporte em PDF ou compartilhe o link web diretamente com o cliente.</div>
+        <div class="g2">
+          <button class="btn btn-p" style="justify-content:center" onclick="showToast('PDF gerado — Proposta_EmpresaABC.pdf')">↓ Exportar PDF</button>
+          <button class="btn btn-g" style="justify-content:center" onclick="showToast('Link copiado: aproove.app/p/abc-2026-xK9m')">↗ Copiar link web</button>
+        </div>
+        <div class="frow"><label>Link da proposta</label><input type="text" value="aproove.app/p/abc-2026-xK9m" readonly style="background:var(--bg2);color:var(--blue);font-family:'DM Mono',monospace;font-size:11px"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:.25rem"><button class="btn btn-s" onclick="propStep(3)">← Editar</button><button class="btn btn-s" onclick="propStep(1);document.getElementById('prop-client').value=''">Nova proposta</button></div>
+      </div>
+    </div>
+    <div class="prop-preview" id="prop-preview">
+      <div class="pp-header">
+        <div class="pp-logo">Agência Nova Era</div>
+        <div class="pp-subtitle">Proposta comercial</div>
+        <div class="pp-title" id="pp-title">Nova Proposta</div>
+        <div class="pp-client-name" id="pp-client">Preencha o nome do cliente →</div>
+      </div>
+      <div class="pp-body">
+        <div class="pp-section">
+          <div class="pp-sec-label">Serviços incluídos</div>
+          <div class="pp-service-row"><span class="pp-service-name">Gestão de redes sociais</span><span class="pp-service-price" id="pp-social">R$ 2.800</span></div>
+          <div class="pp-service-row"><span class="pp-service-name">Produção de vídeo (Reels/TikTok)</span><span class="pp-service-price" id="pp-video">R$ 1.200</span></div>
+          <div class="pp-service-row"><span class="pp-service-name">Setup e onboarding</span><span class="pp-service-price">R$ 500</span></div>
+        </div>
+        <div class="pp-total">
+          <span class="pp-total-label">Investimento mensal</span>
+          <span class="pp-total-val" id="pp-total">R$ 4.500</span>
+        </div>
+        <div style="margin-top:.875rem;padding:.625rem;background:var(--bg);border-radius:var(--r);font-size:11px;color:var(--ink2)">
+          Validade: 30/04/2026 · Pagamento mensal recorrente<br>
+          Inclui acesso ao portal Aproove para aprovação organizada de conteúdo.
+        </div>
+      </div>
+      <div class="pp-link-bar">
+        <span style="font-size:10px;color:var(--ink3)">Link web da proposta:</span>
+        <div class="pp-link-url">aproove.app/p/abc-2026-xK9m</div>
+        <button class="btn btn-s btn-xs" onclick="showToast('Link copiado!')">Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD CLIENT -->
+<div class="page" id="p-add-client">
+  <div class="ph"><div><h1>Incluir cliente</h1><p>Cadastro completo e acesso configurado em 5 etapas</p></div></div>
+  <div class="step-bar" id="ac-steps">
+    <div class="step-w"><div class="step-n act" id="ac-1">1</div><div class="step-l">Dados</div></div>
+    <div class="step-w"><div class="step-n" id="ac-2">2</div><div class="step-l">Contrato</div></div>
+    <div class="step-w"><div class="step-n" id="ac-3">3</div><div class="step-l">Redes</div></div>
+    <div class="step-w"><div class="step-n" id="ac-4">4</div><div class="step-l">Acesso</div></div>
+    <div class="step-w"><div class="step-n" id="ac-5">5</div><div class="step-l">Confirmar</div></div>
+  </div>
+  <div class="fs on" id="ac-s1">
+    <div class="client-form-grid">
+      <div class="card">
+        <div class="g2">
+          <div class="frow"><label>Nome da empresa</label><input type="text" placeholder="Ex: Marca Nova Ltda"></div>
+          <div class="frow"><label>CNPJ</label><input type="text" placeholder="00.000.000/0001-00"></div>
+        </div>
+        <div class="g2">
+          <div class="frow"><label>Nome do contato</label><input type="text" placeholder="Nome do aprovador master"></div>
+          <div class="frow"><label>E-mail</label><input type="email" placeholder="contato@empresa.com"></div>
+        </div>
+        <div class="g2">
+          <div class="frow"><label>WhatsApp</label><input type="text" placeholder="+55 11 9xxxx-xxxx"></div>
+          <div class="frow"><label>Segmento</label><select><option>Moda / Varejo</option><option>Alimentação</option><option>Saúde</option><option>Tecnologia</option><option>Imobiliário</option><option>Outro</option></select></div>
+        </div>
+        <div class="frow"><label>Observações internas</label><textarea placeholder="Notas sobre o cliente para o time..." style="min-height:56px"></textarea></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--ink2);background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:.875rem 1.125rem">
+        <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:.5rem">O que acontece após o cadastro</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <div style="display:flex;gap:.5rem;align-items:flex-start"><span style="background:var(--ink);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px">1</span><span>Cliente recebe convite por e-mail e WhatsApp</span></div>
+          <div style="display:flex;gap:.5rem;align-items:flex-start"><span style="background:var(--ink);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px">2</span><span>Cria senha de acesso ao portal</span></div>
+          <div style="display:flex;gap:.5rem;align-items:flex-start"><span style="background:var(--ink);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px">3</span><span>Pode convidar outros aprovadores</span></div>
+          <div style="display:flex;gap:.5rem;align-items:flex-start"><span style="background:var(--ink);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px">4</span><span>Recebe notificações por WA e portal</span></div>
+          <div style="display:flex;gap:.5rem;align-items:flex-start"><span style="background:var(--ink);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px">5</span><span>Aprovações já registradas com canal e hash</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end"><button class="btn btn-p" onclick="acStep(2)">Próximo →</button></div>
+  </div>
+  <div class="fs" id="ac-s2">
+    <div class="card">
+      <div class="g2">
+        <div class="frow"><label>Plano contratado</label><select><option>Starter — R$ 197/mês</option><option selected>Professional — R$ 497/mês</option><option>Agency — R$ 997/mês</option></select></div>
+        <div class="frow"><label>Data de início</label><input type="date" value="2026-04-01"></div>
+      </div>
+      <div class="g2">
+        <div class="frow"><label>Posts incluídos/mês</label><input type="number" value="20"></div>
+        <div class="frow"><label>Armazenamento incluído</label><select><option>5 GB</option><option selected>25 GB</option><option>100 GB</option></select></div>
+      </div>
+      <div class="g2">
+        <div class="frow"><label>Tempo de retenção do histórico</label><select><option>6 meses</option><option selected>12 meses</option><option>24 meses</option></select></div>
+        <div class="frow"><label>Canal de aprovação</label><select><option>Portal Aproove</option><option selected>WhatsApp + Portal</option><option>Apenas WhatsApp</option></select></div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between"><button class="btn btn-s" onclick="acStep(1)">← Voltar</button><button class="btn btn-p" onclick="acStep(3)">Próximo →</button></div>
+  </div>
+  <div class="fs" id="ac-s3">
+    <div class="card">
+      <div class="frow"><label>Redes sociais do cliente</label>
+        <div class="net-grid">
+          <div class="net-opt sel" onclick="this.classList.toggle('sel')">Instagram</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">LinkedIn</div>
+          <div class="net-opt sel" onclick="this.classList.toggle('sel')">TikTok</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">Facebook</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">YouTube</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">Pinterest</div>
+        </div>
+      </div>
+      <div class="frow" style="margin-top:.5rem"><label>Ferramenta de publicação</label>
+        <select><option selected>Mlabs (integração ativa)</option><option>Aproove nativo</option><option>Etus</option><option>Buffer</option><option>Manual</option></select>
+      </div>
+      <div class="frow"><label>Usuário Mlabs da conta</label><input type="text" placeholder="login@mlabs.com.br"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between"><button class="btn btn-s" onclick="acStep(2)">← Voltar</button><button class="btn btn-p" onclick="acStep(4)">Próximo →</button></div>
+  </div>
+  <div class="fs" id="ac-s4">
+    <div class="card">
+      <div class="ct">Permissões de acesso do cliente</div>
+      <div class="access-row"><div><div class="ar-lbl">Portal Aproove</div><div class="ar-sub">Acesso ao portal web e app mobile</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="access-row"><div><div class="ar-lbl">Aprovação via WhatsApp</div><div class="ar-sub">Recebe e responde peças pelo WA</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="access-row"><div><div class="ar-lbl">Download de peças</div><div class="ar-sub">Pode baixar artes aprovadas</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="access-row"><div><div class="ar-lbl">Visualizar relatórios</div><div class="ar-sub">Ver desempenho e ROI no portal</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="access-row"><div><div class="ar-lbl">Inserir resultado financeiro</div><div class="ar-sub">Permite informar receita para cálculo de ROI</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="access-row"><div><div class="ar-lbl">Convidar usuários aprovadores</div><div class="ar-sub">Pode adicionar outros aprovadores à conta</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      <div class="access-row"><div><div class="ar-lbl">Solicitar novas campanhas</div><div class="ar-sub">Pode criar solicitações pela plataforma</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between"><button class="btn btn-s" onclick="acStep(3)">← Voltar</button><button class="btn btn-p" onclick="acStep(5)">Revisar →</button></div>
+  </div>
+  <div class="fs" id="ac-s5">
+    <div class="card"><div class="ct">Resumo do cliente</div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--ink2)">
+        <div style="display:flex;gap:.5rem"><span style="min-width:120px;color:var(--ink3)">Empresa:</span><span style="font-weight:500;color:var(--ink)">Nova empresa cadastrada</span></div>
+        <div style="display:flex;gap:.5rem"><span style="min-width:120px;color:var(--ink3)">Plano:</span><span>Professional · R$ 497/mês</span></div>
+        <div style="display:flex;gap:.5rem"><span style="min-width:120px;color:var(--ink3)">Posts/mês:</span><span>20 posts · 25 GB</span></div>
+        <div style="display:flex;gap:.5rem"><span style="min-width:120px;color:var(--ink3)">Redes:</span><span>Instagram · TikTok</span></div>
+        <div style="display:flex;gap:.5rem"><span style="min-width:120px;color:var(--ink3)">Publicação:</span><span>Via Mlabs</span></div>
+        <div style="display:flex;gap:.5rem"><span style="min-width:120px;color:var(--ink3)">Aprovação:</span><span>WhatsApp + Portal</span></div>
+      </div>
+    </div>
+    <div class="ib ib-info">Cliente receberá convite por e-mail e WhatsApp para criar o acesso ao portal.</div>
+    <div style="display:flex;justify-content:space-between"><button class="btn btn-s" onclick="acStep(4)">← Voltar</button><button class="btn btn-p" onclick="showToast('Cliente cadastrado! Convite enviado por e-mail e WhatsApp.')">Cadastrar cliente</button></div>
+  </div>
+</div>
+
+<!-- COMMERCIAL PRESENTATION -->
+<div class="page" id="p-commercial">
+  <div class="ph"><div><h1>Apresentação comercial</h1><p>Módulos do Aproove para vender às agências e empresas</p></div>
+    <div class="ph-acts"><button class="btn btn-s btn-sm" onclick="showToast('Link de apresentação copiado: aproove.app/demo')">↗ Compartilhar demo</button><button class="btn btn-p btn-sm" onclick="showToast('Gerando deck PDF...')">↓ Exportar deck</button></div>
+  </div>
+  <div class="ib ib-purple">Use esta apresentação para vender o Aproove para agências e times de marketing. Cada card representa um módulo que pode ser apresentado individualmente ou como conjunto.</div>
+  <div class="mod-grid">
+    <div class="mod-card c1"><div class="mod-icon">✓</div><div class="mod-name">Aprovação organizada</div><div class="mod-desc">Substituí o caos de WhatsApp por um fluxo estruturado com registro formal de cada decisão.</div><div class="mod-benefits"><div class="mb-item">Aprovação via Portal ou WhatsApp</div><div class="mb-item">Registro com canal, identidade e hash</div><div class="mb-item">Histórico imutável exportável</div></div><div class="mod-price-tag">Incluso em todos os planos</div></div>
+    <div class="mod-card c2"><div class="mod-icon">🔍</div><div class="mod-name">Mockup por rede social</div><div class="mod-desc">Cliente aprova o post como ele vai aparecer no feed, story ou reels — não uma arte solta.</div><div class="mod-benefits"><div class="mb-item">Preview IG · LI · TikTok · FB · WA</div><div class="mb-item">Legenda, CTA e data visíveis</div><div class="mb-item">Comparação side-by-side de versões</div></div><div class="mod-price-tag">Incluso em todos os planos</div></div>
+    <div class="mod-card c3"><div class="mod-icon">✦</div><div class="mod-name">IA integrada</div><div class="mod-desc">Revisão ortográfica, horário de publicação e análise de resultado — tudo com inteligência artificial.</div><div class="mod-benefits"><div class="mb-item">Revisão de copy em tempo real</div><div class="mb-item">OCR na arte antes de enviar</div><div class="mb-item">Horário recomendado por dados reais</div></div><div class="mod-price-tag">A partir do plano Professional</div></div>
+    <div class="mod-card c4"><div class="mod-icon">📊</div><div class="mod-name">Relatório com ROI</div><div class="mod-desc">IA cruza dados das redes com resultado financeiro informado pelo cliente. Prova o valor da agência.</div><div class="mod-benefits"><div class="mb-item">ROI da campanha calculado</div><div class="mb-item">Funil de conversão visual</div><div class="mb-item">Análise e sugestões de melhoria</div></div><div class="mod-price-tag">A partir do plano Professional</div></div>
+    <div class="mod-card c5"><div class="mod-icon">◉</div><div class="mod-name">Gestão do time</div><div class="mod-desc">Esteira de cada profissional, tempo médio por tipo de peça e redesignação com um clique.</div><div class="mod-benefits"><div class="mb-item">Capacidade em tempo real</div><div class="mb-item">Tempo médio para precificação</div><div class="mb-item">Redesignação automatizada</div></div><div class="mod-price-tag">A partir do plano Professional</div></div>
+    <div class="mod-card c6"><div class="mod-icon">🏷</div><div class="mod-name">White label (Aproover)</div><div class="mod-desc">A agência entrega o Aproove com sua própria marca. O cliente nunca sabe que é o Aproove.</div><div class="mod-benefits"><div class="mb-item">Logo e cores da agência</div><div class="mb-item">Domínio personalizado</div><div class="mb-item">WhatsApp com nome da agência</div></div><div class="mod-price-tag">Plano Agency</div></div>
+  </div>
+  <div class="deck-slide">
+    <div class="ds-header">
+      <div class="ds-tag">Por que o Aproove</div>
+      <div class="ds-title">O problema que todo time de marketing tem</div>
+      <div class="ds-sub">Aprovação por WhatsApp parece prático — até virar um processo incontrolável</div>
+    </div>
+    <div class="ds-body">
+      <div class="ds-feat-grid">
+        <div class="ds-feat"><div class="dsf-icon">💬</div><div class="dsf-name">Aprovações perdidas</div><div class="dsf-text">O cliente disse "ok" em alguma mensagem. Mas qual versão? Qual data?</div></div>
+        <div class="ds-feat"><div class="dsf-icon">🔁</div><div class="dsf-name">Retrabalho sem fim</div><div class="dsf-text">Feedback chegou em 3 mensagens, 2 dias depois. Designer já passou para outro projeto.</div></div>
+        <div class="ds-feat"><div class="dsf-icon">⚠️</div><div class="dsf-name">Sem prova de aprovação</div><div class="dsf-text">Cliente diz que não aprovou. Agência jura que sim. Sem registro, sem prova.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHITE LABEL -->
+<div class="page" id="p-whitelabel">
+  <div class="ph"><div><h1>White label — Aproover</h1><p>Configure a identidade da sua agência em todos os canais</p></div>
+    <div class="ph-acts"><button class="btn btn-p btn-sm" onclick="applyWL()">Aplicar configurações</button></div>
+  </div>
+  <div class="wl-config">
+    <div>
+      <div class="card">
+        <div class="ct">Identidade visual</div>
+        <div class="frow"><label>Nome exibido para o cliente</label><input type="text" id="wl-name" value="Agência Nova Era" oninput="updateWL()"></div>
+        <div class="g2">
+          <div class="frow"><label>Cor primária</label><input type="color" id="wl-color" value="#1a1a18" oninput="updateWL()" style="height:38px;padding:4px"></div>
+          <div class="frow"><label>Cor de destaque</label><input type="color" id="wl-accent" value="#2a5f2a" oninput="updateWL()" style="height:38px;padding:4px"></div>
+        </div>
+        <div class="frow"><label>Logo (PNG/SVG)</label>
+          <div style="border:1.5px dashed var(--border2);border-radius:var(--r);padding:.875rem;text-align:center;font-size:12px;color:var(--ink3);cursor:pointer" onclick="showToast('Logo enviado com sucesso')">Clique para fazer upload do logo · Máx. 2MB</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct">Domínio personalizado</div>
+        <div class="frow"><label>Subdomínio Aproove</label>
+          <div style="display:flex;gap:.375rem">
+            <input type="text" id="wl-domain" value="novaera" oninput="updateWL()" style="flex:1">
+            <span style="padding:7px 9px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;color:var(--ink3);white-space:nowrap">.aproove.app</span>
+          </div>
+        </div>
+        <div class="ib ib-info" style="margin-top:.375rem">Seu cliente acessa: <strong id="wl-domain-preview">novaera.aproove.app</strong> — sem nenhuma menção ao Aproove na interface.</div>
+        <div class="frow"><label>Domínio próprio (opcional)</label><input type="text" placeholder="aprovacoes.novaera.com.br"></div>
+      </div>
+      <div class="card">
+        <div class="ct">WhatsApp Business</div>
+        <div class="frow"><label>Nome do remetente</label><input type="text" id="wl-wa" value="Agência Nova Era" oninput="updateWL()"></div>
+        <div class="frow"><label>Número WhatsApp Business</label><input type="text" placeholder="+55 11 3000-0000 · conecte via BSP"></div>
+        <div class="frow"><label>Assinatura das mensagens</label><input type="text" id="wl-wa-sign" value="Equipe Nova Era · Portal de Aprovação" oninput="updateWL()"></div>
+      </div>
+      <div class="card">
+        <div class="ct">E-mail</div>
+        <div class="frow"><label>Remetente</label><input type="text" id="wl-email-from" value="aprovacoes@novaera.com.br" oninput="updateWL()"></div>
+        <div class="frow"><label>Nome do remetente</label><input type="text" id="wl-email-name" value="Agência Nova Era" oninput="updateWL()"></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11.5px;font-weight:600;color:var(--ink);margin-bottom:.5rem">Preview — Portal do cliente</div>
+      <div class="wl-preview-phone" id="wl-phone">
+        <div class="wlp-inner">
+          <div class="wlp-bar" id="wlp-bar" style="background:#1a1a18">
+            <div class="wlp-mark" id="wlp-mark" style="background:#2a5f2a;color:white;font-size:9px">NE</div>
+            <div><div class="wlp-name" id="wlp-name" style="color:white">Agência Nova Era</div><div class="wlp-tag" style="color:rgba(255,255,255,.5)">Portal de aprovação</div></div>
+          </div>
+          <div class="wlp-nav" id="wlp-nav" style="background:#f7f6f2">
+            <div class="wlp-nitem act" id="wlp-act1">Dashboard</div>
+            <div class="wlp-nitem">Aprovar</div>
+            <div class="wlp-nitem">Calendário</div>
+            <div class="wlp-nitem">Downloads</div>
+          </div>
+          <div class="wlp-content">
+            <div class="wlp-hero" id="wlp-hero" style="background:#1a1a18">
+              <div class="wlp-hero-t" style="color:white">Olá, João 👋</div>
+              <div class="wlp-hero-s" style="color:rgba(255,255,255,.6)">3 peças aguardando aprovação</div>
+            </div>
+            <div class="wlp-cards">
+              <div class="wlp-card"><div class="wlp-card-t">Aprovados</div><div class="wlp-card-v">12</div></div>
+              <div class="wlp-card"><div class="wlp-card-t">Publicados</div><div class="wlp-card-v">8</div></div>
+            </div>
+            <div style="font-size:8px;color:var(--ink3);text-align:center;padding:.25rem" id="wl-domain-footer">novaera.aproove.app</div>
+          </div>
+          <div class="wlp-footer" id="wlp-footer">
+            <div class="wlp-fi"><div class="wlp-fi-icon">⊞</div><div class="wlp-fi-lbl">Home</div></div>
+            <div class="wlp-fi"><div class="wlp-fi-icon">✓</div><div class="wlp-fi-lbl">Aprovar</div></div>
+            <div class="wlp-fi"><div class="wlp-fi-icon">◫</div><div class="wlp-fi-lbl">Calendário</div></div>
+            <div class="wlp-fi"><div class="wlp-fi-icon">☰</div><div class="wlp-fi-lbl">Mais</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:var(--ink);margin:.75rem 0 .375rem">Preview — WhatsApp</div>
+      <div class="wa-preview">
+        <div class="wap-bubble">
+          <div class="wap-sender" id="wap-sender">Agência Nova Era</div>
+          Olá, <strong>João</strong>! 📋 Você tem <strong>3 peças</strong> para aprovar na campanha <em>Lançamento Verão</em>.
+          <div style="background:#f0f0f0;border-radius:5px;margin-top:5px;padding:5px 7px;border-left:3px solid #25D366;font-size:9px">
+            <div style="font-weight:600;color:#111">Post feed · 20/03 às 10h00</div>
+            <div style="color:#075e54" id="wap-link">novaera.aproove.app/a/xK9m</div>
+          </div>
+          <div class="wap-time" id="wap-sign">Equipe Nova Era · Portal de Aprovação · 10:31 ✓✓</div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;color:var(--ink);margin:.75rem 0 .375rem">Preview — E-mail</div>
+      <div class="email-preview">
+        <div class="ep-bar">Para: joao@marcaverao.com · De: <span id="ep-from">aprovacoes@novaera.com.br</span></div>
+        <div class="ep-header">
+          <div class="ep-logo" id="ep-logo">Agência Nova Era</div>
+          <div class="ep-subject">3 peças aguardando sua aprovação — Lançamento Verão 2026</div>
+          <div class="ep-from" id="ep-from-name">Agência Nova Era &lt;aprovacoes@novaera.com.br&gt;</div>
+        </div>
+        <div class="ep-body">Olá João, temos 3 novas peças da campanha <strong>Lançamento Verão 2026</strong> aguardando sua aprovação.
+          <br><br><a href="#" id="ep-btn" class="ep-btn" style="background:#1a1a18;text-decoration:none">Ver e aprovar agora →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENTERPRISE -->
+<div class="page" id="p-enterprise">
+  <div class="ph"><div><h1>Empresas e unidades</h1><p>Modelo empresa-mãe com múltiplas unidades independentes</p></div>
+    <div class="ph-acts"><button class="btn btn-p btn-sm" onclick="showToast('Nova unidade adicionada')">+ Adicionar unidade</button></div>
+  </div>
+  <div class="ib ib-teal">Este modelo foi criado para empresas com múltiplas unidades — redes de franquias, lojas, clínicas, sites. A empresa-mãe define o padrão de marca e aprova o que vai ao ar. Cada unidade aprova seu conteúdo local.</div>
+  <div class="unit-tree">
+    <div class="unit-root">
+      <div style="font-size:22px">🏢</div>
+      <div>
+        <div class="ur-name">Grupo Brindes Brasil</div>
+        <div class="ur-sub">Empresa-mãe · 40 unidades · 1 gestor central</div>
+      </div>
+      <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span class="pill pl-teal">Enterprise</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.4)">Contrato único · R$ 4.800/mês</span>
+      </div>
+    </div>
+    <div class="units-grid">
+      <div class="unit-card"><div class="uc-name">Unidade São Paulo Centro</div><div class="uc-loc">SP · Carlos Mendes</div><div class="uc-stats"><span class="uc-stat" style="background:var(--abg);color:var(--amber)">2 aguardando</span><span class="uc-stat" style="background:var(--gbg);color:var(--green)">4 publicados</span></div></div>
+      <div class="unit-card"><div class="uc-name">Unidade Campinas</div><div class="uc-loc">SP · Ana Rodrigues</div><div class="uc-stats"><span class="uc-stat" style="background:var(--gbg);color:var(--green)">0 pendentes</span><span class="uc-stat" style="background:var(--gbg);color:var(--green)">6 publicados</span></div></div>
+      <div class="unit-card"><div class="uc-name">Unidade Belo Horizonte</div><div class="uc-loc">MG · Pedro Nunes</div><div class="uc-stats"><span class="uc-stat" style="background:var(--rbg);color:var(--red)">1 atrasada</span><span class="uc-stat" style="background:var(--abg);color:var(--amber)">2 aguardando</span></div></div>
+      <div class="unit-card"><div class="uc-name">Unidade Rio de Janeiro</div><div class="uc-loc">RJ · Juliana Costa</div><div class="uc-stats"><span class="uc-stat" style="background:var(--abg);color:var(--amber)">1 aguardando</span><span class="uc-stat" style="background:var(--gbg);color:var(--green)">5 publicados</span></div></div>
+      <div class="unit-card"><div class="uc-name">Unidade Porto Alegre</div><div class="uc-loc">RS · Marcos Alves</div><div class="uc-stats"><span class="uc-stat" style="background:var(--gbg);color:var(--green)">Tudo ok</span><span class="uc-stat" style="background:var(--gbg);color:var(--green)">3 publicados</span></div></div>
+      <div class="unit-card" style="border:1.5px dashed var(--border2);background:var(--bg);cursor:pointer" onclick="showToast('+ Adicionar nova unidade')"><div style="text-align:center;padding:.5rem;color:var(--ink3);font-size:12px">+ Adicionar unidade</div></div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="ct">Visão consolidada · todas as unidades</div>
+      <div class="g3" style="margin-bottom:.5rem">
+        <div class="met warn"><div class="ml">Aguardando aprovação</div><div class="mv">12</div><div class="ms">em 8 unidades</div></div>
+        <div class="met danger"><div class="ml">Atrasadas +48h</div><div class="mv">3</div><div class="ms">BH, SP Sul, Curitiba</div></div>
+        <div class="met good"><div class="ml">Publicados no mês</div><div class="mv">87</div><div class="ms">40 unidades</div></div>
+      </div>
+    </div>
+    <div class="card"><div class="ct">Estrutura de aprovação</div>
+      <div style="display:flex;flex-direction:column;gap:.375rem;font-size:12px;color:var(--ink2)">
+        <div style="display:flex;gap:.5rem;align-items:flex-start"><span class="pill pl-teal">1</span><span>Agência central produz o conteúdo</span></div>
+        <div style="display:flex;gap:.5rem;align-items:flex-start"><span class="pill pl-pub">2</span><span>Gestor central aprova o padrão de marca</span></div>
+        <div style="display:flex;gap:.5rem;align-items:flex-start"><span class="pill pl-pend">3</span><span>Unidade local aprova o conteúdo regional</span></div>
+        <div style="display:flex;gap:.5rem;align-items:flex-start"><span class="pill pl-apr">4</span><span>Publica automaticamente via Mlabs</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INTEGRATIONS -->
+<div class="page" id="p-integrations">
+  <div class="ph"><div><h1>Integrações</h1><p>Ferramentas conectadas ao Aproove</p></div></div>
+  <div class="card" style="margin-bottom:.875rem">
+    <div class="ct">Fluxo de publicação com Mlabs</div>
+    <div class="flow-diagram">
+      <div class="flow-node active-node">Produção no Aproove</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node active-node">Aprovação do cliente</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node active-node">Aproove aciona API</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ext">Mlabs agenda post</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node ext">Publicação automática</div>
+    </div>
+    <div class="ib ib-suc">Aprovado no Aproove → publicado via Mlabs. Sem ação manual. O cliente aprova como está acostumado e a publicação acontece no horário definido.</div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo" style="background:#e8f0fb">📱</div>
+    <div class="int-info">
+      <div class="int-name">Mlabs</div>
+      <div class="int-desc">Agendamento e publicação nas redes sociais. Quando uma peça é aprovada no Aproove, o sistema envia automaticamente para o Mlabs agendar no horário definido.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-connected">✓ Conectado</span>
+      <button class="btn btn-s btn-xs" onclick="showToast('Configurações do Mlabs abertas')">Configurar</button>
+    </div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo">📲</div>
+    <div class="int-info">
+      <div class="int-name">WhatsApp Business API (via Zenvia)</div>
+      <div class="int-desc">Envio de notificações e captura de aprovações via WhatsApp. Cada mensagem enviada registra canal, identidade e timestamp no Aproove.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-connected">✓ Conectado</span>
+      <button class="btn btn-s btn-xs" onclick="showToast('Configurações do WhatsApp abertas')">Configurar</button>
+    </div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo">📊</div>
+    <div class="int-info">
+      <div class="int-name">Meta Business Suite</div>
+      <div class="int-desc">Coleta de métricas de alcance, engajamento e seguidores do Instagram e Facebook para o relatório de campanha com análise de IA.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-connected">✓ Conectado</span>
+      <button class="btn btn-s btn-xs">Configurar</button>
+    </div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo">🎵</div>
+    <div class="int-info">
+      <div class="int-name">Etus</div>
+      <div class="int-desc">Alternativa ao Mlabs para agendamento. Mesma integração — aprovação no Aproove dispara o agendamento no Etus automaticamente.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-available">Disponível</span>
+      <button class="btn btn-p btn-xs" onclick="showToast('Iniciando conexão com Etus...')">Conectar</button>
+    </div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo">📈</div>
+    <div class="int-info">
+      <div class="int-name">RD Station CRM</div>
+      <div class="int-desc">Importação de dados de leads e oportunidades para cruzar com campanhas e calcular ROI de forma automática no relatório.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-available">Disponível</span>
+      <button class="btn btn-p btn-xs" onclick="showToast('Iniciando conexão com RD Station...')">Conectar</button>
+    </div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo">🔗</div>
+    <div class="int-info">
+      <div class="int-name">Buffer · Hootsuite · Postgrain</div>
+      <div class="int-desc">Integrações com outras ferramentas de agendamento. Para quem já usa Buffer ou Hootsuite internacionalmente.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-soon">Em breve</span>
+    </div>
+  </div>
+  <div class="int-card">
+    <div class="int-logo">🛒</div>
+    <div class="int-info">
+      <div class="int-name">Shopify · VTEX · WooCommerce</div>
+      <div class="int-desc">Importação automática de dados de vendas para calcular ROI da campanha sem entrada manual pelo cliente.</div>
+    </div>
+    <div class="int-status">
+      <span class="int-soon">Em breve</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// NAV
+function go(id, el) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.sb-it').forEach(function(i){i.classList.remove('on')});
+  var pg = document.getElementById('p-'+id);
+  if(pg) pg.classList.add('on');
+  if(el) el.classList.add('on');
+}
+
+// TOAST
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){t.style.display='none'}, 2800);
+}
+
+// MODAL
+function showModal(task) {
+  var info = document.getElementById('modal-task-info');
+  if(task) info.textContent = 'Tarefa: '+task+' · atualmente com Pedro Designer (esteira lotada)';
+  document.getElementById('modal-overlay').classList.add('on');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('on'); }
+function confirmRedesign(){
+  closeModal();
+  showToast('Tarefa redesignada para Lucas Designer. Notificação enviada.');
+}
+
+// INLINE EDIT
+function toggleEdit(id, row) {
+  var el = document.getElementById(id);
+  var isOpen = el.classList.contains('on');
+  document.querySelectorAll('.inline-edit').forEach(function(e){e.classList.remove('on')});
+  if(!isOpen) el.classList.add('on');
+}
+
+// PROPOSAL
+function propStep(n) {
+  document.querySelectorAll('#p-proposal .fs').forEach(function(s){s.classList.remove('on')});
+  document.getElementById('prop-s'+n).classList.add('on');
+  for(var i=1;i<=4;i++){
+    var el=document.getElementById('ps-'+i);
+    el.classList.remove('act','done');
+    if(i<n) el.classList.add('done');
+    else if(i===n) el.classList.add('act');
+  }
+}
+function updatePreview() {
+  var name = document.getElementById('prop-client').value || 'Nome do cliente';
+  document.getElementById('pp-title').textContent = 'Proposta — ' + name;
+  document.getElementById('pp-client').textContent = name;
+  var social = document.getElementById('v-social') ? document.getElementById('v-social').value : 'R$ 2.800';
+  var video = document.getElementById('v-video') ? document.getElementById('v-video').value : 'R$ 1.200';
+  if(document.getElementById('pp-social')) document.getElementById('pp-social').textContent = social;
+  if(document.getElementById('pp-video')) document.getElementById('pp-video').textContent = video;
+}
+
+// ADD CLIENT
+function acStep(n) {
+  document.querySelectorAll('#p-add-client .fs').forEach(function(s){s.classList.remove('on')});
+  document.getElementById('ac-s'+n).classList.add('on');
+  for(var i=1;i<=5;i++){
+    var el=document.getElementById('ac-'+i);
+    el.classList.remove('act','done');
+    if(i<n) el.classList.add('done');
+    else if(i===n) el.classList.add('act');
+  }
+}
+
+// WHITE LABEL
+function updateWL() {
+  var name = document.getElementById('wl-name').value || 'Agência';
+  var color = document.getElementById('wl-color').value;
+  var accent = document.getElementById('wl-accent').value;
+  var domain = document.getElementById('wl-domain').value || 'agencia';
+  var waSign = document.getElementById('wl-wa-sign').value;
+  var emailFrom = document.getElementById('wl-email-from').value;
+  var emailName = document.getElementById('wl-email-name').value;
+  var waName = document.getElementById('wl-wa').value;
+  // Update preview
+  document.getElementById('wlp-bar').style.background = color;
+  document.getElementById('wlp-hero').style.background = color;
+  document.getElementById('wlp-mark').style.background = accent;
+  document.getElementById('wlp-name').textContent = name;
+  document.getElementById('wlp-act1').style.color = accent;
+  document.getElementById('wl-domain-footer').textContent = domain+'.aproove.app';
+  document.getElementById('wl-domain-preview').textContent = domain+'.aproove.app';
+  document.getElementById('wap-sender').textContent = waName || name;
+  document.getElementById('wap-link').textContent = domain+'.aproove.app/a/xK9m';
+  document.getElementById('wap-sign').textContent = (waSign || name) + ' · 10:31 ✓✓';
+  document.getElementById('ep-from').textContent = emailFrom;
+  document.getElementById('ep-logo').textContent = emailName || name;
+  document.getElementById('ep-from-name').textContent = (emailName||name)+' <'+(emailFrom)+'>';
+  document.getElementById('ep-btn').style.background = color;
+  document.getElementById('wl-domain-preview').textContent = domain+'.aproove.app';
+}
+function applyWL() { showToast('Configurações de white label aplicadas em todos os canais.'); }
+
+// INIT
+document.getElementById('sb-nav').querySelectorAll('.sb-it')[0].classList.add('on');
+</script>
+</body>
+</html>

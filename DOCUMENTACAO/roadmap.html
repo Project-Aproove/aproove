@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111110; --ink2: #4a4a47; --ink3: #9a9a96;
+  --paper: #faf9f6; --paper2: #f2f1ec; --paper3: #e8e7e0;
+  --line: rgba(17,17,16,0.08); --line2: rgba(17,17,16,0.15);
+  --green: #2a5f2a; --green-bg: #edf5ed; --green-bd: rgba(42,95,42,.2);
+  --amber: #7a4a0a; --amber-bg: #fdf2e2; --amber-bd: rgba(122,74,10,.2);
+  --blue: #0d4a8a; --blue-bg: #e8f0fb; --blue-bd: rgba(13,74,138,.2);
+  --red: #8a1a1a; --red-bg: #fbeaea; --red-bd: rgba(138,26,26,.2);
+  --purple: #4a1d7a; --purple-bg: #f3eefb;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.65; }
+
+.doc-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,249,246,0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line2); padding: 0 2rem; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.doc-nav-brand { font-size: 13px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+.doc-nav-brand .mark { width: 22px; height: 22px; background: var(--ink); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; }
+.doc-nav-brand .mark svg { width: 12px; height: 12px; }
+.doc-nav-links { display: flex; gap: 1.5rem; }
+.doc-nav-links a { font-size: 12px; color: var(--ink3); text-decoration: none; transition: color .15s; }
+.doc-nav-links a:hover, .doc-nav-links a.active { color: var(--ink); }
+.doc-badge { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; background: var(--paper3); color: var(--ink2); padding: 3px 8px; border-radius: 4px; }
+
+.page { max-width: 860px; margin: 0 auto; padding: 80px 2rem 6rem; }
+
+.cover { padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 3rem; }
+.cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.cover-title { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; margin-bottom: .75rem; }
+.cover-sub { font-size: 16px; color: var(--ink2); font-weight: 300; max-width: 560px; line-height: 1.6; margin-bottom: 1.5rem; }
+.cover-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.cover-meta-item { font-size: 11px; color: var(--ink3); }
+.cover-meta-item strong { color: var(--ink2); font-weight: 500; }
+
+/* CURRENT PHASE BANNER */
+.phase-banner {
+  padding: 1.25rem 1.5rem; border-radius: 12px; margin-bottom: 2rem;
+  background: var(--ink); color: var(--paper);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.phase-banner-left .phase-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: .25rem; }
+.phase-banner-left .phase-name { font-size: 18px; font-weight: 600; }
+.phase-banner-right { display: flex; gap: .75rem; flex-wrap: wrap; }
+.phase-stat { text-align: center; padding: .5rem .875rem; background: rgba(255,255,255,.1); border-radius: 8px; }
+.phase-stat .ps-val { font-size: 20px; font-weight: 700; font-family: 'DM Mono', monospace; }
+.phase-stat .ps-label { font-size: 10px; color: rgba(255,255,255,.5); margin-top: 2px; }
+
+/* PHASE BLOCKS */
+.phases { display: flex; flex-direction: column; gap: 2.5rem; }
+
+.phase-block { position: relative; }
+.phase-header { display: flex; align-items: center; gap: .875rem; margin-bottom: 1.25rem; }
+.phase-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.phase-dot.done { background: var(--green); }
+.phase-dot.active { background: var(--amber); box-shadow: 0 0 0 3px var(--amber-bg); }
+.phase-dot.upcoming { background: var(--paper3); border: 1.5px solid var(--line2); }
+.phase-num { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+.phase-title-text { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.phase-period { font-size: 11px; color: var(--ink3); margin-left: auto; font-family: 'DM Mono', monospace; }
+
+.phase-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-left: .5rem; }
+.phase-badge.done { background: var(--green-bg); color: var(--green); }
+.phase-badge.active { background: var(--amber-bg); color: var(--amber); }
+.phase-badge.upcoming { background: var(--paper3); color: var(--ink3); }
+
+/* TASK ITEMS */
+.task-list { display: flex; flex-direction: column; gap: .5rem; }
+.task-item { display: flex; align-items: flex-start; gap: .75rem; padding: .75rem 1rem; background: var(--paper2); border: 1px solid var(--line); border-radius: 8px; }
+.task-item.done-task { background: var(--green-bg); border-color: var(--green-bd); }
+.task-item.active-task { background: var(--amber-bg); border-color: var(--amber-bd); }
+.task-check { width: 16px; height: 16px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.task-item.done-task .task-check { background: var(--green); }
+.task-item.active-task .task-check { background: var(--amber); }
+.task-item .task-check svg { width: 9px; height: 9px; }
+.task-item:not(.done-task):not(.active-task) .task-check { background: var(--paper3); border: 1.5px solid var(--line2); }
+.task-content { flex: 1; }
+.task-content h4 { font-size: 13px; font-weight: 600; margin-bottom: .2rem; }
+.task-content p { font-size: 12px; color: var(--ink2); }
+.task-meta { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; }
+
+/* EFFORT BADGES */
+.effort { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
+.effort.baixo { background: var(--green-bg); color: var(--green); }
+.effort.medio { background: var(--amber-bg); color: var(--amber); }
+.effort.grande { background: var(--red-bg); color: var(--red); }
+
+/* LEGEND */
+.legend { display: flex; gap: 1.5rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: .4rem; font-size: 11px; color: var(--ink2); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.doc-footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.doc-footer-left { font-size: 11px; color: var(--ink3); }
+.doc-footer-right { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+.section-sep { height: 1px; background: var(--line); margin: 2rem 0; }
+
+@media (max-width: 640px) {
+  .cover-title { font-size: 28px; }
+  .doc-nav-links { display: none; }
+  .phase-banner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<nav class="doc-nav">
+  <div class="doc-nav-brand">
+    <span class="mark"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    Aproove
+  </div>
+  <nav class="doc-nav-links">
+    <a href="conceito.html">Conceito</a>
+    <a href="investimento.html">Investimento</a>
+    <a href="roadmap.html" class="active">Roadmap</a>
+    <a href="modelo_negocio.html">Modelo de Negócio</a>
+  </nav>
+  <span class="doc-badge">DOCUMENTAÇÃO INTERNA</span>
+</nav>
+
+<main class="page">
+
+  <div class="cover">
+    <div class="cover-tag">Roadmap · Março 2026</div>
+    <h1 class="cover-title">Roadmap</h1>
+    <p class="cover-sub">Status atual do projeto, o que foi construído, o que está em andamento e o que vem a seguir — com placar de esforço para cada entrega.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>Fase atual</strong> · Fase 1 — Fundação</div>
+      <div class="cover-meta-item"><strong>Atualizado</strong> · Março 2026</div>
+    </div>
+  </div>
+
+  <!-- CURRENT STATUS BANNER -->
+  <div class="phase-banner">
+    <div class="phase-banner-left">
+      <div class="phase-label">Status atual</div>
+      <div class="phase-name">Fase 1 — Fundação &amp; Estruturação</div>
+    </div>
+    <div class="phase-banner-right">
+      <div class="phase-stat">
+        <div class="ps-val">8</div>
+        <div class="ps-label">Entregues</div>
+      </div>
+      <div class="phase-stat">
+        <div class="ps-val">7</div>
+        <div class="ps-label">Em andamento</div>
+      </div>
+      <div class="phase-stat">
+        <div class="ps-val">28</div>
+        <div class="ps-label">No backlog</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span> Concluído</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span> Em andamento</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--paper3);border:1.5px solid var(--line2)"></span> Backlog</div>
+    <div style="margin-left:auto;display:flex;gap:.75rem;flex-wrap:wrap;">
+      <span class="effort baixo">Baixo</span>
+      <span class="effort medio">Médio</span>
+      <span class="effort grande">Grande</span>
+    </div>
+  </div>
+
+  <div class="phases">
+
+    <!-- FASE 0: CONCEITO -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-dot done"></div>
+        <span class="phase-num">Fase 0</span>
+        <span class="phase-title-text">Conceito e Prototipagem</span>
+        <span class="phase-badge done">Concluída</span>
+        <span class="phase-period">Jan — Mar 2026</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Definição do produto e posicionamento</h4><p>Problema, público-alvo, diferencial competitivo, proposta de valor.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Prototipagem HTML — Landing page</h4><p>Design completo da página de venda com copy e visual.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Prototipagem HTML — Portal da agência</h4><p>Dashboard, sidebar, visão de campanhas, gestão de peças e equipe.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Prototipagem HTML — Portal do cliente</h4><p>Tela de aprovação com mockup visual por rede social, histórico de versões.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Prototipagem HTML — Área do gestor</h4><p>Visão consolidada para o gerente de marketing da agência.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Mockup multi-formato</h4><p>Simulação visual de posts para Instagram, LinkedIn, TikTok, Facebook, X.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Documento técnico mestre</h4><p>Spec completo com arquitetura, data models, fluxos, roles, LGPD.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item done-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="task-content"><h4>Prompt de desenvolvimento completo</h4><p>Prompt detalhado para construção do MVP com stack, data models e fluxos.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- FASE 1: FUNDAÇÃO -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-dot active"></div>
+        <span class="phase-num">Fase 1</span>
+        <span class="phase-title-text">Fundação &amp; Estruturação</span>
+        <span class="phase-badge active">Em andamento</span>
+        <span class="phase-period">Mar — Abr 2026</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>Estrutura de pastas e ambientes (produção / teste)</h4><p>Dois ambientes separados, sistema de versionamento no rodapé, botão COLOCAR NO AR.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>DOCUMENTAÇÃO completa do projeto</h4><p>Conceito, investimento, roadmap, modelo de negócio — documentos HTML ricos e atualizáveis.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>Landing page de produção v0.0.1</h4><p>Versão refinada da landing com rodapé de versão, pronta para publicação.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>Servidor de desenvolvimento local (server.js)</h4><p>Servidor Node.js com endpoints de deploy, ideas CRUD e webhook WhatsApp.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>Laboratório de Ideias do fundador</h4><p>Interface privada para captura e gestão de ideias. Integração WhatsApp via Meta Cloud API. Armazenamento em ideas.json.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>GitHub Actions — deploy automático para GitHub Pages</h4><p>.github/workflows/deploy.yml — publica producao/ no GitHub Pages a cada push para main.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>Publicação no GitHub + domínio gratuito ativo</h4><p>Subir tudo no GitHub, ativar GitHub Pages, landing pública em usuario.github.io/aproove. Preparado para domínio próprio.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+        <div class="task-item active-task">
+          <div class="task-check"><svg viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="2" fill="white"/></svg></div>
+          <div class="task-content"><h4>Programa Fundadores — configurar primeiros 10 clientes</h4><p>Badge, acesso vitalício gratuito, canal de feedback direto. Capturar primeiros leads na landing.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- FASE 2: MVP CORE -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-dot upcoming"></div>
+        <span class="phase-num">Fase 2</span>
+        <span class="phase-title-text">MVP Core — Backend + Frontend</span>
+        <span class="phase-badge upcoming">Backlog</span>
+        <span class="phase-period">Mai — Jul 2026</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Setup do projeto React + TypeScript + Tailwind</h4><p>Criação do projeto base com estrutura de pastas, lint, e configuração de build.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Configuração do Supabase (DB + Auth + Storage)</h4><p>Schema completo, migrations, RLS policies, storage buckets.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-content"><h4>Sistema de autenticação e RBAC</h4><p>Login, logout, recuperação de senha, roles: planner, social media, designer, manager, admin.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Dashboard principal da agência</h4><p>KPIs, lista de campanhas com status, barra de progresso, ações rápidas.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Criação de campanha</h4><p>Formulário completo: nome, cliente, datas, objetivo, redes, formatos, equipe designada.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Tela de detalhe da peça</h4><p>Copy (caption, CTA, hashtags), upload de arte, pré-visualização, fluxo de status.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Mockup visual nativo por rede social</h4><p>Renderização do post como apareceria no Instagram, LinkedIn, TikTok, Facebook, X.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Portal de aprovação do cliente (link único)</h4><p>Acesso sem conta, mockup visual, botões Aprovar / Solicitar ajuste / Reprovar, registro imutável.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Histórico de versões por peça</h4><p>Timeline vertical com versões, thumbnails, comentários, status de cada iteração.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Notificações por e-mail</h4><p>Aviso ao cliente quando peça está aguardando aprovação. Aviso à agência quando cliente aprova/reprova.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Seed data para demonstração</h4><p>1 agência, 3 usuários, 1 cliente demo, 2 campanhas com peças em status diferentes.</p></div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- FASE 3: POLIMENTO E LANÇAMENTO -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-dot upcoming"></div>
+        <span class="phase-num">Fase 3</span>
+        <span class="phase-title-text">Polimento, CMS e Lançamento</span>
+        <span class="phase-badge upcoming">Backlog</span>
+        <span class="phase-period">Ago — Set 2026</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>CMS para landing page</h4><p>Interface administrativa para atualizar conteúdo da página de venda sem alterar código.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Gestão de planos e billing</h4><p>Integração com Stripe, página de planos, upgrade/downgrade, histórico de faturas.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Onboarding guiado para novas agências</h4><p>Wizard de configuração inicial: criação de conta, primeiro cliente, primeira campanha.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Painel admin (super-admin Aproove)</h4><p>Gestão de todas as contas, métricas de uso, churn, MRR, storage consumido.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Testes de carga e segurança</h4><p>Pentest básico, testes de LGPD compliance, limites de upload, rate limiting.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Lançamento público v1.0</h4><p>Go-live com primeiros 10 clientes beta, suporte dedicado, coleta de feedback estruturada.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- FASE 4: CRESCIMENTO -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-dot upcoming"></div>
+        <span class="phase-num">Fase 4</span>
+        <span class="phase-title-text">Crescimento e Expansão de Produto</span>
+        <span class="phase-badge upcoming">Backlog</span>
+        <span class="phase-period">Out 2026 →</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Publicação direta via APIs das redes sociais</h4><p>Integração com Meta, LinkedIn. Publicar diretamente após aprovação, sem sair do Aproove.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>White-label para agências Enterprise</h4><p>Logo, domínio e cores personalizadas para cada agência usar com seus clientes.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Analytics e relatórios</h4><p>Taxa de aprovação, tempo médio de ciclo, histórico de performance por cliente e campanha.</p></div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>Assistente de copy com IA</h4><p>Sugestão de legendas, CTAs e hashtags baseado no objetivo da campanha e histórico.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content"><h4>App mobile (iOS + Android)</h4><p>Clientes aprovam pelo celular. Equipe acompanha status em tempo real com push notifications.</p></div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-left">Aproove · Documento Interno · Roadmap · Atualizado Março 2026</div>
+    <div class="doc-footer-right">v0.0.1</div>
+  </footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,469 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px}
+
+.shell{display:grid;grid-template-columns:200px 1fr 280px;gap:0;min-height:700px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+
+.sidebar-left{background:var(--color-background-secondary);border-right:0.5px solid var(--color-border-tertiary);padding:.75rem 0}
+.sl-header{padding:.5rem 1rem .75rem;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:.5rem}
+.sl-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.sl-camp{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+
+.format-item{display:flex;align-items:center;gap:8px;padding:7px 1rem;cursor:pointer;border-left:2px solid transparent;transition:all .12s;font-size:13px;color:var(--color-text-secondary)}
+.format-item:hover{background:var(--color-background-primary);color:var(--color-text-primary)}
+.format-item.active{background:var(--color-background-primary);color:var(--color-text-primary);border-left-color:var(--color-text-primary)}
+.net-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fi-right{margin-left:auto;font-size:10px;padding:1px 5px;border-radius:3px}
+.status-ok{background:var(--color-background-success);color:var(--color-text-success)}
+.status-pend{background:var(--color-background-warning);color:var(--color-text-warning)}
+
+.center-area{background:var(--color-background-primary);display:flex;flex-direction:column}
+.center-top{padding:.875rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:.75rem}
+.net-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+.fmt-badge{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:3px 8px;border-radius:4px}
+.version-label{margin-left:auto;font-size:12px;color:var(--color-text-secondary)}
+
+.preview-wrap{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:1.25rem;background:var(--color-background-tertiary)}
+
+.phone-shell{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:18px;overflow:hidden;width:220px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.phone-bar{padding:8px 12px;display:flex;align-items:center;gap:7px}
+.ph-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0}
+.ph-name{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.ph-handle{font-size:10px;color:var(--color-text-secondary)}
+.ph-more{margin-left:auto;font-size:13px;color:var(--color-text-secondary)}
+
+.post-img{background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--color-text-secondary);position:relative;overflow:hidden}
+.post-img-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+.post-label{font-size:13px;font-weight:500;color:var(--color-text-primary);text-align:center;padding:0 12px}
+.post-sub{font-size:10px;color:var(--color-text-secondary);text-align:center;padding:0 12px}
+
+.ig-actions{display:flex;gap:10px;padding:7px 10px 4px;font-size:15px;color:var(--color-text-secondary)}
+.ig-save{margin-left:auto}
+.ig-likes{font-size:11px;font-weight:500;color:var(--color-text-primary);padding:0 10px 3px}
+.ig-caption{padding:0 10px 8px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
+.ig-caption .u{font-weight:500}
+.ig-tags{color:#3B82F6;font-size:10px;margin-top:2px}
+.ig-date-bar{padding:0 10px 8px;font-size:10px;color:var(--color-text-secondary)}
+
+.li-header{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:6px}
+.li-avatar{width:26px;height:26px;border-radius:4px;background:var(--color-background-info);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--color-text-info)}
+.li-meta{font-size:10px}
+.li-name{font-weight:500;color:var(--color-text-primary)}
+.li-sub{color:var(--color-text-secondary)}
+.li-body{padding:8px 10px;font-size:11px;color:var(--color-text-primary);line-height:1.5}
+.li-img{aspect-ratio:16/9;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px}
+.li-reactions{padding:6px 10px;font-size:10px;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary)}
+
+.tk-body{background:#111;color:white;padding:8px 10px}
+.tk-caption{font-size:10px;line-height:1.4;margin-bottom:6px}
+.tk-tags{font-size:10px;opacity:.7}
+.tk-side{display:flex;flex-direction:column;gap:8px;align-items:flex-end;padding:6px 10px;background:#111}
+.tk-btn{font-size:10px;color:white;opacity:.8;text-align:center}
+
+.sidebar-right{background:var(--color-background-secondary);border-left:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column}
+.sr-section{padding:.875rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sr-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.625rem}
+
+.date-recommended{background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:.625rem .875rem;margin-bottom:.625rem}
+.dr-date{font-size:14px;font-weight:500;color:var(--color-text-success);margin-bottom:2px}
+.dr-why{font-size:11px;color:var(--color-text-success);line-height:1.4}
+
+.insight-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px}
+.insight-row:last-child{border-bottom:none}
+.ins-bar-wrap{flex:1;height:4px;background:var(--color-border-tertiary);border-radius:2px}
+.ins-bar{height:4px;border-radius:2px;background:var(--color-text-success)}
+.ins-time{color:var(--color-text-secondary);width:38px;flex-shrink:0;font-size:10px}
+.ins-pct{color:var(--color-text-secondary);width:26px;text-align:right;flex-shrink:0;font-size:10px}
+
+.date-inputs{display:flex;gap:6px;margin-bottom:.5rem}
+.date-inputs input{flex:1;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.date-inputs input:focus{outline:none;border-color:var(--color-border-primary)}
+
+.conflict-box{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:.625rem .875rem;margin-bottom:.625rem;display:none}
+.conflict-box.visible{display:block}
+.cb-title{font-size:12px;font-weight:500;color:var(--color-text-warning);margin-bottom:4px}
+.cb-body{font-size:11px;color:var(--color-text-warning);line-height:1.4;margin-bottom:.5rem}
+.cb-actions{display:flex;gap:6px}
+.cb-btn{padding:4px 10px;font-size:11px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid var(--color-border-warning);background:transparent;color:var(--color-text-warning);font-family:var(--font-sans);transition:background .12s}
+.cb-btn:hover{background:var(--color-background-warning)}
+.cb-btn.primary{background:var(--color-text-warning);color:var(--color-background-primary);border-color:var(--color-text-warning)}
+
+.action-btns{padding:.875rem 1rem;margin-top:auto;border-top:0.5px solid var(--color-border-tertiary)}
+.btn-approve{width:100%;padding:9px;font-size:13px;font-weight:500;border:none;border-radius:var(--border-radius-md);background:var(--color-text-primary);color:var(--color-background-primary);cursor:pointer;margin-bottom:6px;font-family:var(--font-sans);transition:opacity .12s}
+.btn-approve:hover{opacity:.85}
+.btn-adjust{width:100%;padding:9px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;margin-bottom:6px;font-family:var(--font-sans);transition:background .12s}
+.btn-adjust:hover{background:var(--color-background-secondary)}
+.btn-reject{width:100%;padding:7px;font-size:12px;border:none;background:transparent;color:var(--color-text-danger);cursor:pointer;font-family:var(--font-sans)}
+
+.result-banner{background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-md);padding:.625rem .875rem;margin-bottom:.5rem;display:none}
+.result-banner.warn{background:var(--color-background-warning);border-color:var(--color-border-warning)}
+.result-banner.danger{background:var(--color-background-danger);border-color:var(--color-border-danger)}
+.rb-title{font-size:12px;font-weight:500;color:var(--color-text-success)}
+.result-banner.warn .rb-title{color:var(--color-text-warning)}
+.result-banner.danger .rb-title{color:var(--color-text-danger)}
+.rb-sub{font-size:11px;color:var(--color-text-success);margin-top:2px}
+.result-banner.warn .rb-sub{color:var(--color-text-warning)}
+.result-banner.danger .rb-sub{color:var(--color-text-danger)}
+
+.caption-input{width:100%;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 9px;font-size:11px;font-family:var(--font-sans);color:var(--color-text-primary);background:var(--color-background-primary);resize:none;min-height:54px}
+.caption-input:focus{outline:none;border-color:var(--color-border-primary)}
+</style>
+
+<div class="shell">
+
+  <div class="sidebar-left">
+    <div class="sl-header">
+      <div class="sl-title">Campanha</div>
+      <div class="sl-camp">Lançamento Verão 2026</div>
+    </div>
+    <div style="padding:.375rem 1rem .25rem;font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em">5 formatos</div>
+    <div class="format-item active" onclick="switchFormat('ig-feed',this)">
+      <div class="net-dot" style="background:#E84040"></div>
+      <span>IG feed</span>
+      <span class="fi-right status-pend">aguardando</span>
+    </div>
+    <div class="format-item" onclick="switchFormat('ig-reels',this)">
+      <div class="net-dot" style="background:#E84040"></div>
+      <span>IG reels</span>
+      <span class="fi-right status-pend">aguardando</span>
+    </div>
+    <div class="format-item" onclick="switchFormat('ig-story',this)">
+      <div class="net-dot" style="background:#E84040"></div>
+      <span>IG story</span>
+      <span class="fi-right status-ok">aprovado</span>
+    </div>
+    <div class="format-item" onclick="switchFormat('linkedin',this)">
+      <div class="net-dot" style="background:#2563A0"></div>
+      <span>LinkedIn</span>
+      <span class="fi-right status-pend">aguardando</span>
+    </div>
+    <div class="format-item" onclick="switchFormat('tiktok',this)">
+      <div class="net-dot" style="background:#111"></div>
+      <span>TikTok</span>
+      <span class="fi-right status-pend">aguardando</span>
+    </div>
+    <div style="padding:.75rem 1rem 0;margin-top:.5rem;border-top:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.5">Mesma mensagem adaptada para cada formato e rede. Aprovação independente por formato.</div>
+    </div>
+  </div>
+
+  <div class="center-area">
+    <div class="center-top">
+      <span id="net-badge" class="net-badge" style="background:#FDECEA;color:#B91C1C">Instagram</span>
+      <span id="fmt-badge" class="fmt-badge">Feed 1:1</span>
+      <span class="version-label">v2 · atual</span>
+    </div>
+    <div class="preview-wrap" id="preview-wrap">
+
+      <div id="preview-ig-feed" class="phone-shell">
+        <div class="phone-bar" style="background:var(--color-background-primary)">
+          <div class="ph-avatar" style="background:#FDECEA;color:#B91C1C">MK</div>
+          <div><div class="ph-name">marcaoficial</div><div class="ph-handle">São Paulo</div></div>
+          <div class="ph-more">···</div>
+        </div>
+        <div class="post-img" style="aspect-ratio:1">
+          <div class="post-img-inner" style="background:var(--color-background-secondary)">
+            <div style="font-size:28px">☀️</div>
+            <div class="post-label">Verão chegou.</div>
+            <div class="post-sub">Nova coleção disponível</div>
+          </div>
+        </div>
+        <div class="ig-actions"><span>♡</span><span>○</span><span>↗</span><span class="ig-save">⊟</span></div>
+        <div class="ig-likes">1.284 curtidas</div>
+        <div class="ig-caption"><span class="u">marcaoficial</span> Verão chegou e a nossa nova coleção também! Peças exclusivas para arrasar na estação mais quente do ano. Acesse o link na bio.<div class="ig-tags">#verão2026 #moda #novacoleção</div></div>
+        <div class="ig-date-bar">Programado: <b>20/03/2026 às 10h00</b></div>
+      </div>
+
+      <div id="preview-ig-reels" class="phone-shell" style="display:none">
+        <div class="phone-bar" style="background:#111">
+          <div class="ph-avatar" style="background:#333;color:white">MK</div>
+          <div><div class="ph-name" style="color:white">marcaoficial</div></div>
+          <div class="ph-more" style="color:white">···</div>
+        </div>
+        <div class="post-img" style="aspect-ratio:9/16;background:#111">
+          <div class="post-img-inner">
+            <div style="font-size:28px">🎬</div>
+            <div class="post-label" style="color:white">Reels · 15s</div>
+            <div class="post-sub" style="color:rgba(255,255,255,.6)">Verão chegou</div>
+          </div>
+          <div style="position:absolute;bottom:12px;left:10px;right:32px">
+            <div style="font-size:10px;color:white;font-weight:500;margin-bottom:3px">marcaoficial</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.8);line-height:1.4">Verão chegou e a nossa nova coleção também! Peças exclusivas pra você arrasar ☀️</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:3px">#verão2026 #moda</div>
+          </div>
+          <div style="position:absolute;bottom:8px;right:8px;display:flex;flex-direction:column;gap:10px;align-items:center">
+            <div style="text-align:center"><div style="font-size:16px">♡</div><div style="font-size:9px;color:white">1,2k</div></div>
+            <div style="font-size:16px;color:white">○</div>
+            <div style="font-size:16px;color:white">↗</div>
+          </div>
+        </div>
+        <div class="ig-date-bar" style="background:var(--color-background-primary)">Programado: <b>20/03/2026 às 18h00</b></div>
+      </div>
+
+      <div id="preview-ig-story" class="phone-shell" style="display:none">
+        <div class="post-img" style="aspect-ratio:9/16;background:#111">
+          <div style="position:absolute;top:0;left:0;right:0;padding:8px 10px;display:flex;align-items:center;gap:6px;z-index:2">
+            <div style="flex:1;height:2px;background:white;border-radius:1px"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.4);border-radius:1px"></div>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,.4);border-radius:1px"></div>
+          </div>
+          <div style="position:absolute;top:18px;left:10px;display:flex;align-items:center;gap:6px">
+            <div class="ph-avatar" style="background:#FDECEA;color:#B91C1C;width:22px;height:22px;font-size:9px">MK</div>
+            <div style="font-size:10px;color:white;font-weight:500">marcaoficial</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.6)">agora</div>
+          </div>
+          <div class="post-img-inner">
+            <div style="font-size:36px">☀️</div>
+            <div style="font-size:16px;font-weight:500;color:white;text-align:center;padding:0 16px">Nova coleção</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.8);text-align:center;padding:0 16px">Verão chegou</div>
+          </div>
+          <div style="position:absolute;bottom:20px;left:0;right:0;display:flex;align-items:center;justify-content:center">
+            <div style="background:white;color:#111;font-size:11px;font-weight:500;padding:6px 18px;border-radius:20px">Ver coleção</div>
+          </div>
+        </div>
+        <div class="ig-date-bar" style="background:var(--color-background-primary)">Programado: <b>20/03/2026 às 09h00</b> · <span style="color:var(--color-text-success)">Aprovado</span></div>
+      </div>
+
+      <div id="preview-linkedin" class="phone-shell" style="display:none">
+        <div class="li-header">
+          <div class="li-avatar">MK</div>
+          <div class="li-meta">
+            <div class="li-name">Marca Oficial</div>
+            <div class="li-sub">Moda · 12.400 seguidores</div>
+          </div>
+          <div class="ph-more" style="margin-left:auto">···</div>
+        </div>
+        <div class="li-body">Verão chegou e lançamos nossa nova coleção! Peças exclusivas pensadas para o profissional que quer estilo e conforto mesmo nos dias mais quentes. Confira o link nos comentários.</div>
+        <div class="li-img">
+          <div style="font-size:24px">☀️</div>
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px">Banner 1200×628</div>
+        </div>
+        <div class="li-reactions">👍 348 · 42 comentários · 18 compartilhamentos</div>
+        <div class="ig-date-bar" style="padding:6px 10px">Programado: <b>20/03/2026 às 08h00</b></div>
+      </div>
+
+      <div id="preview-tiktok" class="phone-shell" style="display:none">
+        <div class="post-img" style="aspect-ratio:9/16;background:#111">
+          <div style="position:absolute;top:8px;left:0;right:0;display:flex;justify-content:space-around;padding:0 12px">
+            <div style="font-size:10px;color:rgba(255,255,255,.6)">Seguindo</div>
+            <div style="font-size:10px;color:white;font-weight:500;border-bottom:1.5px solid white;padding-bottom:2px">Para você</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6)">Ao vivo</div>
+          </div>
+          <div class="post-img-inner">
+            <div style="font-size:36px">☀️</div>
+            <div style="font-size:13px;color:white;font-weight:500">TikTok · 30s</div>
+          </div>
+          <div style="position:absolute;bottom:40px;left:10px;right:50px">
+            <div style="font-size:11px;color:white;font-weight:500;margin-bottom:3px">@marcaoficial</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.9);line-height:1.4">Verão chegou e a nossa nova coleção também! ☀️ Corre ver as peças!</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.7);margin-top:3px">#verão2026 #moda #fy</div>
+            <div style="font-size:10px;color:white;margin-top:4px;display:flex;align-items:center;gap:4px"><span style="font-size:10px">♪</span> Música original</div>
+          </div>
+          <div style="position:absolute;bottom:30px;right:8px;display:flex;flex-direction:column;gap:12px;align-items:center">
+            <div class="ph-avatar" style="width:28px;height:28px;font-size:10px;background:#FDECEA;color:#B91C1C;border:1.5px solid white">MK</div>
+            <div style="text-align:center"><div style="font-size:18px">♡</div><div style="font-size:9px;color:white">24k</div></div>
+            <div style="text-align:center"><div style="font-size:15px;color:white">○</div><div style="font-size:9px;color:white">891</div></div>
+            <div style="text-align:center"><div style="font-size:15px;color:white">↗</div><div style="font-size:9px;color:white">1.2k</div></div>
+          </div>
+        </div>
+        <div class="ig-date-bar" style="background:var(--color-background-primary)">Programado: <b>20/03/2026 às 19h00</b></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="sidebar-right">
+    <div class="sr-section">
+      <div class="sr-label">Horário recomendado</div>
+      <div class="date-recommended">
+        <div class="dr-date" id="rec-date">20/03/2026 às 10h00</div>
+        <div class="dr-why" id="rec-why">Melhor janela para Instagram Feed baseado nos últimos 90 dias: taxa de engajamento 3,2× acima da média da conta às 10h–11h.</div>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:.5rem">Engajamento por horário (últimos 90 dias)</div>
+      <div class="insight-row"><span class="ins-time">08h–09h</span><div class="ins-bar-wrap"><div class="ins-bar" id="bar-8" style="width:40%"></div></div><span class="ins-pct">40%</span></div>
+      <div class="insight-row"><span class="ins-time">10h–11h</span><div class="ins-bar-wrap"><div class="ins-bar" style="width:100%"></div></div><span class="ins-pct" style="color:var(--color-text-success);font-weight:500">100%</span></div>
+      <div class="insight-row"><span class="ins-time">12h–13h</span><div class="ins-bar-wrap"><div class="ins-bar" style="width:72%"></div></div><span class="ins-pct">72%</span></div>
+      <div class="insight-row"><span class="ins-time">18h–19h</span><div class="ins-bar-wrap"><div class="ins-bar" style="width:88%"></div></div><span class="ins-pct">88%</span></div>
+      <div class="insight-row"><span class="ins-time">21h–22h</span><div class="ins-bar-wrap"><div class="ins-bar" style="width:65%"></div></div><span class="ins-pct">65%</span></div>
+    </div>
+
+    <div class="sr-section">
+      <div class="sr-label">Sugerir outra data</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:.5rem">O horário recomendado está pré-selecionado. Altere se quiser propor outro momento.</div>
+      <div class="date-inputs">
+        <input type="date" id="input-date" value="2026-03-20">
+        <input type="time" id="input-time" value="10:00">
+      </div>
+      <div id="conflict-box" class="conflict-box">
+        <div class="cb-title">Conflito detectado</div>
+        <div class="cb-body" id="conflict-msg">Já existe um post de Instagram Feed programado para esta conta em <b>20/03/2026 às 10h00</b> (Post "Oferta relâmpago"). Publicar dois posts no mesmo horário pode reduzir o alcance de ambos.</div>
+        <div class="cb-actions">
+          <button class="cb-btn" onclick="resolveConflict('adjust')">Ajustar horário</button>
+          <button class="cb-btn primary" onclick="resolveConflict('keep')">Manter mesmo assim</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sr-section" style="flex:1">
+      <div class="sr-label">Comentário</div>
+      <textarea class="caption-input" id="comment-box" placeholder="Deixe uma observação ou justificativa para a nova data..."></textarea>
+    </div>
+
+    <div class="action-btns">
+      <div class="result-banner" id="result-banner">
+        <div class="rb-title" id="rb-title">Aprovado</div>
+        <div class="rb-sub" id="rb-sub"></div>
+      </div>
+      <button class="btn-approve" onclick="doAction('approve')">Aprovar esta publicação</button>
+      <button class="btn-adjust" onclick="doAction('adjust')">Solicitar ajuste</button>
+      <button class="btn-reject" onclick="doAction('reject')">Reprovar</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var formats = {
+  'ig-feed': {
+    net:'Instagram', netBg:'#FDECEA', netColor:'#B91C1C',
+    fmt:'Feed 1:1', date:'20/03/2026', time:'10:00',
+    recLabel:'20/03/2026 às 10h00',
+    recWhy:'Melhor janela Instagram Feed: engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias.',
+    bars:[40,100,72,88,65],
+    conflictDate:'2026-03-20', conflictTime:'10:00',
+    conflictMsg:'Já existe um post de <b>Instagram Feed</b> programado para <b>20/03/2026 às 10h00</b> ("Oferta relâmpago"). Dois posts simultâneos reduzem alcance de ambos.'
+  },
+  'ig-reels': {
+    net:'Instagram', netBg:'#FDECEA', netColor:'#B91C1C',
+    fmt:'Reels 9:16', date:'20/03/2026', time:'18:00',
+    recLabel:'20/03/2026 às 18h00',
+    recWhy:'Reels têm pico de visualização entre 18h–20h. Essa janela gera 2,8× mais plays que o restante do dia.',
+    bars:[30,60,55,100,80],
+    conflictDate:null, conflictMsg:''
+  },
+  'ig-story': {
+    net:'Instagram', netBg:'#FDECEA', netColor:'#B91C1C',
+    fmt:'Story 9:16', date:'20/03/2026', time:'09:00',
+    recLabel:'20/03/2026 às 09h00',
+    recWhy:'Stories têm maior abertura entre 08h–10h, quando o público verifica o celular ao acordar.',
+    bars:[100,85,60,70,55],
+    conflictDate:null, conflictMsg:''
+  },
+  'linkedin': {
+    net:'LinkedIn', netBg:'#DBEAFE', netColor:'#1D4ED8',
+    fmt:'Post feed', date:'20/03/2026', time:'08:00',
+    recLabel:'20/03/2026 às 08h00',
+    recWhy:'LinkedIn tem maior engajamento entre 07h30 e 09h em dias úteis. Decisores consomem conteúdo antes das reuniões.',
+    bars:[100,75,65,40,20],
+    conflictDate:'2026-03-20', conflictTime:'08:00',
+    conflictMsg:'Já existe um post de <b>LinkedIn</b> programado para <b>20/03/2026 às 08h00</b> ("Case de sucesso"). Considere espaçar pelo menos 3 horas entre publicações.'
+  },
+  'tiktok': {
+    net:'TikTok', netBg:'#F3F4F6', netColor:'#111111',
+    fmt:'Vídeo 9:16', date:'20/03/2026', time:'19:00',
+    recLabel:'20/03/2026 às 19h00',
+    recWhy:'TikTok tem pico de distribuição orgânica entre 19h–21h para o perfil desta conta (faixa 18–34 anos, BR).',
+    bars:[20,35,50,85,100],
+    conflictDate:null, conflictMsg:''
+  }
+};
+
+var currentFormat = 'ig-feed';
+var conflictDismissed = false;
+
+function switchFormat(id, el) {
+  document.querySelectorAll('.format-item').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="preview-"]').forEach(x=>x.style.display='none');
+  document.getElementById('preview-'+id).style.display='block';
+  currentFormat = id;
+  conflictDismissed = false;
+
+  var f = formats[id];
+  document.getElementById('net-badge').textContent = f.net;
+  document.getElementById('net-badge').style.background = f.netBg;
+  document.getElementById('net-badge').style.color = f.netColor;
+  document.getElementById('fmt-badge').textContent = f.fmt;
+  document.getElementById('rec-date').textContent = f.recLabel;
+  document.getElementById('rec-why').textContent = f.recWhy;
+  document.getElementById('input-date').value = f.date.split('/').reverse().join('-');
+  document.getElementById('input-time').value = f.time;
+  document.getElementById('conflict-box').classList.remove('visible');
+  document.getElementById('result-banner').style.display='none';
+
+  var barEls = document.querySelectorAll('.ins-bar');
+  barEls.forEach((b,i)=>{ b.style.width = (f.bars[i]||50)+'%'; });
+  var pctEls = document.querySelectorAll('.ins-pct');
+  pctEls.forEach((p,i)=>{ 
+    p.textContent=(f.bars[i]||50)+'%';
+    p.style.color = f.bars[i]===100 ? 'var(--color-text-success)' : 'var(--color-text-secondary)';
+    p.style.fontWeight = f.bars[i]===100 ? '500' : '400';
+  });
+}
+
+function checkConflict() {
+  if(conflictDismissed) return;
+  var f = formats[currentFormat];
+  if(!f.conflictDate) return;
+  var d = document.getElementById('input-date').value;
+  var t = document.getElementById('input-time').value;
+  if(d===f.conflictDate && t===f.conflictTime) {
+    document.getElementById('conflict-msg').innerHTML = f.conflictMsg;
+    document.getElementById('conflict-box').classList.add('visible');
+  } else {
+    document.getElementById('conflict-box').classList.remove('visible');
+  }
+}
+
+function resolveConflict(action) {
+  if(action==='adjust') {
+    var t = document.getElementById('input-time');
+    var cur = t.value.split(':');
+    var h = (parseInt(cur[0])+2)%24;
+    t.value = (h<10?'0':'')+h+':00';
+    document.getElementById('conflict-box').classList.remove('visible');
+    conflictDismissed = false;
+    checkConflict();
+  } else {
+    conflictDismissed = true;
+    document.getElementById('conflict-box').classList.remove('visible');
+  }
+}
+
+document.getElementById('input-date').addEventListener('change', checkConflict);
+document.getElementById('input-time').addEventListener('change', checkConflict);
+
+function doAction(type) {
+  var f = formats[currentFormat];
+  var d = document.getElementById('input-date').value.split('-').reverse().join('/');
+  var t = document.getElementById('input-time').value+'h';
+  var banner = document.getElementById('result-banner');
+  var title = document.getElementById('rb-title');
+  var sub = document.getElementById('rb-sub');
+  var comment = document.getElementById('comment-box').value.trim();
+  banner.className = 'result-banner';
+  if(type==='approve') {
+    banner.style.display='block';
+    title.textContent = 'Aprovado — '+f.fmt;
+    sub.textContent = 'Agendado para '+d+' às '+t+' · canal: portal';
+  } else if(type==='adjust') {
+    if(!comment){ 
+      banner.classList.add('warn'); banner.style.display='block';
+      title.textContent='Comentário necessário';
+      sub.textContent='Descreva o que precisa ser ajustado antes de enviar.';
+      return;
+    }
+    banner.classList.add('warn'); banner.style.display='block';
+    title.textContent='Ajuste solicitado — '+f.fmt;
+    sub.textContent='Feedback enviado ao time. '+d+' às '+t+' registrado como sugestão de data.';
+  } else {
+    banner.classList.add('danger'); banner.style.display='block';
+    title.textContent='Reprovado — '+f.fmt;
+    sub.textContent='Peça retornou ao time com o motivo registrado.';
+  }
+  banner.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+checkConflict();
+</script>

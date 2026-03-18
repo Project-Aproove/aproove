@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove Developer Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e0c;--bg2:#161614;--bg3:#1e1e1b;--bg4:#262622;
+  --surface:#1a1a17;--surface2:#222220;
+  --ink:#f0efe8;--ink2:#a8a79e;--ink3:#6a6a62;
+  --border:rgba(240,239,232,.08);--border2:rgba(240,239,232,.14);
+  --green:#3a9b3a;--gbg:rgba(58,155,58,.12);--gbd:rgba(58,155,58,.3);
+  --blue:#4a90d9;--bbg:rgba(74,144,217,.12);--bbd:rgba(74,144,217,.3);
+  --amber:#d9943a;--abg:rgba(217,148,58,.12);--abd:rgba(217,148,58,.3);
+  --red:#d94a4a;--rbg:rgba(217,74,74,.12);--rbd:rgba(217,74,74,.3);
+  --purple:#9b6fd9;--pbg:rgba(155,111,217,.12);--pbd:rgba(155,111,217,.3);
+  --accent:#f0efe8;
+  --r:7px;--rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;font-size:14px;background:var(--bg);color:var(--ink);line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:'DM Mono',monospace;font-size:.85em;background:var(--bg3);padding:2px 6px;border-radius:4px;color:#9cdcfe}
+strong{font-weight:500}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:260px 1fr 300px;min-height:100vh}
+@media(max-width:1100px){.layout{grid-template-columns:240px 1fr}}
+@media(max-width:780px){.layout{grid-template-columns:1fr}.sidebar,.toc{display:none}}
+
+/* TOP NAV */
+.topnav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(14,14,12,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1.5rem;z-index:100}
+.tn-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.tn-mark{width:26px;height:26px;border-radius:6px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tn-mark svg{width:14px;height:14px}
+.tn-name{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.tn-sep{width:1px;height:18px;background:var(--border2)}
+.tn-tag{font-size:12px;color:var(--ink3)}
+.tn-links{display:flex;gap:1.25rem;margin-left:auto}
+.tn-links a{font-size:13px;color:var(--ink2);text-decoration:none;transition:color .12s}
+.tn-links a:hover{color:var(--ink)}
+.tn-key{padding:5px 14px;font-size:12px;font-weight:500;background:var(--ink);color:var(--bg);border-radius:6px;cursor:pointer;border:none;font-family:inherit;transition:opacity .12s}
+.tn-key:hover{opacity:.85}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:52px;left:0;width:260px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--border);padding:.75rem 0;background:var(--bg)}
+.sb-sec{padding:.625rem 1.25rem .25rem;font-size:10px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+.sb-item{display:flex;align-items:center;gap:7px;padding:6px 1.25rem;font-size:13px;color:var(--ink2);cursor:pointer;border-left:2px solid transparent;transition:all .1s;text-decoration:none}
+.sb-item:hover{color:var(--ink);background:var(--bg2)}
+.sb-item.active{color:var(--ink);border-left-color:var(--blue);background:var(--bbg);font-weight:500}
+.sb-item:hover{text-decoration:none}
+.sb-badge{margin-left:auto;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:600}
+.sb-method{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0;font-family:'DM Mono',monospace}
+.m-get{background:var(--gbg);color:var(--green)}
+.m-post{background:var(--bbg);color:var(--blue)}
+.m-patch{background:var(--abg);color:var(--amber)}
+.m-del{background:var(--rbg);color:var(--red)}
+
+/* CONTENT */
+.content{margin-left:260px;margin-right:300px;padding-top:52px}
+.section{padding:3rem 2.5rem;border-bottom:1px solid var(--border)}
+.section:last-child{border-bottom:none}
+@media(max-width:1100px){.content{margin-right:0}}
+
+/* HEADINGS */
+.section-label{font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem}
+h1{font-size:2rem;font-weight:600;letter-spacing:-.03em;color:var(--ink);margin-bottom:.75rem;line-height:1.15}
+h2{font-size:1.4rem;font-weight:600;letter-spacing:-.02em;color:var(--ink);margin-bottom:.75rem;margin-top:2.5rem;line-height:1.2}
+h2:first-child{margin-top:0}
+h3{font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:.5rem;margin-top:1.75rem}
+p{color:var(--ink2);margin-bottom:1rem;line-height:1.7;font-size:14px}
+ul,ol{color:var(--ink2);margin-bottom:1rem;padding-left:1.25rem}
+li{margin-bottom:.375rem;line-height:1.6;font-size:14px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.badge-get{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.badge-post{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)}
+.badge-patch{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.badge-del{background:var(--rbg);color:var(--red);border:1px solid var(--rbd)}
+.badge-webhook{background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+.badge-new{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd);font-size:10px}
+
+/* ENDPOINT CARD */
+.endpoint{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:1.25rem;overflow:hidden}
+.ep-header{padding:.875rem 1.25rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.ep-header:hover{background:var(--surface2)}
+.ep-path{font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);flex:1}
+.ep-desc{font-size:13px;color:var(--ink2);margin-left:.5rem}
+.ep-body{padding:1.25rem;display:none}
+.ep-body.open{display:block}
+.ep-sub{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.625rem;margin-top:1rem}
+.ep-sub:first-child{margin-top:0}
+
+/* PARAMS TABLE */
+.params{width:100%;border-collapse:collapse;margin-bottom:.75rem}
+.params th{text-align:left;padding:.375rem .75rem;font-size:11px;font-weight:600;color:var(--ink3);border-bottom:1px solid var(--border);background:var(--bg2)}
+.params td{padding:.5rem .75rem;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top}
+.params tr:last-child td{border-bottom:none}
+.param-name{font-family:'DM Mono',monospace;font-size:12px;color:#9cdcfe}
+.param-type{font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace}
+.param-req{font-size:10px;background:var(--rbg);color:var(--red);border:1px solid var(--rbd);padding:1px 5px;border-radius:3px;font-weight:600}
+.param-opt{font-size:10px;background:var(--bg3);color:var(--ink3);border:1px solid var(--border);padding:1px 5px;border-radius:3px}
+.param-desc{color:var(--ink2);font-size:13px}
+
+/* CODE BLOCKS */
+.code-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem}
+.cb-header{display:flex;align-items:center;justify-content:space-between;padding:.5rem .875rem;border-bottom:1px solid var(--border);background:var(--bg3)}
+.cb-lang{font-size:11px;font-weight:500;color:var(--ink3);font-family:'DM Mono',monospace}
+.cb-copy{font-size:11px;color:var(--ink3);cursor:pointer;border:none;background:transparent;font-family:inherit;transition:color .12s;padding:2px 6px;border-radius:4px}
+.cb-copy:hover{color:var(--ink);background:var(--bg4)}
+.cb-content{padding:.875rem 1.25rem;overflow-x:auto}
+pre{font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.7;color:var(--ink2);white-space:pre}
+.kw{color:#c586c0}
+.str{color:#ce9178}
+.num{color:#b5cea8}
+.key{color:#9cdcfe}
+.val{color:#4ec9b0}
+.cmt{color:#6a9955;font-style:italic}
+.fn{color:#dcdcaa}
+.op{color:#d4d4d4}
+
+/* RESPONSE EXAMPLE */
+.response-tabs{display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--border)}
+.rt{padding:.375rem .875rem;font-size:12px;cursor:pointer;color:var(--ink3);border-bottom:2px solid transparent;transition:all .1s;font-family:'DM Mono',monospace}
+.rt.active{color:var(--ink);border-bottom-color:var(--blue)}
+.rt-content{display:none}.rt-content.active{display:block}
+
+/* WEBHOOK CARD */
+.webhook-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:1rem;overflow:hidden}
+.wh-header{padding:.875rem 1.25rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid var(--border)}
+.wh-event{font-family:'DM Mono',monospace;font-size:13px;color:var(--purple)}
+.wh-desc{font-size:13px;color:var(--ink2);margin-left:auto}
+.wh-body{padding:1.25rem}
+
+/* INFO BOX */
+.ib{border-radius:var(--r);padding:.75rem 1rem;font-size:13px;line-height:1.6;margin-bottom:1rem;display:flex;gap:.625rem}
+.ib-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.ib-text{color:var(--ink2)}
+.ib-i{background:var(--bbg);border:1px solid var(--bbd)}
+.ib-w{background:var(--abg);border:1px solid var(--abd)}
+.ib-s{background:var(--gbg);border:1px solid var(--gbd)}
+.ib-p{background:var(--pbg);border:1px solid var(--pbd)}
+
+/* INTEGRATION GUIDE */
+.int-step{display:flex;gap:1rem;margin-bottom:1.5rem}
+.is-num{width:28px;height:28px;border-radius:50%;background:var(--blue);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:2px}
+.is-body{flex:1}
+.is-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:.375rem}
+.is-text{font-size:13px;color:var(--ink2);line-height:1.65}
+
+/* SCOPE TABLE */
+.scope-row{display:flex;align-items:flex-start;gap:.75rem;padding:.625rem 0;border-bottom:1px solid var(--border);font-size:13px}
+.scope-row:last-child{border-bottom:none}
+.scope-name{font-family:'DM Mono',monospace;font-size:12px;color:#9cdcfe;min-width:200px;flex-shrink:0;margin-top:1px}
+.scope-desc{color:var(--ink2)}
+
+/* PLAYGROUND */
+.playground{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem}
+.pg-header{padding:.875rem 1.25rem;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.pg-method-sel{padding:.375rem .625rem;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg2);color:var(--green);font-family:'DM Mono',monospace;font-weight:600;cursor:pointer;min-width:70px}
+.pg-url{flex:1;padding:.375rem .625rem;font-size:12px;border:1px solid var(--border2);border-radius:5px;background:var(--bg2);color:var(--ink);font-family:'DM Mono',monospace;outline:none}
+.pg-url:focus{border-color:var(--blue)}
+.pg-send{padding:.375rem 1rem;font-size:12px;font-weight:500;background:var(--blue);color:#fff;border:none;border-radius:5px;cursor:pointer;font-family:inherit;transition:opacity .12s}
+.pg-send:hover{opacity:.85}
+.pg-body{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.pg-panel{padding:1rem}
+.pg-panel:first-child{border-right:1px solid var(--border)}
+.pg-plbl{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem}
+.pg-textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:.625rem .75rem;font-size:12px;font-family:'DM Mono',monospace;color:var(--ink);resize:none;min-height:140px;outline:none;line-height:1.6}
+.pg-textarea:focus{border-color:var(--blue)}
+.pg-footer{padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;font-size:12px}
+.pg-status{font-family:'DM Mono',monospace}
+.pg-time{color:var(--ink3)}
+
+/* TOC */
+.toc{position:fixed;top:52px;right:0;width:300px;height:calc(100vh - 52px);overflow-y:auto;padding:1.5rem 1.25rem;border-left:1px solid var(--border);background:var(--bg)}
+.toc-title{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem}
+.toc-item{display:block;font-size:12px;color:var(--ink3);padding:3px 0;cursor:pointer;transition:color .1s;text-decoration:none}
+.toc-item:hover{color:var(--ink);text-decoration:none}
+.toc-item.active{color:var(--blue)}
+.toc-sub{padding-left:.875rem}
+.toc-sep{height:1px;background:var(--border);margin:.75rem 0}
+
+/* TAG PILL */
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;margin:2px;font-family:'DM Mono',monospace}
+.tag-str{background:rgba(206,145,120,.12);color:#ce9178;border:1px solid rgba(206,145,120,.2)}
+.tag-int{background:var(--gbg);color:var(--green);border:1px solid var(--gbd)}
+.tag-bool{background:var(--pbg);color:var(--purple);border:1px solid var(--pbd)}
+.tag-obj{background:var(--abg);color:var(--amber);border:1px solid var(--abd)}
+.tag-arr{background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)}
+
+/* DIVIDER */
+hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="tn-logo" href="#">
+    <div class="tn-mark">
+      <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="black" stroke-width="1.4"/><path d="M3.5 7.2l2.2 2.2L10.5 5" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <span class="tn-name">Aproove</span>
+  </a>
+  <div class="tn-sep"></div>
+  <span class="tn-tag">Developer Hub</span>
+  <div class="tn-links">
+    <a href="#">Changelog</a>
+    <a href="#">Status</a>
+    <a href="#">Suporte</a>
+  </div>
+  <button class="tn-key" onclick="showKeyModal()">Gerar API Key</button>
+</nav>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-sec">Introdução</div>
+  <a class="sb-item active" onclick="scrollTo('intro')" href="#">Visão geral</a>
+  <a class="sb-item" onclick="scrollTo('auth')" href="#">Autenticação</a>
+  <a class="sb-item" onclick="scrollTo('scopes')" href="#">Escopos e permissões</a>
+  <a class="sb-item" onclick="scrollTo('errors')" href="#">Erros e status HTTP</a>
+  <a class="sb-item" onclick="scrollTo('rate')" href="#">Rate limiting</a>
+  <a class="sb-item" onclick="scrollTo('playground')" href="#">Playground<span class="sb-badge" style="background:var(--bbg);color:var(--blue);border:1px solid var(--bbd)">interativo</span></a>
+
+  <div class="sb-sec">Endpoints REST</div>
+  <a class="sb-item" onclick="scrollTo('ep-campaigns')" href="#"><span class="sb-method m-get">GET</span>Campanhas</a>
+  <a class="sb-item" onclick="scrollTo('ep-pieces')" href="#"><span class="sb-method m-post">POST</span>Peças</a>
+  <a class="sb-item" onclick="scrollTo('ep-approvals')" href="#"><span class="sb-method m-patch">PATCH</span>Aprovações</a>
+  <a class="sb-item" onclick="scrollTo('ep-clients')" href="#"><span class="sb-method m-get">GET</span>Clientes</a>
+  <a class="sb-item" onclick="scrollTo('ep-reports')" href="#"><span class="sb-method m-get">GET</span>Relatórios</a>
+
+  <div class="sb-sec">Webhooks</div>
+  <a class="sb-item" onclick="scrollTo('webhooks-intro')" href="#">Configuração</a>
+  <a class="sb-item" onclick="scrollTo('webhooks-events')" href="#">Eventos disponíveis</a>
+  <a class="sb-item" onclick="scrollTo('webhooks-security')" href="#">Verificação de assinatura</a>
+
+  <div class="sb-sec">Guias de integração</div>
+  <a class="sb-item" onclick="scrollTo('int-mlabs')" href="#">Mlabs</a>
+  <a class="sb-item" onclick="scrollTo('int-etus')" href="#">Etus</a>
+  <a class="sb-item" onclick="scrollTo('int-meta')" href="#">Meta (IG + FB)</a>
+  <a class="sb-item" onclick="scrollTo('int-linkedin')" href="#">LinkedIn</a>
+
+  <div class="sb-sec">Referência</div>
+  <a class="sb-item" onclick="scrollTo('objects')" href="#">Objetos de dados</a>
+  <a class="sb-item" onclick="scrollTo('lgpd')" href="#">LGPD e segurança</a>
+  <a class="sb-item" onclick="scrollTo('changelog')" href="#">Changelog da API</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<!-- INTRO -->
+<div class="section" id="intro">
+  <div class="section-label">Introdução</div>
+  <h1>Aproove Developer Hub</h1>
+  <p>A API REST do Aproove permite que você integre aprovação de conteúdo, gestão de campanhas e publicação automática em qualquer sistema externo. Construída sobre HTTP com autenticação OAuth 2.0 e respostas em JSON.</p>
+  <div class="ib ib-i"><span class="ib-icon">ℹ</span><div class="ib-text"><strong>Base URL:</strong> <code>https://api.aproove.app/v1</code> — Todas as requisições devem usar HTTPS. Requisições HTTP são rejeitadas com status 301.</div></div>
+  <div class="ib ib-s"><span class="ib-icon">✓</span><div class="ib-text">A API está em <strong>v1 estável</strong>. Mudanças breaking são anunciadas no changelog com 90 dias de antecedência e mantemos versões antigas por 12 meses.</div></div>
+
+  <h2>Quick start</h2>
+  <p>Três passos para fazer sua primeira chamada de API:</p>
+  <div class="int-step"><div class="is-num">1</div><div class="is-body"><div class="is-title">Gere uma API Key</div><div class="is-text">No portal do gestor → Configurações → Integrações → API Keys. Cada key tem escopos configuráveis. Nunca exponha sua key no frontend.</div></div></div>
+  <div class="int-step"><div class="is-num">2</div><div class="is-body"><div class="is-title">Adicione o header de autorização</div><div class="is-text">Inclua <code>Authorization: Bearer SEU_TOKEN</code> em todas as requisições. Tokens expiram em 24h para OAuth 2.0 e não expiram para API Keys (até revogação manual).</div></div></div>
+  <div class="int-step"><div class="is-num">3</div><div class="is-body"><div class="is-title">Faça sua primeira chamada</div></div></div>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">bash</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="cmt"># Listar campanhas ativas da sua agência</span>
+<span class="fn">curl</span> <span class="op">-X</span> GET <span class="str">"https://api.aproove.app/v1/campaigns?status=active"</span> \
+  <span class="op">-H</span> <span class="str">"Authorization: Bearer sk_live_xxxxxxxxxxxx"</span> \
+  <span class="op">-H</span> <span class="str">"Content-Type: application/json"</span></pre></div>
+  </div>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">json — resposta</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"data"</span><span class="op">:</span> <span class="op">[</span>
+    <span class="op">{</span>
+      <span class="key">"id"</span><span class="op">:</span> <span class="str">"camp_9xkT2m"</span><span class="op">,</span>
+      <span class="key">"name"</span><span class="op">:</span> <span class="str">"Lançamento Verão 2026"</span><span class="op">,</span>
+      <span class="key">"client_id"</span><span class="op">:</span> <span class="str">"cli_7nPq4r"</span><span class="op">,</span>
+      <span class="key">"status"</span><span class="op">:</span> <span class="str">"active"</span><span class="op">,</span>
+      <span class="key">"start_date"</span><span class="op">:</span> <span class="str">"2026-01-01"</span><span class="op">,</span>
+      <span class="key">"end_date"</span><span class="op">:</span> <span class="str">"2026-03-31"</span><span class="op">,</span>
+      <span class="key">"pieces_count"</span><span class="op">:</span> <span class="num">18</span><span class="op">,</span>
+      <span class="key">"pending_approval"</span><span class="op">:</span> <span class="num">3</span>
+    <span class="op">}</span>
+  <span class="op">],</span>
+  <span class="key">"meta"</span><span class="op">:</span> <span class="op">{</span> <span class="key">"total"</span><span class="op">:</span> <span class="num">6</span><span class="op">,</span> <span class="key">"page"</span><span class="op">:</span> <span class="num">1</span><span class="op">,</span> <span class="key">"per_page"</span><span class="op">:</span> <span class="num">20</span> <span class="op">}</span>
+<span class="op">}</span></pre></div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div class="section" id="auth">
+  <div class="section-label">Autenticação</div>
+  <h2>Autenticação e segurança</h2>
+  <p>A API do Aproove suporta dois métodos de autenticação. Use <strong>OAuth 2.0</strong> para aplicações que atuam em nome de usuários, e <strong>API Keys</strong> para integrações server-to-server.</p>
+
+  <h3>API Keys — server-to-server</h3>
+  <div class="ib ib-w"><span class="ib-icon">⚠</span><div class="ib-text">API Keys concedem acesso direto à conta. Nunca exponha no frontend, em repositórios públicos ou em logs. Em caso de comprometimento, revogue imediatamente no painel.</div></div>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">http header</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="key">Authorization</span><span class="op">:</span> <span class="str">Bearer sk_live_xxxxxxxxxxxxxxxxxxxx</span></pre></div>
+  </div>
+  <p>Prefixos de API Key: <code>sk_live_</code> para produção, <code>sk_test_</code> para sandbox. Keys de teste não geram aprovações reais nem disparam publicações.</p>
+
+  <h3>OAuth 2.0 — em nome de usuário</h3>
+  <p>Use OAuth 2.0 quando sua aplicação precisa agir em nome de um usuário Aproove. O fluxo é o Authorization Code padrão.</p>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">oauth flow</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="cmt"># 1. Redirecione o usuário para autorizar</span>
+<span class="str">https://aproove.app/oauth/authorize
+  ?client_id=YOUR_CLIENT_ID
+  &redirect_uri=https://yourapp.com/callback
+  &scope=campaigns:read approvals:write
+  &response_type=code
+  &state=random_string</span>
+
+<span class="cmt"># 2. Troque o code por um access_token</span>
+<span class="fn">curl</span> <span class="op">-X</span> POST <span class="str">"https://api.aproove.app/v1/oauth/token"</span> \
+  <span class="op">-d</span> <span class="str">"grant_type=authorization_code"</span> \
+  <span class="op">-d</span> <span class="str">"code=CODE_RECEIVED"</span> \
+  <span class="op">-d</span> <span class="str">"client_id=YOUR_CLIENT_ID"</span> \
+  <span class="op">-d</span> <span class="str">"client_secret=YOUR_SECRET"</span> \
+  <span class="op">-d</span> <span class="str">"redirect_uri=https://yourapp.com/callback"</span>
+
+<span class="cmt"># 3. Use o access_token nas chamadas (expira em 24h)</span>
+<span class="cmt"># Renove com refresh_token antes de expirar</span></pre></div>
+  </div>
+</div>
+
+<!-- SCOPES -->
+<div class="section" id="scopes">
+  <div class="section-label">Autenticação</div>
+  <h2>Escopos e permissões</h2>
+  <p>Cada API Key ou token OAuth tem escopos que definem o que pode ser lido ou modificado. Configure escopos mínimos necessários — princípio do menor privilégio.</p>
+  <div class="scope-row"><div class="scope-name">campaigns:read</div><div class="scope-desc">Listar e visualizar campanhas, peças e grade editorial. Não permite criação ou edição.</div></div>
+  <div class="scope-row"><div class="scope-name">campaigns:write</div><div class="scope-desc">Criar, atualizar e arquivar campanhas. Inclui <code>campaigns:read</code>.</div></div>
+  <div class="scope-row"><div class="scope-name">pieces:read</div><div class="scope-desc">Listar peças, versões, copies e status de produção.</div></div>
+  <div class="scope-row"><div class="scope-name">pieces:write</div><div class="scope-desc">Criar peças, fazer upload de artes e atualizar copies.</div></div>
+  <div class="scope-row"><div class="scope-name">approvals:read</div><div class="scope-desc">Consultar status de aprovação, histórico e auditoria.</div></div>
+  <div class="scope-row"><div class="scope-name">approvals:write</div><div class="scope-desc">Registrar aprovações, solicitações de ajuste e reprovações via API.</div></div>
+  <div class="scope-row"><div class="scope-name">clients:read</div><div class="scope-desc">Listar clientes, usuários aprovadores e configurações de conta.</div></div>
+  <div class="scope-row"><div class="scope-name">clients:write</div><div class="scope-desc">Criar e atualizar clientes, gerenciar usuários aprovadores.</div></div>
+  <div class="scope-row"><div class="scope-name">reports:read</div><div class="scope-desc">Acessar métricas de desempenho e relatórios de ROI por campanha.</div></div>
+  <div class="scope-row"><div class="scope-name">webhooks:manage</div><div class="scope-desc">Criar, listar e excluir endpoints de webhook da conta.</div></div>
+  <div class="scope-row"><div class="scope-name">publish:write</div><div class="scope-desc">Disparar publicação via integrações (Mlabs, Etus, Meta). Requer revisão manual de uso.</div></div>
+</div>
+
+<!-- ERRORS -->
+<div class="section" id="errors">
+  <div class="section-label">Referência</div>
+  <h2>Erros e status HTTP</h2>
+  <p>A API usa status HTTP convencionais. Erros retornam um objeto JSON com <code>error.code</code> e <code>error.message</code> legíveis.</p>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">json — estrutura de erro</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"error"</span><span class="op">:</span> <span class="op">{</span>
+    <span class="key">"code"</span><span class="op">:</span> <span class="str">"approval_already_registered"</span><span class="op">,</span>
+    <span class="key">"message"</span><span class="op">:</span> <span class="str">"Esta peça já foi aprovada e não pode ser alterada."</span><span class="op">,</span>
+    <span class="key">"status"</span><span class="op">:</span> <span class="num">409</span><span class="op">,</span>
+    <span class="key">"request_id"</span><span class="op">:</span> <span class="str">"req_8xPmT2nQ"</span>
+  <span class="op">}</span>
+<span class="op">}</span></pre></div>
+  </div>
+  <table class="params">
+    <thead><tr><th>Status</th><th>Significado</th><th>Código comum</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-get">200</span></td><td class="param-desc">Sucesso</td><td class="param-name">—</td></tr>
+      <tr><td><span class="badge badge-post">201</span></td><td class="param-desc">Recurso criado</td><td class="param-name">—</td></tr>
+      <tr><td><span class="badge badge-patch">400</span></td><td class="param-desc">Request inválido — parâmetro faltando ou incorreto</td><td class="param-name">invalid_params</td></tr>
+      <tr><td><span class="badge badge-del">401</span></td><td class="param-desc">Não autenticado — token inválido ou expirado</td><td class="param-name">invalid_token</td></tr>
+      <tr><td><span class="badge badge-del">403</span></td><td class="param-desc">Sem permissão — escopo insuficiente</td><td class="param-name">insufficient_scope</td></tr>
+      <tr><td><span class="badge badge-del">404</span></td><td class="param-desc">Recurso não encontrado</td><td class="param-name">not_found</td></tr>
+      <tr><td><span class="badge badge-del">409</span></td><td class="param-desc">Conflito de estado — aprovação já registrada</td><td class="param-name">conflict</td></tr>
+      <tr><td><span class="badge badge-del">429</span></td><td class="param-desc">Rate limit excedido</td><td class="param-name">rate_limit_exceeded</td></tr>
+      <tr><td><span class="badge badge-del">500</span></td><td class="param-desc">Erro interno — use request_id no suporte</td><td class="param-name">internal_error</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- RATE LIMITING -->
+<div class="section" id="rate">
+  <div class="section-label">Referência</div>
+  <h2>Rate limiting</h2>
+  <p>Os limites são por API Key, por minuto e por hora. Os headers de resposta informam o consumo atual.</p>
+  <table class="params">
+    <thead><tr><th>Plano</th><th>Por minuto</th><th>Por hora</th></tr></thead>
+    <tbody>
+      <tr><td>Starter</td><td class="param-desc">60 req/min</td><td class="param-desc">1.000 req/h</td></tr>
+      <tr><td>Professional</td><td class="param-desc">300 req/min</td><td class="param-desc">10.000 req/h</td></tr>
+      <tr><td>Agency</td><td class="param-desc">1.000 req/min</td><td class="param-desc">50.000 req/h</td></tr>
+      <tr><td>Enterprise</td><td class="param-desc">Customizado</td><td class="param-desc">Customizado</td></tr>
+    </tbody>
+  </table>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">response headers</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="key">X-RateLimit-Limit</span><span class="op">:</span> <span class="num">300</span>
+<span class="key">X-RateLimit-Remaining</span><span class="op">:</span> <span class="num">247</span>
+<span class="key">X-RateLimit-Reset</span><span class="op">:</span> <span class="num">1710509460</span>
+<span class="key">Retry-After</span><span class="op">:</span> <span class="num">12</span> <span class="cmt"># segundos — presente apenas quando 429</span></pre></div>
+  </div>
+</div>
+
+<!-- PLAYGROUND -->
+<div class="section" id="playground">
+  <div class="section-label">Playground</div>
+  <h2>Playground interativo</h2>
+  <p>Teste chamadas de API em tempo real usando sandbox. Use o prefixo <code>sk_test_</code> — nenhuma ação real é executada.</p>
+  <div class="playground">
+    <div class="pg-header">
+      <select class="pg-method-sel" id="pg-method" onchange="updateMethodColor()">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PATCH">PATCH</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+      <input class="pg-url" id="pg-url" value="/v1/campaigns?status=active" type="text">
+      <button class="pg-send" onclick="runPlayground()">Enviar</button>
+    </div>
+    <div class="pg-body">
+      <div class="pg-panel">
+        <div class="pg-plbl">Headers</div>
+        <textarea class="pg-textarea" id="pg-headers">Authorization: Bearer sk_test_demo_xxxx
+Content-Type: application/json</textarea>
+      </div>
+      <div class="pg-panel">
+        <div class="pg-plbl">Body (JSON)</div>
+        <textarea class="pg-textarea" id="pg-body" placeholder="{ }">{ }</textarea>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border)">
+      <div style="padding:.75rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.625rem">
+        <div class="pg-plbl" style="margin-bottom:0">Resposta</div>
+        <span id="pg-status" style="font-family:'DM Mono',monospace;font-size:12px;display:none"></span>
+        <span id="pg-time" class="pg-time" style="font-size:11px;display:none"></span>
+      </div>
+      <div class="pg-panel" style="padding:1rem 1.25rem">
+        <pre id="pg-response" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink2);min-height:100px;line-height:1.7">Clique em <span style="color:var(--blue)">Enviar</span> para ver a resposta aqui.</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENDPOINTS: CAMPAIGNS -->
+<div class="section" id="ep-campaigns">
+  <div class="section-label">Endpoints REST</div>
+  <h2>Campanhas</h2>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-get">GET</span>
+      <span class="ep-path">/v1/campaigns</span>
+      <span class="ep-desc">Listar campanhas</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-sub">Parâmetros de query</div>
+      <table class="params">
+        <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Filtrar por status: <code>active</code>, <code>planning</code>, <code>completed</code>, <code>archived</code></td></tr>
+          <tr><td><span class="param-name">client_id</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Filtrar por cliente específico</td></tr>
+          <tr><td><span class="param-name">page</span></td><td><span class="param-type">integer</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Página (default: 1)</td></tr>
+          <tr><td><span class="param-name">per_page</span></td><td><span class="param-type">integer</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Itens por página, máx. 100 (default: 20)</td></tr>
+        </tbody>
+      </table>
+      <div class="ep-sub">Exemplo de resposta</div>
+      <div class="code-block" style="margin-bottom:0">
+        <div class="cb-header"><span class="cb-lang">json</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+        <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"data"</span><span class="op">: [{</span>
+    <span class="key">"id"</span><span class="op">:</span> <span class="str">"camp_9xkT2m"</span><span class="op">,</span>
+    <span class="key">"name"</span><span class="op">:</span> <span class="str">"Lançamento Verão 2026"</span><span class="op">,</span>
+    <span class="key">"client_id"</span><span class="op">:</span> <span class="str">"cli_7nPq4r"</span><span class="op">,</span>
+    <span class="key">"status"</span><span class="op">:</span> <span class="str">"active"</span><span class="op">,</span>
+    <span class="key">"networks"</span><span class="op">: [</span><span class="str">"instagram"</span><span class="op">,</span> <span class="str">"linkedin"</span><span class="op">,</span> <span class="str">"tiktok"</span><span class="op">],</span>
+    <span class="key">"start_date"</span><span class="op">:</span> <span class="str">"2026-01-01"</span><span class="op">,</span>
+    <span class="key">"end_date"</span><span class="op">:</span> <span class="str">"2026-03-31"</span><span class="op">,</span>
+    <span class="key">"pieces_count"</span><span class="op">:</span> <span class="num">18</span><span class="op">,</span>
+    <span class="key">"pending_approval"</span><span class="op">:</span> <span class="num">3</span><span class="op">,</span>
+    <span class="key">"created_at"</span><span class="op">:</span> <span class="str">"2026-01-02T09:00:00Z"</span>
+  <span class="op">}],</span>
+  <span class="key">"meta"</span><span class="op">: {</span> <span class="key">"total"</span><span class="op">:</span> <span class="num">6</span><span class="op">,</span> <span class="key">"page"</span><span class="op">:</span> <span class="num">1</span><span class="op">,</span> <span class="key">"per_page"</span><span class="op">:</span> <span class="num">20</span> <span class="op">}</span>
+<span class="op">}</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-get">GET</span>
+      <span class="ep-path">/v1/campaigns/{id}</span>
+      <span class="ep-desc">Buscar campanha por ID</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-sub">Path params</div>
+      <table class="params"><thead><tr><th>Parâmetro</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead><tbody><tr><td><span class="param-name">id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">ID da campanha no formato <code>camp_xxxxxx</code></td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-post">POST</span>
+      <span class="ep-path">/v1/campaigns</span>
+      <span class="ep-desc">Criar campanha</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-sub">Body (application/json)</div>
+      <table class="params">
+        <thead><tr><th>Campo</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Nome da campanha (máx. 120 chars)</td></tr>
+          <tr><td><span class="param-name">client_id</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">ID do cliente</td></tr>
+          <tr><td><span class="param-name">start_date</span></td><td><span class="param-type">date</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Formato ISO 8601: <code>YYYY-MM-DD</code></td></tr>
+          <tr><td><span class="param-name">end_date</span></td><td><span class="param-type">date</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Formato ISO 8601: <code>YYYY-MM-DD</code></td></tr>
+          <tr><td><span class="param-name">networks</span></td><td><span class="param-type">array</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Ex: <code>["instagram","linkedin","tiktok"]</code></td></tr>
+          <tr><td><span class="param-name">objective</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc"><code>launch</code>, <code>engagement</code>, <code>leads</code>, <code>awareness</code>, <code>sales</code></td></tr>
+          <tr><td><span class="param-name">briefing</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Briefing em texto livre (máx. 5.000 chars)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ENDPOINTS: PIECES -->
+<div class="section" id="ep-pieces">
+  <div class="section-label">Endpoints REST</div>
+  <h2>Peças</h2>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-get">GET</span>
+      <span class="ep-path">/v1/campaigns/{id}/pieces</span>
+      <span class="ep-desc">Listar peças da campanha</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-sub">Query params opcionais</div>
+      <table class="params"><thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td class="param-desc"><code>briefing</code> <code>production</code> <code>review</code> <code>pending_approval</code> <code>approved</code> <code>scheduled</code> <code>published</code> <code>adjusting</code></td></tr>
+        <tr><td><span class="param-name">network</span></td><td><span class="param-type">string</span></td><td class="param-desc">Filtrar por rede: <code>instagram</code>, <code>linkedin</code>, <code>tiktok</code>, <code>facebook</code></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-post">POST</span>
+      <span class="ep-path">/v1/campaigns/{id}/pieces</span>
+      <span class="ep-desc">Criar peça e fazer upload de arte</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ib ib-i" style="margin-top:0"><span class="ib-icon">ℹ</span><div class="ib-text">Upload de arquivo via <code>multipart/form-data</code>. Máximo 200 MB por arquivo. Formatos aceitos: JPG, PNG, MP4, PDF, PPTX.</div></div>
+      <div class="ep-sub">Body (multipart/form-data)</div>
+      <table class="params"><thead><tr><th>Campo</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><span class="param-name">network</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Rede de destino</td></tr>
+        <tr><td><span class="param-name">format</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc"><code>feed_1_1</code>, <code>story_9_16</code>, <code>reels_9_16</code>, <code>linkedin_banner</code>, <code>tiktok_video</code>, <code>whatsapp_1_1</code>, <code>presentation</code></td></tr>
+        <tr><td><span class="param-name">scheduled_at</span></td><td><span class="param-type">datetime</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Data/hora de publicação ISO 8601: <code>2026-03-20T10:00:00-03:00</code></td></tr>
+        <tr><td><span class="param-name">copy</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Legenda ou texto da publicação</td></tr>
+        <tr><td><span class="param-name">file</span></td><td><span class="param-type">file</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Arquivo de arte (imagem ou vídeo)</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ENDPOINTS: APPROVALS -->
+<div class="section" id="ep-approvals">
+  <div class="section-label">Endpoints REST</div>
+  <h2>Aprovações</h2>
+  <div class="ib ib-p"><span class="ib-icon">⚠</span><div class="ib-text">Registros de aprovação são <strong>imutáveis</strong>. Uma vez criado o registro, não pode ser editado ou excluído. O hash SHA-256 é calculado no momento do registro e verificado em qualquer consulta posterior.</div></div>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-post">POST</span>
+      <span class="ep-path">/v1/pieces/{id}/approve</span>
+      <span class="ep-desc">Registrar aprovação</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <table class="params"><thead><tr><th>Campo</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><span class="param-name">approved_by</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Nome ou ID do aprovador</td></tr>
+        <tr><td><span class="param-name">channel</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc"><code>portal</code>, <code>whatsapp</code>, <code>email</code>, <code>api</code></td></tr>
+        <tr><td><span class="param-name">scheduled_at</span></td><td><span class="param-type">datetime</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Sobrescreve a data de publicação original</td></tr>
+        <tr><td><span class="param-name">comment</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Observação registrada junto à aprovação</td></tr>
+      </tbody></table>
+      <div class="ep-sub">Resposta — 200 OK</div>
+      <div class="code-block" style="margin-bottom:0">
+        <div class="cb-header"><span class="cb-lang">json</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+        <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"approval"</span><span class="op">: {</span>
+    <span class="key">"id"</span><span class="op">:</span> <span class="str">"apv_3mXnT9"</span><span class="op">,</span>
+    <span class="key">"piece_id"</span><span class="op">:</span> <span class="str">"pce_7kLmQ4"</span><span class="op">,</span>
+    <span class="key">"status"</span><span class="op">:</span> <span class="str">"approved"</span><span class="op">,</span>
+    <span class="key">"approved_by"</span><span class="op">:</span> <span class="str">"João Ferreira"</span><span class="op">,</span>
+    <span class="key">"channel"</span><span class="op">:</span> <span class="str">"whatsapp"</span><span class="op">,</span>
+    <span class="key">"approved_at"</span><span class="op">:</span> <span class="str">"2026-03-10T17:03:22-03:00"</span><span class="op">,</span>
+    <span class="key">"scheduled_at"</span><span class="op">:</span> <span class="str">"2026-03-20T10:00:00-03:00"</span><span class="op">,</span>
+    <span class="key">"version"</span><span class="op">:</span> <span class="num">2</span><span class="op">,</span>
+    <span class="key">"hash_sha256"</span><span class="op">:</span> <span class="str">"9c1e4f7a3b2d8e5f..."</span><span class="op">,</span>
+    <span class="key">"audit_trail"</span><span class="op">:</span> <span class="str">"Aprovado via whatsapp por João Ferreira em 10/03/2026 às 17:03 · v2"</span>
+  <span class="op">}</span>
+<span class="op">}</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-post">POST</span>
+      <span class="ep-path">/v1/pieces/{id}/request-revision</span>
+      <span class="ep-desc">Solicitar revisão com feedback</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <table class="params"><thead><tr><th>Campo</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><span class="param-name">feedback</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Descrição do ajuste solicitado (mín. 10 chars)</td></tr>
+        <tr><td><span class="param-name">requested_by</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Identificação do solicitante</td></tr>
+        <tr><td><span class="param-name">channel</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc"><code>portal</code>, <code>whatsapp</code>, <code>email</code>, <code>api</code></td></tr>
+        <tr><td><span class="param-name">attachments</span></td><td><span class="param-type">array</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">URLs de imagens de referência (máx. 5)</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ENDPOINTS: CLIENTS + REPORTS -->
+<div class="section" id="ep-clients">
+  <div class="section-label">Endpoints REST</div>
+  <h2>Clientes</h2>
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-get">GET</span>
+      <span class="ep-path">/v1/clients</span>
+      <span class="ep-desc">Listar clientes da conta</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <p>Retorna todos os clientes com plano, uso atual e status. Requer escopo <code>clients:read</code>.</p>
+    </div>
+  </div>
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-post">POST</span>
+      <span class="ep-path">/v1/clients</span>
+      <span class="ep-desc">Criar cliente na plataforma</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <table class="params"><thead><tr><th>Campo</th><th>Tipo</th><th>Req.</th><th>Descrição</th></tr></thead><tbody>
+        <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Nome da empresa ou cliente</td></tr>
+        <tr><td><span class="param-name">contact_name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">Nome do contato principal</td></tr>
+        <tr><td><span class="param-name">contact_email</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc">E-mail para acesso ao portal</td></tr>
+        <tr><td><span class="param-name">whatsapp</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">opcional</span></td><td class="param-desc">Número no formato E.164: <code>+5511999999999</code></td></tr>
+        <tr><td><span class="param-name">plan</span></td><td><span class="param-type">string</span></td><td><span class="param-req">obrigatório</span></td><td class="param-desc"><code>starter</code>, <code>professional</code>, <code>agency</code>, <code>enterprise</code></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="ep-reports">
+  <div class="section-label">Endpoints REST</div>
+  <h2>Relatórios</h2>
+  <div class="endpoint">
+    <div class="ep-header" onclick="toggleEp(this)">
+      <span class="badge badge-get">GET</span>
+      <span class="ep-path">/v1/campaigns/{id}/report</span>
+      <span class="ep-desc">Relatório de desempenho da campanha</span>
+      <span style="font-size:11px;color:var(--ink3);margin-left:auto">▾</span>
+    </div>
+    <div class="ep-body">
+      <p>Retorna métricas agregadas de desempenho, KPIs vs metas e resultado financeiro (se inserido pelo cliente). Requer escopo <code>reports:read</code>.</p>
+      <div class="ep-sub">Resposta</div>
+      <div class="code-block" style="margin-bottom:0">
+        <div class="cb-header"><span class="cb-lang">json</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+        <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"campaign_id"</span><span class="op">:</span> <span class="str">"camp_9xkT2m"</span><span class="op">,</span>
+  <span class="key">"period"</span><span class="op">: {</span> <span class="key">"start"</span><span class="op">:</span> <span class="str">"2026-01-01"</span><span class="op">,</span> <span class="key">"end"</span><span class="op">:</span> <span class="str">"2026-03-31"</span> <span class="op">},</span>
+  <span class="key">"metrics"</span><span class="op">: {</span>
+    <span class="key">"total_reach"</span><span class="op">:</span> <span class="num">48320</span><span class="op">,</span>
+    <span class="key">"avg_engagement_rate"</span><span class="op">:</span> <span class="num">3.8</span><span class="op">,</span>
+    <span class="key">"new_followers"</span><span class="op">:</span> <span class="num">612</span><span class="op">,</span>
+    <span class="key">"leads_generated"</span><span class="op">:</span> <span class="num">74</span>
+  <span class="op">},</span>
+  <span class="key">"business_result"</span><span class="op">: {</span>
+    <span class="key">"revenue"</span><span class="op">:</span> <span class="num">127400.00</span><span class="op">,</span>
+    <span class="key">"investment"</span><span class="op">:</span> <span class="num">8500.00</span><span class="op">,</span>
+    <span class="key">"roi"</span><span class="op">:</span> <span class="num">14.99</span>
+  <span class="op">}</span>
+<span class="op">}</span></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WEBHOOKS -->
+<div class="section" id="webhooks-intro">
+  <div class="section-label">Webhooks</div>
+  <h2>Configuração de webhooks</h2>
+  <p>Webhooks permitem que o Aproove notifique seu sistema em tempo real quando eventos importantes acontecem — aprovação, publicação, solicitação de ajuste e mais. Muito mais eficiente que polling.</p>
+
+  <div class="int-step"><div class="is-num">1</div><div class="is-body"><div class="is-title">Registre seu endpoint</div><div class="is-text">Cadastre uma URL HTTPS pública que receberá os eventos via <code>POST</code>. O endpoint deve responder com <code>200 OK</code> em até 10 segundos.</div></div></div>
+  <div class="int-step"><div class="is-num">2</div><div class="is-body"><div class="is-title">Escolha os eventos</div><div class="is-text">Selecione quais eventos disparar para aquele endpoint. Você pode ter múltiplos endpoints com eventos diferentes.</div></div></div>
+  <div class="int-step"><div class="is-num">3</div><div class="is-body"><div class="is-title">Verifique a assinatura</div><div class="is-text">Cada request inclui o header <code>X-Aproove-Signature</code> com HMAC-SHA256 calculado com seu webhook secret. Sempre verifique antes de processar.</div></div></div>
+
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">bash — cadastrar webhook</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="fn">curl</span> <span class="op">-X</span> POST <span class="str">"https://api.aproove.app/v1/webhooks"</span> \
+  <span class="op">-H</span> <span class="str">"Authorization: Bearer sk_live_xxxx"</span> \
+  <span class="op">-d</span> <span class="str">'{
+    "url": "https://yourdomain.com/aproove/webhook",
+    "events": [
+      "piece.approved",
+      "piece.revision_requested",
+      "piece.published",
+      "piece.rejected"
+    ],
+    "description": "Integração com CRM interno"
+  }'</span></pre></div>
+  </div>
+</div>
+
+<div class="section" id="webhooks-events">
+  <div class="section-label">Webhooks</div>
+  <h2>Eventos disponíveis</h2>
+
+  <div class="webhook-card">
+    <div class="wh-header"><span class="badge badge-webhook">piece.approved</span><span class="wh-desc">Peça aprovada pelo cliente</span></div>
+    <div class="wh-body">
+      <div class="code-block" style="margin-bottom:0">
+        <div class="cb-header"><span class="cb-lang">json — payload</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+        <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"event"</span><span class="op">:</span> <span class="str">"piece.approved"</span><span class="op">,</span>
+  <span class="key">"created_at"</span><span class="op">:</span> <span class="str">"2026-03-10T17:03:22-03:00"</span><span class="op">,</span>
+  <span class="key">"data"</span><span class="op">: {</span>
+    <span class="key">"piece_id"</span><span class="op">:</span> <span class="str">"pce_7kLmQ4"</span><span class="op">,</span>
+    <span class="key">"campaign_id"</span><span class="op">:</span> <span class="str">"camp_9xkT2m"</span><span class="op">,</span>
+    <span class="key">"client_id"</span><span class="op">:</span> <span class="str">"cli_7nPq4r"</span><span class="op">,</span>
+    <span class="key">"approved_by"</span><span class="op">:</span> <span class="str">"João Ferreira"</span><span class="op">,</span>
+    <span class="key">"channel"</span><span class="op">:</span> <span class="str">"whatsapp"</span><span class="op">,</span>
+    <span class="key">"scheduled_at"</span><span class="op">:</span> <span class="str">"2026-03-20T10:00:00-03:00"</span><span class="op">,</span>
+    <span class="key">"version"</span><span class="op">:</span> <span class="num">2</span><span class="op">,</span>
+    <span class="key">"hash_sha256"</span><span class="op">:</span> <span class="str">"9c1e4f7a3b2d8e5f..."</span>
+  <span class="op">}</span>
+<span class="op">}</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="webhook-card">
+    <div class="wh-header"><span class="badge badge-webhook">piece.revision_requested</span><span class="wh-desc">Ajuste solicitado pelo cliente</span></div>
+    <div class="wh-body">
+      <div class="code-block" style="margin-bottom:0">
+        <div class="cb-header"><span class="cb-lang">json — payload</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+        <div class="cb-content"><pre><span class="op">{</span>
+  <span class="key">"event"</span><span class="op">:</span> <span class="str">"piece.revision_requested"</span><span class="op">,</span>
+  <span class="key">"data"</span><span class="op">: {</span>
+    <span class="key">"piece_id"</span><span class="op">:</span> <span class="str">"pce_7kLmQ4"</span><span class="op">,</span>
+    <span class="key">"requested_by"</span><span class="op">:</span> <span class="str">"Maria Costa"</span><span class="op">,</span>
+    <span class="key">"channel"</span><span class="op">:</span> <span class="str">"portal"</span><span class="op">,</span>
+    <span class="key">"feedback"</span><span class="op">:</span> <span class="str">"Muda o CTA para 'Saiba mais'"</span><span class="op">,</span>
+    <span class="key">"attachments"</span><span class="op">: []</span>
+  <span class="op">}</span>
+<span class="op">}</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:1rem">Outros eventos disponíveis: <span class="badge badge-webhook">piece.rejected</span> <span class="badge badge-webhook">piece.published</span> <span class="badge badge-webhook">campaign.created</span> <span class="badge badge-webhook">campaign.completed</span> <span class="badge badge-webhook">client.created</span></p>
+</div>
+
+<div class="section" id="webhooks-security">
+  <div class="section-label">Webhooks</div>
+  <h2>Verificação de assinatura</h2>
+  <p>Todo request de webhook inclui <code>X-Aproove-Signature: sha256=HASH</code>. Verifique antes de processar.</p>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">node.js</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="kw">const</span> <span class="val">crypto</span> <span class="op">=</span> <span class="fn">require</span><span class="op">(</span><span class="str">'crypto'</span><span class="op">);</span>
+
+<span class="kw">function</span> <span class="fn">verifyWebhook</span><span class="op">(</span><span class="val">payload</span><span class="op">,</span> <span class="val">signature</span><span class="op">,</span> <span class="val">secret</span><span class="op">) {</span>
+  <span class="kw">const</span> <span class="val">expected</span> <span class="op">=</span> <span class="str">'sha256='</span> <span class="op">+</span> <span class="val">crypto</span>
+    <span class="op">.</span><span class="fn">createHmac</span><span class="op">(</span><span class="str">'sha256'</span><span class="op">,</span> <span class="val">secret</span><span class="op">)</span>
+    <span class="op">.</span><span class="fn">update</span><span class="op">(</span><span class="val">payload</span><span class="op">,</span> <span class="str">'utf8'</span><span class="op">)</span>
+    <span class="op">.</span><span class="fn">digest</span><span class="op">(</span><span class="str">'hex'</span><span class="op">);</span>
+
+  <span class="kw">return</span> <span class="val">crypto</span><span class="op">.</span><span class="fn">timingSafeEqual</span><span class="op">(</span>
+    <span class="val">Buffer</span><span class="op">.</span><span class="fn">from</span><span class="op">(</span><span class="val">expected</span><span class="op">),</span>
+    <span class="val">Buffer</span><span class="op">.</span><span class="fn">from</span><span class="op">(</span><span class="val">signature</span><span class="op">)</span>
+  <span class="op">);</span>
+<span class="op">}</span>
+
+<span class="cmt">// No seu endpoint Express:</span>
+<span class="val">app</span><span class="op">.</span><span class="fn">post</span><span class="op">(</span><span class="str">'/aproove/webhook'</span><span class="op">,</span> <span class="op">(</span><span class="val">req</span><span class="op">,</span> <span class="val">res</span><span class="op">) => {</span>
+  <span class="kw">const</span> <span class="val">sig</span> <span class="op">=</span> <span class="val">req</span><span class="op">.</span><span class="val">headers</span><span class="op">[</span><span class="str">'x-aproove-signature'</span><span class="op">];</span>
+  <span class="kw">if</span> <span class="op">(!</span><span class="fn">verifyWebhook</span><span class="op">(</span><span class="val">req</span><span class="op">.</span><span class="val">rawBody</span><span class="op">,</span> <span class="val">sig</span><span class="op">,</span> <span class="val">process</span><span class="op">.</span><span class="val">env</span><span class="op">.</span><span class="val">WEBHOOK_SECRET</span><span class="op">))</span>
+    <span class="kw">return</span> <span class="val">res</span><span class="op">.</span><span class="fn">status</span><span class="op">(</span><span class="num">401</span><span class="op">).</span><span class="fn">send</span><span class="op">(</span><span class="str">'Assinatura inválida'</span><span class="op">);</span>
+
+  <span class="kw">const</span> <span class="val">event</span> <span class="op">=</span> <span class="val">req</span><span class="op">.</span><span class="val">body</span><span class="op">;</span>
+  <span class="kw">if</span> <span class="op">(</span><span class="val">event</span><span class="op">.</span><span class="val">event</span> <span class="op">===</span> <span class="str">'piece.approved'</span><span class="op">)</span> <span class="op">{</span>
+    <span class="cmt">// Sua lógica aqui — ex: atualizar CRM, disparar Mlabs, etc.</span>
+  <span class="op">}</span>
+
+  <span class="val">res</span><span class="op">.</span><span class="fn">status</span><span class="op">(</span><span class="num">200</span><span class="op">).</span><span class="fn">json</span><span class="op">({</span> <span class="key">received</span><span class="op">:</span> <span class="kw">true</span> <span class="op">});</span>
+<span class="op">});</span></pre></div>
+  </div>
+</div>
+
+<!-- INTEGRATIONS -->
+<div class="section" id="int-mlabs">
+  <div class="section-label">Guias de integração</div>
+  <h2>Integração com Mlabs</h2>
+  <p>O padrão de integração com Mlabs usa webhooks do Aproove para disparar agendamentos automáticos. Quando uma peça é aprovada, o evento <code>piece.approved</code> chega no seu endpoint e você chama a API do Mlabs para agendar.</p>
+  <div class="int-step"><div class="is-num">1</div><div class="is-body"><div class="is-title">Configure o webhook no Aproove</div><div class="is-text">Registre seu endpoint em <code>POST /v1/webhooks</code> com o evento <code>piece.approved</code>. Salve o webhook secret gerado.</div></div></div>
+  <div class="int-step"><div class="is-num">2</div><div class="is-body"><div class="is-title">Receba e verifique o evento</div><div class="is-text">No seu servidor, valide a assinatura HMAC e processe o payload com <code>piece_id</code>, <code>scheduled_at</code> e URL do arquivo.</div></div></div>
+  <div class="int-step"><div class="is-num">3</div><div class="is-body"><div class="is-title">Chame a API do Mlabs</div><div class="is-text">Com os dados recebidos, crie o agendamento na API do Mlabs passando rede social, data/hora, imagem e legenda.</div></div></div>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">node.js — handler completo</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="cmt">// Quando piece.approved chega:</span>
+<span class="kw">async function</span> <span class="fn">handleApproval</span><span class="op">(</span><span class="val">event</span><span class="op">) {</span>
+  <span class="kw">const</span> <span class="op">{</span> <span class="val">piece_id</span><span class="op">,</span> <span class="val">scheduled_at</span> <span class="op">}</span> <span class="op">=</span> <span class="val">event</span><span class="op">.</span><span class="val">data</span><span class="op">;</span>
+
+  <span class="cmt">// 1. Buscar detalhes da peça no Aproove</span>
+  <span class="kw">const</span> <span class="val">piece</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">aprooveGet</span><span class="op">(</span><span class="str">`/v1/pieces/<span class="op">${</span><span class="val">piece_id</span><span class="op">}</span>`</span><span class="op">);</span>
+
+  <span class="cmt">// 2. Agendar via API do Mlabs</span>
+  <span class="kw">await</span> <span class="fn">fetch</span><span class="op">(</span><span class="str">'https://api.mlabs.com.br/v2/schedule'</span><span class="op">, {</span>
+    <span class="key">method</span><span class="op">:</span> <span class="str">'POST'</span><span class="op">,</span>
+    <span class="key">headers</span><span class="op">: {</span>
+      <span class="str">'Authorization'</span><span class="op">:</span> <span class="str">`Bearer <span class="op">${</span><span class="val">MLABS_TOKEN</span><span class="op">}</span>`</span><span class="op">,</span>
+      <span class="str">'Content-Type'</span><span class="op">:</span> <span class="str">'application/json'</span>
+    <span class="op">},</span>
+    <span class="key">body</span><span class="op">:</span> <span class="val">JSON</span><span class="op">.</span><span class="fn">stringify</span><span class="op">({</span>
+      <span class="key">network</span><span class="op">:</span> <span class="val">piece</span><span class="op">.</span><span class="val">network</span><span class="op">,</span>
+      <span class="key">schedule_date</span><span class="op">:</span> <span class="val">scheduled_at</span><span class="op">,</span>
+      <span class="key">text</span><span class="op">:</span> <span class="val">piece</span><span class="op">.</span><span class="val">copy</span><span class="op">,</span>
+      <span class="key">media_url</span><span class="op">:</span> <span class="val">piece</span><span class="op">.</span><span class="val">file_url</span>
+    <span class="op">})</span>
+  <span class="op">});</span>
+<span class="op">}</span></pre></div>
+  </div>
+</div>
+
+<div class="section" id="int-etus">
+  <div class="section-label">Guias de integração</div>
+  <h2>Integração com Etus</h2>
+  <p>Mesmo padrão do Mlabs — webhook <code>piece.approved</code> → chamada para a API do Etus. A Etus usa autenticação via <code>X-API-Key</code> e endpoint <code>POST /posts/schedule</code>.</p>
+  <div class="ib ib-i"><span class="ib-icon">ℹ</span><div class="ib-text">Consulte a documentação da Etus em <a href="#">developers.etus.com.br</a> para os campos específicos da API deles. O mapeamento de redes sociais pode variar.</div></div>
+</div>
+
+<div class="section" id="int-meta">
+  <div class="section-label">Guias de integração</div>
+  <h2>Integração com Meta (Instagram + Facebook)</h2>
+  <p>Publicação direta via Meta Graph API, sem intermediário. Requer app Meta aprovado e permissões <code>instagram_content_publish</code> e <code>pages_manage_posts</code>.</p>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">bash — publicar no Instagram</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="cmt"># 1. Criar container de mídia</span>
+<span class="fn">curl</span> <span class="op">-X</span> POST \
+  <span class="str">"https://graph.facebook.com/v19.0/{ig-user-id}/media"</span> \
+  <span class="op">-d</span> <span class="str">"image_url=https://cdn.aproove.app/files/piece.jpg"</span> \
+  <span class="op">-d</span> <span class="str">"caption=Verão chegou! ☀️ #verão2026"</span> \
+  <span class="op">-d</span> <span class="str">"access_token={user-access-token}"</span>
+
+<span class="cmt"># 2. Publicar o container</span>
+<span class="fn">curl</span> <span class="op">-X</span> POST \
+  <span class="str">"https://graph.facebook.com/v19.0/{ig-user-id}/media_publish"</span> \
+  <span class="op">-d</span> <span class="str">"creation_id={container-id}"</span> \
+  <span class="op">-d</span> <span class="str">"access_token={user-access-token}"</span></pre></div>
+  </div>
+</div>
+
+<div class="section" id="int-linkedin">
+  <div class="section-label">Guias de integração</div>
+  <h2>Integração com LinkedIn</h2>
+  <p>Publicação via LinkedIn API v2. Requer OAuth 2.0 com escopo <code>w_member_social</code> para perfil pessoal ou <code>w_organization_social</code> para páginas de empresa.</p>
+  <div class="code-block">
+    <div class="cb-header"><span class="cb-lang">bash — publicar em página de empresa</span><button class="cb-copy" onclick="copyCode(this)">Copiar</button></div>
+    <div class="cb-content"><pre><span class="fn">curl</span> <span class="op">-X</span> POST \
+  <span class="str">"https://api.linkedin.com/v2/ugcPosts"</span> \
+  <span class="op">-H</span> <span class="str">"Authorization: Bearer {access_token}"</span> \
+  <span class="op">-H</span> <span class="str">"Content-Type: application/json"</span> \
+  <span class="op">-d</span> <span class="str">'{
+    "author": "urn:li:organization:{org-id}",
+    "lifecycleState": "PUBLISHED",
+    "specificContent": {
+      "com.linkedin.ugc.ShareContent": {
+        "shareCommentary": {
+          "text": "Verão chegou! ☀️ Nova coleção disponível."
+        },
+        "shareMediaCategory": "IMAGE",
+        "media": [{
+          "status": "READY",
+          "description": { "text": "Lançamento Verão 2026" },
+          "media": "urn:li:digitalmediaAsset:{asset-id}"
+        }]
+      }
+    },
+    "visibility": {
+      "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+    }
+  }'</span></pre></div>
+  </div>
+</div>
+
+<!-- LGPD -->
+<div class="section" id="lgpd">
+  <div class="section-label">Referência</div>
+  <h2>LGPD e segurança de dados</h2>
+  <div class="ib ib-w"><span class="ib-icon">⚠</span><div class="ib-text"><strong>Dados pessoais via API:</strong> O Aproove não retorna números de telefone completos em nenhum endpoint. O campo <code>whatsapp</code> é retornado mascarado (<code>+55119xxxx4321</code>) e o número completo existe apenas internamente, criptografado. Isso é conformidade LGPD — não contorne com tentativas de engenharia reversa.</div></div>
+  <ul>
+    <li>Todos os dados são armazenados em servidores no Brasil (AWS São Paulo — <code>sa-east-1</code>)</li>
+    <li>Comunicação via HTTPS/TLS 1.3 em todos os endpoints</li>
+    <li>API Keys têm escopo mínimo configurável — nunca use permissões além do necessário</li>
+    <li>Logs de acesso à API são retidos por 90 dias e disponíveis via <code>GET /v1/logs</code></li>
+    <li>Dados de clientes finais (aprovadores) não são acessíveis via API — apenas pela conta proprietária</li>
+    <li>Em caso de incidente, notificação ao titular em até 72h conforme LGPD Art. 48</li>
+  </ul>
+</div>
+
+<!-- CHANGELOG -->
+<div class="section" id="changelog">
+  <div class="section-label">Referência</div>
+  <h2>Changelog da API</h2>
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+    <div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem"><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">2026-03-01</span><span class="badge badge-new">v1.4</span></div><ul style="font-size:13px"><li>Adicionado campo <code>hash_sha256</code> na resposta de aprovação</li><li>Novo evento webhook <code>campaign.completed</code></li><li>Endpoint <code>GET /v1/campaigns/{id}/report</code> agora inclui <code>business_result</code></li></ul></div>
+    <div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem"><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">2026-01-15</span><span class="badge badge-get">v1.3</span></div><ul style="font-size:13px"><li>Suporte a <code>multipart/form-data</code> no endpoint de upload de artes</li><li>Escopo <code>publish:write</code> adicionado para integrações de publicação direta</li></ul></div>
+    <div><div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem"><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink3)">2025-11-01</span><span class="badge badge-get">v1.0</span></div><ul style="font-size:13px"><li>Lançamento inicial da API pública</li><li>Endpoints de campanhas, peças, aprovações e clientes</li><li>Sistema de webhooks com verificação HMAC-SHA256</li></ul></div>
+  </div>
+</div>
+
+</main>
+
+<!-- TOC -->
+<aside class="toc">
+  <div class="toc-title">Nesta página</div>
+  <a class="toc-item" onclick="scrollTo('intro')" href="#">Visão geral</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('auth')" href="#">Quick start</a>
+  <div class="toc-sep"></div>
+  <a class="toc-item" onclick="scrollTo('auth')" href="#">Autenticação</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('scopes')" href="#">Escopos</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('errors')" href="#">Erros HTTP</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('rate')" href="#">Rate limiting</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('playground')" href="#">Playground</a>
+  <div class="toc-sep"></div>
+  <a class="toc-item" onclick="scrollTo('ep-campaigns')" href="#">Campanhas</a>
+  <a class="toc-item" onclick="scrollTo('ep-pieces')" href="#">Peças</a>
+  <a class="toc-item" onclick="scrollTo('ep-approvals')" href="#">Aprovações</a>
+  <a class="toc-item" onclick="scrollTo('ep-clients')" href="#">Clientes</a>
+  <a class="toc-item" onclick="scrollTo('ep-reports')" href="#">Relatórios</a>
+  <div class="toc-sep"></div>
+  <a class="toc-item" onclick="scrollTo('webhooks-intro')" href="#">Webhooks</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('webhooks-events')" href="#">Eventos</a>
+  <a class="toc-item toc-sub" onclick="scrollTo('webhooks-security')" href="#">Verificação</a>
+  <div class="toc-sep"></div>
+  <a class="toc-item" onclick="scrollTo('int-mlabs')" href="#">Mlabs</a>
+  <a class="toc-item" onclick="scrollTo('int-etus')" href="#">Etus</a>
+  <a class="toc-item" onclick="scrollTo('int-meta')" href="#">Meta</a>
+  <a class="toc-item" onclick="scrollTo('int-linkedin')" href="#">LinkedIn</a>
+  <div class="toc-sep"></div>
+  <a class="toc-item" onclick="scrollTo('lgpd')" href="#">LGPD</a>
+  <a class="toc-item" onclick="scrollTo('changelog')" href="#">Changelog</a>
+</aside>
+
+</div><!-- /layout -->
+
+<!-- API KEY MODAL -->
+<div id="key-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:2rem;width:420px;max-width:90vw">
+    <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:.5rem;letter-spacing:-.02em">Nova API Key</div>
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:1.25rem">Guarde em local seguro — não será exibida novamente.</div>
+    <div style="background:var(--bg);border:1px solid var(--border2);border-radius:var(--r);padding:.875rem 1rem;margin-bottom:1rem;font-family:'DM Mono',monospace;font-size:12px;color:#9cdcfe;word-break:break-all" id="generated-key">sk_demo_xK9mT2nQ4rP8vL3jF7wS1bD6eM5hA0cZ</div>
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+      <select style="flex:1;padding:7px 10px;font-size:12px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--ink);font-family:inherit">
+        <option>campaigns:read + approvals:write</option>
+        <option>Acesso completo (todos os escopos)</option>
+        <option>Apenas leitura</option>
+        <option>Publicação (publish:write)</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:.5rem">
+      <button onclick="copyKey()" style="flex:1;padding:9px;font-size:13px;font-weight:500;background:var(--blue);color:#fff;border:none;border-radius:var(--r);cursor:pointer;font-family:inherit">Copiar key</button>
+      <button onclick="closeModal()" style="padding:9px 18px;font-size:13px;background:transparent;color:var(--ink2);border:1px solid var(--border2);border-radius:var(--r);cursor:pointer;font-family:inherit">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function scrollTo(id){
+  var el=document.getElementById(id);
+  if(el){window.scrollTo({top:el.offsetTop-70,behavior:'smooth'});}
+  return false;
+}
+
+function toggleEp(header){
+  var body=header.nextElementSibling;
+  var arrow=header.querySelector('span:last-child');
+  body.classList.toggle('open');
+  arrow.textContent=body.classList.contains('open')?'▴':'▾';
+}
+
+function copyCode(btn){
+  var pre=btn.closest('.code-block').querySelector('pre');
+  var text=pre.innerText||pre.textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var orig=btn.textContent;btn.textContent='Copiado!';btn.style.color='var(--green)';
+    setTimeout(function(){btn.textContent=orig;btn.style.color='';},2000);
+  }).catch(function(){btn.textContent='Erro';setTimeout(function(){btn.textContent='Copiar';},2000);});
+}
+
+// PLAYGROUND
+var PG_RESPONSES={
+  'GET /v1/campaigns':{'status':200,'time':142,'body':{'data':[{'id':'camp_9xkT2m','name':'Lançamento Verão 2026','client_id':'cli_7nPq4r','status':'active','networks':['instagram','linkedin','tiktok'],'start_date':'2026-01-01','end_date':'2026-03-31','pieces_count':18,'pending_approval':3}],'meta':{'total':6,'page':1,'per_page':20}}},
+  'GET /v1/campaigns?status=active':{'status':200,'time':138,'body':{'data':[{'id':'camp_9xkT2m','name':'Lançamento Verão 2026','status':'active','pieces_count':18,'pending_approval':3}],'meta':{'total':4,'page':1,'per_page':20}}},
+  'POST /v1/campaigns':{'status':201,'time':198,'body':{'data':{'id':'camp_nXk7Tm','name':'Nova Campanha','status':'planning','created_at':'2026-03-15T10:30:00-03:00'}}},
+  'GET /v1/clients':{'status':200,'time':115,'body':{'data':[{'id':'cli_7nPq4r','name':'Marca Verão S/A','plan':'professional','pieces_used':18,'pieces_limit':200}]}},
+  'DEFAULT':{'status':200,'time':145,'body':{'data':[],'meta':{'total':0,'page':1,'per_page':20}}}
+};
+
+function runPlayground(){
+  var method=document.getElementById('pg-method').value;
+  var url=document.getElementById('pg-url').value.trim();
+  var resp=document.getElementById('pg-response');
+  var statusEl=document.getElementById('pg-status');
+  var timeEl=document.getElementById('pg-time');
+  resp.innerHTML='<span style="color:var(--amber)">Aguardando resposta...</span>';
+  statusEl.style.display='none';timeEl.style.display='none';
+  var key=method+' '+url;
+  var data=PG_RESPONSES[key]||PG_RESPONSES['DEFAULT'];
+  var delay=data.time+Math.floor(Math.random()*60);
+  setTimeout(function(){
+    var sc=data.status<300?'var(--green)':data.status<500?'var(--amber)':'var(--red)';
+    statusEl.textContent=data.status+(data.status===200?' OK':data.status===201?' Created':data.status===404?' Not Found':'');
+    statusEl.style.color=sc;statusEl.style.display='inline';
+    timeEl.textContent=delay+'ms';timeEl.style.display='inline';
+    resp.innerHTML=syntaxHL(JSON.stringify(data.body,null,2));
+  },delay);
+}
+
+function syntaxHL(json){
+  return json
+    .replace(/("(?:\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,function(m){
+      var cls='num';
+      if(/^"/.test(m)){cls=/:$/.test(m)?'key':'str';}
+      else if(/true|false/.test(m)){cls='kw';}
+      else if(/null/.test(m)){cls='kw';}
+      return '<span class="'+cls+'">'+m+'</span>';
+    });
+}
+
+function updateMethodColor(){
+  var s=document.getElementById('pg-method');
+  var colors={GET:'var(--green)',POST:'var(--blue)',PATCH:'var(--amber)',DELETE:'var(--red)'};
+  s.style.color=colors[s.value]||'var(--ink)';
+}
+
+// MODAL
+function showKeyModal(){
+  var m=document.getElementById('key-modal');m.style.display='flex';
+  var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var key='sk_live_';for(var i=0;i<32;i++)key+=chars.charAt(Math.floor(Math.random()*chars.length));
+  document.getElementById('generated-key').textContent=key;
+}
+function closeModal(){document.getElementById('key-modal').style.display='none';}
+function copyKey(){var k=document.getElementById('generated-key').textContent;navigator.clipboard.writeText(k).then(function(){document.querySelector('#key-modal button').textContent='Copiado!';setTimeout(function(){document.querySelector('#key-modal button').textContent='Copiar key';},2000);});}
+document.getElementById('key-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>

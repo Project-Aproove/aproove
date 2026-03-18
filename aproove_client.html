@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Portal do Cliente</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf8;
+  --bg2: #f2f1ed;
+  --bg3: #e8e7e1;
+  --surface: #ffffff;
+  --text: #1c1c1a;
+  --text2: #6b6a63;
+  --text3: #a8a79f;
+  --border: rgba(28,28,26,0.1);
+  --border2: rgba(28,28,26,0.18);
+  --accent: #1c1c1a;
+  --green: #2d6a2d; --green-bg: #eaf3ea; --green-border: rgba(45,106,45,0.25);
+  --amber: #7a4a0a; --amber-bg: #fdf0dd; --amber-border: rgba(122,74,10,0.25);
+  --blue: #0d4a8a; --blue-bg: #e8f0fb; --blue-border: rgba(13,74,138,0.25);
+  --red: #8a1a1a; --red-bg: #fbeaea; --red-border: rgba(138,26,26,0.25);
+  --purple: #4a2d8a; --purple-bg: #f0eafb; --purple-border: rgba(74,45,138,0.25);
+  --r: 10px; --r-lg: 14px; --r-xl: 20px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; font-size: 13px; background: var(--bg); color: var(--text); line-height: 1.5; }
+a { color: inherit; text-decoration: none; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+/* ── SHELL ── */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar { width: 224px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sb-logo { padding: 1.25rem 1.125rem 1rem; display: flex; align-items: center; gap: 9px; border-bottom: 1px solid var(--border); }
+.sb-logo-mark { width: 30px; height: 30px; border-radius: 8px; background: var(--text); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sb-logo-mark svg { width: 16px; height: 16px; }
+.sb-logo-name { font-size: 15px; font-weight: 600; letter-spacing: -.02em; }
+.sb-logo-tag { font-size: 10px; color: var(--text3); }
+
+.sb-client-badge { margin: .75rem 1.125rem .5rem; padding: .5rem .75rem; background: var(--bg2); border-radius: var(--r); border: 1px solid var(--border); }
+.scb-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-weight: 500; margin-bottom: 2px; }
+.scb-name { font-size: 12px; font-weight: 500; color: var(--text); }
+
+.sb-section { padding: .625rem 1.125rem .2rem; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; }
+.sb-nav { flex: 1; padding: .25rem 0; overflow-y: auto; }
+.sb-item { display: flex; align-items: center; gap: 9px; padding: 7px 1.125rem; font-size: 12.5px; color: var(--text2); cursor: pointer; border-left: 2px solid transparent; transition: all .12s; position: relative; }
+.sb-item:hover { background: var(--bg); color: var(--text); }
+.sb-item.active { background: var(--bg); color: var(--text); border-left-color: var(--text); font-weight: 500; }
+.sb-item-icon { width: 16px; text-align: center; flex-shrink: 0; font-size: 13px; }
+.sb-badge { margin-left: auto; font-size: 10px; background: var(--amber-bg); color: var(--amber); padding: 1px 6px; border-radius: 10px; font-weight: 600; border: 1px solid var(--amber-border); }
+.sb-badge.new { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-border); }
+
+.sb-bottom { padding: 1rem 1.125rem; border-top: 1px solid var(--border); }
+.sb-user { display: flex; align-items: center; gap: 8px; }
+.sb-av { width: 30px; height: 30px; border-radius: 50%; background: var(--blue-bg); border: 1px solid var(--blue-border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--blue); flex-shrink: 0; }
+.sb-uname { font-size: 12px; font-weight: 500; color: var(--text); }
+.sb-urole { font-size: 10px; color: var(--text3); }
+
+/* ── MAIN ── */
+.main { flex: 1; overflow-y: auto; background: var(--bg); }
+.page { display: none; padding: 1.75rem 2rem; }
+.page.active { display: block; animation: fadeIn .18s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.ph { margin-bottom: 1.5rem; }
+.ph h1 { font-size: 22px; font-weight: 600; letter-spacing: -.03em; margin-bottom: 3px; }
+.ph p { font-size: 12.5px; color: var(--text2); }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-bottom: .75rem; }
+.card-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: .75rem; letter-spacing: .01em; }
+.g2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(0,1fr)); gap: .75rem; margin-bottom: .75rem; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem; margin-bottom: .75rem; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin-bottom: .75rem; }
+
+.metric { background: var(--bg2); border-radius: var(--r); padding: .875rem 1rem; border: 1px solid var(--border); }
+.metric .m-lbl { font-size: 11px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
+.metric .m-val { font-size: 24px; font-weight: 600; letter-spacing: -.03em; color: var(--text); }
+.metric .m-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.metric.good .m-val { color: var(--green); }
+.metric.warn .m-val { color: var(--amber); }
+.metric.hi { background: var(--green-bg); border-color: var(--green-border); }
+.metric.hi .m-lbl { color: var(--green); }
+.metric.hi .m-val { color: var(--green); }
+.metric.hi .m-sub { color: var(--green); }
+
+/* ── PILLS ── */
+.pill { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; letter-spacing: .02em; }
+.pl-apr { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.pl-pub { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+.pl-pend { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.pl-adj { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.pl-rej { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.pl-wa { background: #e5f7e5; color: #1a5c1a; border: 1px solid rgba(26,92,26,.2); }
+.pl-portal { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+
+/* ── BUTTONS ── */
+.btn { padding: 8px 16px; font-size: 12.5px; border-radius: var(--r); cursor: pointer; font-family: inherit; font-weight: 500; transition: all .12s; letter-spacing: .01em; }
+.btn-primary { background: var(--text); color: var(--surface); border: none; }
+.btn-primary:hover { opacity: .85; }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+.btn-secondary:hover { background: var(--bg2); }
+.btn-danger { background: transparent; color: var(--red); border: none; font-size: 12px; }
+.btn-sm { padding: 5px 11px; font-size: 11px; }
+
+/* ── INFO BOXES ── */
+.ib { border-radius: var(--r); padding: .625rem .875rem; font-size: 12px; line-height: 1.55; margin-bottom: .75rem; }
+.ib-suc { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.ib-warn { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.ib-info { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+.ib-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.ib-neutral { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); }
+
+/* ── ALERT BANNER ── */
+.alert-banner { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--r-lg); padding: .875rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .75rem; }
+.ab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+.ab-text { font-size: 12.5px; color: var(--amber); flex: 1; }
+.ab-text strong { font-weight: 600; }
+.ab-action { margin-left: auto; flex-shrink: 0; }
+
+/* ── ROWS ── */
+.row { display: flex; align-items: center; gap: .625rem; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.row:last-child { border-bottom: none; }
+.net-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; letter-spacing: .02em; }
+.row-info { flex: 1; min-width: 0; }
+.row-title { font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-sub { font-size: 11px; color: var(--text2); }
+.row-time { font-size: 11px; color: var(--text3); flex-shrink: 0; }
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* ══════════════════════════════════
+   APPROVAL
+══════════════════════════════════ */
+.approval-shell { display: grid; grid-template-columns: 176px 1fr 252px; border: 1px solid var(--border); border-radius: var(--r-xl); overflow: hidden; min-height: 580px; background: var(--surface); box-shadow: var(--shadow); }
+.asl { background: var(--bg); border-right: 1px solid var(--border); }
+.asl-head { padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
+.asl-camp { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; font-weight: 500; margin-bottom: 2px; }
+.asl-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.fmt-section-label { padding: .5rem 1rem .2rem; font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; }
+.fmt-item { display: flex; align-items: center; gap: 7px; padding: 7px 1rem; cursor: pointer; border-left: 2px solid transparent; font-size: 12px; color: var(--text2); transition: all .12s; }
+.fmt-item:hover { background: var(--surface); color: var(--text); }
+.fmt-item.active { background: var(--surface); color: var(--text); border-left-color: var(--text); font-weight: 500; }
+.fi-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.fi-badge { margin-left: auto; font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
+
+.asc { background: var(--surface); display: flex; flex-direction: column; }
+.asc-top { padding: .75rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: .5rem; }
+.asc-net { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.asc-fmt { font-size: 11px; color: var(--text2); background: var(--bg2); padding: 3px 8px; border-radius: 5px; }
+.preview-zone { flex: 1; background: var(--bg2); display: flex; align-items: flex-start; justify-content: center; padding: 1.25rem; }
+.phone { background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; overflow: hidden; width: 210px; box-shadow: var(--shadow); }
+.ph-bar { padding: 8px 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border); }
+.ph-av { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; flex-shrink: 0; }
+.ph-nm { font-size: 11px; font-weight: 600; }
+.ph-sub { font-size: 9px; color: var(--text3); }
+.ph-more { margin-left: auto; font-size: 12px; color: var(--text2); }
+.post-area { width: 100%; background: var(--bg2); display: flex; align-items: center; justify-content: center; position: relative; }
+.post-inner { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 14px; }
+.post-em { font-size: 32px; line-height: 1; }
+.post-t { font-size: 12px; font-weight: 600; color: var(--text); text-align: center; }
+.post-s { font-size: 10px; color: var(--text2); text-align: center; }
+.dark-area { background: #0f0f0f; }
+.dk-cap { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px 10px 20px; }
+.dk-side { position: absolute; bottom: 18px; right: 6px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.story-bars { position: absolute; top: 6px; left: 8px; right: 8px; display: flex; gap: 3px; }
+.story-bar { flex: 1; height: 2px; border-radius: 1px; }
+.story-head { position: absolute; top: 15px; left: 8px; display: flex; align-items: center; gap: 5px; }
+.story-cta { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); background: white; color: #111; font-size: 10px; font-weight: 700; padding: 5px 16px; border-radius: 20px; white-space: nowrap; }
+.tk-top { position: absolute; top: 8px; left: 0; right: 0; display: flex; justify-content: space-around; padding: 0 8px; }
+.ig-acts { display: flex; gap: 9px; padding: 6px 10px 3px; font-size: 13px; color: var(--text2); }
+.ig-likes { font-size: 10px; font-weight: 600; color: var(--text); padding: 0 10px 2px; }
+.ig-cap { padding: 0 10px 6px; font-size: 10px; color: var(--text); line-height: 1.5; }
+.ig-cap .u { font-weight: 600; }
+.ig-cap .tags { color: #3b82f6; font-size: 9px; margin-top: 2px; }
+.ig-date { padding: 3px 10px 8px; font-size: 9px; color: var(--text2); }
+
+.asr { background: var(--bg); border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+.asr-sec { padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
+.asr-lbl { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .5rem; }
+.rec-box { background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--r); padding: .5rem .75rem; margin-bottom: .5rem; }
+.rec-dt { font-size: 13px; font-weight: 600; color: var(--green); margin-bottom: 2px; }
+.rec-why { font-size: 10px; color: var(--green); line-height: 1.4; }
+.bar-row { display: flex; align-items: center; gap: 5px; padding: 3px 0; border-bottom: 1px solid var(--border); font-size: 10px; }
+.bar-row:last-child { border-bottom: none; }
+.bar-time { color: var(--text2); width: 34px; flex-shrink: 0; }
+.bar-track { flex: 1; height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 4px; border-radius: 2px; background: var(--green); transition: width .4s ease; }
+.bar-pct { width: 26px; text-align: right; font-size: 10px; color: var(--text2); flex-shrink: 0; }
+.date-inputs { display: flex; gap: 5px; margin-bottom: .5rem; }
+.date-inputs input { flex: 1; padding: 5px 8px; font-size: 11px; border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); color: var(--text); font-family: inherit; }
+.date-inputs input:focus { outline: none; border-color: var(--text); }
+.conflict-box { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--r); padding: .5rem .75rem; margin-bottom: .5rem; display: none; }
+.conflict-box.on { display: block; }
+.cb-title { font-size: 11px; font-weight: 600; color: var(--amber); margin-bottom: 3px; }
+.cb-body { font-size: 10px; color: var(--amber); line-height: 1.4; margin-bottom: .375rem; }
+.cb-btns { display: flex; gap: 5px; }
+.cb-btn { padding: 3px 9px; font-size: 10px; border-radius: var(--r); cursor: pointer; border: 1px solid var(--amber-border); background: transparent; color: var(--amber); font-family: inherit; }
+.cb-btn.pri { background: var(--amber); color: white; }
+.asr-cmt { flex: 1; padding: .75rem 1rem; }
+.asr-cmt textarea { width: 100%; border: 1px solid var(--border2); border-radius: var(--r); padding: 7px 9px; font-size: 11px; font-family: inherit; color: var(--text); background: var(--surface); resize: none; height: 64px; }
+.asr-cmt textarea:focus { outline: none; border-color: var(--text); }
+.asr-acts { padding: .75rem 1rem; border-top: 1px solid var(--border); }
+.result-banner { border-radius: var(--r); padding: .5rem .75rem; margin-bottom: .5rem; display: none; }
+.rb-suc { background: var(--green-bg); border: 1px solid var(--green-border); }
+.rb-warn { background: var(--amber-bg); border: 1px solid var(--amber-border); }
+.rb-dan { background: var(--red-bg); border: 1px solid var(--red-border); }
+.rb-title { font-size: 11px; font-weight: 600; }
+.rb-suc .rb-title { color: var(--green); }
+.rb-warn .rb-title { color: var(--amber); }
+.rb-dan .rb-title { color: var(--red); }
+.rb-sub { font-size: 10px; margin-top: 2px; }
+.rb-suc .rb-sub { color: var(--green); }
+.rb-warn .rb-sub { color: var(--amber); }
+.rb-dan .rb-sub { color: var(--red); }
+
+/* ══ CALENDAR ══ */
+.cal-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.cal-nav { display: flex; align-items: center; gap: .5rem; }
+.cal-nav button { padding: 4px 10px; font-size: 12px; border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); color: var(--text); cursor: pointer; font-family: inherit; }
+.cal-month { font-size: 16px; font-weight: 600; letter-spacing: -.02em; min-width: 130px; }
+.cal-legend { display: flex; gap: .75rem; margin-left: auto; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.cal-dow { text-align: center; font-size: 10px; font-weight: 600; color: var(--text3); padding: 4px 0; text-transform: uppercase; letter-spacing: .05em; }
+.cal-cell { min-height: 76px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 5px; cursor: pointer; transition: border-color .12s; }
+.cal-cell:hover { border-color: var(--border2); }
+.cal-cell.today { border-color: #3b82f6; background: #eff6ff; }
+.cal-cell.empty { background: var(--bg2); cursor: default; }
+.cal-cell.empty:hover { border-color: var(--border); }
+.cal-day-num { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+.cal-cell.today .cal-day-num { color: #1d4ed8; font-weight: 600; }
+.cal-pill { font-size: 9px; padding: 1px 5px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; font-weight: 500; }
+.cp-pub { background: var(--green-bg); color: var(--green); }
+.cp-apr { background: var(--blue-bg); color: var(--blue); }
+.cp-pend { background: var(--amber-bg); color: var(--amber); }
+.cp-more { font-size: 9px; color: var(--text3); }
+.day-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-top: .75rem; display: none; }
+.day-detail.on { display: block; }
+.dd-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: .75rem; }
+.dd-row { display: flex; align-items: center; gap: .625rem; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.dd-row:last-child { border-bottom: none; }
+
+/* ══ HISTORY ══ */
+.hist-filters { display: flex; gap: .375rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.hf { padding: 4px 12px; font-size: 11px; border: 1px solid var(--border2); border-radius: 20px; background: var(--surface); color: var(--text2); cursor: pointer; font-family: inherit; transition: all .12s; }
+.hf:hover, .hf.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+.hist-entry { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: .875rem 1.25rem; margin-bottom: .5rem; display: flex; gap: .875rem; transition: border-color .12s; }
+.hist-entry:hover { border-color: var(--border2); }
+.hist-entry.hidden { display: none; }
+.he-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+.he-body { flex: 1; min-width: 0; }
+.he-ch { display: inline-flex; align-items: center; font-size: 10px; padding: 1px 7px; border-radius: 20px; font-weight: 600; margin-bottom: 4px; }
+.ch-wa { background: #e5f7e5; color: #1a5c1a; border: 1px solid rgba(26,92,26,.2); }
+.ch-portal { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+.ch-email { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.he-title { font-size: 12.5px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.he-meta { font-size: 11px; color: var(--text2); margin-bottom: .375rem; line-height: 1.4; }
+.he-audit { font-size: 10px; color: var(--text3); background: var(--bg2); border-radius: 5px; padding: 4px 9px; font-family: 'DM Mono', monospace; line-height: 1.4; }
+.he-right { flex-shrink: 0; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.he-date { font-size: 10px; color: var(--text3); line-height: 1.4; }
+
+/* ══ REQUESTS ══ */
+.step-bar { display: flex; gap: 0; margin-bottom: 1.25rem; }
+.step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.step::after { content: ''; position: absolute; top: 13px; left: 50%; width: 100%; height: 1px; background: var(--border); z-index: 0; }
+.step:last-child::after { display: none; }
+.step-n { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--text2); position: relative; z-index: 1; transition: all .2s; }
+.step-n.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+.step-n.done { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.step-lbl { font-size: 10px; color: var(--text3); margin-top: 4px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.frow { display: flex; flex-direction: column; gap: 4px; margin-bottom: .75rem; }
+.frow label { font-size: 11px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; }
+.frow input, .frow select, .frow textarea { padding: 8px 10px; font-size: 12.5px; border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); color: var(--text); font-family: inherit; width: 100%; }
+.frow input:focus, .frow select:focus, .frow textarea:focus { outline: none; border-color: var(--text); }
+.frow textarea { resize: none; min-height: 80px; }
+.net-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.net-opt { padding: 5px 12px; font-size: 11.5px; border: 1px solid var(--border2); border-radius: var(--r); cursor: pointer; background: var(--surface); color: var(--text2); transition: all .12s; user-select: none; }
+.net-opt:hover { border-color: var(--text); color: var(--text); }
+.net-opt.sel { background: var(--text); color: var(--surface); border-color: var(--text); }
+.obj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 7px; margin-top: 4px; }
+.obj-card { padding: 9px 11px; border: 1px solid var(--border2); border-radius: var(--r); cursor: pointer; transition: all .12s; }
+.obj-card:hover { border-color: var(--text); }
+.obj-card.sel { border-color: var(--text); background: var(--bg2); }
+.obj-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.obj-sub { font-size: 10px; color: var(--text2); }
+.camp-summary { font-size: 12px; color: var(--text2); line-height: 1.8; }
+.cs-row { display: flex; gap: .5rem; }
+.cs-lbl { min-width: 120px; color: var(--text3); }
+.cs-val { color: var(--text); font-weight: 500; }
+
+/* ══ MOBILE ══ */
+.phone-frame { background: var(--bg2); border-radius: 26px; padding: 8px; border: 1px solid var(--border2); width: 246px; flex-shrink: 0; }
+.phone-body { background: var(--surface); border-radius: 20px; overflow: hidden; }
+.mob-bar { background: var(--text); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+.mob-brand { display: flex; align-items: center; gap: 6px; }
+.mob-brand-icon { width: 22px; height: 22px; border-radius: 5px; background: var(--surface); display: flex; align-items: center; justify-content: center; }
+.mob-brand-icon svg { width: 13px; height: 13px; }
+.mob-brand span { font-size: 13px; font-weight: 600; color: var(--surface); letter-spacing: -.01em; }
+.mob-notif { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 600; }
+.mob-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.mob-stab { flex: 1; padding: 8px 4px; text-align: center; font-size: 10px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; }
+.mob-stab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+.mob-content { padding: .625rem; }
+.mob-sec { font-size: 9px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: .375rem; margin-top: .375rem; }
+.mob-card { background: var(--bg2); border-radius: var(--r); padding: .5rem .625rem; margin-bottom: .375rem; display: flex; align-items: center; gap: .5rem; border: 1px solid var(--border); }
+.mob-net { width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+.mob-info { flex: 1; min-width: 0; }
+.mob-t { font-size: 10px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mob-s { font-size: 9px; color: var(--text2); }
+.mob-st { font-size: 8px; font-weight: 600; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+.mob-nav { display: flex; border-top: 1px solid var(--border); background: var(--surface); }
+.mob-ni { flex: 1; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+.mob-ni-icon { font-size: 14px; color: var(--text3); }
+.mob-ni-lbl { font-size: 7px; color: var(--text3); }
+.mob-ni.active .mob-ni-icon, .mob-ni.active .mob-ni-lbl { color: var(--text); }
+
+/* ══ WHATSAPP ══ */
+.wa-frame { background: var(--bg2); border-radius: 26px; padding: 8px; border: 1px solid var(--border2); width: 246px; flex-shrink: 0; }
+.wa-inner { background: var(--surface); border-radius: 20px; overflow: hidden; }
+.wa-bar { background: #075E54; padding: 10px 12px; display: flex; align-items: center; gap: 7px; }
+.wa-av { width: 28px; height: 28px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #075E54; flex-shrink: 0; }
+.wa-name { font-size: 12px; font-weight: 600; color: white; }
+.wa-status { font-size: 9px; color: rgba(255,255,255,.7); }
+.wa-chat { background: #ECE5DD; padding: 10px 8px; min-height: 340px; display: flex; flex-direction: column; gap: 7px; }
+.wm { max-width: 90%; border-radius: 8px; padding: 6px 9px; font-size: 10px; line-height: 1.5; }
+.wm.bot { background: white; align-self: flex-start; color: #111; }
+.wm.usr { background: #DCF8C6; align-self: flex-end; color: #111; }
+.wm-time { font-size: 8px; color: #888; text-align: right; margin-top: 2px; }
+.wm-check { color: #53BDEB; }
+.wm-link { display: block; background: #f0f0f0; border-radius: 5px; padding: 6px 8px; margin-top: 5px; border-left: 3px solid #25D366; }
+.wml-t { font-size: 10px; font-weight: 600; color: #111; margin-bottom: 1px; }
+.wml-s { font-size: 8px; color: #555; }
+.wml-u { font-size: 8px; color: #075E54; }
+.wa-quick { background: #ECE5DD; padding: 6px 8px; display: flex; gap: 5px; flex-wrap: wrap; }
+.wq-btn { background: white; border: none; border-radius: 14px; padding: 4px 10px; font-size: 9.5px; color: #075E54; cursor: pointer; font-family: inherit; font-weight: 500; }
+.wa-input-bar { background: white; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-size: 10px; color: #aaa; }
+.wa-field { flex: 1; background: #f0f0f0; border-radius: 14px; padding: 5px 10px; font-size: 10px; color: #aaa; }
+
+/* ══ AUDIT ══ */
+.audit-entry { padding: .875rem 0; border-bottom: 1px solid var(--border); }
+.audit-entry:last-child { border-bottom: none; }
+.ae-header { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; flex-wrap: wrap; }
+.ae-comment { font-size: 12px; color: var(--text2); background: var(--bg2); border-radius: 6px; padding: 7px 11px; border-left: 2px solid var(--border2); line-height: 1.5; margin-top: 5px; font-style: italic; }
+.ae-hash { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: 'DM Mono', monospace; }
+
+/* ══ PLANS ══ */
+.plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.25rem; }
+.plan-card.featured { border: 2px solid #3b82f6; }
+.plan-name { font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 3px; }
+.plan-price { font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -.04em; }
+.plan-price span { font-size: 13px; font-weight: 400; color: var(--text2); }
+.plan-tag { font-size: 11px; color: var(--text3); margin-bottom: 1rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
+.plan-item { font-size: 12px; color: var(--text2); padding: 3px 0; display: flex; gap: 6px; }
+.plan-item::before { content: "—"; color: var(--border2); flex-shrink: 0; }
+.pop-badge { display: inline-block; font-size: 10px; padding: 2px 9px; border-radius: 5px; background: var(--blue-bg); color: var(--blue); font-weight: 600; margin-bottom: .625rem; border: 1px solid var(--blue-border); }
+
+/* ══ DOWNLOAD ══ */
+.dl-row { display: flex; align-items: center; gap: .75rem; padding: .75rem; border: 1px solid var(--border); border-radius: var(--r); margin-bottom: .5rem; transition: border-color .12s; cursor: pointer; }
+.dl-row:hover { border-color: var(--border2); }
+.dl-row.sel { border-color: var(--text); background: var(--bg2); }
+.dl-check { width: 17px; height: 17px; border-radius: 4px; border: 1px solid var(--border2); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; transition: all .12s; }
+.dl-check.on { background: var(--text); border-color: var(--text); color: white; }
+.dl-thumb { width: 44px; height: 44px; border-radius: var(--r); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.dl-info { flex: 1; min-width: 0; }
+.dl-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dl-meta { font-size: 11px; color: var(--text2); }
+.dl-acts { display: flex; gap: 4px; flex-shrink: 0; }
+
+/* ══ REPORTS ══ */
+.kpi-bar-outer { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.kpi-bar-inner { height: 6px; border-radius: 3px; }
+.chart-row { display: flex; align-items: center; gap: 8px; font-size: 11px; margin-bottom: 5px; }
+.chart-lbl { width: 64px; flex-shrink: 0; color: var(--text2); text-align: right; }
+.chart-track { flex: 1; height: 16px; background: var(--bg2); border-radius: var(--r); overflow: hidden; position: relative; }
+.chart-fill { height: 100%; border-radius: var(--r); display: flex; align-items: center; justify-content: flex-end; padding-right: 7px; font-size: 10px; font-weight: 600; color: white; min-width: 28px; }
+.chart-val { width: 38px; text-align: right; font-weight: 500; color: var(--text); flex-shrink: 0; }
+.ai-insight { border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-bottom: .625rem; border-left: 3px solid; }
+.ai-good { background: var(--green-bg); border-color: var(--green); }
+.ai-warn-i { background: var(--amber-bg); border-color: var(--amber); }
+.ai-tip { background: var(--purple-bg); border-color: var(--purple); }
+.ai-neutral { background: var(--bg2); border-color: var(--border2); }
+.ai-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
+.ai-good .ai-lbl { color: var(--green); }
+.ai-warn-i .ai-lbl { color: var(--amber); }
+.ai-tip .ai-lbl { color: var(--purple); }
+.ai-neutral .ai-lbl { color: var(--text2); }
+.ai-t { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.ai-b { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.ai-act { display: inline-block; margin-top: .5rem; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; cursor: pointer; border: none; font-family: inherit; }
+.ai-good .ai-act { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.ai-warn-i .ai-act { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.ai-tip .ai-act { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.divider-ai { display: flex; align-items: center; gap: .75rem; margin: 1rem 0 .875rem; }
+.divider-ai::before, .divider-ai::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.ai-badge { font-size: 11px; font-weight: 500; color: var(--purple); background: var(--purple-bg); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--purple-border); white-space: nowrap; }
+.toast-bar { display: none; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--r); padding: .5rem .875rem; font-size: 12px; color: var(--green); margin-bottom: .5rem; }
+
+/* ══ REQUESTS LIST ══ */
+.req-entry { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: .875rem 1.25rem; margin-bottom: .5rem; display: flex; gap: .875rem; transition: border-color .12s; }
+.req-entry:hover { border-color: var(--border2); }
+.re-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.re-body { flex: 1; min-width: 0; }
+.re-type { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 20px; display: inline-block; margin-bottom: 4px; }
+.re-camp { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+.re-avulsa { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.re-title { font-size: 12.5px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.re-meta { font-size: 11px; color: var(--text2); line-height: 1.4; }
+.re-right { flex-shrink: 0; text-align: right; }
+
+/* ══ CONFIG ══ */
+.cfg-row { display: flex; align-items: center; justify-content: space-between; padding: .75rem 0; border-bottom: 1px solid var(--border); }
+.cfg-row:last-child { border-bottom: none; }
+.cfg-lbl { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.cfg-sub { font-size: 11px; color: var(--text2); }
+.toggle { width: 34px; height: 19px; border-radius: 10px; background: var(--bg3); position: relative; cursor: pointer; transition: background .15s; flex-shrink: 0; border: 1px solid var(--border2); }
+.toggle.on { background: var(--green); border-color: var(--green); }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: white; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+.toggle.on::after { transform: translateX(15px); }
+.user-row { display: flex; align-items: center; gap: 10px; padding: .625rem 0; border-bottom: 1px solid var(--border); }
+.user-row:last-child { border-bottom: none; }
+.ur-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.ur-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.ur-role { font-size: 11px; color: var(--text2); }
+
+/* ══ MOBILE SHOWCASE ══ */
+.mobile-showcase { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+.mobile-notes { flex: 1; min-width: 200px; }
+.note-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: .875rem 1.25rem; margin-bottom: .75rem; }
+.note-card h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: .5rem; }
+.note-card p { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.step-item { display: flex; gap: .625rem; padding: .375rem 0; font-size: 12px; color: var(--text2); align-items: flex-start; }
+.step-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--bg2); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
+
+/* ══ FINANCIAL ══ */
+.fin-plan-box { background: var(--bg2); border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-bottom: .75rem; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); }
+.fpb-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.02em; }
+.fpb-price { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -.04em; }
+.fpb-price span { font-size: 13px; font-weight: 400; color: var(--text2); }
+.fpb-tag { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.fpb-status { font-size: 11px; background: var(--green-bg); color: var(--green); padding: 4px 12px; border-radius: 20px; font-weight: 600; border: 1px solid var(--green-border); }
+.pay-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.pay-row:last-child { border-bottom: none; }
+.pay-lbl { color: var(--text2); }
+
+/* ══ CAMPAIGN VIEW ══ */
+.kv-block { background: var(--bg2); border-radius: var(--r-xl); padding: 1.5rem; text-align: center; margin-bottom: .75rem; border: 1px solid var(--border); }
+.kpi-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.kpi-row:last-child { border-bottom: none; }
+.kpi-lbl { color: var(--text2); }
+.kpi-val { font-weight: 500; color: var(--text); }
+
+/* ══ SUCCESS STATE ══ */
+.success-state { display: none; text-align: center; padding: 2rem 1rem; }
+.success-state.on { display: block; }
+.ss-icon { font-size: 42px; margin-bottom: 1rem; }
+.ss-title { font-size: 17px; font-weight: 600; color: var(--text); letter-spacing: -.02em; margin-bottom: .5rem; }
+.ss-sub { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 1.25rem; max-width: 400px; margin-left: auto; margin-right: auto; }
+.ss-audit { font-size: 11px; color: var(--text2); background: var(--bg2); border-radius: var(--r); padding: .625rem .875rem; font-family: 'DM Mono', monospace; line-height: 1.6; display: inline-block; text-align: left; border: 1px solid var(--border); }
+
+@media (max-width: 900px) {
+  .sidebar { width: 190px; }
+  .g4 { grid-template-columns: repeat(2,1fr); }
+  .g3 { grid-template-columns: repeat(2,1fr); }
+  .approval-shell { grid-template-columns: 160px 1fr 230px; }
+}
+@media (max-width: 700px) {
+  .app { flex-direction: column; height: auto; }
+  .sidebar { width: 100%; height: auto; }
+  .main { overflow-y: visible; }
+  .approval-shell { grid-template-columns: 1fr; }
+  .asl, .asr { display: none; }
+  .g3, .g4 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="3.5" stroke="white" stroke-width="1.5"/><path d="M4.5 8.25L6.75 10.5L11.5 5.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="sb-logo-name">Aproove</div>
+      <div class="sb-logo-tag">Portal do cliente</div>
+    </div>
+  </div>
+  <div class="sb-client-badge">
+    <div class="scb-label">Conta ativa</div>
+    <div class="scb-name">Marca Verão S/A</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section">Principal</div>
+    <div class="sb-item active" onclick="nav('dashboard',this)"><span class="sb-item-icon">⊞</span>Dashboard<span class="sb-badge">3</span></div>
+    <div class="sb-item" onclick="nav('campaign',this)"><span class="sb-item-icon">◈</span>Minha campanha</div>
+    <div class="sb-item" onclick="nav('approve',this)"><span class="sb-item-icon">✓</span>Aprovar peças<span class="sb-badge">3</span></div>
+    <div class="sb-item" onclick="nav('calendar',this)"><span class="sb-item-icon">◫</span>Calendário</div>
+    <div class="sb-item" onclick="nav('history',this)"><span class="sb-item-icon">☰</span>Histórico</div>
+    <div class="sb-item" onclick="nav('audit',this)"><span class="sb-item-icon">◎</span>Auditoria</div>
+    <div class="sb-section">Solicitações</div>
+    <div class="sb-item" onclick="nav('new-campaign',this)"><span class="sb-item-icon">+</span>Nova campanha<span class="sb-badge new">novo</span></div>
+    <div class="sb-item" onclick="nav('avulsa',this)"><span class="sb-item-icon">◉</span>Peça avulsa</div>
+    <div class="sb-item" onclick="nav('my-requests',this)"><span class="sb-item-icon">◷</span>Minhas solicitações</div>
+    <div class="sb-section">Materiais</div>
+    <div class="sb-item" onclick="nav('downloads',this)"><span class="sb-item-icon">↓</span>Downloads</div>
+    <div class="sb-item" onclick="nav('report',this)"><span class="sb-item-icon">▣</span>Relatório</div>
+    <div class="sb-section">Conta</div>
+    <div class="sb-item" onclick="nav('financial',this)"><span class="sb-item-icon">◈</span>Financeiro</div>
+    <div class="sb-item" onclick="nav('settings',this)"><span class="sb-item-icon">⚙</span>Configurações</div>
+    <div class="sb-item" onclick="nav('mobile',this)"><span class="sb-item-icon">☐</span>App mobile</div>
+    <div class="sb-item" onclick="nav('whatsapp',this)"><span class="sb-item-icon">◉</span>WhatsApp</div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-av">JF</div>
+      <div>
+        <div class="sb-uname">João Ferreira</div>
+        <div class="sb-urole">Aprovador Master</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="ph"><h1>Olá, João</h1><p>Campanha: Lançamento Verão 2026 · 15 de março de 2026</p></div>
+  <div class="alert-banner">
+    <div class="ab-dot"></div>
+    <div class="ab-text"><strong>3 peças aguardando sua aprovação</strong> — publicação programada para os próximos 5 dias.</div>
+    <div class="ab-action"><button class="btn btn-secondary btn-sm" onclick="nav('approve',document.querySelector('[onclick*=approve]'))">Ver agora</button></div>
+  </div>
+  <div class="g4">
+    <div class="metric warn"><div class="m-lbl">Aguardando aprovação</div><div class="m-val">3</div><div class="m-sub">publicação em 5 dias</div></div>
+    <div class="metric good"><div class="m-lbl">Aprovados este mês</div><div class="m-val">12</div><div class="m-sub">de 20 planejados</div></div>
+    <div class="metric"><div class="m-lbl">Publicados</div><div class="m-val">8</div><div class="m-sub">em 4 redes sociais</div></div>
+    <div class="metric"><div class="m-lbl">Em ajuste</div><div class="m-val">1</div><div class="m-sub">retorno esperado hoje</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Próximas publicações</div>
+      <div class="row"><div class="dot" style="background:var(--amber);flex-shrink:0"></div><div class="row-info"><div class="row-title">IG Feed — Verão 2026</div><div class="row-sub">20/03 às 10h00</div></div><span class="pill pl-pend">Aguardando</span></div>
+      <div class="row"><div class="dot" style="background:var(--amber);flex-shrink:0"></div><div class="row-info"><div class="row-title">IG Reels — Verão 2026</div><div class="row-sub">20/03 às 18h00</div></div><span class="pill pl-pend">Aguardando</span></div>
+      <div class="row"><div class="dot" style="background:var(--amber);flex-shrink:0"></div><div class="row-info"><div class="row-title">LinkedIn — Verão 2026</div><div class="row-sub">20/03 às 08h00</div></div><span class="pill pl-pend">Aguardando</span></div>
+      <div class="row"><div class="dot" style="background:#2d6a2d;flex-shrink:0"></div><div class="row-info"><div class="row-title">IG Story — Verão 2026</div><div class="row-sub">20/03 às 09h00</div></div><span class="pill pl-apr">Aprovado</span></div>
+      <div class="row"><div class="dot" style="background:var(--blue);flex-shrink:0"></div><div class="row-info"><div class="row-title">TikTok — Verão 2026</div><div class="row-sub">20/03 às 19h00</div></div><span class="pill pl-pub">Agendado</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Atividade recente</div>
+      <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Story aprovado</div><div class="row-sub">via Portal · há 2h</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">Ajuste solicitado</div><div class="row-sub">"Muda o CTA" · há 4h</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Reels publicado</div><div class="row-sub">15/03 às 18h00</div></div></div>
+      <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div class="row-info"><div class="row-title">TikTok aprovado via WA</div><div class="row-sub">12/03 às 09:14</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CAMPANHA -->
+<div class="page" id="page-campaign">
+  <div class="ph"><h1>Minha campanha</h1><p>Lançamento Verão 2026 · Janeiro a Março 2026</p></div>
+  <div class="kv-block">
+    <div style="font-size:40px;margin-bottom:10px">☀️</div>
+    <div style="font-size:17px;font-weight:600;color:var(--text);margin-bottom:5px;letter-spacing:-.02em">Verão chegou. Seu estilo também.</div>
+    <div style="font-size:12px;color:var(--text2)">Key Visual · Campanha Lançamento Verão 2026</div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Direcionamento estratégico</div>
+      <div class="kpi-row"><span class="kpi-lbl">Objetivo</span><span class="kpi-val">Lançamento de produto</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Público-alvo</span><span class="kpi-val">Mulheres 25–40, A/B</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Tom de voz</span><span class="kpi-val">Moderno, aspiracional</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Período</span><span class="kpi-val">Jan–Mar 2026</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Redes ativas</span><span class="kpi-val">IG · LI · TikTok · FB</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">KPIs do contrato</div>
+      <div class="kpi-row"><span class="kpi-lbl">Alcance mensal</span><span class="kpi-val">+50.000 pessoas</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Engajamento IG</span><span class="kpi-val">+3,5%</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Novos seguidores</span><span class="kpi-val">+500 por mês</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Leads gerados</span><span class="kpi-val">100 via link na bio</span></div>
+      <div class="kpi-row"><span class="kpi-lbl">Posts mensais</span><span class="kpi-val">20 posts · 8 vídeos</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Planejamento por rede</div>
+    <div class="row"><div class="net-tag" style="background:#FDECEA;color:#B91C1C">IG</div><div class="row-info"><div class="row-title">Instagram</div><div class="row-sub">12 posts · 4 reels · 8 stories</div></div><span class="pill pl-pub">Em andamento</span></div>
+    <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="row-info"><div class="row-title">LinkedIn</div><div class="row-sub">4 posts · 2 artigos</div></div><span class="pill pl-pub">Em andamento</span></div>
+    <div class="row"><div class="net-tag" style="background:#F3F4F6;color:#333">TK</div><div class="row-info"><div class="row-title">TikTok</div><div class="row-sub">4 vídeos curtos</div></div><span class="pill pl-apr">Aprovado</span></div>
+    <div class="row"><div class="net-tag" style="background:#DBEAFE;color:#1D4ED8">FB</div><div class="row-info"><div class="row-title">Facebook</div><div class="row-sub">4 posts · impulsionamento</div></div><span class="pill pl-pend">Aguardando</span></div>
+  </div>
+</div>
+
+<!-- APROVAÇÕES -->
+<div class="page" id="page-approve">
+  <div class="ph"><h1>Aprovar peças</h1><p>Campanha: Lançamento Verão 2026 · 3 aguardando sua resposta</p></div>
+  <div class="approval-shell">
+    <div class="asl">
+      <div class="asl-head"><div class="asl-camp">Campanha</div><div class="asl-name">Lançamento Verão 2026</div></div>
+      <div class="fmt-section-label">5 formatos</div>
+      <div class="fmt-item active" data-fmt="ig-feed" onclick="swFmt(this)"><div class="fi-dot" style="background:#E84040"></div>IG feed<span class="fi-badge" style="background:var(--amber-bg);color:var(--amber)">aguardando</span></div>
+      <div class="fmt-item" data-fmt="ig-reels" onclick="swFmt(this)"><div class="fi-dot" style="background:#E84040"></div>IG reels<span class="fi-badge" style="background:var(--amber-bg);color:var(--amber)">aguardando</span></div>
+      <div class="fmt-item" data-fmt="ig-story" onclick="swFmt(this)"><div class="fi-dot" style="background:#E84040"></div>IG story<span class="fi-badge" style="background:var(--green-bg);color:var(--green)">aprovado</span></div>
+      <div class="fmt-item" data-fmt="linkedin" onclick="swFmt(this)"><div class="fi-dot" style="background:#2563A0"></div>LinkedIn<span class="fi-badge" style="background:var(--amber-bg);color:var(--amber)">aguardando</span></div>
+      <div class="fmt-item" data-fmt="tiktok" onclick="swFmt(this)"><div class="fi-dot" style="background:#333"></div>TikTok<span class="fi-badge" style="background:var(--blue-bg);color:var(--blue)">agendado</span></div>
+    </div>
+    <div class="asc">
+      <div class="asc-top">
+        <span class="asc-net" id="ap-net" style="background:#FDECEA;color:#B91C1C">Instagram</span>
+        <span class="asc-fmt" id="ap-fmt">Feed 1:1</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">v2 · atual</span>
+      </div>
+      <div class="preview-zone" id="ap-preview"></div>
+    </div>
+    <div class="asr">
+      <div class="asr-sec">
+        <div class="asr-lbl">Horário recomendado</div>
+        <div class="rec-box"><div class="rec-dt" id="ap-recdt">20/03/2026 às 10h00</div><div class="rec-why" id="ap-recwhy">Engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias desta conta.</div></div>
+        <div style="font-size:10px;color:var(--text2);margin-bottom:.375rem">Engajamento por horário (90 dias)</div>
+        <div class="bar-row"><span class="bar-time">08–09h</span><div class="bar-track"><div class="bar-fill" id="b0" style="width:40%"></div></div><span class="bar-pct" id="p0">40%</span></div>
+        <div class="bar-row"><span class="bar-time">10–11h</span><div class="bar-track"><div class="bar-fill" id="b1" style="width:100%"></div></div><span class="bar-pct" id="p1" style="color:var(--green);font-weight:600">100%</span></div>
+        <div class="bar-row"><span class="bar-time">12–13h</span><div class="bar-track"><div class="bar-fill" id="b2" style="width:72%"></div></div><span class="bar-pct" id="p2">72%</span></div>
+        <div class="bar-row"><span class="bar-time">18–19h</span><div class="bar-track"><div class="bar-fill" id="b3" style="width:88%"></div></div><span class="bar-pct" id="p3">88%</span></div>
+        <div class="bar-row"><span class="bar-time">21–22h</span><div class="bar-track"><div class="bar-fill" id="b4" style="width:65%"></div></div><span class="bar-pct" id="p4">65%</span></div>
+      </div>
+      <div class="asr-sec">
+        <div class="asr-lbl">Sugerir outra data</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:.4rem">Horário recomendado pré-selecionado. Altere se necessário.</div>
+        <div class="date-inputs">
+          <input type="date" id="ap-date" value="2026-03-20" onchange="apChk()">
+          <input type="time" id="ap-time" value="10:00" onchange="apChk()">
+        </div>
+        <div class="conflict-box" id="ap-conflict">
+          <div class="cb-title">Conflito detectado</div>
+          <div class="cb-body" id="ap-confmsg"></div>
+          <div class="cb-btns"><button class="cb-btn" onclick="apResolve('adj')">Ajustar +2h</button><button class="cb-btn pri" onclick="apResolve('keep')">Manter assim</button></div>
+        </div>
+      </div>
+      <div class="asr-cmt"><div class="asr-lbl">Comentário</div><textarea id="ap-cmt" placeholder="Observação, feedback ou referência visual..."></textarea></div>
+      <div class="asr-acts">
+        <div class="result-banner" id="ap-result"><div class="rb-title" id="ap-rt"></div><div class="rb-sub" id="ap-rs"></div></div>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="apAct('apr')">Aprovar esta publicação</button>
+        <button class="btn btn-secondary" style="width:100%;margin-bottom:6px" onclick="apAct('adj')">Solicitar ajuste</button>
+        <button class="btn btn-danger" style="width:100%" onclick="apAct('rej')">Reprovar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDÁRIO -->
+<div class="page" id="page-calendar">
+  <div class="ph"><h1>Calendário editorial</h1><p>Clique em um dia para ver os posts programados</p></div>
+  <div class="card">
+    <div class="cal-header">
+      <div class="cal-nav">
+        <button onclick="calNav(-1)">←</button>
+        <span class="cal-month" id="cal-month">Março 2026</span>
+        <button onclick="calNav(1)">→</button>
+      </div>
+      <div class="cal-legend">
+        <div class="leg"><div class="dot" style="background:#2d6a2d"></div>Publicado</div>
+        <div class="leg"><div class="dot" style="background:var(--blue)"></div>Aprovado</div>
+        <div class="leg"><div class="dot" style="background:var(--amber)"></div>A aprovar</div>
+      </div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="day-detail" id="day-detail">
+      <div class="dd-title" id="dd-title">Posts do dia</div>
+      <div id="dd-items"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div class="page" id="page-history">
+  <div class="ph"><h1>Histórico de aprovações</h1><p>Registro completo com canal, identidade e timestamp</p></div>
+  <div class="hist-filters">
+    <button class="hf active" onclick="histFilter('all',this)">Todos</button>
+    <button class="hf" onclick="histFilter('approved',this)">Aprovados</button>
+    <button class="hf" onclick="histFilter('adjusted',this)">Ajustes</button>
+    <button class="hf" onclick="histFilter('published',this)">Publicados</button>
+    <button class="hf" onclick="histFilter('rejected',this)">Reprovados</button>
+  </div>
+  <div id="hist-list">
+    <div class="hist-entry" data-type="published"><div class="he-icon" style="background:var(--green-bg)">✓</div><div class="he-body"><span class="he-ch ch-portal">Portal Aproove</span><div class="he-title">Post Instagram Feed — Verão 2026</div><div class="he-meta">Aprovado por você · v2 · Campanha: Verão 2026</div><div class="he-audit">Aprovado via Portal por João Ferreira em 10/03/2026 às 17:03 · v2 · sha256:9c1e4f…b28d</div></div><div class="he-right"><span class="pill pl-pub">Publicado</span><div class="he-date">15/03/2026<br>10h00</div></div></div>
+    <div class="hist-entry" data-type="approved"><div class="he-icon" style="background:var(--blue-bg)">✓</div><div class="he-body"><span class="he-ch ch-wa">WhatsApp · +55 11 9xxxx-4321</span><div class="he-title">TikTok — Verão 2026</div><div class="he-meta">Aprovado por você via WhatsApp · v1 · Campanha: Verão 2026</div><div class="he-audit">Aprovado via WhatsApp do contato João Ferreira (+55 11 9xxxx-4321) em 12/03/2026 às 09:14 · v1</div></div><div class="he-right"><span class="pill pl-apr">Aprovado</span><div class="he-date">20/03/2026<br>19h00</div></div></div>
+    <div class="hist-entry" data-type="adjusted"><div class="he-icon" style="background:var(--amber-bg)">✎</div><div class="he-body"><span class="he-ch ch-portal">Portal Aproove</span><div class="he-title">LinkedIn — Verão 2026</div><div class="he-meta">Ajuste solicitado por você · v1 · "Muda o CTA para Saiba mais"</div><div class="he-audit">Ajuste via Portal · João Ferreira · 11/03/2026 14:22 · v1</div></div><div class="he-right"><span class="pill pl-adj">Em ajuste</span><div class="he-date">20/03/2026<br>08h00</div></div></div>
+    <div class="hist-entry" data-type="published"><div class="he-icon" style="background:var(--green-bg)">✓</div><div class="he-body"><span class="he-ch ch-wa">WhatsApp · +55 11 9xxxx-4321</span><div class="he-title">IG Story — Verão 2026</div><div class="he-meta">Aprovado por você via WhatsApp · v1</div><div class="he-audit">Aprovado via WhatsApp de João Ferreira em 08/03/2026 às 09:22 · v1</div></div><div class="he-right"><span class="pill pl-pub">Publicado</span><div class="he-date">10/03/2026<br>09h00</div></div></div>
+    <div class="hist-entry" data-type="rejected"><div class="he-icon" style="background:var(--red-bg)">✕</div><div class="he-body"><span class="he-ch ch-portal">Portal Aproove</span><div class="he-title">IG Reels — Carnaval 2026</div><div class="he-meta">Reprovado por você · v1 · "Vídeo fora do tom da marca"</div><div class="he-audit">Reprovado via Portal · João Ferreira · 05/03/2026 16:41 · v1</div></div><div class="he-right"><span class="pill pl-rej">Reprovado</span><div class="he-date">05/03/2026<br>—</div></div></div>
+  </div>
+</div>
+
+<!-- AUDITORIA -->
+<div class="page" id="page-audit">
+  <div class="ph"><h1>Auditoria — Post Instagram Feed</h1><p>Linha do tempo imutável com canal, identidade e hash de integridade</p></div>
+  <div class="card" style="margin-bottom:.75rem">
+    <div class="audit-entry"><div class="ae-header"><span class="pill pl-pub" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)">Enviado para aprovação</span><span class="pill pl-portal">Portal Aproove</span></div><div class="ae-meta" style="font-size:12px;color:var(--text2)">Por <strong style="color:var(--text)">Ana Souza (Social Media)</strong> · 10/03/2026 às 14:48 · versão v1</div><div class="ae-hash">hash: sha256:3a7f2b9c...e14d · IP: 189.xxx.xxx.12</div></div>
+    <div class="audit-entry"><div class="ae-header"><span class="pill" style="background:var(--bg2);color:var(--text2);border:1px solid var(--border2)">Link visualizado</span><span class="pill pl-wa">WhatsApp · +55 11 9xxxx-4321</span></div><div class="ae-meta" style="font-size:12px;color:var(--text2)">Por <strong style="color:var(--text)">João Ferreira (você)</strong> · 10/03/2026 às 15:12</div></div>
+    <div class="audit-entry"><div class="ae-header"><span class="pill pl-adj">Ajuste solicitado</span><span class="pill pl-wa">WhatsApp · +55 11 9xxxx-4321</span></div><div class="ae-meta" style="font-size:12px;color:var(--text2)">Por <strong style="color:var(--text)">João Ferreira (você)</strong> · 10/03/2026 às 15:19</div><div class="ae-comment">"Muda a cor do botão para laranja e o texto do CTA para 'Saiba mais'. Segue print de referência."</div><div class="ae-hash">registrado via webhook WhatsApp · +55 11 9xxxx-4321</div></div>
+    <div class="audit-entry"><div class="ae-header"><span class="pill pl-pub" style="background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)">Nova versão enviada</span><span class="pill pl-portal">Portal Aproove</span></div><div class="ae-meta" style="font-size:12px;color:var(--text2)">Por <strong style="color:var(--text)">Pedro Lima (Designer)</strong> · 10/03/2026 às 16:40 · versão v2</div><div class="ae-comment">Botão alterado para laranja (#FF6B2B). CTA atualizado para "Saiba mais".</div></div>
+    <div class="audit-entry"><div class="ae-header"><span class="pill pl-apr">Aprovado</span><span class="pill pl-wa">WhatsApp · +55 11 9xxxx-4321</span></div><div class="ae-meta" style="font-size:12px;color:var(--text2)">Por <strong style="color:var(--text)">João Ferreira (você)</strong> · 10/03/2026 às 17:03 · versão v2</div><div class="ae-comment">"Perfeito! Aprovado."</div><div class="ae-hash">Aprovado via WhatsApp do contato João Ferreira (+55 11 9xxxx-4321) em 10/03/2026 às 17:03 · v2 · sha256:9c1e4f7a...b28d</div></div>
+  </div>
+  <div class="ib ib-suc"><strong>Registro formal:</strong> Aprovado via WhatsApp do contato João Ferreira em 10/03/2026 às 17:03 · versão v2 · Campanha Lançamento Verão 2026 · Instagram Feed · agendado para 15/03/2026 às 10h00.</div>
+  <div class="ib ib-info">Todos os eventos são imutáveis. O hash SHA-256 garante integridade do registro. Número de telefone armazenado criptografado e exibido mascarado conforme LGPD.</div>
+</div>
+
+<!-- NOVA CAMPANHA -->
+<div class="page" id="page-new-campaign">
+  <div class="ph"><h1>Nova campanha</h1><p>Solicite uma nova campanha à sua agência</p></div>
+  <div class="ib ib-info">Quanto mais detalhes você fornecer, mais alinhada a proposta chegará para você aprovar.</div>
+  <div class="step-bar" id="camp-steps">
+    <div class="step"><div class="step-n active" id="cs-1">1</div><div class="step-lbl">Campanha</div></div>
+    <div class="step"><div class="step-n" id="cs-2">2</div><div class="step-lbl">Objetivo</div></div>
+    <div class="step"><div class="step-n" id="cs-3">3</div><div class="step-lbl">Redes</div></div>
+    <div class="step"><div class="step-n" id="cs-4">4</div><div class="step-lbl">Referências</div></div>
+    <div class="step"><div class="step-n" id="cs-5">5</div><div class="step-lbl">Confirmar</div></div>
+  </div>
+  <div id="camp-form">
+    <div class="form-step active" id="camp-s1">
+      <div class="card">
+        <h3>Informações da campanha</h3>
+        <div class="frow"><label>Nome da campanha</label><input type="text" id="c-nome" placeholder="Ex: Lançamento coleção inverno 2026"></div>
+        <div class="g2">
+          <div class="frow"><label>Data de início desejada</label><input type="date" id="c-inicio" value="2026-04-01"></div>
+          <div class="frow"><label>Data de encerramento</label><input type="date" id="c-fim" value="2026-06-30"></div>
+        </div>
+        <div class="frow"><label>Produto ou serviço a comunicar</label><input type="text" id="c-produto" placeholder="Ex: Nova linha de roupas de inverno"></div>
+        <div class="frow"><label>Público-alvo</label><input type="text" id="c-publico" placeholder="Ex: Mulheres 25–40 anos, classes A/B, São Paulo"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="campStep(2)">Próximo →</button></div>
+    </div>
+    <div class="form-step" id="camp-s2">
+      <div class="card">
+        <h3>Objetivo principal da campanha</h3>
+        <div class="obj-grid">
+          <div class="obj-card" onclick="selObj(this)"><div class="obj-name">Ganhar seguidores</div><div class="obj-sub">Crescer nas redes</div></div>
+          <div class="obj-card" onclick="selObj(this)"><div class="obj-name">Gerar leads</div><div class="obj-sub">Captar contatos</div></div>
+          <div class="obj-card sel" onclick="selObj(this)"><div class="obj-name">Lançamento</div><div class="obj-sub">Apresentar novidade</div></div>
+          <div class="obj-card" onclick="selObj(this)"><div class="obj-name">Aumentar vendas</div><div class="obj-sub">Conversão direta</div></div>
+          <div class="obj-card" onclick="selObj(this)"><div class="obj-name">Posicionamento</div><div class="obj-sub">Imagem de marca</div></div>
+          <div class="obj-card" onclick="selObj(this)"><div class="obj-name">Engajamento</div><div class="obj-sub">Mais interação</div></div>
+        </div>
+        <div class="frow" style="margin-top:.875rem"><label>Detalhe o objetivo</label><textarea id="c-obj" placeholder="Descreva o que espera alcançar..."></textarea></div>
+      </div>
+      <div style="display:flex;justify-content:space-between"><button class="btn btn-secondary" onclick="campStep(1)">← Voltar</button><button class="btn btn-primary" onclick="campStep(3)">Próximo →</button></div>
+    </div>
+    <div class="form-step" id="camp-s3">
+      <div class="card">
+        <h3>Redes sociais</h3>
+        <div class="net-selector">
+          <div class="net-opt sel" onclick="this.classList.toggle('sel')">Instagram</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">LinkedIn</div>
+          <div class="net-opt sel" onclick="this.classList.toggle('sel')">TikTok</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">Facebook</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">YouTube</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">Pinterest</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">X</div>
+          <div class="net-opt" onclick="this.classList.toggle('sel')">Google Ads</div>
+        </div>
+        <div class="frow" style="margin-top:.875rem"><label>Volume estimado de posts por mês</label><select><option>Até 10 posts</option><option selected>10 a 20 posts</option><option>20 a 40 posts</option><option>Acima de 40</option></select></div>
+        <div class="frow"><label>Precisa de vídeo?</label><select><option selected>Sim, incluir vídeos</option><option>Não por enquanto</option><option>Apenas vídeos curtos (Reels/TikTok)</option></select></div>
+      </div>
+      <div style="display:flex;justify-content:space-between"><button class="btn btn-secondary" onclick="campStep(2)">← Voltar</button><button class="btn btn-primary" onclick="campStep(4)">Próximo →</button></div>
+    </div>
+    <div class="form-step" id="camp-s4">
+      <div class="card">
+        <h3>Referências e observações</h3>
+        <div class="frow"><label>Tom de comunicação</label><select><option selected>Moderno e descontraído</option><option>Sério e profissional</option><option>Aspiracional e sofisticado</option><option>Divertido e jovem</option><option>Institucional</option></select></div>
+        <div class="frow"><label>Links de referência</label><input type="text" placeholder="https://instagram.com/marcaqueadmiro"></div>
+        <div class="frow"><label>Observações adicionais</label><textarea placeholder="Restrições, datas importantes, verba para impulsionamento, palavras a evitar..."></textarea></div>
+      </div>
+      <div style="display:flex;justify-content:space-between"><button class="btn btn-secondary" onclick="campStep(3)">← Voltar</button><button class="btn btn-primary" onclick="campStep(5)">Revisar →</button></div>
+    </div>
+    <div class="form-step" id="camp-s5">
+      <div class="card"><h3>Revise sua solicitação</h3><div class="camp-summary" id="camp-summary"></div></div>
+      <div class="ib ib-warn">Ao confirmar, sua agência será notificada e entrará em contato para alinhar o briefing completo.</div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><button class="btn btn-secondary" onclick="campStep(4)">← Voltar</button><button class="btn btn-primary" onclick="submitCamp()">Enviar solicitação</button></div>
+    </div>
+  </div>
+  <div class="success-state" id="camp-success"><div class="ss-icon">✅</div><div class="ss-title">Solicitação enviada!</div><div class="ss-sub">Sua agência foi notificada e entrará em contato em até 1 dia útil para alinhar o briefing.</div><div class="ss-audit" id="camp-audit"></div><div style="margin-top:1.25rem"><button class="btn btn-secondary" onclick="resetCamp()">Fazer nova solicitação</button></div></div>
+</div>
+
+<!-- PEÇA AVULSA -->
+<div class="page" id="page-avulsa">
+  <div class="ph"><h1>Peça avulsa</h1><p>Solicite uma peça pontual fora da campanha</p></div>
+  <div id="avulsa-form">
+    <div class="card">
+      <div class="g2">
+        <div class="frow"><label>Tipo de peça</label><select id="av-tipo"><option>Post estático</option><option>Carrossel</option><option>Story</option><option>Reels / TikTok</option><option>Vídeo longo</option><option>Banner digital</option><option>Arte para WhatsApp</option><option>Apresentação (slides)</option><option>Banner e-mail</option></select></div>
+        <div class="frow"><label>Rede social de destino</label><select><option>Instagram</option><option>LinkedIn</option><option>TikTok</option><option>Facebook</option><option>WhatsApp (equipe de vendas)</option><option>Apresentação interna</option><option>Múltiplas redes</option></select></div>
+      </div>
+      <div class="frow"><label>Objetivo desta peça</label><select><option>Comunicar promoção</option><option>Anunciar evento</option><option>Data comemorativa</option><option>Apresentar produto</option><option>Conteúdo educativo</option><option>Momento / tendência</option><option>Outro</option></select></div>
+      <div class="frow"><label>Descreva o que você precisa</label><textarea placeholder="Ex: Preciso de um post para o Dia das Mães, 11/05. Destaque nossa linha de perfumes. Tom emocional. Cor principal: rosa claro. CTA 'Presenteie com amor'." style="min-height:90px"></textarea></div>
+      <div class="g2">
+        <div class="frow"><label>Data de publicação desejada</label><input type="date" value="2026-04-15"></div>
+        <div class="frow"><label>Urgência</label><select id="av-urg" onchange="checkUrgencia()"><option>Normal (5+ dias úteis)</option><option>Urgente (2–4 dias úteis)</option><option>Muito urgente (até 24h)</option></select></div>
+      </div>
+      <div class="ib ib-warn" id="av-urg-aviso" style="display:none">Solicitações urgentes estão sujeitas à disponibilidade do time criativo e podem ter custo adicional conforme seu contrato.</div>
+      <div class="frow"><label>Texto que deve aparecer na peça</label><textarea placeholder="Ex: 'Dia das Mães · 11 de maio · Presenteie com amor'" style="min-height:56px"></textarea></div>
+      <div class="frow"><label>Observações adicionais</label><textarea placeholder="Cores obrigatórias, elementos a evitar, formatos necessários..." style="min-height:56px"></textarea></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:.5rem">
+      <button class="btn btn-secondary" onclick="document.querySelector('#avulsa-form textarea').value=''">Limpar</button>
+      <button class="btn btn-primary" onclick="submitAvulsa()">Enviar solicitação</button>
+    </div>
+  </div>
+  <div class="success-state" id="avulsa-success"><div class="ss-icon">✅</div><div class="ss-title">Solicitação enviada!</div><div class="ss-sub">Sua agência recebeu o pedido e começará a produção conforme a urgência definida. A peça chegará para sua aprovação quando estiver pronta.</div><div class="ss-audit" id="avulsa-audit"></div><div style="margin-top:1.25rem"><button class="btn btn-secondary" onclick="resetAvulsa()">Fazer outra solicitação</button></div></div>
+</div>
+
+<!-- MINHAS SOLICITAÇÕES -->
+<div class="page" id="page-my-requests">
+  <div class="ph"><h1>Minhas solicitações</h1><p>Acompanhe o status de tudo que você solicitou</p></div>
+  <div class="req-entry"><div class="re-icon" style="background:var(--blue-bg)">◫</div><div class="re-body"><span class="re-type re-camp">Nova campanha</span><div class="re-title">Coleção Inverno 2026</div><div class="re-meta">Solicitada em 10/03/2026 · IG, LinkedIn · Lançamento de produto</div><div class="re-meta" style="margin-top:4px;font-style:italic;color:var(--blue)">"Agência recebeu — entrará em contato hoje para alinhar o briefing."</div></div><div class="re-right"><span class="pill pl-pub">Recebida</span><div class="he-date">10/03/2026</div></div></div>
+  <div class="req-entry"><div class="re-icon" style="background:var(--purple-bg)">✦</div><div class="re-body"><span class="re-type re-avulsa">Peça avulsa</span><div class="re-title">Post Dia das Mães — Instagram</div><div class="re-meta">Solicitada em 08/03/2026 · Normal · Publicação: 11/05/2026</div><div class="re-meta" style="margin-top:4px;font-style:italic;color:var(--amber)">"Em produção — designer trabalhando na arte."</div></div><div class="re-right"><span class="pill pl-pend">Em produção</span><div class="he-date">08/03/2026</div></div></div>
+  <div class="req-entry"><div class="re-icon" style="background:var(--green-bg)">✓</div><div class="re-body"><span class="re-type re-avulsa">Peça avulsa</span><div class="re-title">Banner Black Friday 2025</div><div class="re-meta">Solicitada em 10/11/2025 · IG + FB · Urgente</div><div class="re-meta" style="margin-top:4px;font-style:italic;color:var(--green)">"Peça aprovada e publicada em 28/11/2025."</div></div><div class="re-right"><span class="pill pl-apr">Concluída</span><div class="he-date">28/11/2025</div></div></div>
+  <div class="req-entry"><div class="re-icon" style="background:var(--green-bg)">◫</div><div class="re-body"><span class="re-type re-camp">Nova campanha</span><div class="re-title">Campanha Verão 2026</div><div class="re-meta">Solicitada em 02/01/2026 · IG, TikTok, LinkedIn · Lançamento</div><div class="re-meta" style="margin-top:4px;font-style:italic;color:var(--green)">"Campanha ativa — 12 peças publicadas de 20 planejadas."</div></div><div class="re-right"><span class="pill pl-apr">Ativa</span><div class="he-date">02/01/2026</div></div></div>
+</div>
+
+<!-- DOWNLOADS -->
+<div class="page" id="page-downloads">
+  <div class="ph"><h1>Downloads</h1><p>Peças aprovadas disponíveis para download individual ou em pacote</p></div>
+  <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+    <div style="display:flex;gap:5px">
+      <button class="btn btn-secondary btn-sm" id="view-ind-btn" onclick="setDlView('individual',this)" style="background:var(--text);color:var(--surface);border-color:var(--text)">Peças individuais</button>
+      <button class="btn btn-secondary btn-sm" id="view-pack-btn" onclick="setDlView('pacote',this)">Pacote completo</button>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:4px">
+      <button class="btn btn-secondary btn-sm" onclick="selAllDl()">Selecionar todas</button>
+      <button class="btn btn-secondary btn-sm" onclick="clearDl()">Limpar</button>
+    </div>
+  </div>
+  <div id="dl-ind-view">
+    <div style="display:flex;gap:5px;margin-bottom:.875rem;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--text2);padding:4px 0;margin-right:3px">Filtrar:</span>
+      <button class="btn btn-secondary btn-sm" onclick="filterDl('all',this)" style="border-radius:20px;background:var(--text);color:var(--surface);border-color:var(--text)">Todas</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterDl('ig',this)" style="border-radius:20px">Instagram</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterDl('li',this)" style="border-radius:20px">LinkedIn</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterDl('tk',this)" style="border-radius:20px">TikTok</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterDl('wa',this)" style="border-radius:20px">WhatsApp</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterDl('pres',this)" style="border-radius:20px">Apresentação</button>
+    </div>
+    <div id="dl-list"></div>
+    <div id="dl-summary" style="display:none">
+      <div style="background:var(--bg2);border-radius:var(--r);padding:.75rem 1rem;margin-bottom:.75rem;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">Selecionadas</span><span style="font-weight:500;color:var(--text)" id="dl-sel-count">0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span style="color:var(--text2)">Formatos</span><span style="font-weight:500;color:var(--text)" id="dl-sel-fmts">—</span></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="downloadSel()">↓ Baixar selecionadas (.zip)</button>
+    </div>
+  </div>
+  <div id="dl-pack-view" style="display:none">
+    <div id="pack-list"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="downloadPack()">↓ Baixar pacote selecionado (.zip)</button>
+  </div>
+  <div class="toast-bar" id="dl-toast"></div>
+</div>
+
+<!-- RELATÓRIO -->
+<div class="page" id="page-report">
+  <div class="ph">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+      <div><h1>Relatório</h1><p>Lançamento Verão 2026 · Jan–Mar 2026 · análise de IA</p></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="showToast('rep','Link copiado: aproove.app/r/verao2026-xK9m')">↗ Compartilhar</button>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('rep','Gerando PDF com análise de IA...')">↓ PDF</button>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('rep','Gerando apresentação PowerPoint...')">↓ PPT</button>
+      </div>
+    </div>
+  </div>
+  <div class="g4">
+    <div class="metric hi"><div class="m-lbl">ROI da campanha</div><div class="m-val">14,9×</div><div class="m-sub">R$ 8.500 → R$ 127.400</div></div>
+    <div class="metric hi"><div class="m-lbl">Receita gerada</div><div class="m-val">R$ 127k</div><div class="m-sub">284 pedidos · ticket R$ 448</div></div>
+    <div class="metric good"><div class="m-lbl">Engajamento IG</div><div class="m-val">3,8%</div><div class="m-sub">Meta 3,5% · superado</div></div>
+    <div class="metric warn"><div class="m-lbl">Leads gerados</div><div class="m-val">74</div><div class="m-sub">Meta 100 · 74%</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">KPIs vs metas</div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">Alcance</span><span style="font-weight:500">48.320 / 50.000</span></div><div class="kpi-bar-outer"><div class="kpi-bar-inner" style="width:97%;background:#3b82f6"></div></div></div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">Engajamento ✓</span><span style="font-weight:500;color:var(--green)">3,8% / 3,5%</span></div><div class="kpi-bar-outer"><div class="kpi-bar-inner" style="width:100%;background:var(--green)"></div></div></div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">Seguidores ✓</span><span style="font-weight:500;color:var(--green)">612 / 500</span></div><div class="kpi-bar-outer"><div class="kpi-bar-inner" style="width:100%;background:var(--green)"></div></div></div>
+      <div style="margin-bottom:.5rem"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">Leads</span><span style="font-weight:500;color:var(--red)">74 / 100</span></div><div class="kpi-bar-outer"><div class="kpi-bar-inner" style="width:74%;background:var(--red)"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="color:var(--text2)">Posts publicados</span><span style="font-weight:500;color:var(--amber)">18 / 20</span></div><div class="kpi-bar-outer"><div class="kpi-bar-inner" style="width:90%;background:var(--amber)"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Desempenho por rede</div>
+      <div class="chart-row"><span class="chart-lbl">Instagram</span><div class="chart-track"><div class="chart-fill" style="width:88%;background:#E84040">3,8%</div></div><span class="chart-val">88%</span></div>
+      <div class="chart-row"><span class="chart-lbl">TikTok</span><div class="chart-track"><div class="chart-fill" style="width:72%;background:#333">2,1%</div></div><span class="chart-val">72%</span></div>
+      <div class="chart-row"><span class="chart-lbl">LinkedIn</span><div class="chart-track"><div class="chart-fill" style="width:55%;background:#2563A0">1,4%</div></div><span class="chart-val">55%</span></div>
+      <div class="chart-row"><span class="chart-lbl">Facebook</span><div class="chart-track"><div class="chart-fill" style="width:38%;background:#1877F2">0,9%</div></div><span class="chart-val">38%</span></div>
+    </div>
+  </div>
+  <div class="divider-ai"><div class="ai-badge">Análise de IA · Aproove Intelligence</div></div>
+  <div class="ai-insight ai-good"><div class="ai-lbl">ROI excepcional</div><div class="ai-t">Cada R$ 1 investido retornou R$ 14,90 em receita</div><div class="ai-b">O investimento de R$ 8.500 gerou R$ 127.400 — muito acima do benchmark de 3–5× para moda premium. O pico da semana 2 coincidiu com 3 publicações no mesmo período, sugerindo efeito cumulativo na decisão de compra. Os Reels foram responsáveis por 61% do crescimento de seguidores.</div><button class="ai-act" onclick="showToast('rep','Insight registrado para próxima campanha.')">Usar como referência →</button></div>
+  <div class="ai-insight ai-warn-i"><div class="ai-lbl">Gargalo no funil</div><div class="ai-t">Taxa de conversão do site está abaixo do potencial</div><div class="ai-b">Dos 3.840 acessos vindos das redes, apenas 74 viraram contatos (1,9%). Benchmark do segmento: 3,5–5%. O CTA "link na bio" teve CTR de 1,2% contra 2,8% esperado. Criar landing page específica ou ativar formulário de WhatsApp no Story pode dobrar a conversão.</div><button class="ai-act" onclick="showToast('rep','Solicitado à agência: revisar CTA e página de destino.')">Solicitar ajuste à agência →</button></div>
+  <div class="ai-insight ai-tip"><div class="ai-lbl">Oportunidade identificada</div><div class="ai-t">TikTok tem crescimento acelerado no seu perfil demográfico</div><div class="ai-b">Os 4 vídeos publicados no TikTok tiveram média de 8.200 visualizações, superando Instagram Reels na mesma janela. O perfil 25–40 anos cresceu 34% no TikTok nos últimos 90 dias. Expandir de 4 para 8 vídeos mensais pode abrir um novo canal primário de crescimento.</div><button class="ai-act" onclick="showToast('rep','Incluído no briefing da próxima campanha.')">Incluir no planejamento →</button></div>
+  <div class="toast-bar" id="rep-toast"></div>
+</div>
+
+<!-- FINANCEIRO -->
+<div class="page" id="page-financial">
+  <div class="ph"><h1>Financeiro</h1><p>Plano ativo, uso e histórico de pagamentos</p></div>
+  <div class="fin-plan-box">
+    <div><div class="fpb-name">Plano Professional</div><div class="fpb-price">R$ 497<span>/mês</span></div><div class="fpb-tag">Renovação em 01/04/2026</div></div>
+    <span class="fpb-status">Ativo</span>
+  </div>
+  <div class="g3">
+    <div class="metric"><div class="m-lbl">Posts incluídos</div><div class="m-val">200</div><div class="m-sub">18 usados este mês</div></div>
+    <div class="metric"><div class="m-lbl">Armazenamento</div><div class="m-val">25 GB</div><div class="m-sub">4,2 GB utilizados</div></div>
+    <div class="metric"><div class="m-lbl">Usuários</div><div class="m-val">10</div><div class="m-sub">3 ativos</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Histórico de pagamentos</div>
+    <div class="pay-row"><span class="pay-lbl">Mar 2026</span><span>R$ 497,00</span><span style="color:var(--green);font-size:11px;font-weight:500">Pago</span></div>
+    <div class="pay-row"><span class="pay-lbl">Fev 2026</span><span>R$ 497,00</span><span style="color:var(--green);font-size:11px;font-weight:500">Pago</span></div>
+    <div class="pay-row"><span class="pay-lbl">Jan 2026</span><span>R$ 497,00</span><span style="color:var(--green);font-size:11px;font-weight:500">Pago</span></div>
+    <div class="pay-row"><span class="pay-lbl">Dez 2025</span><span>R$ 497,00</span><span style="color:var(--green);font-size:11px;font-weight:500">Pago</span></div>
+  </div>
+  <div class="card" style="border:2px solid #3b82f6">
+    <div class="pop-badge">Upgrade disponível</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem">
+      <div><div style="font-size:15px;font-weight:600;color:var(--text);letter-spacing:-.02em">Plano Agency</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Ilimitado · White label · API · Suporte dedicado</div></div>
+      <div style="text-align:right"><div style="font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.03em">R$ 997<span style="font-size:12px;font-weight:400;color:var(--text2)">/mês</span></div><button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="showToast('rep','Solicitação de upgrade enviada. Em breve sua agência entrará em contato.')">Solicitar upgrade</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIGURAÇÕES -->
+<div class="page" id="page-settings">
+  <div class="ph"><h1>Configurações</h1><p>Canais de notificação, usuários e privacidade</p></div>
+  <div class="card" style="margin-bottom:.75rem">
+    <div class="card-title">Canal de aprovação</div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Notificação via Portal</div><div class="cfg-sub">Push no app quando houver peça para aprovar</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">WhatsApp</div><div class="cfg-sub">+55 11 9xxxx-4321 · aprovação direto na conversa</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">E-mail</div><div class="cfg-sub">joao.ferreira@marca.com.br</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:.75rem">
+    <div class="card-title">Usuários da conta</div>
+    <div class="user-row"><div class="ur-av" style="background:var(--blue-bg);color:var(--blue)">JF</div><div style="flex:1"><div class="ur-name">João Ferreira</div><div class="ur-role">Master · joao@marca.com.br</div></div><span class="pill pl-pub">Master</span></div>
+    <div class="user-row"><div class="ur-av" style="background:var(--amber-bg);color:var(--amber)">MC</div><div style="flex:1"><div class="ur-name">Maria Costa</div><div class="ur-role">Aprovadora · maria@marca.com.br</div></div><span class="pill pl-pend">Aprovadora</span></div>
+    <div style="margin-top:.75rem"><button class="btn btn-secondary btn-sm">+ Convidar usuário</button></div>
+  </div>
+  <div class="card">
+    <div class="card-title">LGPD e privacidade</div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Consentimento WhatsApp</div><div class="cfg-sub">Aceito em 01/01/2026 · versão 2.1 dos termos</div></div><span style="font-size:11px;color:var(--green);font-weight:500">Ativo</span></div>
+    <div class="cfg-row"><div><div class="cfg-lbl">Exportar meus dados</div><div class="cfg-sub">Download do histórico completo em JSON</div></div><button class="btn btn-secondary btn-sm" onclick="showToast('rep','Preparando exportação...')">Exportar</button></div>
+  </div>
+</div>
+
+<!-- APP MOBILE -->
+<div class="page" id="page-mobile">
+  <div class="ph"><h1>App mobile</h1><p>Interface completa para iOS e Android</p></div>
+  <div class="mobile-showcase">
+    <div class="phone-frame">
+      <div class="phone-body">
+        <div class="mob-bar">
+          <div class="mob-brand"><div class="mob-brand-icon"><svg viewBox="0 0 13 13" fill="none"><rect x=".5" y=".5" width="12" height="12" rx="3" stroke="var(--text)" stroke-width="1.2"/><path d="M3 6.5l2.2 2.2L10 4.5" stroke="var(--text)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span>Aproove</span></div>
+          <div class="mob-notif">3</div>
+        </div>
+        <div class="mob-tabs"><div class="mob-stab active">Pendentes</div><div class="mob-stab">Aprovados</div><div class="mob-stab">Publicados</div></div>
+        <div class="mob-content">
+          <div class="mob-sec">Para aprovar hoje</div>
+          <div class="mob-card"><div class="mob-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="mob-info"><div class="mob-t">Post feed — Verão 2026</div><div class="mob-s">20/03 · 10h00 · v2</div></div><span class="mob-st" style="background:var(--amber-bg);color:var(--amber)">aguardando</span></div>
+          <div class="mob-card"><div class="mob-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="mob-info"><div class="mob-t">Reels — Verão 2026</div><div class="mob-s">20/03 · 18h00 · v1</div></div><span class="mob-st" style="background:var(--amber-bg);color:var(--amber)">aguardando</span></div>
+          <div class="mob-card"><div class="mob-net" style="background:#DBEAFE;color:#1D4ED8">LI</div><div class="mob-info"><div class="mob-t">LinkedIn — Verão 2026</div><div class="mob-s">20/03 · 08h00 · v1</div></div><span class="mob-st" style="background:var(--amber-bg);color:var(--amber)">aguardando</span></div>
+          <div class="mob-sec" style="margin-top:.5rem">Aprovados</div>
+          <div class="mob-card"><div class="mob-net" style="background:#FDECEA;color:#B91C1C">IG</div><div class="mob-info"><div class="mob-t">Story — Verão 2026</div><div class="mob-s">20/03 · 09h00 · Portal</div></div><span class="mob-st" style="background:var(--green-bg);color:var(--green)">aprovado</span></div>
+        </div>
+        <div class="mob-nav"><div class="mob-ni active"><div class="mob-ni-icon">⊞</div><div class="mob-ni-lbl">Dashboard</div></div><div class="mob-ni"><div class="mob-ni-icon">◫</div><div class="mob-ni-lbl">Calendário</div></div><div class="mob-ni"><div class="mob-ni-icon">✓</div><div class="mob-ni-lbl">Aprovar</div></div><div class="mob-ni"><div class="mob-ni-icon">☰</div><div class="mob-ni-lbl">Histórico</div></div></div>
+      </div>
+    </div>
+    <div class="mobile-notes">
+      <div class="note-card"><h4>Funcionalidades mobile</h4><p>App completo para iOS e Android — sem funcionalidade reduzida. Gestor e cliente têm acesso total pelo celular.</p></div>
+      <div class="note-card"><h4>Notificações push</h4><p>Você recebe push quando há peça aguardando aprovação. Toca na notificação e cai direto no mockup + aprovação. Zero atrito entre receber e aprovar.</p></div>
+      <div class="note-card"><h4>Aprovação por swipe</h4><p>Swipe direito para aprovar, swipe esquerdo para solicitar ajuste. Segurar abre campo de comentário. Toda interação registrada com canal e timestamp.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP -->
+<div class="page" id="page-whatsapp">
+  <div class="ph"><h1>WhatsApp cliente</h1><p>Simulação da conversa — clique nos botões para interagir</p></div>
+  <div class="mobile-showcase">
+    <div class="wa-frame">
+      <div class="wa-inner">
+        <div class="wa-bar"><div style="font-size:16px;color:white;cursor:pointer;opacity:.8">←</div><div class="wa-av">AP</div><div><div class="wa-name">Aproove</div><div class="wa-status">online</div></div><div style="margin-left:auto;display:flex;gap:10px;font-size:14px;color:rgba(255,255,255,.8)"><span>☎</span><span>⋮</span></div></div>
+        <div class="wa-chat" id="wa-chat">
+          <div class="wm bot">Olá, <strong>João</strong>! 👋 Você tem <strong>3 peças</strong> aguardando aprovação na campanha <em>Lançamento Verão 2026</em>.<div class="wm-time">10:31 ✓✓</div></div>
+          <div class="wm bot"><strong>1 de 3 — Instagram Feed</strong><div class="wm-link"><div class="wml-t">Post feed 1:1 · 20/03 às 10h00</div><div class="wml-s">Campanha: Lançamento Verão 2026</div><div class="wml-u">aproove.app/a/xK9mP2 · toque para ver o mockup</div></div><div class="wm-time">10:31 ✓✓</div></div>
+        </div>
+        <div class="wa-quick" id="wa-quick">
+          <button class="wq-btn" onclick="waStep('approve')">✅ Aprovar</button>
+          <button class="wq-btn" onclick="waStep('adjust')">✏️ Ajuste</button>
+          <button class="wq-btn" onclick="waStep('link')">🔗 Ver mockup</button>
+        </div>
+        <div class="wa-input-bar"><div class="wa-field">Mensagem</div><span style="font-size:16px;color:#aaa">🎤</span></div>
+      </div>
+    </div>
+    <div class="mobile-notes">
+      <div class="note-card"><h4>Como funciona</h4>
+        <div class="step-item"><div class="step-dot">1</div><span>Aproove detecta peça pronta e dispara mensagem automática</span></div>
+        <div class="step-item"><div class="step-dot">2</div><span>Mensagem tem campanha, formato, data e link do mockup</span></div>
+        <div class="step-item"><div class="step-dot">3</div><span>Botões rápidos: Aprovar · Ajuste · Ver mockup</span></div>
+        <div class="step-item"><div class="step-dot">4</div><span>Resposta capturada via webhook e registrada no Aproove</span></div>
+        <div class="step-item"><div class="step-dot">5</div><span>Confirmação com registro formal: canal + nome + data + hora</span></div>
+        <div class="step-item"><div class="step-dot">6</div><span>Sequência numerada para múltiplas peças (1 de 3, 2 de 3…)</span></div>
+      </div>
+      <div class="note-card"><h4>Registro formal gerado</h4><p style="font-family:'DM Mono',monospace;font-size:11px;background:var(--bg2);padding:.5rem .75rem;border-radius:var(--r);line-height:1.6;margin-top:.5rem;border:1px solid var(--border)">Aprovado via WhatsApp do contato João Ferreira (+55 11 9xxxx-4321) em 15/03/2026 às 10:45 · Post Instagram Feed · v2 · Campanha: Lançamento Verão 2026</p></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ── NAVIGATION ──
+function nav(page, el) {
+  document.querySelectorAll('.sb-item').forEach(function(i) { i.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+}
+
+// ── APPROVAL ──
+var AP_DATA = {
+  'ig-feed': { net:'Instagram', nb:'#FDECEA', nc:'#B91C1C', fmt:'Feed 1:1', recDt:'20/03/2026 às 10h00', recWhy:'Engajamento 3,2× acima da média às 10h–11h nos últimos 90 dias.', bars:[40,100,72,88,65], iD:'2026-03-20', iT:'10:00', cD:'2026-03-20', cT:'10:00', cMsg:'Já existe um post de <b>Instagram Feed</b> agendado para <b>20/03/2026 às 10h00</b>. Dois posts simultâneos reduzem o alcance de ambos.' },
+  'ig-reels': { net:'Instagram', nb:'#FDECEA', nc:'#B91C1C', fmt:'Reels 9:16', recDt:'20/03/2026 às 18h00', recWhy:'Reels têm pico às 18h–20h: 2,8× mais plays.', bars:[30,60,55,100,80], iD:'2026-03-20', iT:'18:00', cD:null, cMsg:'' },
+  'ig-story': { net:'Instagram', nb:'#FDECEA', nc:'#B91C1C', fmt:'Story 9:16', recDt:'20/03/2026 às 09h00', recWhy:'Stories: maior abertura entre 08h–10h.', bars:[100,85,60,70,55], iD:'2026-03-20', iT:'09:00', cD:null, cMsg:'' },
+  'linkedin': { net:'LinkedIn', nb:'#DBEAFE', nc:'#1D4ED8', fmt:'Post feed', recDt:'20/03/2026 às 08h00', recWhy:'LinkedIn: maior engajamento entre 07h30–09h em dias úteis.', bars:[100,75,65,40,20], iD:'2026-03-20', iT:'08:00', cD:'2026-03-20', cT:'08:00', cMsg:'Já existe um post de <b>LinkedIn</b> agendado para <b>20/03/2026 às 08h00</b>. Considere espaçar 3h.' },
+  'tiktok': { net:'TikTok', nb:'#F3F4F6', nc:'#111', fmt:'Vídeo 9:16', recDt:'20/03/2026 às 19h00', recWhy:'TikTok: pico às 19h–21h para este perfil (18–34, BR).', bars:[20,35,50,85,100], iD:'2026-03-20', iT:'19:00', cD:null, cMsg:'' }
+};
+var apCur = 'ig-feed', apDismissed = false;
+
+function buildPreview(fmt) {
+  var a = document.getElementById('ap-preview');
+  if (fmt === 'ig-feed') {
+    a.innerHTML = '<div class="phone"><div class="ph-bar"><div class="ph-av" style="background:#FDECEA;color:#B91C1C">MK</div><div><div class="ph-nm">marcaoficial</div><div class="ph-sub">São Paulo</div></div><div class="ph-more">···</div></div><div class="post-area" style="aspect-ratio:1"><div class="post-inner"><div class="post-em">☀️</div><div class="post-t">Verão chegou.</div><div class="post-s">Nova coleção</div></div></div><div class="ig-acts"><span>♡</span><span>○</span><span>↗</span><span style="margin-left:auto">⊟</span></div><div class="ig-likes">1.284 curtidas</div><div class="ig-cap"><span class="u">marcaoficial</span> Verão chegou e a nossa nova coleção também! Link na bio.<div class="tags">#verão2026 #moda</div></div><div class="ig-date">20/03/2026 às 10h00</div></div>';
+  } else if (fmt === 'ig-reels') {
+    a.innerHTML = '<div class="phone"><div style="position:relative"><div class="post-area dark-area" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-em">🎬</div><div class="post-t" style="color:white">Reels · 15s</div><div class="post-s" style="color:rgba(255,255,255,.6)">Verão chegou</div></div></div><div class="dk-cap"><div style="font-size:10px;color:white;font-weight:600;margin-bottom:2px">marcaoficial</div><div style="font-size:10px;color:rgba(255,255,255,.85);line-height:1.4">Verão chegou! ☀️ Peças exclusivas para você arrasar.</div><div style="font-size:9px;color:rgba(255,255,255,.6);margin-top:2px">#verão2026 #moda</div></div><div class="dk-side"><div style="text-align:center"><div style="font-size:15px;color:white">♡</div><div style="font-size:9px;color:white">1,2k</div></div><div style="font-size:13px;color:white">○</div><div style="font-size:13px;color:white">↗</div></div></div><div class="ig-date" style="background:var(--surface)">20/03/2026 às 18h00</div></div>';
+  } else if (fmt === 'ig-story') {
+    a.innerHTML = '<div class="phone"><div style="position:relative"><div class="post-area dark-area" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-em">☀️</div><div class="post-t" style="color:white;font-size:14px">Nova coleção</div><div class="post-s" style="color:rgba(255,255,255,.8)">Verão chegou</div></div></div><div class="story-bars"><div class="story-bar" style="background:white"></div><div class="story-bar" style="background:rgba(255,255,255,.4)"></div><div class="story-bar" style="background:rgba(255,255,255,.4)"></div></div><div class="story-head"><div class="ph-av" style="width:18px;height:18px;font-size:8px;background:#FDECEA;color:#B91C1C;border:1px solid white">MK</div><div style="font-size:9px;color:white;font-weight:600">marcaoficial</div></div><div class="story-cta">Ver coleção</div></div><div class="ig-date" style="background:var(--surface);color:var(--green)">Aprovado · 20/03/2026 às 09h00</div></div>';
+  } else if (fmt === 'linkedin') {
+    a.innerHTML = '<div class="phone"><div class="ph-bar"><div class="ph-av" style="background:#DBEAFE;color:#1D4ED8;border-radius:4px">MK</div><div><div class="ph-nm">Marca Oficial</div><div class="ph-sub">12.400 seguidores</div></div><div class="ph-more">···</div></div><div class="ig-cap" style="padding:7px 9px">Verão chegou! Peças exclusivas para o profissional que quer estilo e conforto.</div><div class="post-area" style="aspect-ratio:16/9"><div class="post-inner"><div class="post-em">☀️</div><div class="post-s">Banner 1200×628</div></div></div><div style="padding:4px 9px 6px;font-size:10px;color:var(--text2);border-top:1px solid var(--border)">👍 348 · 42 comentários</div><div class="ig-date">20/03/2026 às 08h00</div></div>';
+  } else if (fmt === 'tiktok') {
+    a.innerHTML = '<div class="phone"><div style="position:relative"><div class="post-area dark-area" style="aspect-ratio:9/16"><div class="post-inner"><div class="post-em">☀️</div><div class="post-t" style="color:white">TikTok · 30s</div></div></div><div class="tk-top"><div style="font-size:9px;color:rgba(255,255,255,.6)">Seguindo</div><div style="font-size:9px;color:white;font-weight:600;border-bottom:1.5px solid white;padding-bottom:1px">Para você</div><div style="font-size:9px;color:rgba(255,255,255,.6)">Ao vivo</div></div><div class="dk-cap"><div style="font-size:10px;color:white;font-weight:600;margin-bottom:2px">@marcaoficial</div><div style="font-size:10px;color:rgba(255,255,255,.9);line-height:1.4">Verão chegou! ☀️ Corre ver as peças!</div><div style="font-size:9px;color:rgba(255,255,255,.6);margin-top:2px">#verão2026 #fyp</div></div><div class="dk-side"><div style="text-align:center"><div style="font-size:16px;color:white">♡</div><div style="font-size:9px;color:white">24k</div></div><div style="text-align:center"><div style="font-size:13px;color:white">○</div><div style="font-size:9px;color:white">891</div></div><div style="font-size:13px;color:white">↗</div></div></div><div class="ig-date" style="background:var(--surface);color:var(--blue)">Agendado · 20/03/2026 às 19h00</div></div>';
+  }
+}
+
+function swFmt(el) {
+  document.querySelectorAll('.fmt-item').forEach(function(i) { i.classList.remove('active'); });
+  el.classList.add('active');
+  apCur = el.getAttribute('data-fmt');
+  apDismissed = false;
+  var d = AP_DATA[apCur];
+  document.getElementById('ap-net').textContent = d.net;
+  document.getElementById('ap-net').style.background = d.nb;
+  document.getElementById('ap-net').style.color = d.nc;
+  document.getElementById('ap-fmt').textContent = d.fmt;
+  document.getElementById('ap-recdt').textContent = d.recDt;
+  document.getElementById('ap-recwhy').textContent = d.recWhy;
+  document.getElementById('ap-date').value = d.iD;
+  document.getElementById('ap-time').value = d.iT;
+  document.getElementById('ap-conflict').classList.remove('on');
+  document.getElementById('ap-result').style.display = 'none';
+  document.getElementById('ap-cmt').value = '';
+  for (var i = 0; i < 5; i++) {
+    document.getElementById('b'+i).style.width = d.bars[i] + '%';
+    var p = document.getElementById('p'+i);
+    p.textContent = d.bars[i] + '%';
+    p.style.color = d.bars[i] === 100 ? 'var(--green)' : 'var(--text2)';
+    p.style.fontWeight = d.bars[i] === 100 ? '600' : '400';
+  }
+  buildPreview(apCur);
+  apChk();
+}
+
+function apChk() {
+  if (apDismissed) return;
+  var d = AP_DATA[apCur];
+  if (!d.cD) { document.getElementById('ap-conflict').classList.remove('on'); return; }
+  if (document.getElementById('ap-date').value === d.cD && document.getElementById('ap-time').value === d.cT) {
+    document.getElementById('ap-confmsg').innerHTML = d.cMsg;
+    document.getElementById('ap-conflict').classList.add('on');
+  } else {
+    document.getElementById('ap-conflict').classList.remove('on');
+  }
+}
+
+function apResolve(action) {
+  if (action === 'adj') {
+    var t = document.getElementById('ap-time');
+    var h = (parseInt(t.value.split(':')[0]) + 2) % 24;
+    t.value = (h < 10 ? '0' : '') + h + ':00';
+    apDismissed = false; apChk();
+  } else { apDismissed = true; document.getElementById('ap-conflict').classList.remove('on'); }
+}
+
+function apAct(type) {
+  var d = AP_DATA[apCur];
+  var dt = document.getElementById('ap-date').value.split('-').reverse().join('/');
+  var tm = document.getElementById('ap-time').value + 'h';
+  var cmt = document.getElementById('ap-cmt').value.trim();
+  var r = document.getElementById('ap-result');
+  r.className = 'result-banner';
+  if (type === 'adj' && !cmt) { r.classList.add('rb-warn'); r.style.display = 'block'; document.getElementById('ap-rt').textContent = 'Comentário necessário'; document.getElementById('ap-rs').textContent = 'Descreva o ajuste antes de enviar.'; return; }
+  if (type === 'apr') { r.classList.add('rb-suc'); document.getElementById('ap-rt').textContent = 'Aprovado — ' + d.fmt; document.getElementById('ap-rs').textContent = 'Agendado para ' + dt + ' às ' + tm; }
+  else if (type === 'adj') { r.classList.add('rb-warn'); document.getElementById('ap-rt').textContent = 'Ajuste solicitado — ' + d.fmt; document.getElementById('ap-rs').textContent = 'Feedback enviado. Data sugerida: ' + dt + ' às ' + tm; }
+  else { r.classList.add('rb-dan'); document.getElementById('ap-rt').textContent = 'Reprovado — ' + d.fmt; document.getElementById('ap-rs').textContent = 'Peça retornou ao time.'; }
+  r.style.display = 'block';
+}
+
+// ── CALENDAR ──
+var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var calYear = 2026, calMonth = 2;
+var CAL = {
+  '2026-2-10': [{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pub',c:'Ofertas Fev'}],
+  '2026-2-18': [{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'pub',c:'Carnaval'}],
+  '2026-3-10': [{n:'IG Story',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'09h',s:'pub',c:'Verão'},{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pub',c:'Verão'}],
+  '2026-3-15': [{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Verão'},{n:'IG Reels',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'18h',s:'pend',c:'Verão'},{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Verão'}],
+  '2026-3-20': [{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'apr',c:'Verão'},{n:'IG Story',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'09h',s:'apr',c:'Verão'},{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'pub',c:'Verão'},{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Verão'}],
+  '2026-3-25': [{n:'IG Reels',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'18h',s:'pend',c:'Verão'},{n:'Facebook',net:'FB',nb:'#DBEAFE',nc:'#1D4ED8',time:'11h',s:'pend',c:'Verão'}],
+  '2026-4-5': [{n:'IG Feed',net:'IG',nb:'#FDECEA',nc:'#B91C1C',time:'10h',s:'pend',c:'Inverno'}],
+  '2026-4-12': [{n:'LinkedIn',net:'LI',nb:'#DBEAFE',nc:'#1D4ED8',time:'08h',s:'pend',c:'Inverno'},{n:'TikTok',net:'TK',nb:'#F3F4F6',nc:'#333',time:'19h',s:'pend',c:'Inverno'}]
+};
+
+function renderCal() {
+  document.getElementById('cal-month').textContent = MONTHS[calMonth] + ' ' + calYear;
+  var g = document.getElementById('cal-grid'); g.innerHTML = '';
+  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(function(d) { var e = document.createElement('div'); e.className = 'cal-dow'; e.textContent = d; g.appendChild(e); });
+  var first = new Date(calYear, calMonth, 1).getDay();
+  var days = new Date(calYear, calMonth + 1, 0).getDate();
+  var today = new Date();
+  for (var i = 0; i < first; i++) { var e = document.createElement('div'); e.className = 'cal-cell empty'; g.appendChild(e); }
+  for (var d = 1; d <= days; d++) {
+    var cell = document.createElement('div'); cell.className = 'cal-cell';
+    if (today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d) cell.className += ' today';
+    var dn = document.createElement('div'); dn.className = 'cal-day-num'; dn.textContent = d; cell.appendChild(dn);
+    var key = calYear + '-' + calMonth + '-' + d;
+    var posts = CAL[key] || []; var shown = 0;
+    posts.forEach(function(p) {
+      if (shown >= 2) return;
+      var pill = document.createElement('div');
+      pill.className = 'cal-pill ' + (p.s==='pub'?'cp-pub':p.s==='apr'?'cp-apr':'cp-pend');
+      pill.textContent = p.n; cell.appendChild(pill); shown++;
+    });
+    if (posts.length > 2) { var m = document.createElement('div'); m.className = 'cp-more'; m.textContent = '+' + (posts.length-2) + ' mais'; cell.appendChild(m); }
+    if (posts.length > 0) { (function(dd,kk) { cell.style.cursor='pointer'; cell.onclick = function() { showDay(dd,kk); }; })(d, key); }
+    g.appendChild(cell);
+  }
+  document.getElementById('day-detail').classList.remove('on');
+}
+
+function showDay(d, key) {
+  var posts = CAL[key] || [];
+  document.getElementById('dd-title').textContent = d + ' de ' + MONTHS[calMonth] + ' — ' + posts.length + ' publicação' + (posts.length > 1 ? 'ões' : '');
+  var items = document.getElementById('dd-items'); items.innerHTML = '';
+  posts.forEach(function(p) {
+    var sc = p.s==='pub'?'#2d6a2d':p.s==='apr'?'var(--blue)':'var(--amber)';
+    var sl = p.s==='pub'?'Publicado':p.s==='apr'?'Aprovado':'A aprovar';
+    var sp = p.s==='pub'?'pl-pub':p.s==='apr'?'pl-apr':'pl-pend';
+    var row = document.createElement('div'); row.className = 'dd-row';
+    row.innerHTML = '<div class="dot" style="background:'+sc+'"></div><div class="net-tag" style="background:'+p.nb+';color:'+p.nc+'">'+p.net+'</div><div class="row-info"><div class="row-title">'+p.n+'</div><div class="row-sub">'+p.c+'</div></div><div class="row-time">'+p.time+'</div><span class="pill '+sp+'">'+sl+'</span>';
+    items.appendChild(row);
+  });
+  document.getElementById('day-detail').classList.add('on');
+}
+
+function calNav(dir) { calMonth += dir; if (calMonth > 11) { calMonth = 0; calYear++; } if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
+
+// ── HISTORY ──
+function histFilter(type, btn) {
+  document.querySelectorAll('.hf').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.hist-entry').forEach(function(e) { e.classList.toggle('hidden', type !== 'all' && e.getAttribute('data-type') !== type); });
+}
+
+// ── NEW CAMPAIGN ──
+var campStep_n = 1;
+function campStep(n) {
+  if (n === 5) buildCampSummary();
+  document.querySelectorAll('.form-step').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('camp-s' + n).classList.add('active');
+  for (var i = 1; i <= 5; i++) {
+    var el = document.getElementById('cs-' + i);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  }
+  campStep_n = n;
+}
+function selObj(el) { document.querySelectorAll('.obj-card').forEach(function(c) { c.classList.remove('sel'); }); el.classList.add('sel'); }
+function buildCampSummary() {
+  var nome = document.getElementById('c-nome').value || '(não informado)';
+  var inicio = document.getElementById('c-inicio').value || '—';
+  var fim = document.getElementById('c-fim').value || '—';
+  var produto = document.getElementById('c-produto').value || '(não informado)';
+  var publico = document.getElementById('c-publico').value || '(não informado)';
+  var objSel = document.querySelector('.obj-card.sel');
+  var obj = objSel ? objSel.querySelector('.obj-name').textContent : '(não selecionado)';
+  var nets = []; document.querySelectorAll('.net-opt.sel').forEach(function(n) { nets.push(n.textContent); });
+  document.getElementById('camp-summary').innerHTML =
+    '<div style="display:flex;flex-direction:column;gap:5px">' +
+    '<div class="cs-row"><span class="cs-lbl">Campanha:</span><span class="cs-val">' + nome + '</span></div>' +
+    '<div class="cs-row"><span class="cs-lbl">Período:</span><span class="cs-val">' + inicio + ' a ' + fim + '</span></div>' +
+    '<div class="cs-row"><span class="cs-lbl">Produto:</span><span class="cs-val">' + produto + '</span></div>' +
+    '<div class="cs-row"><span class="cs-lbl">Público:</span><span class="cs-val">' + publico + '</span></div>' +
+    '<div class="cs-row"><span class="cs-lbl">Objetivo:</span><span class="cs-val">' + obj + '</span></div>' +
+    '<div class="cs-row"><span class="cs-lbl">Redes:</span><span class="cs-val">' + (nets.length ? nets.join(', ') : '(não selecionadas)') + '</span></div>' +
+    '</div>';
+}
+function submitCamp() {
+  var now = new Date();
+  var dt = now.getDate()+'/'+(now.getMonth()+1)+'/'+now.getFullYear()+' às '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  var nome = document.getElementById('c-nome').value || 'Nova campanha';
+  document.getElementById('camp-audit').textContent = 'Solicitação registrada por João Ferreira (Master) em ' + dt + ' · "' + nome + '" · via Portal Aproove · protocolo #' + Math.floor(Math.random()*90000+10000);
+  document.getElementById('camp-form').style.display = 'none';
+  document.getElementById('camp-success').classList.add('on');
+}
+function resetCamp() {
+  document.getElementById('camp-form').style.display = 'block';
+  document.getElementById('camp-success').classList.remove('on');
+  campStep(1);
+  document.getElementById('c-nome').value = '';
+}
+
+// ── AVULSA ──
+function checkUrgencia() {
+  var v = document.getElementById('av-urg').value;
+  document.getElementById('av-urg-aviso').style.display = v.includes('rgente') ? 'block' : 'none';
+}
+function submitAvulsa() {
+  var now = new Date();
+  var dt = now.getDate()+'/'+(now.getMonth()+1)+'/'+now.getFullYear()+' às '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  var tipo = document.getElementById('av-tipo').value;
+  document.getElementById('avulsa-audit').textContent = 'Solicitação registrada por João Ferreira em ' + dt + ' · Peça avulsa: ' + tipo + ' · via Portal Aproove · protocolo #' + Math.floor(Math.random()*90000+10000);
+  document.getElementById('avulsa-form').style.display = 'none';
+  document.getElementById('avulsa-success').classList.add('on');
+}
+function resetAvulsa() {
+  document.getElementById('avulsa-form').style.display = 'block';
+  document.getElementById('avulsa-success').classList.remove('on');
+}
+
+// ── DOWNLOADS ──
+var DL_PIECES = [
+  {id:1,name:'Post feed — Verão 2026',net:'ig',tag:'IG Feed',nb:'#FDECEA',nc:'#B91C1C',icon:'☀️',bg:'',fmt:'JPG',size:'842 KB',sel:false},
+  {id:2,name:'Reels — Verão 2026',net:'ig',tag:'IG Reels',nb:'#FDECEA',nc:'#B91C1C',icon:'🎬',bg:'#111',fmt:'MP4',size:'18,4 MB',sel:false},
+  {id:3,name:'Story — Verão 2026',net:'ig',tag:'IG Story',nb:'#FDECEA',nc:'#B91C1C',icon:'☀️',bg:'#111',fmt:'JPG',size:'620 KB',sel:false},
+  {id:4,name:'Post LinkedIn — Verão 2026',net:'li',tag:'LinkedIn',nb:'#DBEAFE',nc:'#1D4ED8',icon:'💼',bg:'',fmt:'JPG',size:'430 KB',sel:false},
+  {id:5,name:'TikTok — Verão 2026',net:'tk',tag:'TikTok',nb:'#F3F4F6',nc:'#333',icon:'🎵',bg:'#111',fmt:'MP4',size:'22,1 MB',sel:false},
+  {id:6,name:'Arte WhatsApp — Promoção Verão',net:'wa',tag:'WhatsApp',nb:'#E8F5E9',nc:'#2E7D32',icon:'📱',bg:'',fmt:'JPG',size:'310 KB',sel:false},
+  {id:7,name:'Apresentação Coleção Verão',net:'pres',tag:'Apresentação',nb:'#EEEDFE',nc:'#4a2d8a',icon:'📊',bg:'',fmt:'PDF+PPTX',size:'12,5 MB',sel:false},
+  {id:8,name:'Banner e-mail Verão 2026',net:'li',tag:'E-mail',nb:'#DBEAFE',nc:'#1D4ED8',icon:'📧',bg:'',fmt:'JPG',size:'280 KB',sel:false}
+];
+var dlNetFilter = 'all';
+var DL_PACKS = [
+  {id:'completo',name:'Pacote completo',desc:'8 peças · todos os formatos',size:'64,2 MB',tags:['IG Feed','IG Reels','IG Story','LinkedIn','TikTok','WhatsApp','Apresentação PDF','Apresentação PPTX'],sel:true},
+  {id:'ig',name:'Pacote Instagram',desc:'3 peças · Feed + Reels + Story',size:'20,1 MB',tags:['IG Feed 1:1','IG Reels 9:16','IG Story 9:16'],sel:false},
+  {id:'vendas',name:'Pacote equipe de vendas',desc:'3 peças · WhatsApp + Apresentação',size:'12,4 MB',tags:['Arte WhatsApp','Apresentação PDF','Apresentação PPTX'],sel:false},
+  {id:'profissional',name:'Pacote redes profissionais',desc:'2 peças · LinkedIn + Apresentação',size:'5,8 MB',tags:['LinkedIn','Apresentação'],sel:false}
+];
+
+function renderDlPieces() {
+  var list = document.getElementById('dl-list'); list.innerHTML = '';
+  var filtered = DL_PIECES.filter(function(p) { return dlNetFilter === 'all' || p.net === dlNetFilter; });
+  filtered.forEach(function(p) {
+    var el = document.createElement('div');
+    el.className = 'dl-row' + (p.sel ? ' sel' : '');
+    el.innerHTML = '<div class="dl-check' + (p.sel ? ' on' : '') + '">' + (p.sel ? '✓' : '') + '</div>' +
+      '<div class="dl-thumb" style="background:' + (p.bg || 'var(--bg2)') + '">' + p.icon + '</div>' +
+      '<div class="dl-info"><div class="dl-name">' + p.name + '</div><div class="dl-meta">' + p.tag + ' · ' + p.fmt + ' · ' + p.size + '</div></div>' +
+      '<span class="net-tag" style="background:' + p.nb + ';color:' + p.nc + '">' + p.tag + '</span>' +
+      '<div class="dl-acts"><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();showToast(\'dl\',\'Baixando: ' + p.name + '...\')">↓ ' + p.fmt.split('+')[0] + '</button></div>';
+    el.onclick = function() { p.sel = !p.sel; renderDlPieces(); updateDlSummary(); };
+    list.appendChild(el);
+  });
+}
+function updateDlSummary() {
+  var sel = DL_PIECES.filter(function(p) { return p.sel; });
+  var box = document.getElementById('dl-summary');
+  if (sel.length > 0) {
+    box.style.display = 'block';
+    document.getElementById('dl-sel-count').textContent = sel.length + ' peça' + (sel.length !== 1 ? 's' : '');
+    document.getElementById('dl-sel-fmts').textContent = [...new Set(sel.map(function(p) { return p.fmt; }))].join(', ');
+  } else { box.style.display = 'none'; }
+}
+function selAllDl() { DL_PIECES.forEach(function(p) { p.sel = true; }); renderDlPieces(); updateDlSummary(); }
+function clearDl() { DL_PIECES.forEach(function(p) { p.sel = false; }); renderDlPieces(); updateDlSummary(); }
+function filterDl(net, el) {
+  document.querySelectorAll('#page-downloads .btn-secondary').forEach(function(b) { b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+  el.style.background = 'var(--text)'; el.style.color = 'var(--surface)'; el.style.borderColor = 'var(--text)';
+  dlNetFilter = net; renderDlPieces();
+}
+function setDlView(view, el) {
+  document.getElementById('view-ind-btn').style.background = view==='individual' ? 'var(--text)' : '';
+  document.getElementById('view-ind-btn').style.color = view==='individual' ? 'var(--surface)' : '';
+  document.getElementById('view-pack-btn').style.background = view==='pacote' ? 'var(--text)' : '';
+  document.getElementById('view-pack-btn').style.color = view==='pacote' ? 'var(--surface)' : '';
+  document.getElementById('dl-ind-view').style.display = view==='individual' ? 'block' : 'none';
+  document.getElementById('dl-pack-view').style.display = view==='pacote' ? 'block' : 'none';
+}
+function renderPacks() {
+  var list = document.getElementById('pack-list'); list.innerHTML = '';
+  DL_PACKS.forEach(function(pack) {
+    var el = document.createElement('div');
+    el.style.cssText = 'border:' + (pack.sel ? '2px solid var(--text)' : '1px solid var(--border)') + ';border-radius:var(--r-lg);padding:1rem;cursor:pointer;margin-bottom:.5rem;background:' + (pack.sel ? 'var(--bg2)' : 'var(--surface)') + ';transition:all .12s';
+    el.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem"><div><div style="font-size:13px;font-weight:500;color:var(--text)">' + pack.name + '</div><div style="font-size:11px;color:var(--text2)">' + pack.desc + ' · ' + pack.size + '</div></div><div class="dl-check ' + (pack.sel ? 'on' : '') + '">' + (pack.sel ? '✓' : '') + '</div></div>' +
+      '<div style="display:flex;gap:4px;flex-wrap:wrap">' + pack.tags.map(function(t) { return '<span class="pill pl-pub" style="font-size:9px">' + t + '</span>'; }).join('') + '</div>';
+    el.onclick = function() { DL_PACKS.forEach(function(p) { p.sel = false; }); pack.sel = true; renderPacks(); };
+    list.appendChild(el);
+  });
+}
+function downloadSel() { var sel = DL_PIECES.filter(function(p) { return p.sel; }); showToast('dl', 'Preparando .zip com ' + sel.length + ' peças selecionadas...'); }
+function downloadPack() { var pack = DL_PACKS.find(function(p) { return p.sel; }); if (pack) showToast('dl', pack.name + ' sendo compactado... O download iniciará em instantes.'); }
+
+// ── TOAST ──
+function showToast(which, msg) {
+  var ids = { dl: 'dl-toast', rep: 'rep-toast' };
+  var t = document.getElementById(ids[which] || 'rep-toast');
+  if (!t) return;
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(function() { t.style.display = 'none'; }, 3500);
+}
+
+// ── WHATSAPP ──
+var waPhase = 0;
+function waStep(action) {
+  var chat = document.getElementById('wa-chat');
+  function addMsg(cls, html) { var m = document.createElement('div'); m.className = 'wm ' + cls; m.innerHTML = html; chat.appendChild(m); chat.scrollTop = 99999; }
+  if (action === 'approve' && waPhase === 0) {
+    addMsg('usr', 'Aprovado ✅<div class="wm-time">10:45 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function() {
+      addMsg('bot', '✅ <strong>Instagram Feed aprovado.</strong><br><br>Registro: Aprovado via WhatsApp por João Ferreira em 15/03/2026 às 10:45.<br>Agendado para <strong>20/03/2026 às 10h00</strong>.<div class="wm-time">10:45 ✓✓</div>');
+      setTimeout(function() {
+        addMsg('bot', '<strong>2 de 3 — Instagram Reels</strong><div class="wm-link"><div class="wml-t">Reels 9:16 · 20/03 às 18h00</div><div class="wml-s">Campanha: Lançamento Verão 2026</div><div class="wml-u">aproove.app/a/yT3nQ8</div></div><div class="wm-time">10:45 ✓✓</div>');
+        document.getElementById('wa-quick').innerHTML = '<button class="wq-btn" onclick="waStep(\'approve2\')">✅ Aprovar</button><button class="wq-btn" onclick="waStep(\'adjust\')">✏️ Ajuste</button><button class="wq-btn" onclick="waStep(\'link\')">🔗 Ver mockup</button>';
+      }, 600);
+    }, 400);
+    waPhase = 1;
+  } else if (action === 'approve2' && waPhase === 1) {
+    addMsg('usr', 'Aprovado ✅<div class="wm-time">10:47 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function() {
+      addMsg('bot', '✅ <strong>Reels aprovado.</strong> Agendado para 20/03 às 18h00.<div class="wm-time">10:47 ✓✓</div>');
+      addMsg('bot', '<strong>3 de 3 — LinkedIn</strong><div class="wm-link"><div class="wml-t">Post feed · 20/03 às 08h00</div><div class="wml-s">Campanha: Lançamento Verão 2026</div><div class="wml-u">aproove.app/a/zR5pL1</div></div><div class="wm-time">10:47 ✓✓</div>');
+      document.getElementById('wa-quick').innerHTML = '<button class="wq-btn" onclick="waStep(\'approve3\')">✅ Aprovar</button><button class="wq-btn" onclick="waStep(\'adjust\')">✏️ Ajuste</button>';
+    }, 400);
+    waPhase = 2;
+  } else if (action === 'approve3' && waPhase === 2) {
+    addMsg('usr', 'Aprovado ✅<div class="wm-time">10:49 <span class="wm-check">✓✓</span></div>');
+    setTimeout(function() {
+      addMsg('bot', '✅ Tudo aprovado! As 3 peças foram agendadas.<br><br>Qualquer dúvida, é só responder aqui.<div class="wm-time">10:49 ✓✓</div>');
+      document.getElementById('wa-quick').innerHTML = '<span style="font-size:10px;color:#888;padding:4px 8px">Todas respondidas ✓</span>';
+    }, 400);
+    waPhase = 3;
+  } else if (action === 'adjust') {
+    addMsg('usr', 'Precisa ajustar o texto — muito longo<div class="wm-time">agora <span class="wm-check">✓✓</span></div>');
+    setTimeout(function() {
+      addMsg('bot', '✏️ Feedback registrado. Time notificado. Assim que a nova versão estiver pronta você recebe aqui.<div class="wm-time">agora ✓✓</div>');
+      document.getElementById('wa-quick').innerHTML = '<span style="font-size:10px;color:#888;padding:4px 8px">Aguardando nova versão</span>';
+    }, 400);
+    waPhase = 3;
+  } else if (action === 'link') {
+    addMsg('bot', 'Acesse o mockup completo:<br><a href="#" style="color:#075e54;font-size:10px">aproove.app/a/xK9mP2</a><div class="wm-time">agora ✓✓</div>');
+  }
+}
+
+// ── INIT ──
+buildPreview('ig-feed');
+renderCal();
+renderDlPieces();
+renderPacks();
+</script>
+</body>
+</html>

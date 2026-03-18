@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Documento Técnico Mestre v1.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --ink: #1a1a18;
+    --ink2: #4a4a44;
+    --ink3: #8a8a80;
+    --paper: #faf9f5;
+    --paper2: #f2f1eb;
+    --paper3: #e8e6de;
+    --rule: rgba(26,26,24,0.12);
+    --accent: #1a1a18;
+    --green: #2d5a1e;
+    --green-bg: #edf4e8;
+    --blue: #0d3d7a;
+    --blue-bg: #e8f0fb;
+    --amber: #7a4a0a;
+    --amber-bg: #fdf0dd;
+    --red: #8a1a1a;
+    --red-bg: #fbeaea;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .cover {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 64px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: 20px; right: 80px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .cover-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 24px;
+  }
+  .cover-title {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .cover-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 24px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+  }
+  .cover-meta strong { color: rgba(255,255,255,0.8); display: block; font-size: 13px; margin-bottom: 2px; }
+
+  .toc {
+    background: var(--paper2);
+    border-bottom: 1px solid var(--rule);
+    padding: 48px 64px;
+  }
+  .toc-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 20px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px 32px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink2);
+  }
+  .toc-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink3);
+    min-width: 20px;
+  }
+
+  .doc-body { max-width: 1000px; margin: 0 auto; padding: 0 64px 80px; }
+
+  .section {
+    padding-top: 64px;
+    border-top: 2px solid var(--ink);
+    margin-top: 64px;
+  }
+  .section:first-child { margin-top: 0; border-top: none; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--ink3);
+    min-width: 28px;
+  }
+  h2 {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+  }
+  h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 20px 0 8px;
+  }
+  p { color: var(--ink2); margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  .lead {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--ink2);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    padding-left: 20px;
+    border-left: 3px solid var(--rule);
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  .card {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 10px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-blue  { background: var(--blue-bg);  color: var(--blue);  }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-red   { background: var(--red-bg);   color: var(--red);   }
+  .badge-gray  { background: var(--paper3);   color: var(--ink3);  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 16px 0;
+  }
+  th {
+    background: var(--ink);
+    color: var(--paper);
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink2);
+  }
+  tr:nth-child(even) td { background: var(--paper2); }
+
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 16px 0;
+  }
+  .flow-step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 34px;
+    bottom: 0;
+    width: 1px;
+    background: var(--rule);
+  }
+  .flow-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 2px;
+  }
+  .flow-body { padding: 4px 0 20px; }
+  .flow-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+  .flow-desc { font-size: 12px; color: var(--ink3); }
+
+  .status-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+
+  .highlight-box {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .highlight-box h4 { color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 10px; }
+  .highlight-box p { color: rgba(255,255,255,0.85); margin-bottom: 0; }
+
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .price-card {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .price-head {
+    background: var(--paper3);
+    padding: 14px 16px 10px;
+  }
+  .price-name { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink3); margin-bottom: 4px; }
+  .price-val { font-size: 22px; font-weight: 900; color: var(--ink); }
+  .price-period { font-size: 10px; color: var(--ink3); }
+  .price-body { padding: 14px 16px; }
+  .price-feat { font-size: 11px; color: var(--ink2); padding: 3px 0; border-bottom: 1px solid var(--rule); }
+  .price-feat:last-child { border: none; }
+
+  .risk-table td:first-child { font-weight: 700; color: var(--ink); }
+
+  ul.clean { list-style: none; padding: 0; }
+  ul.clean li {
+    padding: 5px 0 5px 20px;
+    position: relative;
+    color: var(--ink2);
+    font-size: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  ul.clean li:before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--ink3);
+  }
+
+  .network-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .net-card {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .net-icon { font-size: 24px; margin-bottom: 6px; }
+  .net-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .net-stat { font-size: 10px; color: var(--ink3); }
+
+  .skill-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .skill-card {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .skill-num { font-size: 28px; font-weight: 900; color: var(--paper3); margin-bottom: 4px; }
+  .skill-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .skill-desc { font-size: 11px; color: var(--ink3); line-height: 1.5; }
+
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 12px;
+  }
+  .cost-label { color: var(--ink2); }
+  .cost-val { font-weight: 700; color: var(--ink); }
+
+  .horizon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+  .h-card { border-radius: 8px; padding: 20px; }
+  .h1 { background: var(--ink); color: var(--paper); }
+  .h2 { background: var(--paper2); border: 1px solid var(--rule); }
+  .h-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; opacity: 0.5; }
+  .h-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .h-list { list-style: none; }
+  .h-list li { font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.1); opacity: 0.8; }
+  .h2 .h-list li { border-bottom-color: var(--rule); opacity: 1; color: var(--ink2); }
+
+  .replit-box {
+    background: #0e1117;
+    color: #e6edf3;
+    border-radius: 8px;
+    padding: 28px 32px;
+    font-family: 'Lato', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 16px 0;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  @media print {
+    .section { page-break-before: always; }
+    .cover, .toc { page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="cover">
+  <div class="cover-tag">Documento Técnico Mestre — Versão 1.0</div>
+  <div class="cover-title">Aproove</div>
+  <div class="cover-subtitle">Plataforma SaaS de Gestão, Aprovação e Publicação de Conteúdo para Social Media</div>
+  <div class="cover-meta">
+    <div><strong>Versão</strong>MVP 1.0</div>
+    <div><strong>Data</strong>Março 2026</div>
+    <div><strong>Classificação</strong>Confidencial — Uso Interno</div>
+    <div><strong>Status</strong>Ativo — Em Desenvolvimento</div>
+  </div>
+</div>
+
+<!-- ÍNDICE -->
+<div class="toc">
+  <div class="toc-title">Índice do Documento</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">01</span> Visão do Produto</div>
+    <div class="toc-item"><span class="toc-num">02</span> Problema e Solução</div>
+    <div class="toc-item"><span class="toc-num">03</span> Usuários e Personas</div>
+    <div class="toc-item"><span class="toc-num">04</span> Redes Sociais no Brasil</div>
+    <div class="toc-item"><span class="toc-num">05</span> Fluxos Completos</div>
+    <div class="toc-item"><span class="toc-num">06</span> Status e Estados do Sistema</div>
+    <div class="toc-item"><span class="toc-num">07</span> MVP — Escopo Definido</div>
+    <div class="toc-item"><span class="toc-num">08</span> Wireframes Conceituais</div>
+    <div class="toc-item"><span class="toc-num">09</span> Modelo de Negócio SaaS</div>
+    <div class="toc-item"><span class="toc-num">10</span> Engenharia Financeira</div>
+    <div class="toc-item"><span class="toc-num">11</span> Skills do Projeto</div>
+    <div class="toc-item"><span class="toc-num">12</span> Roadmap e Horizontes</div>
+    <div class="toc-item"><span class="toc-num">13</span> LGPD e Segurança</div>
+    <div class="toc-item"><span class="toc-num">14</span> App Store e Google Play</div>
+    <div class="toc-item"><span class="toc-num">15</span> Estratégia de Validação</div>
+    <div class="toc-item"><span class="toc-num">16</span> Narrativa para Investidores</div>
+    <div class="toc-item"><span class="toc-num">17</span> Prompt para Replit</div>
+    <div class="toc-item"><span class="toc-num">18</span> Próximas Ações</div>
+  </div>
+</div>
+
+<div class="doc-body">
+
+<!-- SEÇÃO 01 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">01</span><h2>Visão do Produto</h2></div>
+  <p class="lead">O Aproove é uma plataforma SaaS B2B que centraliza o fluxo de planejamento, produção, aprovação e publicação automatizada de conteúdo para redes sociais, eliminando o caos operacional de aprovações via WhatsApp, e-mail e PDFs.</p>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">Missão</div>
+      <p>Transformar o processo de aprovação de conteúdo de marketing de uma cadeia desorganizada em um fluxo rastreável, previsível e automatizado.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Visão de Longo Prazo</div>
+      <p>Tornar-se a plataforma central de operação para agências de marketing e departamentos de marketing corporativo no Brasil e América Latina.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Proposta de Valor Central</div>
+      <p>Reduzir retrabalho, acelerar aprovação, dar previsibilidade operacional ao marketing e eliminar publicações erradas por falta de aprovação registrada.</p>
+    </div>
+  </div>
+
+  <h3>Posicionamento de Mercado</h3>
+  <table>
+    <thead><tr><th>Dimensão</th><th>Aproove</th><th>Ferramentas Atuais (WhatsApp + Drive)</th></tr></thead>
+    <tbody>
+      <tr><td>Rastreabilidade</td><td>100% rastreável, histórico por versão</td><td>Zero — mensagens se perdem</td></tr>
+      <tr><td>Aprovação</td><td>Fluxo estruturado com comentários</td><td>Informal, sem registro legal</td></tr>
+      <tr><td>Mockup</td><td>Preview simulando a rede real</td><td>Não existe</td></tr>
+      <tr><td>Publicação</td><td>Agendamento automático pós-aprovação</td><td>Manual, sujeito a erro humano</td></tr>
+      <tr><td>Visibilidade</td><td>Dashboard de status em tempo real</td><td>Nenhuma</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 02 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">02</span><h2>Problema e Solução</h2></div>
+
+  <h3>O Problema Real</h3>
+  <div class="two-col">
+    <div>
+      <h4>Como o processo funciona hoje</h4>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-dot">1</div>
+          <div class="flow-body"><div class="flow-label">Briefing por mensagem</div><div class="flow-desc">WhatsApp, e-mail, ligação — sem registro estruturado</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">2</div>
+          <div class="flow-body"><div class="flow-label">Arte enviada por Drive ou WeTransfer</div><div class="flow-desc">Sem versionamento, sem contexto vinculado</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">3</div>
+          <div class="flow-body"><div class="flow-label">Aprovação informal</div><div class="flow-desc">"Ok" no WhatsApp, print de tela, áudio de 2min</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">4</div>
+          <div class="flow-body"><div class="flow-label">Publicação manual</div><div class="flow-desc">Social media publica na memória — sem garantia de data/hora</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot" style="background:#8a1a1a">!</div>
+          <div class="flow-body"><div class="flow-label">Retrabalho e erro</div><div class="flow-desc">Versão errada publicada, cliente insatisfeito, agência perde tempo</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h4>Como o Aproove resolve</h4>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-dot">1</div>
+          <div class="flow-body"><div class="flow-label">Campanha estruturada</div><div class="flow-desc">Planejador define redes, formatos, datas e responsáveis</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">2</div>
+          <div class="flow-body"><div class="flow-label">Produção organizada</div><div class="flow-desc">Social media e designer têm tarefas claras e prazos</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">3</div>
+          <div class="flow-body"><div class="flow-label">Mockup automático</div><div class="flow-desc">Cliente vê o post exatamente como será publicado</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">4</div>
+          <div class="flow-body"><div class="flow-label">Aprovação registrada</div><div class="flow-desc">Clique no botão "Aprovar" — com data, hora e usuário</div></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot" style="background:#2d5a1e">✓</div>
+          <div class="flow-body"><div class="flow-label">Agendamento automático</div><div class="flow-desc">Aprovado → publicado na data certa, sem intervenção manual</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEÇÃO 03 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">03</span><h2>Usuários e Personas</h2></div>
+
+  <h3>Usuários Internos (Time de Marketing)</h3>
+  <table>
+    <thead><tr><th>Papel</th><th>Responsabilidade Principal</th><th>Ações no Aproove</th><th>Dor Principal</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Planejador</strong></td><td>Criar e estruturar campanhas</td><td>Nova campanha, definir redes/formatos/datas</td><td>Falta de visão consolidada do plano</td></tr>
+      <tr><td><strong>Social Media</strong></td><td>Produzir copies e textos</td><td>Preencher copy por peça e rede</td><td>Briefing chegando de forma incompleta</td></tr>
+      <tr><td><strong>Designer</strong></td><td>Criar artes e assets visuais</td><td>Upload de arte por peça/formato</td><td>Não saber qual versão o cliente aprovou</td></tr>
+      <tr><td><strong>Gestor de Marketing</strong></td><td>Acompanhar status geral</td><td>Dashboard, aprovação interna</td><td>Não ter visibilidade de gargalos</td></tr>
+      <tr><td><strong>Administrador</strong></td><td>Configurar conta e usuários</td><td>Gerenciar time, clientes, integrações</td><td>Controle de acesso e segurança</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Usuário Externo (Cliente Aprovador)</h3>
+  <div class="card">
+    <div class="card-title">Perfil do Cliente Aprovador</div>
+    <p>Gerente de Marketing, CEO ou responsável pela marca do lado do cliente. Não é técnico. Precisa de uma experiência simples: ver o post, aprovar ou comentar. Não tem acesso ao sistema interno.</p>
+    <br>
+    <p><strong>Jornada:</strong> Recebe link por e-mail → Abre página pública ou autenticada → Visualiza mockup → Aprova, solicita ajuste ou reprova → Recebe confirmação → Aguarda publicação.</p>
+  </div>
+
+  <h3>ICP — Perfil Ideal de Cliente (Comprador)</h3>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Agências de Marketing Digital</div>
+      <p>De 5 a 50 pessoas. Atende múltiplos clientes simultaneamente. Sofre com aprovações dispersas. Perde horas semanais em retrabalho. Já usa ferramentas como Monday, Notion ou Trello — mas nenhuma resolve o fluxo de aprovação de social media especificamente.</p>
+      <br>
+      <span class="badge badge-green">Comprador prioritário</span>
+    </div>
+    <div class="card">
+      <div class="card-title">Empresas com Equipe Interna de Marketing</div>
+      <p>Empresas médias com departamento de marketing próprio, que precisa aprovar conteúdo com diretoria, jurídico ou cliente interno. Necessita rastreabilidade e histórico para auditoria.</p>
+      <br>
+      <span class="badge badge-blue">Comprador secundário</span>
+    </div>
+  </div>
+</div>
+
+<!-- SEÇÃO 04 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">04</span><h2>Principais Redes Sociais no Brasil</h2></div>
+
+  <div class="network-grid">
+    <div class="net-card"><div class="net-icon">📸</div><div class="net-name">Instagram</div><div class="net-stat">1ª rede — maior engajamento</div></div>
+    <div class="net-card"><div class="net-icon">▶️</div><div class="net-name">YouTube</div><div class="net-stat">2ª em tempo de uso</div></div>
+    <div class="net-card"><div class="net-icon">🎵</div><div class="net-name">TikTok</div><div class="net-stat">Maior crescimento orgânico</div></div>
+    <div class="net-card"><div class="net-icon">💼</div><div class="net-name">LinkedIn</div><div class="net-stat">B2B obrigatório</div></div>
+    <div class="net-card"><div class="net-icon">🐦</div><div class="net-name">X / Twitter</div><div class="net-stat">Comunicação e notícias</div></div>
+    <div class="net-card"><div class="net-icon">👥</div><div class="net-name">Facebook</div><div class="net-stat">Anúncios + grupos</div></div>
+    <div class="net-card"><div class="net-icon">📌</div><div class="net-name">Pinterest</div><div class="net-stat">E-commerce + moda</div></div>
+    <div class="net-card"><div class="net-icon">⚡</div><div class="net-name">Kwai</div><div class="net-stat">Vídeos curtos — crescendo</div></div>
+  </div>
+
+  <h3>Formatos por Rede — Suportados no Aproove</h3>
+  <table>
+    <thead><tr><th>Rede</th><th>Formatos MVP</th><th>Formatos Fase 2</th></tr></thead>
+    <tbody>
+      <tr><td>Instagram</td><td>Post estático, Carrossel, Story, Reels</td><td>Collab, Guia</td></tr>
+      <tr><td>LinkedIn</td><td>Post texto + imagem, Carrossel (PDF), Vídeo</td><td>Newsletter, Artigo</td></tr>
+      <tr><td>TikTok</td><td>Vídeo vertical</td><td>Live, Dueto</td></tr>
+      <tr><td>Facebook</td><td>Post estático, Vídeo, Story</td><td>Evento, Grupo</td></tr>
+      <tr><td>X / Twitter</td><td>Tweet + imagem, Thread</td><td>Spaces</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 05 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">05</span><h2>Fluxos Completos do Produto</h2></div>
+
+  <h3>Fluxo 1 — Planejamento da Campanha</h3>
+  <p><strong>Ator:</strong> Planejador / Gestor de Marketing &nbsp;|&nbsp; <strong>Objetivo:</strong> Estruturar a campanha antes da produção iniciar.</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Criar nova campanha</div><div class="flow-desc">Nome, cliente associado, período (início/fim), objetivo geral</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Selecionar redes sociais</div><div class="flow-desc">Instagram, LinkedIn, TikTok, Facebook, X — múltipla seleção</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Definir formatos por rede</div><div class="flow-desc">Post estático, carrossel, story, reels, vídeo — por rede selecionada</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Definir objetivo do conteúdo</div><div class="flow-desc">Awareness, Engajamento, Geração de lead, Institucional, Comercial</div></div></div>
+    <div class="flow-step"><div class="flow-dot">5</div><div class="flow-body"><div class="flow-label">Atribuir responsáveis e datas</div><div class="flow-desc">Social media responsável + designer responsável + data de publicação por peça</div></div></div>
+    <div class="flow-step"><div class="flow-dot">6</div><div class="flow-body"><div class="flow-label">Salvar planejamento</div><div class="flow-desc">Sistema gera lista de ativos a produzir — campanha criada e rastreável</div></div></div>
+  </div>
+
+  <h3>Fluxo 2 — Produção de Conteúdo</h3>
+  <p><strong>Atores:</strong> Social Media + Designer &nbsp;|&nbsp; <strong>Objetivo:</strong> Transformar planejamento em ativos prontos para aprovação.</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Social Media recebe tarefa</div><div class="flow-desc">Notificação da peça atribuída — rede, formato, data e objetivo</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Preenchimento do copy</div><div class="flow-desc">Legenda, CTA, hashtags, texto alternativo — campo por campo</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Designer recebe briefing</div><div class="flow-desc">Vê o copy aprovado + instruções de arte vinculadas à peça</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Upload da arte</div><div class="flow-desc">Imagem ou vídeo conforme formato + dimensões exigidas pela rede</div></div></div>
+    <div class="flow-step"><div class="flow-dot">5</div><div class="flow-body"><div class="flow-label">Revisão interna</div><div class="flow-desc">Gestor de marketing valida internamente antes de enviar ao cliente</div></div></div>
+    <div class="flow-step"><div class="flow-dot">6</div><div class="flow-body"><div class="flow-label">Peça marcada como pronta para cliente</div><div class="flow-desc">Status atualizado — aguardando aprovação externa</div></div></div>
+  </div>
+
+  <h3>Fluxo 3 — Geração de Mockup</h3>
+  <p><strong>Ator:</strong> Sistema &nbsp;|&nbsp; <strong>Objetivo:</strong> Apresentar ao cliente a peça no contexto visual da rede social.</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Arte + copy vinculados</div><div class="flow-desc">Sistema detecta que ambos os elementos estão completos</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Geração automática do preview</div><div class="flow-desc">Sistema renderiza o post no frame da rede social correspondente</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Mockup apresentado ao cliente</div><div class="flow-desc">Layout da rede + legenda + CTA + sequência (carrossel) + data programada</div></div></div>
+  </div>
+
+  <h3>Fluxo 4 — Aprovação do Cliente</h3>
+  <p><strong>Ator:</strong> Cliente externo &nbsp;|&nbsp; <strong>Objetivo:</strong> Aprovar ou solicitar ajustes com registro formal.</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Cliente recebe link</div><div class="flow-desc">E-mail com link de aprovação — acesso público ou autenticado</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Visualização do mockup</div><div class="flow-desc">Tela simples e limpa — foco total na peça em contexto</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Decisão do cliente</div><div class="flow-desc">Três opções: Aprovar / Solicitar ajuste (com comentário) / Reprovar</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Registro automático</div><div class="flow-desc">Data, hora, usuário e comentário gravados — imutável</div></div></div>
+  </div>
+
+  <h3>Fluxo 5 — Ciclo de Revisão</h3>
+  <p><strong>Atores:</strong> Time interno + cliente &nbsp;|&nbsp; <strong>Objetivo:</strong> Garantir controle de versão no retrabalho.</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Peça retorna ao time</div><div class="flow-desc">Comentário do cliente vinculado à peça — visível para social media e designer</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Ajuste de copy e/ou arte</div><div class="flow-desc">Nova versão criada — versão anterior preservada no histórico</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Nova versão para o cliente</div><div class="flow-desc">Cliente pode comparar versão atual vs. versão anterior</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Ciclo se repete até aprovação</div><div class="flow-desc">Cada rodada de revisão é registrada — histórico completo disponível</div></div></div>
+  </div>
+
+  <h3>Fluxo 6 — Agendamento Automático</h3>
+  <p><strong>Ator:</strong> Sistema &nbsp;|&nbsp; <strong>Objetivo:</strong> Eliminar a etapa manual de publicação após aprovação.</p>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Cliente aprova</div><div class="flow-desc">Aprovação registrada com timestamp</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Sistema verifica data e rede</div><div class="flow-desc">Consulta a data programada no planejamento da campanha</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Peça entra na fila de agendamento</div><div class="flow-desc">Integração com API da rede social — publicação programada</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Status atualizado</div><div class="flow-desc">Aprovado → Agendado → Publicado — visível no dashboard</div></div></div>
+  </div>
+</div>
+
+<!-- SEÇÃO 06 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">06</span><h2>Status e Estados do Sistema</h2></div>
+  <p>Cada peça de conteúdo percorre os seguintes estados ao longo do fluxo:</p>
+  <div class="status-row">
+    <span class="badge badge-gray">Em Briefing</span>
+    <span class="badge badge-blue">Em Produção</span>
+    <span class="badge badge-amber">Revisão Interna</span>
+    <span class="badge badge-amber">Aguardando Cliente</span>
+    <span class="badge badge-red">Em Ajuste</span>
+    <span class="badge badge-green">Aprovado</span>
+    <span class="badge badge-blue">Agendado</span>
+    <span class="badge badge-green">Publicado</span>
+    <span class="badge badge-red">Reprovado</span>
+  </div>
+
+  <h3>Regras de Transição de Estado</h3>
+  <table>
+    <thead><tr><th>De</th><th>Para</th><th>Quem Aciona</th><th>Condição</th></tr></thead>
+    <tbody>
+      <tr><td>Em Briefing</td><td>Em Produção</td><td>Social Media / Designer</td><td>Início da produção registrado</td></tr>
+      <tr><td>Em Produção</td><td>Revisão Interna</td><td>Social Media ou Designer</td><td>Copy + Arte completos</td></tr>
+      <tr><td>Revisão Interna</td><td>Aguardando Cliente</td><td>Gestor de Marketing</td><td>Aprovação interna confirmada</td></tr>
+      <tr><td>Aguardando Cliente</td><td>Aprovado</td><td>Cliente externo</td><td>Clique em "Aprovar"</td></tr>
+      <tr><td>Aguardando Cliente</td><td>Em Ajuste</td><td>Cliente externo</td><td>Clique em "Solicitar Ajuste" + comentário</td></tr>
+      <tr><td>Em Ajuste</td><td>Aguardando Cliente</td><td>Time interno</td><td>Nova versão produzida</td></tr>
+      <tr><td>Aprovado</td><td>Agendado</td><td>Sistema (automático)</td><td>Data de publicação definida</td></tr>
+      <tr><td>Agendado</td><td>Publicado</td><td>Sistema (automático)</td><td>Data/hora de publicação atingida</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 07 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">07</span><h2>MVP — Escopo Definido</h2></div>
+
+  <div class="highlight-box">
+    <h4>Definição do MVP</h4>
+    <p>O MVP do Aproove é a versão mais enxuta que já gera valor comercial real: o cliente aprova por uma tela simples, a equipe interna rastreia status, e o post é agendado automaticamente. Tudo o que vai além disso é fase 2 ou visão futura.</p>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">✅ Essencial — MVP</div>
+      <ul class="clean">
+        <li>Cadastro de campanha</li>
+        <li>Seleção de redes e formatos</li>
+        <li>Upload de arte e copy</li>
+        <li>Mockup visual por rede</li>
+        <li>Portal de aprovação do cliente</li>
+        <li>Comentário em reprovação</li>
+        <li>Histórico de versões</li>
+        <li>Dashboard de status</li>
+        <li>Agendamento pós-aprovação</li>
+        <li>Notificação por e-mail</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🔵 Fase 2</div>
+      <ul class="clean">
+        <li>Integração direta com APIs de publicação</li>
+        <li>Geração de copy com IA</li>
+        <li>Calendário editorial visual</li>
+        <li>Relatórios de performance</li>
+        <li>Múltiplos clientes por conta</li>
+        <li>Comentários em thread</li>
+        <li>App mobile nativo</li>
+        <li>White-label para agências</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🔮 Visão Futura</div>
+      <ul class="clean">
+        <li>Gestão de campanhas pagas</li>
+        <li>CRM de relacionamento com cliente</li>
+        <li>BI e análise de resultados</li>
+        <li>Gestão de eventos e ativações</li>
+        <li>Módulo de proposta comercial</li>
+        <li>Plataforma de gestão para agência</li>
+        <li>Marketplace de designers</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SEÇÃO 08 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">08</span><h2>Wireframes Conceituais</h2></div>
+
+  <h3>Tela 1 — Dashboard Principal</h3>
+  <div class="card">
+    <div class="card-title">Objetivo da tela</div>
+    <p>Dar ao gestor visão gerencial imediata de todas as campanhas e gargalos ativos.</p>
+    <br>
+    <p><strong>Blocos:</strong> Barra lateral com navegação (Campanhas / Peças / Clientes / Configurações) · Header com nome da conta e usuário logado · KPIs: Total de peças ativas / Pendentes de aprovação / Em ajuste / Agendadas · Lista de campanhas ativas com barra de progresso por status · Atalho rápido para criar nova campanha.</p>
+    <br>
+    <p><strong>Ações disponíveis:</strong> Criar campanha · Filtrar por status · Filtrar por rede · Ver detalhes de campanha.</p>
+  </div>
+
+  <h3>Tela 2 — Nova Campanha</h3>
+  <div class="card">
+    <div class="card-title">Objetivo da tela</div>
+    <p>Criar uma nova campanha estruturada com todos os parâmetros necessários.</p>
+    <br>
+    <p><strong>Campos:</strong> Nome da campanha · Cliente · Data de início · Data de fim · Objetivo da campanha (dropdown) · Seleção de redes (checkboxes visuais com ícone de cada rede) · Para cada rede: seleção de formato(s) + data de publicação + responsável social media + responsável designer.</p>
+    <br>
+    <p><strong>Resultado:</strong> Campanha criada com lista de peças gerada automaticamente, cada uma com status "Em Briefing".</p>
+  </div>
+
+  <h3>Tela 3 — Detalhe da Peça (Produção)</h3>
+  <div class="card">
+    <div class="card-title">Objetivo da tela</div>
+    <p>Permitir que social media e designer completem a produção da peça.</p>
+    <br>
+    <p><strong>Campos:</strong> Rede social + formato (exibido) · Data de publicação · Status atual (badge) · Área de copy: legenda, CTA, hashtags · Upload de arte (drag & drop) · Pré-visualização da arte enviada · Botão de marcar como "Pronto para revisão interna".</p>
+  </div>
+
+  <h3>Tela 4 — Portal do Cliente (Aprovação)</h3>
+  <div class="card">
+    <div class="card-title">Objetivo da tela</div>
+    <p>Tela pública ou com login simples — experiência focada em aprovação, sem ruído.</p>
+    <br>
+    <p><strong>Blocos:</strong> Logo da agência (personalizado) · Nome da campanha + data de publicação · Mockup visual simulando a rede social (frame da rede + arte + copy) · Botões de ação: [Aprovar] [Solicitar Ajuste] · Campo de comentário (aparece se clicar em ajuste) · Histórico de versões anteriores (opcional no MVP).</p>
+    <br>
+    <p><strong>Regras:</strong> Após aprovação, botões desaparecem · Comentário é obrigatório para solicitar ajuste · Aprovação grava timestamp imutável.</p>
+  </div>
+
+  <h3>Tela 5 — Histórico de Versões</h3>
+  <div class="card">
+    <div class="card-title">Objetivo da tela</div>
+    <p>Permitir auditoria completa do ciclo de aprovação de uma peça.</p>
+    <br>
+    <p><strong>Blocos:</strong> Timeline vertical da peça · Por versão: número da versão + data + quem enviou + arte (thumbnail) + copy · Comentários do cliente por versão · Status de cada versão · Versão atual destacada.</p>
+  </div>
+</div>
+
+<!-- SEÇÃO 09 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">09</span><h2>Modelo de Negócio SaaS</h2></div>
+
+  <h3>Planos de Assinatura</h3>
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="price-head">
+        <div class="price-name">Starter</div>
+        <div class="price-val">R$ 197</div>
+        <div class="price-period">/mês · cobrado mensalmente</div>
+      </div>
+      <div class="price-body">
+        <div class="price-feat">3 usuários internos</div>
+        <div class="price-feat">1 cliente aprovador</div>
+        <div class="price-feat">10 campanhas/mês</div>
+        <div class="price-feat">50 peças/mês</div>
+        <div class="price-feat">5 GB armazenamento</div>
+        <div class="price-feat">Histórico 3 meses</div>
+        <div class="price-feat">Suporte por e-mail</div>
+      </div>
+    </div>
+    <div class="price-card">
+      <div class="price-head" style="background: var(--ink); color: var(--paper)">
+        <div class="price-name" style="color:rgba(255,255,255,0.5)">Profissional</div>
+        <div class="price-val">R$ 497</div>
+        <div class="price-period" style="color:rgba(255,255,255,0.4)">/mês · cobrado mensalmente</div>
+      </div>
+      <div class="price-body">
+        <div class="price-feat">10 usuários internos</div>
+        <div class="price-feat">5 clientes aprovadores</div>
+        <div class="price-feat">Campanhas ilimitadas</div>
+        <div class="price-feat">200 peças/mês</div>
+        <div class="price-feat">20 GB armazenamento</div>
+        <div class="price-feat">Histórico 12 meses</div>
+        <div class="price-feat">Agendamento automático</div>
+        <div class="price-feat">Suporte prioritário</div>
+      </div>
+    </div>
+    <div class="price-card">
+      <div class="price-head">
+        <div class="price-name">Agência</div>
+        <div class="price-val">R$ 997</div>
+        <div class="price-period">/mês · cobrado mensalmente</div>
+      </div>
+      <div class="price-body">
+        <div class="price-feat">Usuários ilimitados</div>
+        <div class="price-feat">Clientes ilimitados</div>
+        <div class="price-feat">Tudo ilimitado</div>
+        <div class="price-feat">60 GB armazenamento</div>
+        <div class="price-feat">Histórico 24 meses</div>
+        <div class="price-feat">White-label (logo)</div>
+        <div class="price-feat">API de integração</div>
+        <div class="price-feat">Onboarding dedicado</div>
+      </div>
+    </div>
+    <div class="price-card">
+      <div class="price-head">
+        <div class="price-name">Enterprise</div>
+        <div class="price-val">Sob consulta</div>
+        <div class="price-period">contrato anual</div>
+      </div>
+      <div class="price-body">
+        <div class="price-feat">SLA customizado</div>
+        <div class="price-feat">Armazenamento dedicado</div>
+        <div class="price-feat">SSO / Active Directory</div>
+        <div class="price-feat">Compliance LGPD avançado</div>
+        <div class="price-feat">Histórico indefinido</div>
+        <div class="price-feat">Suporte 24/7</div>
+        <div class="price-feat">Implantação assistida</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Expansão de Uso</h3>
+  <table>
+    <thead><tr><th>Recurso</th><th>Ao ultrapassar o limite</th><th>Custo adicional</th></tr></thead>
+    <tbody>
+      <tr><td>Armazenamento</td><td>Bloqueio de upload / aviso de upgrade</td><td>R$ 29/5 GB extras/mês</td></tr>
+      <tr><td>Peças por mês</td><td>Alerta + opção de upgrade de plano</td><td>Upgrade de plano</td></tr>
+      <tr><td>Usuários internos</td><td>Novo usuário bloqueia até upgrade</td><td>Upgrade de plano</td></tr>
+      <tr><td>Clientes aprovadores</td><td>Novo cliente bloqueia até upgrade</td><td>R$ 49/cliente extra/mês</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 10 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">10</span><h2>Engenharia Financeira</h2></div>
+
+  <h3>Custo Operacional Estimado por Cliente (Plano Profissional)</h3>
+  <div class="cost-row"><span class="cost-label">Armazenamento em nuvem (S3/GCS) — 20 GB</span><span class="cost-val">R$ 4–8/mês</span></div>
+  <div class="cost-row"><span class="cost-label">Banco de dados (RDS/Supabase)</span><span class="cost-val">R$ 3–6/mês</span></div>
+  <div class="cost-row"><span class="cost-label">Largura de banda (transferência de arquivos)</span><span class="cost-val">R$ 2–5/mês</span></div>
+  <div class="cost-row"><span class="cost-label">Processamento (geração de mockups/previews)</span><span class="cost-val">R$ 2–4/mês</span></div>
+  <div class="cost-row"><span class="cost-label">E-mail transacional (notificações)</span><span class="cost-val">R$ 1–2/mês</span></div>
+  <div class="cost-row"><span class="cost-label">Autenticação e sessão</span><span class="cost-val">R$ 1/mês</span></div>
+  <div class="cost-row" style="border-top: 2px solid var(--ink); margin-top: 4px;"><span class="cost-label" style="font-weight:700; color: var(--ink)">Total estimado de infra por cliente</span><span class="cost-val">R$ 13–26/mês</span></div>
+
+  <br>
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">Margem Bruta (Plano Profissional R$497)</div>
+      <p>Custo infra: R$ 26 (pior cenário)<br>Receita: R$ 497<br><strong>Margem bruta: ~95%</strong></p>
+    </div>
+    <div class="card">
+      <div class="card-title">Break-even Operacional</div>
+      <p>Custo fixo estimado: R$ 15.000/mês (infra + time mínimo)<br><strong>Break-even: ~30 clientes pagantes</strong></p>
+    </div>
+    <div class="card">
+      <div class="card-title">MRR Alvo Fase 1</div>
+      <p>50 clientes × ticket médio R$500<br><strong>= R$ 25.000/mês MRR</strong><br>ARR projetado: R$ 300.000</p>
+    </div>
+  </div>
+
+  <h3>Crescimento de Armazenamento por Cliente</h3>
+  <table>
+    <thead><tr><th>Mês</th><th>Peças acumuladas</th><th>Armazenamento estimado</th><th>Custo incremental</th></tr></thead>
+    <tbody>
+      <tr><td>Mês 1</td><td>50 peças</td><td>~2 GB</td><td>R$ 0,40</td></tr>
+      <tr><td>Mês 6</td><td>300 peças</td><td>~12 GB</td><td>R$ 2,40</td></tr>
+      <tr><td>Mês 12</td><td>600 peças</td><td>~24 GB</td><td>R$ 4,80</td></tr>
+      <tr><td>Mês 24</td><td>1.200 peças</td><td>~48 GB</td><td>R$ 9,60 → upgrade necessário</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 11 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">11</span><h2>Skills do Projeto Aproove</h2></div>
+  <p>As Skills são funções de trabalho especializadas que direcionam como o Claude deve operar em cada contexto do projeto.</p>
+
+  <div class="skill-grid">
+    <div class="skill-card"><div class="skill-num">01</div><div class="skill-name">Product Strategist</div><div class="skill-desc">Definir proposta de valor, recorte de mercado, diferencial competitivo e escopo do MVP. Ativado quando há decisões sobre o que construir, priorização ou posicionamento.</div></div>
+    <div class="skill-card"><div class="skill-num">02</div><div class="skill-name">UX Architect</div><div class="skill-desc">Desenhar jornadas, fluxos, wireframes e lógica de telas. Ativado em qualquer discussão sobre experiência do usuário, telas ou navegação.</div></div>
+    <div class="skill-card"><div class="skill-num">03</div><div class="skill-name">SaaS Business Designer</div><div class="skill-desc">Definir modelo de receita, planos, pricing, ICP e narrativa comercial. Ativado em discussões sobre modelo de negócio, monetização e vendas.</div></div>
+    <div class="skill-card"><div class="skill-num">04</div><div class="skill-name">Validation Advisor</div><div class="skill-desc">Criar planos de validação, hipóteses, roteiros de entrevista e estratégias de venda antes do desenvolvimento completo.</div></div>
+    <div class="skill-card"><div class="skill-num">05</div><div class="skill-name">Investor Pitch Builder</div><div class="skill-desc">Estruturar narrativa para investidores, pitch deck, tese de mercado e potencial de escala. Ativado para preparação de captação.</div></div>
+    <div class="skill-card"><div class="skill-num">06</div><div class="skill-name">App Launch Advisor</div><div class="skill-desc">Orientar registro nas lojas (App Store e Google Play), preparação de listagens, textos, keywords e checklist de publicação.</div></div>
+    <div class="skill-card"><div class="skill-num">07</div><div class="skill-name">MVP Scope Controller</div><div class="skill-desc">Filtro de escopo — separar o que entra agora do que deve ser adiado. Ativado quando o escopo começa a crescer além do MVP.</div></div>
+    <div class="skill-card"><div class="skill-num">08</div><div class="skill-name">Financial Engineer</div><div class="skill-desc">Dimensionar custos de infra, modelar pricing sustentável, calcular margens e projetar MRR/ARR. Ativado em decisões financeiras do produto.</div></div>
+  </div>
+</div>
+
+<!-- SEÇÃO 12 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">12</span><h2>Roadmap e Horizontes</h2></div>
+
+  <div class="horizon-grid">
+    <div class="h-card h1">
+      <div class="h-label">Horizonte 1 — MVP (0 a 6 meses)</div>
+      <div class="h-title">Plataforma de Aprovação de Conteúdo</div>
+      <ul class="h-list">
+        <li>Planejamento de campanhas</li>
+        <li>Upload de arte e copy por peça</li>
+        <li>Geração de mockup visual</li>
+        <li>Portal de aprovação do cliente</li>
+        <li>Histórico de versões</li>
+        <li>Agendamento automático</li>
+        <li>Dashboard de status</li>
+        <li>Lançamento App Store e Google Play</li>
+      </ul>
+    </div>
+    <div class="h-card h2">
+      <div class="h-label">Horizonte 2 — Expansão (6 a 18 meses)</div>
+      <div class="h-title">Plataforma de Operação de Marketing</div>
+      <ul class="h-list">
+        <li>Integrações diretas com APIs de redes sociais</li>
+        <li>Geração de copy assistida por IA</li>
+        <li>Calendário editorial visual</li>
+        <li>Relatórios de performance de publicações</li>
+        <li>White-label completo para agências</li>
+        <li>Módulo de briefing criativo</li>
+        <li>Comentários em thread (estilo Figma)</li>
+        <li>App mobile nativo iOS e Android</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Marcos Principais</h3>
+  <table>
+    <thead><tr><th>Marco</th><th>Prazo Estimado</th><th>Critério de Sucesso</th></tr></thead>
+    <tbody>
+      <tr><td>Protótipo navegável (Lovable/Figma)</td><td>Semana 1–2</td><td>Fluxo completo demonstrável</td></tr>
+      <tr><td>Demo para 10 agências</td><td>Semana 3–4</td><td>3 com interesse em pagar</td></tr>
+      <tr><td>MVP funcional (web)</td><td>Mês 2–3</td><td>Primeiro cliente pagante</td></tr>
+      <tr><td>Reserva de nome nas lojas</td><td>Mês 1</td><td>Nome "Aproove" reservado</td></tr>
+      <tr><td>10 clientes pagantes</td><td>Mês 4–5</td><td>MRR R$ 5.000+</td></tr>
+      <tr><td>Publicação nas lojas</td><td>Mês 6</td><td>App aprovado e disponível</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 13 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">13</span><h2>LGPD e Segurança</h2></div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">Dados Pessoais Coletados</div>
+      <ul class="clean">
+        <li>Nome e e-mail de usuários</li>
+        <li>Dados de acesso (login)</li>
+        <li>IP e logs de sessão</li>
+        <li>Arquivos de peças (imagens/vídeos)</li>
+        <li>Comentários e feedbacks</li>
+        <li>Registro de aprovações</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Obrigações LGPD</div>
+      <ul class="clean">
+        <li>Política de Privacidade clara</li>
+        <li>Termo de Uso por usuário</li>
+        <li>Consentimento explícito</li>
+        <li>Direito à exclusão de dados</li>
+        <li>Portabilidade de dados</li>
+        <li>DPO (Encarregado de Dados)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Medidas de Segurança</div>
+      <ul class="clean">
+        <li>Autenticação via JWT + OAuth</li>
+        <li>HTTPS obrigatório em todas as telas</li>
+        <li>Criptografia em repouso (AES-256)</li>
+        <li>Logs de auditoria por ação</li>
+        <li>Controle de acesso por papel (RBAC)</li>
+        <li>Backup automático diário</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <h4>Regra de Ouro — Aprovação como Registro Legal</h4>
+    <p>O registro de aprovação do cliente (timestamp + usuário + IP) deve ser tratado como um documento com valor probatório. Nunca pode ser editado, deletado ou sobrescrito após confirmação. Este é um diferencial competitivo e uma proteção legal para agências e seus clientes.</p>
+  </div>
+</div>
+
+<!-- SEÇÃO 14 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">14</span><h2>App Store e Google Play</h2></div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Apple Developer Account</div>
+      <p><strong>Passo 1:</strong> Acesse developer.apple.com · Clique em "Account" · Faça login com Apple ID ou crie um novo.</p>
+      <br>
+      <p><strong>Passo 2:</strong> Enroll como organização (requer CNPJ, DUNS Number da empresa · DUNS pode ser solicitado gratuitamente em dnb.com · Processo leva 5–14 dias úteis).</p>
+      <br>
+      <p><strong>Passo 3:</strong> Pague a anuidade de US$99/ano.</p>
+      <br>
+      <p><strong>Passo 4:</strong> No App Store Connect (appstoreconnect.apple.com), crie um novo app com o nome "Aproove", Bundle ID sugerido: com.aproove.app, Categoria: Business ou Productivity. Preencha descrição inicial e salve sem submeter para revisão.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Google Play Console</div>
+      <p><strong>Passo 1:</strong> Acesse play.google.com/console · Faça login com conta Google corporativa.</p>
+      <br>
+      <p><strong>Passo 2:</strong> Registre como organização (dados da empresa, endereço, CNPJ).</p>
+      <br>
+      <p><strong>Passo 3:</strong> Pague a taxa única de US$25.</p>
+      <br>
+      <p><strong>Passo 4:</strong> Crie novo aplicativo com nome "Aproove", Categoria: Business / Produtividade. Preencha a descrição inicial (curta e longa) e salve como rascunho sem publicar.</p>
+    </div>
+  </div>
+
+  <h3>Textos para Reserva nas Lojas</h3>
+  <div class="card">
+    <div class="card-title">Descrição Curta (80 caracteres)</div>
+    <p>Aprove conteúdos de marketing com facilidade. Sem WhatsApp, sem retrabalho.</p>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-title">Descrição Longa</div>
+    <p>O Aproove centraliza todo o fluxo de aprovação de conteúdo entre agências de marketing e seus clientes. Crie campanhas, organize peças por rede social, visualize mockups realistas e obtenha aprovações registradas — tudo em um único lugar.</p>
+    <br>
+    <p>Funcionalidades principais: planejamento de campanhas multiformato (Instagram, LinkedIn, TikTok, Facebook e mais) · Mockups visuais simulando o post final em cada rede · Portal de aprovação simples para o cliente · Histórico completo de versões · Agendamento automático pós-aprovação · Dashboard de status em tempo real.</p>
+    <br>
+    <p>Para agências de marketing digital e equipes de marketing que precisam de organização, rastreabilidade e velocidade na aprovação de conteúdo.</p>
+  </div>
+
+  <h3>Keywords Sugeridas</h3>
+  <p>aprovação de conteúdo · social media · marketing digital · agência de marketing · workflow · gestão de campanhas · planejamento de redes sociais · aprovar post · content approval · social media management</p>
+</div>
+
+<!-- SEÇÃO 15 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">15</span><h2>Estratégia de Validação Comercial</h2></div>
+
+  <h3>Hipóteses a Validar</h3>
+  <table>
+    <thead><tr><th>Hipótese</th><th>Como Validar</th><th>Sinal Positivo</th></tr></thead>
+    <tbody>
+      <tr><td>Agências perdem tempo com aprovação por WhatsApp</td><td>Entrevistas com gestores de agências</td><td>Mencionam o problema sem ser perguntadas</td></tr>
+      <tr><td>Cliente pagariam por uma solução</td><td>Apresentar preço durante a demo</td><td>Nenhuma objeção de preço no plano Starter</td></tr>
+      <tr><td>Mockup é diferencial decisivo</td><td>Demo com e sem mockup</td><td>Reação de "wow" no mockup</td></tr>
+      <tr><td>Aprovação registrada tem valor legal</td><td>Perguntar sobre disputas passadas</td><td>Já tiveram problema de aprovação informal</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Como Vender Antes de Construir</h3>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Landing page simples</div><div class="flow-desc">Uma página descrevendo o produto + botão "Quero ser beta tester" + captura de e-mail</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Demo com protótipo navegável</div><div class="flow-desc">Lovable ou Figma — fluxo completo sem backend real</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Oferta de "Fundador"</div><div class="flow-desc">R$ 97/mês com desconto vitalício para os primeiros 20 clientes — acesso antecipado</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Pre-venda com contrato</div><div class="flow-desc">Contrato simples de "acesso beta" — prova de intenção de compra antes de desenvolver tudo</div></div></div>
+    <div class="flow-step"><div class="flow-dot">5</div><div class="flow-body"><div class="flow-label">Meta de validação</div><div class="flow-desc">5 clientes pagantes = produto validado · desenvolver MVP completo</div></div></div>
+  </div>
+</div>
+
+<!-- SEÇÃO 16 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">16</span><h2>Narrativa para Investidores</h2></div>
+
+  <div class="highlight-box">
+    <h4>Tese de Investimento em Uma Frase</h4>
+    <p>O Aproove resolve um problema crônico e universal de agências de marketing: a aprovação de conteúdo acontece hoje por WhatsApp — e isso custa retrabalho, atrasos, erros de publicação e clientes insatisfeitos.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Tamanho do Mercado</div>
+      <p><strong>Brasil:</strong> ~15.000 agências de marketing digital ativas · ~100.000 empresas com equipe interna de marketing. Ticket médio estimado R$ 500/mês por cliente.</p>
+      <br>
+      <p><strong>TAM:</strong> R$ 1,1 bi/ano · <strong>SAM (agências):</strong> R$ 90 mi/ano · <strong>SOM (5% SAM):</strong> R$ 4,5 mi/ano em 3 anos.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Diferencial Competitivo</div>
+      <ul class="clean">
+        <li>Único foco em fluxo de aprovação com mockup</li>
+        <li>Registro legal de aprovação (timestamp + IP)</li>
+        <li>Experiência radicalmente simples para o cliente</li>
+        <li>Agendamento automático pós-aprovação</li>
+        <li>Sem curva de aprendizado para cliente final</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Riscos e Mitigações</h3>
+  <table class="risk-table">
+    <thead><tr><th>Risco</th><th>Probabilidade</th><th>Mitigação</th></tr></thead>
+    <tbody>
+      <tr><td>Concorrente grande copia feature</td><td>Média</td><td>Velocidade de execução + foco exclusivo no nicho</td></tr>
+      <tr><td>Custo de armazenamento supera receita</td><td>Baixa</td><td>Limites rígidos por plano + cobrança por excesso</td></tr>
+      <tr><td>Baixa adoção pelo cliente final</td><td>Média</td><td>Tela de aprovação ultrassimples + link sem login</td></tr>
+      <tr><td>Dificuldade de integração com APIs de redes</td><td>Alta (Fase 2)</td><td>MVP sem integração real — agendamento manual no início</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEÇÃO 17 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">17</span><h2>Prompt Completo para o Replit</h2></div>
+
+  <p>Cole o prompt abaixo integralmente no Replit (ou ferramenta no-code equivalente) para gerar o MVP do Aproove em inglês. O Claude irá produzir a interface em <strong>português do Brasil</strong> como especificado no prompt.</p>
+
+  <div class="replit-box">You are a senior full-stack developer and UI/UX designer tasked with building the MVP of "Aproove" — a B2B SaaS platform for social media content approval workflow management.
+
+IMPORTANT: All user interface text, labels, buttons, messages, and content must be written in Brazilian Portuguese (pt-BR).
+
+---
+
+PROJECT OVERVIEW
+Aproove centralizes the content approval flow between marketing teams and their clients. The core problem it solves: today, content approvals happen via WhatsApp, email, and PDFs — causing rework, delays, misalignment, and publication errors.
+
+---
+
+TECH STACK
+- Frontend: React + TypeScript + Tailwind CSS
+- Backend: Node.js + Express (or Next.js API routes)
+- Database: Supabase (PostgreSQL) or Firebase
+- Storage: Supabase Storage or Cloudinary (for image/video uploads)
+- Auth: Supabase Auth or Clerk
+- Deployment: Replit (web)
+
+---
+
+USER ROLES
+1. Internal Team (authenticated):
+   - Planner: creates campaigns, defines networks/formats/dates
+   - Social Media: writes copy (caption, CTA, hashtags) per piece
+   - Designer: uploads artwork per piece
+   - Marketing Manager: internal review and approval
+   - Admin: manages users, clients, integrations
+
+2. External User (client):
+   - Client Approver: accesses via public link or simple login, views mockup, approves or requests changes
+
+---
+
+CORE FEATURES TO BUILD (MVP SCOPE)
+
+1. CAMPAIGN PLANNING
+   Screen: "Nova Campanha" (New Campaign)
+   Fields:
+   - Campaign name
+   - Associated client
+   - Start and end date
+   - Campaign objective (dropdown: Awareness / Engagement / Lead Generation / Institutional / Commercial)
+   - Social networks (multi-select checkboxes with icons): Instagram, LinkedIn, TikTok, Facebook, X/Twitter
+   - For each selected network: format(s) + publication date + assigned social media user + assigned designer
+   
+   On save: system auto-generates a list of content pieces with status "Em Briefing" (In Briefing)
+
+2. CONTENT PRODUCTION
+   Screen: "Detalhe da Peça" (Content Piece Detail)
+   Fields:
+   - Social network + format (displayed, not editable)
+   - Publication date
+   - Status badge
+   - Copy area: caption, CTA, hashtags (filled by Social Media role)
+   - Artwork upload (drag & drop, image or video) — filled by Designer role
+   - Artwork preview after upload
+   - Button: "Marcar como pronto para revisão" (Mark as ready for review)
+
+3. VISUAL MOCKUP GENERATION
+   When both copy and artwork are complete, the system renders a visual mockup simulating the post as it would appear on the social network:
+   - Instagram: white phone frame, profile picture placeholder, username placeholder, image, caption, like/comment bar
+   - LinkedIn: feed-style card with profile photo, name, text, image
+   - TikTok: vertical dark phone frame with overlay text, like/share buttons
+   - Facebook: standard feed post card
+   - X/Twitter: tweet card with text and image
+
+4. CLIENT APPROVAL PORTAL
+   Screen: public or lightly-authenticated page accessible via unique link
+   Layout:
+   - Agency logo (customizable) at top
+   - Campaign name + scheduled publication date
+   - Visual mockup (network-specific frame)
+   - Caption text displayed below
+   - Three action buttons: [✓ Aprovar] [✎ Solicitar Ajuste] [✗ Reprovar]
+   - Comment field (mandatory, appears when "Solicitar Ajuste" is clicked)
+   - After approval: buttons disappear, confirmation message shown
+   
+   On approval: timestamp, user identifier, and IP are recorded (immutable)
+   On revision request: comment is attached to the piece; status changes to "Em Ajuste"
+
+5. VERSION HISTORY
+   Screen: "Histórico de Versões" (Version History)
+   - Vertical timeline per content piece
+   - Each version shows: version number, date, who submitted, artwork thumbnail, copy text, client's comment (if any), status badge
+   - Current version highlighted
+
+6. AUTOMATIC SCHEDULING
+   Logic (backend):
+   - On client approval, system reads the scheduled publication date from campaign planning
+   - Status updates automatically: Aprovado → Agendado
+   - (For MVP: scheduling confirmation is visual only — no real API integration with social networks yet)
+   - Dashboard reflects: Agendado → Publicado (manually confirmed by manager)
+
+7. MAIN DASHBOARD
+   Screen: "Dashboard"
+   KPI cards:
+   - Total active pieces
+   - Pending client approval
+   - In revision (Em Ajuste)
+   - Scheduled
+   - Published
+   
+   Campaign list with:
+   - Campaign name
+   - Client
+   - Progress bar (pieces by status)
+   - Quick action button
+   
+   Quick-access button: "Nova Campanha" (New Campaign)
+
+---
+
+STATUS SYSTEM (use colored badges in pt-BR)
+- "Em Briefing" — gray
+- "Em Produção" — blue
+- "Revisão Interna" — amber
+- "Aguardando Cliente" — amber
+- "Em Ajuste" — red
+- "Aprovado" — green
+- "Agendado" — blue
+- "Publicado" — green
+- "Reprovado" — red
+
+---
+
+UI/UX DESIGN DIRECTION
+- Design language: clean, modern, B2B SaaS — similar to Notion, Linear, or Figma
+- Color palette: neutral background (off-white #FAF9F5), dark ink (#1A1A18), minimal color accents only for status badges
+- Typography: DM Sans or Lato — clean, readable, professional
+- Layout: sidebar navigation (left) + main content area (right)
+- Components: cards, status badges, progress bars, drag-and-drop upload areas, modal dialogs
+- Mobile-responsive is a bonus, not required for MVP
+
+---
+
+NAVIGATION STRUCTURE (sidebar)
+- Dashboard (Painel)
+- Campanhas (Campaigns)
+- Peças (Content Pieces)
+- Clientes (Clients)
+- Configurações (Settings)
+
+---
+
+DATA MODELS (simplified)
+
+Campaign:
+- id, name, client_id, start_date, end_date, objective, networks[], status, created_by, created_at
+
+ContentPiece:
+- id, campaign_id, network, format, publication_date, assigned_social_media, assigned_designer, copy_caption, copy_cta, copy_hashtags, artwork_url, status, approval_timestamp, approval_user, approval_ip, created_at
+
+ContentVersion:
+- id, piece_id, version_number, artwork_url, copy_caption, copy_cta, copy_hashtags, status, client_comment, submitted_at, submitted_by
+
+Client:
+- id, name, logo_url, contact_email, approval_link_token
+
+User:
+- id, name, email, role (planner | social_media | designer | manager | admin), account_id
+
+---
+
+SECURITY AND LGPD COMPLIANCE
+- All routes must be authenticated (except client approval portal)
+- Role-based access control (RBAC): users only see and edit what their role permits
+- Approval records are immutable — no update or delete allowed after confirmation
+- All file uploads: validate file type and size before storing
+- Use HTTPS everywhere
+- Log all approval actions with timestamp, user ID, and IP address
+
+---
+
+FINANCIAL CONSIDERATIONS (architecture decisions)
+- Implement file size limits per upload (images: max 10MB, videos: max 100MB)
+- Store files in cloud object storage (not local filesystem)
+- Track storage usage per account for future billing enforcement
+- Implement soft limits with warning notifications (80% of plan limit)
+- Hard limits that block uploads at 100% of plan storage
+
+---
+
+DELIVERABLES
+Build a fully functional web application with:
+1. Authentication system (login/logout, role assignment)
+2. All 7 screens described above, fully functional in Brazilian Portuguese
+3. Database schema with seed data for demo purposes
+4. Client approval portal accessible via unique shareable link
+5. File upload and cloud storage integration
+6. Status workflow system with transitions
+7. Version history per content piece
+8. Responsive sidebar navigation
+
+Include demo seed data:
+- 1 demo agency account
+- 3 demo users (manager, social media, designer)
+- 1 demo client ("Empresa Demo")
+- 2 demo campaigns with pieces in different statuses
+- Example mockups for Instagram and LinkedIn
+
+---
+
+START BY:
+1. Setting up the project structure
+2. Creating the database schema
+3. Building the authentication system
+4. Building the Dashboard screen
+5. Building the Campaign creation screen
+6. Building the Content Piece detail screen with mockup preview
+7. Building the Client Approval Portal (public page)
+8. Connecting all flows end-to-end
+
+The final product should be a convincing, demonstrable MVP that can be shown to potential clients and investors. Prioritize working functionality over visual polish, but maintain a clean, professional B2B SaaS aesthetic throughout.
+
+All UI text, labels, error messages, success messages, placeholders, and navigation items must be in Brazilian Portuguese (pt-BR).</div>
+</div>
+
+<!-- SEÇÃO 18 -->
+<div class="section">
+  <div class="section-header"><span class="section-num">18</span><h2>Próximas Ações — Sequência Operacional</h2></div>
+
+  <div class="flow">
+    <div class="flow-step"><div class="flow-dot">1</div><div class="flow-body"><div class="flow-label">Agora — Prototipar no Lovable ou Figma</div><div class="flow-desc">Usar os wireframes desta documentação para criar o protótipo navegável. Foco: Dashboard, Nova Campanha, Portal do Cliente.</div></div></div>
+    <div class="flow-step"><div class="flow-dot">2</div><div class="flow-body"><div class="flow-label">Semana 1 — Criar contas nas lojas</div><div class="flow-desc">Apple Developer + Google Play Console. Reservar o nome "Aproove". Preencher descrição inicial. Não submeter o app ainda.</div></div></div>
+    <div class="flow-step"><div class="flow-dot">3</div><div class="flow-body"><div class="flow-label">Semana 1-2 — Rodar demos com agências</div><div class="flow-desc">10 demos com gestores de agências usando o protótipo. Validar hipóteses. Coletar feedback estruturado.</div></div></div>
+    <div class="flow-step"><div class="flow-dot">4</div><div class="flow-body"><div class="flow-label">Semana 2-3 — Iniciar construção no Replit</div><div class="flow-desc">Usar o prompt da Seção 17 para iniciar o MVP. Foco em fluxo de aprovação funcional primeiro.</div></div></div>
+    <div class="flow-step"><div class="flow-dot">5</div><div class="flow-body"><div class="flow-label">Mês 2 — Primeiro cliente pagante</div><div class="flow-desc">Oferta de Fundador (R$97/mês) para os primeiros 5 clientes. Contrato simples. Acesso beta com suporte próximo.</div></div></div>
+    <div class="flow-step"><div class="flow-dot">6</div><div class="flow-body"><div class="flow-label">Mês 3 — Ajustar com feedback real</div><div class="flow-desc">Iterar o produto com base no uso real dos primeiros clientes pagantes. Priorizar os 3 maiores problemas encontrados.</div></div></div>
+    <div class="flow-step"><div class="flow-dot" style="background:#2d5a1e">★</div><div class="flow-body"><div class="flow-label">Mês 6 — Publicar nas lojas + pitch para investidores</div><div class="flow-desc">App Store + Google Play + narrativa validada com MRR real. Base para captação de investimento semente.</div></div></div>
+  </div>
+
+  <div class="highlight-box">
+    <h4>Lembrete Estratégico</h4>
+    <p>O problema do Aproove não é tecnológico — é de distribuição e validação. O produto mais simples que já gera valor real para uma agência de marketing é suficiente para começar a vender. Construa o mínimo, venda primeiro, melhore depois.</p>
+  </div>
+</div>
+
+</div><!-- /doc-body -->
+
+<div style="background: var(--paper3); border-top: 1px solid var(--rule); padding: 32px 64px; text-align: center;">
+  <p style="font-size: 11px; color: var(--ink3);">Aproove — Documento Técnico Mestre v1.0 · Confidencial · Março 2026</p>
+  <p style="font-size: 11px; color: var(--ink3); margin-top: 4px;">Construído com Claude.ai · Projeto em desenvolvimento ativo</p>
+</div>
+
+</body>
+</html>

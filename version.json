@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "updated_at": "2026-03-18",
+  "history": [
+    {
+      "version": "0.0.1",
+      "date": "2026-03-18",
+      "notes": "Estrutura inicial do projeto — DOCUMENTACAO, ambientes produção e teste criados"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# ═══════════════════════════════════════════════
+# APROOVE — .gitignore
+# ═══════════════════════════════════════════════
+
+# Variáveis de ambiente (NUNCA subir para o GitHub)
+.env
+.env.local
+.env.*.local
+
+# Dependências Node.js (quando instalar)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Dados privados do BBrain (ideias e sessões pessoais)
+# ⚠️ Remova estas linhas se quiser versionar seus dados
+ideas.json
+sessions.json
+
+# Claude Code (configuração interna da ferramenta)
+.claude/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs e editores
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Build / temporários
+dist/
+build/
+.cache/
+*.log

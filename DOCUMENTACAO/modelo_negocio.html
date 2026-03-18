@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aproove — Modelo de Negócio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111110; --ink2: #4a4a47; --ink3: #9a9a96;
+  --paper: #faf9f6; --paper2: #f2f1ec; --paper3: #e8e7e0;
+  --line: rgba(17,17,16,0.08); --line2: rgba(17,17,16,0.15);
+  --green: #2a5f2a; --green-bg: #edf5ed; --green-bd: rgba(42,95,42,.2);
+  --amber: #7a4a0a; --amber-bg: #fdf2e2; --amber-bd: rgba(122,74,10,.2);
+  --blue: #0d4a8a; --blue-bg: #e8f0fb; --blue-bd: rgba(13,74,138,.2);
+  --red: #8a1a1a; --red-bg: #fbeaea; --red-bd: rgba(138,26,26,.2);
+  --purple: #4a1d7a; --purple-bg: #f3eefb;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.65; }
+
+.doc-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,249,246,0.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line2); padding: 0 2rem; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.doc-nav-brand { font-size: 13px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; gap: 8px; }
+.doc-nav-brand .mark { width: 22px; height: 22px; background: var(--ink); border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; }
+.doc-nav-brand .mark svg { width: 12px; height: 12px; }
+.doc-nav-links { display: flex; gap: 1.5rem; }
+.doc-nav-links a { font-size: 12px; color: var(--ink3); text-decoration: none; transition: color .15s; }
+.doc-nav-links a:hover, .doc-nav-links a.active { color: var(--ink); }
+.doc-badge { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; background: var(--paper3); color: var(--ink2); padding: 3px 8px; border-radius: 4px; }
+
+.page { max-width: 860px; margin: 0 auto; padding: 80px 2rem 6rem; }
+
+.cover { padding: 3rem 0 2.5rem; border-bottom: 1px solid var(--line); margin-bottom: 3rem; }
+.cover-tag { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+.cover-title { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; margin-bottom: .75rem; }
+.cover-sub { font-size: 16px; color: var(--ink2); font-weight: 300; max-width: 560px; line-height: 1.6; margin-bottom: 1.5rem; }
+.cover-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.cover-meta-item { font-size: 11px; color: var(--ink3); }
+.cover-meta-item strong { color: var(--ink2); font-weight: 500; }
+
+.section { margin-bottom: 3.5rem; }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid var(--line); }
+.section-title { font-size: 22px; font-weight: 600; letter-spacing: -.02em; margin-bottom: .75rem; }
+.section-body { color: var(--ink2); max-width: 680px; }
+.section-body p { margin-bottom: .75rem; }
+
+/* PITCH STATEMENT */
+.pitch-statement { padding: 2rem 2.5rem; background: var(--ink); color: var(--paper); border-radius: 14px; margin: 1.5rem 0; }
+.pitch-statement p { font-size: 18px; line-height: 1.6; font-weight: 300; }
+.pitch-statement strong { font-weight: 600; }
+
+/* METRICS GRID */
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.metric-card { padding: 1.25rem; background: var(--paper2); border: 1px solid var(--line); border-radius: 12px; }
+.metric-card .m-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem; }
+.metric-card .m-value { font-size: 22px; font-weight: 700; font-family: 'DM Mono', monospace; letter-spacing: -.02em; margin-bottom: .25rem; }
+.metric-card .m-desc { font-size: 11px; color: var(--ink2); line-height: 1.4; }
+.metric-card.highlight-metric { background: var(--green-bg); border-color: var(--green-bd); }
+.metric-card.highlight-metric .m-value { color: var(--green); }
+
+/* PLANS GRID */
+.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.plan-card { padding: 1.5rem; border-radius: 14px; border: 1px solid var(--line); background: var(--paper2); }
+.plan-card.featured { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.plan-name { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .75rem; }
+.plan-card.featured .plan-name { color: rgba(255,255,255,.5); }
+.plan-card:not(.featured) .plan-name { color: var(--ink3); }
+.plan-price { font-size: 32px; font-weight: 700; font-family: 'DM Mono', monospace; letter-spacing: -.03em; margin-bottom: .25rem; }
+.plan-period { font-size: 11px; color: var(--ink3); margin-bottom: 1.25rem; }
+.plan-card.featured .plan-period { color: rgba(255,255,255,.4); }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+.plan-features li { font-size: 12px; display: flex; align-items: flex-start; gap: .5rem; }
+.plan-card.featured .plan-features li { color: rgba(255,255,255,.75); }
+.plan-card:not(.featured) .plan-features li { color: var(--ink2); }
+.plan-features li::before { content: '—'; flex-shrink: 0; color: var(--ink3); }
+.plan-card.featured .plan-features li::before { color: rgba(255,255,255,.3); }
+
+/* PROJECTIONS TABLE */
+.proj-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 13px; }
+.proj-table thead th { padding: .5rem .75rem; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); border-bottom: 1px solid var(--line2); }
+.proj-table thead th:not(:first-child) { text-align: right; }
+.proj-table tbody td { padding: .75rem; border-bottom: 1px solid var(--line); }
+.proj-table tbody td:not(:first-child) { text-align: right; font-family: 'DM Mono', monospace; font-size: 12px; }
+.proj-table .milestone td { background: var(--green-bg); font-weight: 600; color: var(--green); }
+.proj-table .milestone td:first-child { border-left: 2px solid var(--green); padding-left: .75rem; }
+
+/* HIGHLIGHT */
+.highlight { background: var(--paper2); border: 1px solid var(--line2); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+.highlight.green { background: var(--green-bg); border-color: var(--green-bd); }
+.highlight.amber { background: var(--amber-bg); border-color: var(--amber-bd); }
+.highlight.blue { background: var(--blue-bg); border-color: var(--blue-bd); }
+.highlight.red { background: var(--red-bg); border-color: var(--red-bd); }
+.highlight-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+.highlight.green .highlight-label { color: var(--green); }
+.highlight.amber .highlight-label { color: var(--amber); }
+.highlight.blue .highlight-label { color: var(--blue); }
+.highlight.red .highlight-label { color: var(--red); }
+.highlight-body { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.highlight-body strong { color: var(--ink); }
+
+/* BLIND SPOTS */
+.blind-list { display: flex; flex-direction: column; gap: .75rem; margin: 1.5rem 0; }
+.blind-item { padding: 1rem 1.25rem; background: var(--amber-bg); border: 1px solid var(--amber-bd); border-radius: 10px; }
+.blind-item h4 { font-size: 13px; font-weight: 600; color: var(--amber); margin-bottom: .35rem; }
+.blind-item p { font-size: 12px; color: var(--ink2); }
+
+/* MVP VS MSP */
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0; }
+.comp-card { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--line); }
+.comp-card.mvp { background: var(--blue-bg); border-color: var(--blue-bd); }
+.comp-card.msp { background: var(--green-bg); border-color: var(--green-bd); }
+.comp-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .75rem; }
+.comp-card.mvp .comp-title { color: var(--blue); }
+.comp-card.msp .comp-title { color: var(--green); }
+.comp-list { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+.comp-list li { font-size: 12px; color: var(--ink2); padding-left: .75rem; position: relative; }
+.comp-list li::before { content: '·'; position: absolute; left: 0; color: var(--ink3); }
+
+/* TAM SAM SOM */
+.market-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; }
+.market-card { padding: 1.25rem; border-radius: 12px; border: 1px solid var(--line); text-align: center; }
+.market-card:nth-child(1) { background: var(--paper2); }
+.market-card:nth-child(2) { background: var(--blue-bg); border-color: var(--blue-bd); }
+.market-card:nth-child(3) { background: var(--green-bg); border-color: var(--green-bd); }
+.market-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem; }
+.market-value { font-size: 26px; font-weight: 700; font-family: 'DM Mono', monospace; letter-spacing: -.02em; margin-bottom: .35rem; }
+.market-desc { font-size: 11px; color: var(--ink2); line-height: 1.4; }
+
+.doc-footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.doc-footer-left { font-size: 11px; color: var(--ink3); }
+.doc-footer-right { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+@media (max-width: 700px) {
+  .metrics-grid { grid-template-columns: repeat(2,1fr); }
+  .plans-grid, .comparison, .market-grid { grid-template-columns: 1fr; }
+  .cover-title { font-size: 28px; }
+  .doc-nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="doc-nav">
+  <div class="doc-nav-brand">
+    <span class="mark"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    Aproove
+  </div>
+  <nav class="doc-nav-links">
+    <a href="conceito.html">Conceito</a>
+    <a href="investimento.html">Investimento</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="modelo_negocio.html" class="active">Modelo de Negócio</a>
+  </nav>
+  <span class="doc-badge">DOCUMENTAÇÃO INTERNA</span>
+</nav>
+
+<main class="page">
+
+  <div class="cover">
+    <div class="cover-tag">Modelo de Negócio · Pitch para Investidores · v1.0</div>
+    <h1 class="cover-title">Modelo de Negócio</h1>
+    <p class="cover-sub">Por que o Aproove é um negócio sustentável, como ele cresce e o que é necessário para chegar lá.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>Fase</strong> · Proto-produto</div>
+      <div class="cover-meta-item"><strong>Modelo</strong> · SaaS B2B recorrente</div>
+      <div class="cover-meta-item"><strong>Mercado</strong> · Brasil (expansão LATAM)</div>
+      <div class="cover-meta-item"><strong>Atualizado</strong> · Março 2026</div>
+    </div>
+  </div>
+
+  <!-- PITCH STATEMENT -->
+  <div class="section">
+    <div class="section-label">O Pitch</div>
+    <div class="pitch-statement">
+      <p><strong>Aproove</strong> é o sistema de aprovação de conteúdo para agências de marketing que cansaram de perder tempo com WhatsApp, e-mails e PDFs. Centralizamos todo o fluxo de briefing à publicação em uma plataforma profissional, rastreável e que o cliente <strong>realmente usa</strong>.</p>
+    </div>
+  </div>
+
+  <!-- O MERCADO -->
+  <div class="section">
+    <div class="section-label">01 · O Mercado</div>
+    <h2 class="section-title">Um problema universal com mercado endereçável claro</h2>
+    <div class="market-grid">
+      <div class="market-card">
+        <div class="market-label">TAM — Mercado Total</div>
+        <div class="market-value">R$ 2,4B</div>
+        <div class="market-desc">Total gasto por agências brasileiras em ferramentas de gestão e produção de conteúdo/ano</div>
+      </div>
+      <div class="market-card">
+        <div class="market-label">SAM — Mercado Endereçável</div>
+        <div class="market-value">R$ 380M</div>
+        <div class="market-desc">Agências com 3–50 clientes ativos que ainda usam processos manuais de aprovação</div>
+      </div>
+      <div class="market-card">
+        <div class="market-label">SOM — Alvo Realista (Ano 2)</div>
+        <div class="market-value">R$ 4,8M</div>
+        <div class="market-desc">400 agências × plano Pro médio de R$ 1.000/mês (blended)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODELO DE RECEITA -->
+  <div class="section">
+    <div class="section-label">02 · Modelo de Receita</div>
+    <h2 class="section-title">SaaS recorrente com upsell por volume</h2>
+    <div class="section-body">
+      <p>Receita 100% recorrente. A agência paga mensalmente pelo acesso à plataforma. O cliente dela acessa gratuitamente via link único — o que é um vetor de distribuição, não um custo.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">R$ 297</div>
+        <div class="plan-period">/mês · cobrado mensalmente</div>
+        <ul class="plan-features">
+          <li>Até 3 clientes ativos</li>
+          <li>10 campanhas/mês</li>
+          <li>3 usuários internos</li>
+          <li>5 GB de storage</li>
+          <li>Portal de aprovação básico</li>
+          <li>Histórico 3 meses</li>
+        </ul>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">R$ 697</div>
+        <div class="plan-period">/mês · cobrado mensalmente</div>
+        <ul class="plan-features">
+          <li>Clientes ilimitados</li>
+          <li>Campanhas ilimitadas</li>
+          <li>10 usuários internos</li>
+          <li>50 GB de storage</li>
+          <li>Mockup avançado + todas as redes</li>
+          <li>Relatórios básicos</li>
+          <li>Notificações por e-mail</li>
+          <li>Histórico 12 meses</li>
+        </ul>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">R$ 1.497</div>
+        <div class="plan-period">/mês · cobrado mensalmente</div>
+        <ul class="plan-features">
+          <li>Tudo do Pro</li>
+          <li>Usuários ilimitados</li>
+          <li>200 GB de storage</li>
+          <li>White-label (logo/domínio próprio)</li>
+          <li>Relatórios avançados PDF</li>
+          <li>API de integração</li>
+          <li>Suporte prioritário</li>
+          <li>SLA garantido</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÉTRICAS-CHAVE -->
+  <div class="section">
+    <div class="section-label">03 · Métricas-chave</div>
+    <h2 class="section-title">Os números que sustentam o negócio</h2>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="m-label">CAC alvo</div>
+        <div class="m-value">R$400</div>
+        <div class="m-desc">Custo de aquisição por cliente. Mix: tráfego pago + SEO + indicação.</div>
+      </div>
+      <div class="metric-card highlight-metric">
+        <div class="m-label">LTV alvo</div>
+        <div class="m-value">R$12.600</div>
+        <div class="m-desc">18 meses médios no plano Pro (R$697/mês). Upsell aumenta esse número.</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">LTV / CAC</div>
+        <div class="m-value">31,5×</div>
+        <div class="m-desc">Meta: acima de 3×. Projeção conservadora já está bem acima do threshold saudável.</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">Churn alvo</div>
+        <div class="m-value">&lt; 3%</div>
+        <div class="m-desc">Mensal. Produto com alta stickiness: agência e cliente ficam presos pelo histórico.</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">MRR break-even</div>
+        <div class="m-value">R$14k</div>
+        <div class="m-desc">Aproximadamente 46 clientes Pro ou 20 clientes Enterprise. Meta: mês 6 pós-launch.</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">ROAS alvo (Ads)</div>
+        <div class="m-value">4:1</div>
+        <div class="m-desc">R$4 em LTV para cada R$1 investido em tráfego pago.</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">Payback period</div>
+        <div class="m-value">&lt;1 mês</div>
+        <div class="m-desc">Com CAC R$400 e MRR R$697, o cliente paga seu custo de aquisição no primeiro mês.</div>
+      </div>
+      <div class="metric-card highlight-metric">
+        <div class="m-label">ARR meta Ano 1</div>
+        <div class="m-value">R$840k</div>
+        <div class="m-desc">100 clientes ao final do primeiro ano, ticket médio R$700/mês.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJEÇÕES DE RECEITA -->
+  <div class="section">
+    <div class="section-label">04 · Projeções de Receita</div>
+    <h2 class="section-title">Cenário conservador — 24 meses</h2>
+    <div class="section-body">
+      <p>Projeção baseada em crescimento orgânico + tráfego pago. Sem investimento externo, apenas reinvestimento das primeiras receitas.</p>
+    </div>
+
+    <table class="proj-table">
+      <thead>
+        <tr>
+          <th>Período</th>
+          <th>Clientes ativos</th>
+          <th>MRR</th>
+          <th>ARR (anualizado)</th>
+          <th>Burn mensal</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Mês 1</td><td>5</td><td>R$ 3.485</td><td>R$ 41.820</td><td>R$ 13.675</td><td style="color:var(--red)">–R$ 10.190</td></tr>
+        <tr><td>Mês 2</td><td>12</td><td>R$ 8.364</td><td>R$ 100.368</td><td>R$ 13.675</td><td style="color:var(--red)">–R$ 5.311</td></tr>
+        <tr><td>Mês 3</td><td>22</td><td>R$ 15.334</td><td>R$ 184.008</td><td>R$ 13.675</td><td style="color:var(--green)">+R$ 1.659</td></tr>
+        <tr class="milestone"><td>Mês 4 ✓</td><td>35</td><td>R$ 24.395</td><td>R$ 292.740</td><td>R$ 13.675</td><td>Break-even</td></tr>
+        <tr><td>Mês 6</td><td>55</td><td>R$ 38.335</td><td>R$ 460.020</td><td>R$ 25.300</td><td style="color:var(--green)">+R$ 13.035</td></tr>
+        <tr><td>Mês 9</td><td>80</td><td>R$ 55.760</td><td>R$ 669.120</td><td>R$ 25.300</td><td style="color:var(--green)">+R$ 30.460</td></tr>
+        <tr class="milestone"><td>Mês 12 ✓</td><td>100</td><td>R$ 69.700</td><td>R$ 836.400</td><td>R$ 25.300</td><td>Meta Ano 1</td></tr>
+        <tr><td>Mês 18</td><td>160</td><td>R$ 111.520</td><td>R$ 1.338.240</td><td>R$ 35.000</td><td style="color:var(--green)">+R$ 76.520</td></tr>
+        <tr class="milestone"><td>Mês 24 ✓</td><td>250</td><td>R$ 174.250</td><td>R$ 2.091.000</td><td>R$ 45.000</td><td>Meta Ano 2</td></tr>
+      </tbody>
+    </table>
+
+    <div class="highlight green">
+      <div class="highlight-label">Base do cálculo</div>
+      <div class="highlight-body">Ticket médio blended de <strong>R$ 697/mês</strong> (mix de planos). Crescimento de novos clientes: 5 no M1 crescendo para +15/mês no M6+. Churn de 3% ao mês aplicado a partir do M3. Burn de escala começa no M4 com contratação de 2º dev.</div>
+    </div>
+  </div>
+
+  <!-- MVP vs M$P -->
+  <div class="section">
+    <div class="section-label">05 · MVP vs. M$P</div>
+    <h2 class="section-title">Mínimo Viável vs. Mínimo Vendável</h2>
+    <div class="section-body">
+      <p>O MVP prova que funciona. O M$P (Produto Mínimo Vendável) é o que alguém paga para usar. Há diferença crucial entre os dois — e é fundamental não confundir.</p>
+    </div>
+    <div class="comparison">
+      <div class="comp-card mvp">
+        <div class="comp-title">MVP — Mínimo Viável</div>
+        <ul class="comp-list">
+          <li>Login + RBAC básico</li>
+          <li>Criar campanha + peças</li>
+          <li>Upload de arte</li>
+          <li>Portal de aprovação via link</li>
+          <li>Status básico (aprovado / ajuste)</li>
+          <li>1 formato de mockup (Instagram)</li>
+          <li>Seed data para demo</li>
+        </ul>
+      </div>
+      <div class="comp-card msp">
+        <div class="comp-title">M$P — Mínimo Vendável</div>
+        <ul class="comp-list">
+          <li>MVP completo + estável</li>
+          <li>Todos os mockups de redes sociais</li>
+          <li>Notificações por e-mail</li>
+          <li>Histórico de versões</li>
+          <li>Gestão de múltiplos clientes</li>
+          <li>Billing / cobrança recorrente</li>
+          <li>Onboarding guiado (wizard)</li>
+          <li>Suporte mínimo responsivo</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight blue">
+      <div class="highlight-label">Prioridade de produto</div>
+      <div class="highlight-body">O time deve focar em chegar ao M$P antes de qualquer feature de fase 2. <strong>Ninguém paga por um produto que parece demo.</strong> A ordem é: MVP funcionando → validação com beta testadores → M$P com billing → lançamento público.</div>
+    </div>
+  </div>
+
+  <!-- PONTOS CEGOS -->
+  <div class="section">
+    <div class="section-label">06 · Pontos Cegos</div>
+    <h2 class="section-title">O que ainda precisa ser validado</h2>
+    <div class="section-body">
+      <p>Todo modelo de negócio tem premissas não testadas. Identificar os pontos cegos antecipadamente é o que separa uma startup que aprende rápido de uma que queima dinheiro no caminho errado.</p>
+    </div>
+    <div class="blind-list">
+      <div class="blind-item">
+        <h4>Willingness to pay — o preço está certo?</h4>
+        <p>R$ 697/mês pode ser alto para agências pequenas (1–3 clientes) e baixo para agências grandes (50+ clientes). Precisa-se validar com entrevistas e experimentos de preço antes de fixar os planos.</p>
+      </div>
+      <div class="blind-item">
+        <h4>Adoção do cliente final — quem convence o cliente da agência a mudar?</h4>
+        <p>A agência contrata, mas o cliente precisa mudar seu comportamento (sair do WhatsApp). Se o cliente resistir à adoção, a ferramenta não vai funcionar. Precisa-se de um onboarding de cliente muito simples.</p>
+      </div>
+      <div class="blind-item">
+        <h4>Churn por abandono do gestor — o que acontece quando o contato na agência sai?</h4>
+        <p>O Aproove é comprado por uma pessoa. Se ela sair da agência, a conta pode cancelar. A stickiness precisa ser a nível de processo, não só de usuário individual.</p>
+      </div>
+      <div class="blind-item">
+        <h4>Concorrência de ferramentas genéricas — Notion, ClickUp, Google Drive</h4>
+        <p>Muitas agências acham que "resolve com Notion". Precisamos de um argumento muito claro do porquê ferramentas genéricas custam mais caro (em tempo e retrabalho) do que o Aproove.</p>
+      </div>
+      <div class="blind-item">
+        <h4>LGPD e dados de aprovação — os registros têm validade legal?</h4>
+        <p>O Aproove registra aprovações com timestamp + IP. Mas isso tem peso jurídico? É necessário validar com um advogado especialista em contratos digitais antes de vender como proteção legal.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODELO DE AUTOFINANCIAMENTO -->
+  <div class="section">
+    <div class="section-label">07 · Autofinanciamento — A plataforma paga a si mesma</div>
+    <h2 class="section-title">Receita cobre operação desde o primeiro cliente</h2>
+    <div class="section-body">
+      <p>O Aproove não espera investimento externo para operar. A estratégia é lançar o M$P com o mínimo funcional para venda e usar a receita gerada para financiar cada iteração seguinte.</p>
+    </div>
+    <div class="highlight green">
+      <div class="highlight-label">Princípio de operação</div>
+      <div class="highlight-body">
+        <strong>Cada versão lançada anuncia uma melhoria visível ao cliente.</strong> O cliente paga pelo que recebe hoje e investe no que virá. A evolução constante justifica a retenção — e a receita recorrente financia o desenvolvimento do próximo sprint.
+      </div>
+    </div>
+    <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metric-card">
+        <div class="m-label">Custo mensal mínimo</div>
+        <div class="m-value">R$ 510</div>
+        <div class="m-desc">Infra (hosting + DB + storage + email) no modelo solo sem dev contratado</div>
+      </div>
+      <div class="metric-card highlight-metric">
+        <div class="m-label">Break-even solo</div>
+        <div class="m-value">2 clientes</div>
+        <div class="m-desc">2 clientes Pro (R$697) cobrem toda a infraestrutura + ferramentas</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">Infra paga por</div>
+        <div class="m-value">M1</div>
+        <div class="m-desc">Meta: cobrir custos de infraestrutura a partir do primeiro mês de vendas</div>
+      </div>
+    </div>
+    <div class="blind-list" style="margin-top:1rem">
+      <div class="blind-item" style="background:var(--green-bg);border-color:var(--green-bd)">
+        <h4 style="color:var(--green)">Hospedagem gratuita para decolar (GitHub Pages + Render/Railway)</h4>
+        <p>A landing page pública fica no GitHub Pages (gratuito). O servidor Node.js fica no Railway ou Render (free tier). Custo zero até o primeiro cliente. Migra para infraestrutura paga somente quando a receita justificar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRAMA DE PRIMEIROS CLIENTES -->
+  <div class="section">
+    <div class="section-label">08 · Programa Fundadores — Os 10 Primeiros</div>
+    <h2 class="section-title">Primeiros clientes são parceiros estratégicos</h2>
+    <div class="section-body">
+      <p>Os 10 primeiros clientes não pagam nada — e ganham proteção permanente. Em troca, oferecem feedback real, relatam bugs, sugerem melhorias e se tornam cases e referências para os próximos clientes.</p>
+    </div>
+    <div class="comparison">
+      <div class="comp-card mvp" style="background:var(--green-bg);border-color:var(--green-bd)">
+        <div class="comp-title" style="color:var(--green)">O que os Fundadores recebem</div>
+        <ul class="comp-list">
+          <li>Acesso gratuito vitalício a todas as melhorias</li>
+          <li>Plano equivalente ao Pro (sem limitações)</li>
+          <li>Garantia de preço congelado no valor zero para sempre</li>
+          <li>Canal direto com o fundador para feedback</li>
+          <li>Badge "Cliente Fundador" no painel</li>
+          <li>Voz ativa nas decisões de produto (votação em features)</li>
+        </ul>
+      </div>
+      <div class="comp-card msp" style="background:var(--blue-bg);border-color:var(--blue-bd)">
+        <div class="comp-title" style="color:var(--blue)">O que o Aproove recebe</div>
+        <ul class="comp-list">
+          <li>Feedback real de usuários ativos</li>
+          <li>Casos de uso reais para documentar</li>
+          <li>Depoimentos e cases para o site</li>
+          <li>Indicações para os próximos 10 clientes</li>
+          <li>Validação do modelo de preço com o mercado</li>
+          <li>Network inicial de agências parceiras</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight blue">
+      <div class="highlight-label">Regra de proteção de preço para todos os clientes</div>
+      <div class="highlight-body">
+        Todo cliente que assina em uma versão <strong>mantém seu preço original enquanto permanecer ativo</strong>. Novas versões mais caras não afetam clientes existentes. Isso cria <strong>incentivo permanente para não cancelar</strong> — o cliente que fica sempre sai ganhando.
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEALAB COMO PRODUTO INDEPENDENTE -->
+  <div class="section">
+    <div class="section-label">09 · Produto Satélite — IdeaLab como Micro-SaaS</div>
+    <h2 class="section-title">A ferramenta do fundador vira um produto</h2>
+    <div class="section-body">
+      <p>O Laboratório de Ideias criado para uso interno do fundador tem potencial para ser comercializado como produto independente — com WhatsApp como canal de captura e IA como motor de organização.</p>
+    </div>
+    <div class="pitch-statement" style="background:var(--paper2);color:var(--ink);border:1px solid var(--line2);">
+      <p>Envie uma ideia pelo WhatsApp. <strong>IA organiza, conecta com outras ideias, e adiciona automaticamente ao roadmap quando fizer sentido.</strong> Para fundadores, PMs, designers, estrategistas — qualquer pessoa que pensa em produtos.</p>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="m-label">Nome sugerido</div>
+        <div class="m-value" style="font-size:18px">Spark</div>
+        <div class="m-desc">Ou IdeaVault, Vault, Ideia — a definir com validação</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">Preço alvo</div>
+        <div class="m-value">R$ 39</div>
+        <div class="m-desc">/mês por usuário individual. R$97–197 para times de 5–10 pessoas.</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">Diferencial</div>
+        <div class="m-value" style="font-size:16px">WhatsApp</div>
+        <div class="m-desc">Captura por mensagem de texto e áudio. Zero fricção. Você já está lá.</div>
+      </div>
+      <div class="metric-card highlight-metric">
+        <div class="m-label">Potencial</div>
+        <div class="m-value" style="font-size:18px">Front door</div>
+        <div class="m-desc">Produto de entrada (baixo CAC) → upsell para Aproove (alto LTV)</div>
+      </div>
+    </div>
+    <div class="blind-list" style="margin-top:1rem">
+      <div class="blind-item" style="background:var(--amber-bg);border-color:var(--amber-bd)">
+        <h4>Decisão estratégica pendente: produto separado ou feature do Aproove?</h4>
+        <p>Manter como feature interna do Aproove simplifica a operação. Separar como produto independente aumenta o TAM e cria uma segunda fonte de receita. Recomendação: validar com 5 usuários externos antes de decidir.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA INVESTIDORES -->
+  <div class="section">
+    <div class="section-label">10 · Próximos Passos para Investidores</div>
+    <div class="pitch-statement" style="background:var(--paper2);color:var(--ink);border:1px solid var(--line2);">
+      <p>Estamos em busca de <strong>R$ 45.000 em capital semente</strong> para financiar 3 meses de desenvolvimento e lançamento do M$P. Com esse investimento, chegamos ao break-even operacional e provamos a tração necessária para a próxima rodada de crescimento.</p>
+    </div>
+    <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metric-card">
+        <div class="m-label">Buscando</div>
+        <div class="m-value">R$ 45k</div>
+        <div class="m-desc">Capital semente para MVP + lançamento</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">Equity (negociável)</div>
+        <div class="m-value">10–20%</div>
+        <div class="m-desc">Dependendo do perfil e valor agregado do investidor</div>
+      </div>
+      <div class="metric-card highlight-metric">
+        <div class="m-label">Retorno alvo (24m)</div>
+        <div class="m-value">5–8×</div>
+        <div class="m-desc">Baseado na projeção de ARR R$ 2M no mês 24</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="doc-footer">
+    <div class="doc-footer-left">Aproove · Documento Interno · Modelo de Negócio · Atualizado Março 2026</div>
+    <div class="doc-footer-right">v0.0.1</div>
+  </footer>
+
+</main>
+</body>
+</html>

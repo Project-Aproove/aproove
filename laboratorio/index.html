@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BBrain — Bruno Cérebro · Aproove</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #111110; --ink2: #4a4a47; --ink3: #9a9a96;
+  --paper: #f7f5ef; --paper2: #efede6; --paper3: #e4e1d8;
+  --surface: #ffffff;
+  --line: rgba(17,17,16,0.08); --line2: rgba(17,17,16,0.14);
+  --green: #2a5f2a; --green-bg: #edf5ed; --green-bd: rgba(42,95,42,.2);
+  --amber: #7a4a0a; --amber-bg: #fdf2e2; --amber-bd: rgba(122,74,10,.2);
+  --blue: #0d4a8a; --blue-bg: #e8f0fb; --blue-bd: rgba(13,74,138,.2);
+  --red: #8a1a1a; --red-bg: #fbeaea; --red-bd: rgba(138,26,26,.2);
+  --purple: #4a1d7a; --purple-bg: #f3eefb; --purple-bd: rgba(74,29,122,.2);
+  --brain: #1a0a3a; --brain-mid: #3a1f7a; --brain-glow: rgba(74,45,138,.15);
+  --wa: #25d366; --wa-bg: #e8fdf2; --wa-bd: rgba(37,211,102,.25);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 3px; }
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(247,245,239,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line2);
+  padding: .875rem 2rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.brain-logo { display: flex; align-items: center; gap: .625rem; }
+.brain-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--brain); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(74,45,138,.3), 0 2px 8px var(--brain-glow);
+}
+.brain-name { font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+.brain-sub { font-size: 11px; color: var(--ink3); }
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+.stat-chip { display: flex; align-items: center; gap: .3rem; padding: .25rem .625rem; background: var(--paper2); border: 1px solid var(--line2); border-radius: 12px; font-size: 11px; color: var(--ink2); }
+.stat-chip b { font-weight: 700; font-family: 'DM Mono', monospace; color: var(--ink); }
+.stat-chip.active { background: var(--green-bg); border-color: var(--green-bd); }
+.stat-chip.active b { color: var(--green); }
+
+/* ── SESSION ACTIVE BANNER ── */
+.session-banner {
+  background: var(--brain); color: rgba(255,255,255,.9);
+  padding: .75rem 2rem;
+  display: none; align-items: center; gap: 1rem; flex-wrap: wrap;
+  font-size: 12px;
+}
+.session-banner.visible { display: flex; }
+.session-pulse { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink: 0; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,.4); } 50% { box-shadow: 0 0 0 5px rgba(74,222,128,0); } }
+.session-info { flex: 1; }
+.session-info strong { color: white; }
+.session-timer { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,.5); }
+.btn-end-session {
+  padding: .3rem .875rem; border-radius: 6px; border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1); color: rgba(255,255,255,.8);
+  font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.btn-end-session:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.4); }
+
+/* ── TABS ── */
+.tabs { border-bottom: 1px solid var(--line2); padding: 0 2rem; display: flex; gap: 0; }
+.tab-btn { padding: .75rem 1.25rem; font-size: 13px; font-weight: 500; color: var(--ink3); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; display: flex; align-items: center; gap: .4rem; }
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--ink); }
+.tab-count { font-size: 10px; font-family: 'DM Mono', monospace; background: var(--paper3); padding: 1px 5px; border-radius: 8px; }
+.tab-btn.active .tab-count { background: var(--ink); color: var(--paper); }
+
+/* ── MAIN ── */
+.main { max-width: 780px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── CAPTURE BOX ── */
+.capture-card {
+  background: var(--surface); border: 1.5px solid var(--line2); border-radius: 14px;
+  padding: 1.25rem; margin-bottom: 1.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.capture-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .75rem; display: flex; align-items: center; gap: .5rem; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 0 2px rgba(245,158,11,.2); }
+.idea-textarea {
+  width: 100%; min-height: 100px; resize: vertical;
+  background: var(--paper); border: 1.5px solid var(--line2); border-radius: 10px;
+  padding: .875rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  color: var(--ink); line-height: 1.6; outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.idea-textarea::placeholder { color: var(--ink3); }
+.idea-textarea:focus { border-color: rgba(74,29,122,.4); box-shadow: 0 0 0 3px var(--brain-glow); }
+.capture-footer { display: flex; align-items: center; justify-content: space-between; margin-top: .875rem; gap: .75rem; flex-wrap: wrap; }
+.capture-hint { font-size: 11px; color: var(--ink3); }
+.capture-hint kbd { font-family: 'DM Mono', monospace; font-size: 10px; padding: 1px 5px; background: var(--paper2); border: 1px solid var(--line2); border-radius: 3px; }
+.btn-idea {
+  background: var(--brain); color: white; border: none; border-radius: 8px;
+  padding: .5rem 1.25rem; font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.btn-idea:hover { opacity: .85; }
+.btn-idea:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── FILTERS ── */
+.filters { display: flex; gap: .4rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
+.filter-btn { padding: .3rem .75rem; border: 1px solid var(--line2); border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--paper2); color: var(--ink2); cursor: pointer; transition: all .12s; }
+.filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+.filter-btn.active { background: var(--brain); color: white; border-color: var(--brain); }
+.fc { font-family: 'DM Mono', monospace; font-size: 10px; opacity: .65; }
+
+/* ── IDEA CARDS ── */
+.ideas-list { display: flex; flex-direction: column; gap: .75rem; }
+.idea-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; }
+.idea-top { display: flex; align-items: flex-start; gap: .75rem; }
+.idea-num { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--ink3); flex-shrink: 0; padding-top: 2px; min-width: 28px; }
+.idea-body { flex: 1; }
+.idea-text { font-size: 13px; color: var(--ink); line-height: 1.55; margin-bottom: .5rem; }
+.idea-meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-size: 11px; color: var(--ink3); }
+.badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: 1px 7px; border-radius: 4px; }
+.badge-nova { background: var(--blue-bg); color: var(--blue); }
+.badge-roadmap { background: var(--green-bg); color: var(--green); }
+.badge-analise { background: var(--amber-bg); color: var(--amber); }
+.badge-arquivada { background: var(--paper2); color: var(--ink3); }
+.badge-vinculada { background: var(--purple-bg); color: var(--brain-mid); }
+.badge-wa { background: var(--wa-bg); color: #1a9e4f; border: 1px solid var(--wa-bd); }
+.idea-eval { margin-top: .625rem; padding: .625rem .875rem; background: var(--purple-bg); border: 1px solid var(--purple-bd); border-radius: 8px; font-size: 12px; color: var(--ink2); line-height: 1.5; }
+.idea-eval-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brain-mid); margin-bottom: .3rem; }
+.idea-tags { display: flex; gap: .3rem; flex-wrap: wrap; margin-top: .5rem; }
+.tag { font-size: 10px; padding: 1px 7px; background: var(--paper2); border-radius: 10px; color: var(--ink2); }
+.idea-actions { display: flex; gap: .4rem; margin-top: .75rem; padding-top: .625rem; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.act { font-size: 11px; font-weight: 500; padding: .275rem .625rem; border-radius: 6px; border: 1px solid var(--line2); background: var(--paper2); color: var(--ink2); cursor: pointer; transition: all .12s; }
+.act:hover { border-color: var(--ink); color: var(--ink); }
+.act.green { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+.act.green:hover { background: var(--green); color: white; border-color: var(--green); }
+.act.del { border-color: transparent; color: var(--ink3); }
+.act.del:hover { color: var(--red); background: var(--red-bg); border-color: var(--red-bd); }
+
+/* ── SESSION CARDS (histórico) ── */
+.sessions-list { display: flex; flex-direction: column; gap: 1rem; }
+.session-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  overflow: hidden;
+}
+.session-card-header {
+  padding: 1rem 1.25rem;
+  display: flex; align-items: flex-start; gap: 1rem;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(26,10,58,.02), transparent);
+}
+.session-date-block { flex-shrink: 0; text-align: center; min-width: 44px; }
+.session-day { font-size: 26px; font-weight: 700; letter-spacing: -.03em; line-height: 1; }
+.session-month { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+.session-meta { flex: 1; }
+.session-time { font-size: 13px; font-weight: 600; margin-bottom: .25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.session-location { font-size: 12px; color: var(--ink2); margin-bottom: .35rem; }
+.session-location::before { content: '📍 '; }
+.session-duration { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+.session-thoughts {
+  padding: 1rem 1.25rem;
+  font-size: 13px; color: var(--ink2); line-height: 1.6; font-style: italic;
+  border-bottom: 1px solid var(--line);
+}
+.session-thoughts::before { content: '"'; color: var(--ink3); font-size: 18px; line-height: 0; vertical-align: -4px; margin-right: 2px; }
+.session-thoughts::after { content: '"'; color: var(--ink3); font-size: 18px; line-height: 0; vertical-align: -4px; margin-left: 2px; }
+.session-footer { padding: .75rem 1.25rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.session-content-btn { font-size: 11px; font-weight: 600; padding: .3rem .75rem; border-radius: 6px; border: 1px solid var(--purple-bd); background: var(--purple-bg); color: var(--brain-mid); cursor: pointer; transition: all .15s; }
+.session-content-btn:hover { background: var(--brain-mid); color: white; }
+.social-preview {
+  margin: .5rem 1.25rem 1rem; padding: 1rem; background: var(--paper); border: 1px solid var(--line2); border-radius: 10px; font-size: 12px; color: var(--ink2); line-height: 1.6; display: none;
+}
+.social-preview.open { display: block; }
+.social-preview-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem; }
+.copy-btn { font-size: 10px; font-weight: 600; padding: .2rem .5rem; border-radius: 4px; border: 1px solid var(--line2); background: var(--paper3); color: var(--ink2); cursor: pointer; float: right; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 3.5rem 2rem; }
+.empty-icon { font-size: 36px; margin-bottom: 1rem; opacity: .4; }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--ink2); margin-bottom: .4rem; }
+.empty-desc { font-size: 12px; color: var(--ink3); max-width: 280px; margin: 0 auto; }
+
+/* ── SPINNER ── */
+.spinner { display: inline-block; width: 11px; height: 11px; border: 1.5px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--brain); color: white; padding: .625rem 1.25rem; border-radius: 8px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .2s; pointer-events: none; white-space: nowrap; z-index: 300; }
+.toast.show { opacity: 1; }
+
+/* ── CHECK-IN MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(26,10,58,.7); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.checkin-modal {
+  background: var(--surface); border-radius: 18px;
+  padding: 2rem; max-width: 440px; width: 100%;
+  box-shadow: 0 20px 60px rgba(26,10,58,.3);
+  transform: translateY(12px) scale(.97); transition: transform .25s;
+}
+.modal-overlay.open .checkin-modal { transform: translateY(0) scale(1); }
+.checkin-header { text-align: center; margin-bottom: 1.75rem; }
+.checkin-brain { font-size: 36px; margin-bottom: .75rem; }
+.checkin-title { font-size: 20px; font-weight: 700; letter-spacing: -.02em; margin-bottom: .3rem; }
+.checkin-datetime { font-size: 12px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+.checkin-field { margin-bottom: 1.25rem; }
+.checkin-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem; display: block; }
+.checkin-input {
+  width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--line2); border-radius: 10px;
+  font-family: inherit; font-size: 14px; color: var(--ink); background: var(--paper);
+  outline: none; transition: border-color .15s;
+}
+.checkin-input:focus { border-color: rgba(74,29,122,.4); box-shadow: 0 0 0 3px var(--brain-glow); }
+.checkin-textarea { min-height: 90px; resize: vertical; }
+.checkin-textarea::placeholder, .checkin-input::placeholder { color: var(--ink3); }
+.location-pills { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.loc-pill { padding: .3rem .75rem; border: 1px solid var(--line2); border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--paper2); color: var(--ink2); cursor: pointer; transition: all .12s; }
+.loc-pill:hover, .loc-pill.sel { background: var(--brain); color: white; border-color: var(--brain); }
+.btn-checkin {
+  width: 100%; padding: .875rem; background: var(--brain); color: white; border: none;
+  border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: opacity .15s; letter-spacing: -.01em;
+  margin-top: .5rem;
+}
+.btn-checkin:hover { opacity: .9; }
+.btn-checkin:disabled { opacity: .45; cursor: not-allowed; }
+.checkin-skip { display: block; text-align: center; font-size: 11px; color: var(--ink3); margin-top: .875rem; cursor: pointer; }
+.checkin-skip:hover { color: var(--ink); }
+
+@media (max-width: 600px) {
+  .header { gap: .5rem; }
+  .main { padding: 1.25rem 1rem 4rem; }
+  .tabs { padding: 0 1rem; overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="brain-logo">
+    <div class="brain-mark">🧠</div>
+    <div>
+      <div class="brain-name">BBrain</div>
+      <div class="brain-sub">Bruno Cérebro · Espaço privado do fundador</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="stat-chip active" id="stat-session-active" style="display:none">
+      <b id="stat-session-time">00:00</b> sessão ativa
+    </div>
+    <div class="stat-chip"><b id="stat-total">0</b> ideias</div>
+    <div class="stat-chip"><b id="stat-roadmap">0</b> no roadmap</div>
+    <div class="stat-chip"><b id="stat-sessions">0</b> sessões</div>
+  </div>
+</header>
+
+<!-- ── SESSION ACTIVE BANNER ── -->
+<div class="session-banner" id="session-banner">
+  <div class="session-pulse"></div>
+  <div class="session-info">
+    <strong id="sb-location">—</strong>
+    <span id="sb-thoughts" style="color:rgba(255,255,255,.55);margin-left:.5rem"></span>
+  </div>
+  <div class="session-timer" id="sb-timer">00:00:00</div>
+  <button class="btn-end-session" onclick="endSession()">Encerrar sessão</button>
+</div>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('ideas', this)">
+    💡 Ideias <span class="tab-count" id="tc-ideas">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('sessions', this)">
+    📓 Diário de sessões <span class="tab-count" id="tc-sessions">0</span>
+  </button>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- TAB: IDEIAS -->
+  <div class="tab-panel active" id="panel-ideas">
+    <div class="capture-card">
+      <div class="capture-label"><div class="live-dot"></div> Nova ideia</div>
+      <textarea class="idea-textarea" id="idea-input" placeholder="Qualquer pensamento, observação ou insight. Sem filtro — pode começar incompleto. O BBrain guarda tudo." onkeydown="handleKey(event)"></textarea>
+      <div class="capture-footer">
+        <div class="capture-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> para registrar</div>
+        <button class="btn-idea" id="submit-btn" onclick="submitIdea()">Registrar ideia</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('todas',this)">Todas <span class="fc" id="fc-todas">0</span></button>
+      <button class="filter-btn" onclick="setFilter('nova',this)">Novas <span class="fc" id="fc-nova">0</span></button>
+      <button class="filter-btn" onclick="setFilter('no_roadmap',this)">Roadmap <span class="fc" id="fc-roadmap">0</span></button>
+      <button class="filter-btn" onclick="setFilter('em_analise',this)">Em análise <span class="fc" id="fc-analise">0</span></button>
+      <button class="filter-btn" onclick="setFilter('arquivada',this)">Arquivadas <span class="fc" id="fc-arquivada">0</span></button>
+    </div>
+
+    <div class="ideas-list" id="ideas-list">
+      <div class="empty" id="empty-ideas">
+        <div class="empty-icon">💡</div>
+        <div class="empty-title">Nenhuma ideia ainda</div>
+        <div class="empty-desc">Registre sua primeira ideia acima ou mande uma mensagem via WhatsApp.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SESSÕES -->
+  <div class="tab-panel" id="panel-sessions">
+    <div class="sessions-list" id="sessions-list">
+      <div class="empty" id="empty-sessions">
+        <div class="empty-icon">📓</div>
+        <div class="empty-title">Nenhuma sessão registrada</div>
+        <div class="empty-desc">Quando você começar a trabalhar e fazer o check-in, cada sessão vai aparecer aqui como parte do seu diário de fundador.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── CHECK-IN MODAL ── -->
+<div class="modal-overlay" id="checkin-overlay">
+  <div class="checkin-modal">
+    <div class="checkin-header">
+      <div class="checkin-brain">🧠</div>
+      <div class="checkin-title">Nova sessão de trabalho</div>
+      <div class="checkin-datetime" id="checkin-datetime">—</div>
+    </div>
+
+    <div class="checkin-field">
+      <label class="checkin-label">Onde você está?</label>
+      <div class="location-pills">
+        <div class="loc-pill" onclick="selectLocation('Em casa')">Em casa</div>
+        <div class="loc-pill" onclick="selectLocation('No escritório')">No escritório</div>
+        <div class="loc-pill" onclick="selectLocation('Em casa, de madrugada')">De madrugada</div>
+        <div class="loc-pill" onclick="selectLocation('No café')">No café</div>
+        <div class="loc-pill" onclick="selectLocation('Viajando')">Viajando</div>
+      </div>
+      <input class="checkin-input" id="location-input" type="text" placeholder="ou escreva livremente..." oninput="clearPills()">
+    </div>
+
+    <div class="checkin-field">
+      <label class="checkin-label">O que você está pensando?</label>
+      <textarea class="checkin-input checkin-textarea" id="thoughts-input" placeholder="Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante..."></textarea>
+    </div>
+
+    <button class="btn-checkin" id="checkin-btn" onclick="startSession()">Começar a trabalhar</button>
+    <span class="checkin-skip" onclick="skipCheckin()">Continuar sem registrar sessão</span>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// BBRAIN — Bruno Cérebro · Diário do Fundador + Captura de Ideias
+// ═══════════════════════════════════════════════════════════════
+
+let ideas    = [];
+let sessions = [];
+let activeSession = null;
+let sessionTimer  = null;
+let activeFilter  = 'todas';
+let activeTab     = 'ideas';
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  updateCheckinDatetime();
+  await loadData();
+  checkForActiveSession();
+}
+
+function updateCheckinDatetime() {
+  const now  = new Date();
+  const fmt  = now.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const time = now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  const el   = document.getElementById('checkin-datetime');
+  if (el) el.textContent = `${fmt} · ${time}`;
+}
+
+// ── CARREGAR DADOS ────────────────────────────────────────────
+async function loadData() {
+  await Promise.all([loadIdeas(), loadSessions()]);
+}
+
+async function loadIdeas() {
+  try {
+    const r = await fetch('/api/ideas');
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    ideas = d.ideas || [];
+  } catch {
+    const s = localStorage.getItem('bbrain_ideas');
+    ideas = s ? JSON.parse(s) : [];
+  }
+  renderIdeas();
+  updateStats();
+}
+
+async function loadSessions() {
+  try {
+    const r = await fetch('/api/sessions');
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    sessions = d.sessions || [];
+  } catch {
+    const s = localStorage.getItem('bbrain_sessions');
+    sessions = s ? JSON.parse(s) : [];
+  }
+  renderSessions();
+}
+
+// ── CHECK-IN DE SESSÃO ────────────────────────────────────────
+function checkForActiveSession() {
+  // Verifica se há sessão ativa no localStorage
+  const active = localStorage.getItem('bbrain_active_session');
+  if (active) {
+    activeSession = JSON.parse(active);
+    showSessionBanner();
+    startSessionTimer();
+    return;
+  }
+
+  // Verifica última sessão — se foi há mais de 30 minutos, pede novo check-in
+  const lastSession = sessions[0];
+  if (lastSession && lastSession.ended_at) {
+    const diff = Date.now() - new Date(lastSession.ended_at).getTime();
+    if (diff < 30 * 60 * 1000) return; // Menos de 30min: não mostra modal
+  }
+
+  // Mostra modal de check-in
+  setTimeout(() => {
+    updateCheckinDatetime();
+    document.getElementById('checkin-overlay').classList.add('open');
+  }, 400);
+}
+
+function selectLocation(loc) {
+  document.getElementById('location-input').value = loc;
+  document.querySelectorAll('.loc-pill').forEach(p => p.classList.remove('sel'));
+  event.target.classList.add('sel');
+}
+
+function clearPills() {
+  document.querySelectorAll('.loc-pill').forEach(p => p.classList.remove('sel'));
+}
+
+async function startSession() {
+  const location = document.getElementById('location-input').value.trim();
+  const thoughts = document.getElementById('thoughts-input').value.trim();
+  if (!location) {
+    document.getElementById('location-input').focus();
+    document.getElementById('location-input').style.borderColor = 'rgba(138,26,26,.5)';
+    setTimeout(() => document.getElementById('location-input').style.borderColor = '', 2000);
+    return;
+  }
+
+  const btn = document.getElementById('checkin-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+
+  const session = {
+    id: generateId(),
+    started_at: new Date().toISOString(),
+    ended_at: null,
+    location,
+    initial_thoughts: thoughts,
+    duration_minutes: null,
+    features_worked: [],
+    ideas_captured: [],
+    social_content: null
+  };
+
+  try {
+    const r = await fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(session)
+    });
+    if (r.ok) {
+      const d = await r.json();
+      activeSession = d.session;
+    } else throw new Error();
+  } catch {
+    activeSession = session;
+    sessions.unshift(session);
+    localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
+  }
+
+  localStorage.setItem('bbrain_active_session', JSON.stringify(activeSession));
+  document.getElementById('checkin-overlay').classList.remove('open');
+  showSessionBanner();
+  startSessionTimer();
+  renderSessions();
+  showToast('✓ Sessão iniciada — bom trabalho!');
+
+  btn.disabled = false;
+  btn.textContent = 'Começar a trabalhar';
+}
+
+function skipCheckin() {
+  document.getElementById('checkin-overlay').classList.remove('open');
+}
+
+// ── ENCERRAR SESSÃO ───────────────────────────────────────────
+async function endSession() {
+  if (!activeSession) return;
+  if (!confirm('Encerrar sessão de trabalho?')) return;
+
+  const now = new Date();
+  const started = new Date(activeSession.started_at);
+  const diffMin = Math.round((now - started) / 60000);
+
+  activeSession.ended_at = now.toISOString();
+  activeSession.duration_minutes = diffMin;
+
+  try {
+    await fetch(`/api/sessions/${activeSession.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ended_at: activeSession.ended_at, duration_minutes: diffMin })
+    });
+  } catch {
+    // Atualiza localmente
+    const idx = sessions.findIndex(s => s.id === activeSession.id);
+    if (idx !== -1) sessions[idx] = activeSession;
+    localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
+  }
+
+  clearInterval(sessionTimer);
+  sessionTimer = null;
+  localStorage.removeItem('bbrain_active_session');
+
+  const saved = activeSession;
+  activeSession = null;
+  document.getElementById('session-banner').classList.remove('visible');
+  document.getElementById('stat-session-active').style.display = 'none';
+
+  showToast(`✓ Sessão encerrada — ${diffMin} min registrados`);
+  await loadSessions();
+
+  // Gera conteúdo automático após encerrar
+  generateSocialContent(saved);
+}
+
+// ── TIMER DE SESSÃO ───────────────────────────────────────────
+function startSessionTimer() {
+  const start = new Date(activeSession.started_at);
+  function tick() {
+    const now = new Date();
+    const diff = Math.floor((now - start) / 1000);
+    const h = Math.floor(diff / 3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+    const fmt = (n) => String(n).padStart(2,'0');
+    const timeStr = h > 0 ? `${fmt(h)}:${fmt(m)}:${fmt(s)}` : `${fmt(m)}:${fmt(s)}`;
+    const timerEl = document.getElementById('sb-timer');
+    const statEl  = document.getElementById('stat-session-time');
+    if (timerEl) timerEl.textContent = h > 0 ? `${fmt(h)}:${fmt(m)}:${fmt(s)}` : `${fmt(m)}:${fmt(s)}`;
+    if (statEl)  statEl.textContent = timeStr;
+  }
+  tick();
+  sessionTimer = setInterval(tick, 1000);
+}
+
+function showSessionBanner() {
+  if (!activeSession) return;
+  document.getElementById('sb-location').textContent = activeSession.location;
+  const th = activeSession.initial_thoughts;
+  if (th) document.getElementById('sb-thoughts').textContent = '— ' + th.slice(0, 60) + (th.length > 60 ? '...' : '');
+  document.getElementById('session-banner').classList.add('visible');
+  document.getElementById('stat-session-active').style.display = 'flex';
+}
+
+// ── SUBMETER IDEIA ────────────────────────────────────────────
+async function submitIdea() {
+  const input = document.getElementById('idea-input');
+  const text  = input.value.trim();
+  if (!text) { input.focus(); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+
+  const idea = {
+    text, source: 'web',
+    status: 'nova', tags: [],
+    evaluation: null, roadmap_phase: null, connections: [],
+    session_id: activeSession?.id || null
+  };
+
+  try {
+    const r = await fetch('/api/ideas', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(idea)
+    });
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    ideas.unshift(d.idea);
+    // Vincula ideia à sessão ativa
+    if (activeSession) activeSession.ideas_captured = [...(activeSession.ideas_captured || []), d.idea.id];
+  } catch {
+    const local = { ...idea, id: generateId(), created_at: new Date().toISOString() };
+    ideas.unshift(local);
+    localStorage.setItem('bbrain_ideas', JSON.stringify(ideas));
+  }
+
+  input.value = '';
+  updateStats();
+  renderIdeas();
+  showToast('💡 Ideia registrada!');
+
+  btn.disabled = false;
+  btn.textContent = 'Registrar ideia';
+}
+
+function handleKey(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); submitIdea(); }
+}
+
+// ── ATUALIZAR STATUS ──────────────────────────────────────────
+async function updateIdeaStatus(id, status) {
+  const i = ideas.find(x => x.id === id);
+  if (!i) return;
+  i.status = status;
+  try {
+    await fetch(`/api/ideas/${id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+  } catch { localStorage.setItem('bbrain_ideas', JSON.stringify(ideas)); }
+  updateStats(); renderIdeas();
+  const labels = { no_roadmap:'✓ No roadmap', arquivada:'Arquivada', em_analise:'Em análise', nova:'Reaberta' };
+  showToast(labels[status] || 'Atualizado');
+}
+
+async function deleteIdea(id) {
+  if (!confirm('Deletar esta ideia?')) return;
+  ideas = ideas.filter(i => i.id !== id);
+  try { await fetch(`/api/ideas/${id}`, { method: 'DELETE' }); } catch {}
+  localStorage.setItem('bbrain_ideas', JSON.stringify(ideas));
+  updateStats(); renderIdeas();
+  showToast('Removida');
+}
+
+// ── GERAR CONTEÚDO PARA REDES ─────────────────────────────────
+function generateSocialContent(session) {
+  if (!session) return;
+  const start = new Date(session.started_at);
+  const day   = start.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+  const time  = start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const dur   = session.duration_minutes || 0;
+  const loc   = session.location;
+  const th    = session.initial_thoughts || '';
+
+  let post = `${day}, ${time}. ${loc}.\n\n`;
+  if (th) post += `"${th}"\n\n`;
+  post += `${dur > 0 ? `${dur} minutos de trabalho no @aproove.` : 'Sessão de trabalho no @aproove.'}\n\n`;
+  post += `Cada sessão vira um capítulo. 🧠 #BuildInPublic #Aproove #BBrain`;
+
+  // Salva no session para exibir depois
+  const idx = sessions.findIndex(s => s.id === session.id);
+  if (idx !== -1) {
+    sessions[idx].social_content = post;
+    localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
+    renderSessions();
+  }
+}
+
+function toggleSocialContent(id) {
+  const el = document.getElementById(`social-${id}`);
+  if (el) el.classList.toggle('open');
+}
+
+function copyContent(id) {
+  const el = document.getElementById(`social-text-${id}`);
+  if (el) {
+    navigator.clipboard.writeText(el.textContent).then(() => showToast('✓ Copiado!'));
+  }
+}
+
+// ── RENDERIZAR IDEIAS ─────────────────────────────────────────
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderIdeas();
+}
+
+function renderIdeas() {
+  const container = document.getElementById('ideas-list');
+  const empty     = document.getElementById('empty-ideas');
+  let list = [...ideas];
+  if (activeFilter !== 'todas') list = list.filter(i => i.status === activeFilter);
+
+  document.getElementById('fc-todas').textContent    = ideas.length;
+  document.getElementById('fc-nova').textContent     = ideas.filter(i => i.status === 'nova').length;
+  document.getElementById('fc-roadmap').textContent  = ideas.filter(i => i.status === 'no_roadmap').length;
+  document.getElementById('fc-analise').textContent  = ideas.filter(i => i.status === 'em_analise').length;
+  document.getElementById('fc-arquivada').textContent= ideas.filter(i => i.status === 'arquivada').length;
+  document.getElementById('tc-ideas').textContent    = ideas.length;
+
+  if (list.length === 0) { container.innerHTML = ''; container.appendChild(empty); empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  const statusLabel = { nova:'Nova', em_analise:'Em análise', no_roadmap:'Roadmap', arquivada:'Arquivada', vinculada:'Vinculada' };
+  const statusClass = { nova:'badge-nova', em_analise:'badge-analise', no_roadmap:'badge-roadmap', arquivada:'badge-arquivada', vinculada:'badge-vinculada' };
+
+  container.innerHTML = list.map((idea, idx) => {
+    const date = new Date(idea.created_at).toLocaleDateString('pt-BR', { day:'2-digit', month:'short' });
+    const waBadge = idea.source === 'whatsapp' ? `<span class="badge badge-wa">WhatsApp</span>` : '';
+    const evalBlock = idea.evaluation ? `<div class="idea-eval"><div class="idea-eval-label">✦ BBrain avalia</div>${esc(idea.evaluation)}</div>` : '';
+    const tags = (idea.tags||[]).length ? `<div class="idea-tags">${idea.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>` : '';
+    const roadmapBadge = idea.roadmap_phase ? `<span class="tag" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)">${idea.roadmap_phase}</span>` : '';
+
+    return `<div class="idea-card">
+      <div class="idea-top">
+        <div class="idea-num">#${String(idx+1).padStart(3,'0')}</div>
+        <div class="idea-body">
+          <div class="idea-text">${esc(idea.text)}</div>
+          <div class="idea-meta">
+            <span>${date}</span>
+            ${waBadge}
+            <span class="badge ${statusClass[idea.status]||'badge-nova'}">${statusLabel[idea.status]||idea.status}</span>
+            ${roadmapBadge}
+          </div>
+          ${tags}
+          ${evalBlock}
+          <div class="idea-actions">
+            ${idea.status!=='no_roadmap'?`<button class="act green" onclick="updateIdeaStatus('${idea.id}','no_roadmap')">+ Roadmap</button>`:''}
+            ${idea.status!=='em_analise'&&idea.status!=='no_roadmap'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','em_analise')">Analisar</button>`:''}
+            ${idea.status!=='arquivada'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','arquivada')">Arquivar</button>`:`<button class="act" onclick="updateIdeaStatus('${idea.id}','nova')">Reabrir</button>`}
+            <button class="act del" onclick="deleteIdea('${idea.id}')">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDERIZAR SESSÕES ────────────────────────────────────────
+function renderSessions() {
+  const container = document.getElementById('sessions-list');
+  const empty     = document.getElementById('empty-sessions');
+  document.getElementById('tc-sessions').textContent = sessions.length;
+
+  if (sessions.length === 0) { container.innerHTML = ''; container.appendChild(empty); empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  container.innerHTML = sessions.map(s => {
+    const start  = new Date(s.started_at);
+    const day    = start.getDate();
+    const month  = start.toLocaleDateString('pt-BR', { month: 'short' });
+    const time   = start.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    const ended  = s.ended_at ? new Date(s.ended_at).toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : null;
+    const dur    = s.duration_minutes;
+    const durStr = dur ? (dur >= 60 ? `${Math.floor(dur/60)}h ${dur%60}min` : `${dur}min`) : 'Em andamento';
+    const active = !s.ended_at;
+
+    const socialBtn = s.social_content
+      ? `<button class="session-content-btn" onclick="toggleSocialContent('${s.id}')">📱 Ver post gerado</button>`
+      : `<button class="session-content-btn" onclick="generateSocialContent(${JSON.stringify(s).replace(/"/g,'&quot;')})">✦ Gerar conteúdo</button>`;
+
+    const socialPreview = s.social_content
+      ? `<div class="social-preview" id="social-${s.id}">
+          <div class="social-preview-label">Post sugerido · Instagram / LinkedIn
+            <button class="copy-btn" onclick="copyContent('${s.id}')">Copiar</button>
+          </div>
+          <div id="social-text-${s.id}">${esc(s.social_content)}</div>
+        </div>` : '';
+
+    return `<div class="session-card">
+      <div class="session-card-header">
+        <div class="session-date-block">
+          <div class="session-day">${day}</div>
+          <div class="session-month">${month}</div>
+        </div>
+        <div class="session-meta">
+          <div class="session-time">
+            ${time}${ended ? ` → ${ended}` : ''}
+            ${active ? `<span class="badge badge-nova" style="animation:pulse 2s infinite">Ativa</span>` : ''}
+          </div>
+          <div class="session-location">${esc(s.location)}</div>
+          <div class="session-duration">⏱ ${durStr}${s.ideas_captured?.length ? ` · ${s.ideas_captured.length} ideia${s.ideas_captured.length!==1?'s':''} capturada${s.ideas_captured.length!==1?'s':''}` : ''}</div>
+        </div>
+      </div>
+      ${s.initial_thoughts ? `<div class="session-thoughts">${esc(s.initial_thoughts)}</div>` : ''}
+      <div class="session-footer">${socialBtn}</div>
+      ${socialPreview}
+    </div>`;
+  }).join('');
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
+
+// ── STATS ─────────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('stat-total').textContent    = ideas.length;
+  document.getElementById('stat-roadmap').textContent  = ideas.filter(i => i.status==='no_roadmap').length;
+  document.getElementById('stat-sessions').textContent = sessions.length;
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function generateId() {
+  const d = new Date(), pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Date.now().toString(36).slice(-5).toUpperCase()}`;
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── START ─────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "aproove",
+  "version": "0.0.1",
+  "description": "Aproove — Sistema de aprovação de conteúdo para agências",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

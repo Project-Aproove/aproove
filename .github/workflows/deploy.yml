@@ -1,0 +1,46 @@
+name: Deploy — Aproove Landing (GitHub Pages)
+
+# Dispara quando há push para main na pasta producao/
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'producao/**'
+      - 'version.json'
+
+  # Permite disparar manualmente pelo GitHub UI
+  workflow_dispatch:
+
+# Permissões para o token do GitHub Actions
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: Publicar em GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Copiar version.json para producao/
+        run: cp version.json producao/version.json
+
+      - name: Deploy para GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./producao
+          publish_branch: gh-pages
+          commit_message: "deploy: v$(cat version.json | python3 -c \"import sys,json; print(json.load(sys.stdin)['version'])\")"
+          force_orphan: false
+
+      - name: Resultado
+        run: |
+          VERSION=$(cat version.json | python3 -c "import sys,json; print(json.load(sys.stdin)['version'])")
+          echo "✓ Aproove v${VERSION} publicado em GitHub Pages"
+          echo "  URL: https://project-aproove.github.io/aproove"
