@@ -1,7 +1,12 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.2",
   "updated_at": "2026-03-18",
   "history": [
+    {
+      "version": "0.0.2",
+      "date": "2026-03-18",
+      "notes": "Primeira entrega — seção Clientes Fundadores, formulário conectado ao Formspree, .nojekyll para GitHub Pages"
+    },
     {
       "version": "0.0.1",
       "date": "2026-03-18",
