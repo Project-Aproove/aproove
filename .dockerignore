@@ -1,0 +1,12 @@
+fly.toml
+Dockerfile
+.dockerignore
+node_modules
+.git
+.env
+auth.json
+ideas.json
+sessions.json
+google-credentials.json
+ACESSOS.md
+GOVERNANCA_DRIVE.md

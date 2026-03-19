@@ -450,6 +450,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <button id="setup-btn" class="auth-btn" onclick="doSetup()" data-t="auth.setup.submit">Criar acesso e entrar</button>
     <p class="auth-err" id="setup-err"></p>
     <p class="auth-hint" data-t="auth.setup.hint">Guarde seu usuário e senha — serão pedidos todo dia.</p>
+    <span class="auth-link" onclick="showLogin()" style="margin-top:.5rem">← Voltar ao login</span>
   </div>
 
   <!-- LOGIN: visitas seguintes -->
@@ -468,6 +469,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <button id="login-btn" class="auth-btn" onclick="doLogin()" data-t="auth.login.submit">Entrar</button>
     <p class="auth-err" id="login-err"></p>
     <span class="auth-link" onclick="showForgot()" data-t="auth.login.forgot">Esqueci minha senha</span>
+    <span class="auth-link" id="login-create-link" onclick="showSetup()" style="display:none;margin-top:.5rem">Criar conta →</span>
   </div>
 
   <!-- FORGOT: esqueci a senha -->
@@ -712,6 +714,12 @@ function api(url, opts = {}) {
   return fetch(url, opts);
 }
 
+function showSetup() {
+  document.getElementById('auth-login').style.display  = 'none';
+  document.getElementById('auth-forgot').style.display = 'none';
+  document.getElementById('auth-setup').style.display  = 'block';
+  setTimeout(() => document.getElementById('setup-user').focus(), 100);
+}
 function showLogin() {
   document.getElementById('auth-setup').style.display  = 'none';
   document.getElementById('auth-forgot').style.display = 'none';
@@ -750,20 +758,18 @@ async function checkAuth() {
     const d = await r.json();
     if (d.authenticated) { overlay.classList.add('hidden'); return true; }
     overlay.classList.remove('hidden');
-    if (d.setup_required) {
-      document.getElementById('auth-setup').style.display = 'block';
-      setTimeout(() => document.getElementById('setup-user').focus(), 100);
-    } else {
-      // Pré-preenche username se salvo
-      const savedUser = localStorage.getItem('bbrain_username') || d.username || '';
-      const loginUser = document.getElementById('login-user');
-      if (loginUser && savedUser) { loginUser.value = savedUser; }
-      document.getElementById('auth-login').style.display = 'block';
-      setTimeout(() => {
-        const u = document.getElementById('login-user');
-        if (u && !u.value) u.focus(); else document.getElementById('login-pwd').focus();
-      }, 100);
-    }
+    // Sempre mostra login primeiro — setup aparece só como link se necessário
+    const savedUser = localStorage.getItem('bbrain_username') || d.username || '';
+    const loginUser = document.getElementById('login-user');
+    if (loginUser && savedUser) loginUser.value = savedUser;
+    // Mostra/esconde link de "Criar conta" conforme setup_required
+    const createLink = document.getElementById('login-create-link');
+    if (createLink) createLink.style.display = d.setup_required ? 'inline-block' : 'none';
+    document.getElementById('auth-login').style.display = 'block';
+    setTimeout(() => {
+      const u = document.getElementById('login-user');
+      if (u && !u.value) u.focus(); else document.getElementById('login-pwd').focus();
+    }, 100);
     return false;
   } catch {
     overlay.classList.remove('hidden');
