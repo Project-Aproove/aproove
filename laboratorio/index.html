@@ -1076,15 +1076,17 @@ async function startSession() {
     } else throw new Error();
   } catch {
     activeSession = session;
-    sessions.unshift(session);
-    localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
   }
 
+  // Sempre adiciona ao array local e persiste
+  sessions.unshift(activeSession);
+  localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
   localStorage.setItem('bbrain_active_session', JSON.stringify(activeSession));
   document.getElementById('checkin-overlay').classList.remove('open');
   showSessionBanner();
   startSessionTimer();
   renderSessions();
+  updateStats();
   showToast(t('toast.session_started'));
 
   btn.disabled = false;
