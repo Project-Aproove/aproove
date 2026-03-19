@@ -755,7 +755,15 @@ async function checkAuth() {
     overlay.classList.remove('hidden');
     document.getElementById('auth-login').style.display = 'block';
     const err = document.getElementById('login-err');
-    if (err) err.textContent = t('auth.err.starting');
+    // Mostra countdown e retenta automaticamente
+    let secs = 20;
+    const tick = () => {
+      if (err) err.textContent = `⏳ Servidor iniciando... ${secs}s`;
+      if (secs <= 0) { if (err) err.textContent = ''; checkAuth(); return; }
+      secs--;
+      setTimeout(tick, 1000);
+    };
+    tick();
     return false;
   }
 }
