@@ -385,16 +385,16 @@ const server = http.createServer(async (req, res) => {
       if (!payload.text?.trim()) return json(res, 400, { error: 'Texto da ideia é obrigatório' });
       const data = readIdeas();
       const idea = {
-        id: generateId(),
+        id: payload.id || generateId(),
         text: payload.text.trim(),
         source: payload.source || 'web',
-        whatsapp_from: null,
-        created_at: new Date().toISOString(),
-        status: 'nova',
+        whatsapp_from: payload.whatsapp_from || null,
+        created_at: payload.created_at || new Date().toISOString(),
+        status: payload.status || 'nova',
         tags: payload.tags || [],
-        evaluation: null,
-        roadmap_phase: null,
-        connections: []
+        evaluation: payload.evaluation || null,
+        roadmap_phase: payload.roadmap_phase || null,
+        connections: payload.connections || []
       };
       data.ideas.unshift(idea);
       writeIdeas(data);
@@ -449,13 +449,13 @@ const server = http.createServer(async (req, res) => {
       const session = {
         id: payload.id || generateId(),
         started_at: payload.started_at || new Date().toISOString(),
-        ended_at: null,
+        ended_at: payload.ended_at || null,
         location: payload.location.trim(),
         initial_thoughts: payload.initial_thoughts?.trim() || null,
-        duration_minutes: null,
-        features_worked: [],
-        ideas_captured: [],
-        social_content: null
+        duration_minutes: payload.duration_minutes || null,
+        features_worked: payload.features_worked || [],
+        ideas_captured: payload.ideas_captured || [],
+        social_content: payload.social_content || null
       };
       data.sessions.unshift(session);
       writeSessions(data);

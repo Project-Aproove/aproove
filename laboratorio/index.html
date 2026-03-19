@@ -443,6 +443,16 @@ function api(url, opts = {}) {
 
 async function checkAuth() {
   const overlay = document.getElementById('auth-overlay');
+
+  // Expiração diária: força novo login a cada dia
+  const today = new Date().toDateString();
+  const tokenDate = localStorage.getItem('bbrain_token_date');
+  if (authToken && tokenDate !== today) {
+    authToken = '';
+    localStorage.removeItem('bbrain_token');
+    localStorage.removeItem('bbrain_token_date');
+  }
+
   try {
     const r = await api('/api/auth/status', {
       headers: authToken ? { 'Authorization': 'Bearer ' + authToken } : {}
@@ -459,9 +469,12 @@ async function checkAuth() {
     }
     return false;
   } catch {
-    // Servidor offline — esconde overlay e continua (modo offline/local)
-    overlay.classList.add('hidden');
-    return true;
+    // Servidor offline ou iniciando (Render free tier dorme após inatividade)
+    overlay.classList.remove('hidden');
+    document.getElementById('auth-login').style.display = 'block';
+    const err = document.getElementById('login-err');
+    if (err) err.textContent = '⏳ Servidor iniciando... Aguarde 30s e recarregue a página.';
+    return false;
   }
 }
 
@@ -483,6 +496,7 @@ async function doSetup() {
     if (d.token) {
       authToken = d.token;
       localStorage.setItem('bbrain_token', authToken);
+      localStorage.setItem('bbrain_token_date', new Date().toDateString());
       document.getElementById('auth-overlay').classList.add('hidden');
       init();
     } else { err.textContent = d.error || 'Erro ao criar senha'; }
@@ -506,6 +520,7 @@ async function doLogin() {
     if (d.token) {
       authToken = d.token;
       localStorage.setItem('bbrain_token', authToken);
+      localStorage.setItem('bbrain_token_date', new Date().toDateString());
       document.getElementById('auth-overlay').classList.add('hidden');
       init();
     } else { err.textContent = 'Senha incorreta'; document.getElementById('login-pwd').value = ''; }
@@ -549,7 +564,25 @@ async function loadIdeas() {
     const r = await api('/api/ideas');
     if (!r.ok) throw new Error();
     const d = await r.json();
-    ideas = d.ideas || [];
+    const apiIdeas = d.ideas || [];
+    const localStr = localStorage.getItem('bbrain_ideas');
+    const localIdeas = localStr ? JSON.parse(localStr) : [];
+    if (apiIdeas.length === 0 && localIdeas.length > 0) {
+      // Servidor reiniciou — restaura do localStorage
+      ideas = localIdeas;
+      for (const idea of localIdeas.slice(0, 20)) {
+        try {
+          await api('/api/ideas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...idea, id: idea.id })
+          });
+        } catch {}
+      }
+    } else {
+      ideas = apiIdeas;
+      localStorage.setItem('bbrain_ideas', JSON.stringify(ideas));
+    }
   } catch {
     const s = localStorage.getItem('bbrain_ideas');
     ideas = s ? JSON.parse(s) : [];
@@ -563,7 +596,25 @@ async function loadSessions() {
     const r = await api('/api/sessions');
     if (!r.ok) throw new Error();
     const d = await r.json();
-    sessions = d.sessions || [];
+    const apiSessions = d.sessions || [];
+    const localStr = localStorage.getItem('bbrain_sessions');
+    const localSessions = localStr ? JSON.parse(localStr) : [];
+    if (apiSessions.length === 0 && localSessions.length > 0) {
+      // Servidor reiniciou — restaura do localStorage
+      sessions = localSessions;
+      for (const s of localSessions.slice(0, 10)) {
+        try {
+          await api('/api/sessions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(s)
+          });
+        } catch {}
+      }
+    } else {
+      sessions = apiSessions;
+      localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
+    }
   } catch {
     const s = localStorage.getItem('bbrain_sessions');
     sessions = s ? JSON.parse(s) : [];
@@ -825,6 +876,11 @@ function generateSocialContent(session) {
     sessions[idx].social_content = post;
     localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
     renderSessions();
+    // Auto-abre o preview gerado
+    setTimeout(() => {
+      const el = document.getElementById(`social-${session.id}`);
+      if (el) el.classList.add('open');
+    }, 50);
   }
 }
 
