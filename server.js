@@ -757,7 +757,12 @@ const server = http.createServer(async (req, res) => {
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
 server.listen(PORT, async () => {
-  await initSheets();
+  try {
+    await Promise.race([
+      initSheets(),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 12000))
+    ]);
+  } catch (e) { console.error('⚠️  initSheets:', e.message, '— usando cache local'); }
   const v     = readVersion().version;
   const ideas = readIdeas();
   const sess  = readSessions();
