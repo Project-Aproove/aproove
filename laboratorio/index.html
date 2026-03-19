@@ -289,6 +289,17 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   font-size:10px;color:var(--ink3);cursor:pointer;font-family:inherit;transition:all .15s; }
 .hlang-btn:hover { border-color:var(--line2);color:var(--ink2); }
 .hlang-btn.active { background:var(--paper2);color:var(--ink);font-weight:600; }
+
+/* ── LOGOUT BTN ── */
+.btn-logout {
+  display:flex;align-items:center;gap:.3rem;
+  padding:.3rem .7rem;border-radius:8px;border:1px solid var(--line2);
+  background:none;font-family:inherit;font-size:11px;font-weight:500;
+  color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-logout:hover { border-color:var(--red-bd);background:var(--red-bg);color:var(--red); }
+.header-user { font-size:11px;color:var(--ink3);padding:.25rem .5rem;
+  background:var(--paper2);border:1px solid var(--line);border-radius:8px; }
 </style>
 </head>
 <body>
@@ -315,6 +326,8 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
       <button class="hlang-btn" onclick="setLang('fr')">FR</button>
       <button class="hlang-btn" onclick="setLang('es')">ES</button>
     </div>
+    <span class="header-user" id="header-user" style="display:none"></span>
+    <button class="btn-logout" id="btn-logout" onclick="logout()" style="display:none" title="Sair">↪ Sair</button>
   </div>
 </header>
 
@@ -876,10 +889,29 @@ document.addEventListener('keydown', e => {
   else if (login && login.style.display !== 'none') doLogin();
 });
 
+// ── LOGOUT ────────────────────────────────────────────────────
+async function logout() {
+  if (!confirm('Sair do BBrain?')) return;
+  try { await api('/api/auth/logout', { method: 'POST' }); } catch {}
+  authToken = '';
+  localStorage.removeItem('bbrain_token');
+  localStorage.removeItem('bbrain_token_date');
+  location.reload();
+}
+
+function showHeaderUser() {
+  const user = localStorage.getItem('bbrain_username') || '';
+  const uEl  = document.getElementById('header-user');
+  const bEl  = document.getElementById('btn-logout');
+  if (uEl && user) { uEl.textContent = user; uEl.style.display = ''; }
+  if (bEl) bEl.style.display = '';
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
   const authed = await checkAuth();
   if (!authed) return;
+  showHeaderUser();
   updateCheckinDatetime();
   await loadData();
   checkForActiveSession();

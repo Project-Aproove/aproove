@@ -104,21 +104,26 @@ function deploy(notes) {
   return newV;
 }
 
-// ── IDEAS ─────────────────────────────────────────────────────────────────────
+// ── IDEAS (cache em memória — sincronizado com Google Sheets) ─────────────────
+let ideasCache = [];
+
 function readIdeas() {
-  try { return JSON.parse(fs.readFileSync(IDEAS_FILE, 'utf8')); }
-  catch { return { ideas: [], meta: { total:0, on_roadmap:0, archived:0, from_whatsapp:0 } }; }
+  return {
+    ideas: ideasCache,
+    meta: {
+      total: ideasCache.length,
+      on_roadmap: ideasCache.filter(i => i.status === 'no_roadmap').length,
+      archived: ideasCache.filter(i => i.status === 'arquivada').length,
+      from_whatsapp: ideasCache.filter(i => i.source === 'whatsapp').length,
+      last_updated: new Date().toISOString().slice(0, 10)
+    }
+  };
 }
 
 function writeIdeas(data) {
-  data.meta = {
-    total: data.ideas.length,
-    on_roadmap: data.ideas.filter(i => i.status === 'no_roadmap').length,
-    archived: data.ideas.filter(i => i.status === 'arquivada').length,
-    from_whatsapp: data.ideas.filter(i => i.source === 'whatsapp').length,
-    last_updated: new Date().toISOString().slice(0, 10)
-  };
-  fs.writeFileSync(IDEAS_FILE, JSON.stringify(data, null, 2));
+  ideasCache = data.ideas;
+  syncIdeas().catch(e => console.error('syncIdeas:', e.message));
+  try { fs.writeFileSync(IDEAS_FILE, JSON.stringify(data, null, 2)); } catch {}
 }
 
 function generateId() {
@@ -127,19 +132,161 @@ function generateId() {
   return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Date.now().toString(36).slice(-5).toUpperCase()}`;
 }
 
-// ── SESSIONS (BBrain — Diário do Fundador) ────────────────────────────────────
+// ── SESSIONS (cache em memória — sincronizado com Google Sheets) ──────────────
+let sessCache = [];
+
 function readSessions() {
-  try { return JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')); }
-  catch { return { sessions: [], meta: { total_sessions: 0, total_hours: 0, locations: [], last_session: null } }; }
+  const totMin = sessCache.reduce((a, s) => a + (s.duration_minutes || 0), 0);
+  return {
+    sessions: sessCache,
+    meta: {
+      total_sessions: sessCache.length,
+      total_hours: Math.round(totMin / 60 * 10) / 10,
+      locations: [...new Set(sessCache.map(s => s.location).filter(Boolean))],
+      last_session: sessCache[0]?.started_at || null
+    }
+  };
 }
 
 function writeSessions(data) {
-  const total   = data.sessions.length;
-  const totMin  = data.sessions.reduce((a, s) => a + (s.duration_minutes || 0), 0);
-  const locs    = [...new Set(data.sessions.map(s => s.location).filter(Boolean))];
-  const last    = data.sessions[0]?.started_at || null;
-  data.meta = { total_sessions: total, total_hours: Math.round(totMin / 60 * 10) / 10, locations: locs, last_session: last };
-  fs.writeFileSync(SESSIONS_FILE, JSON.stringify(data, null, 2));
+  sessCache = data.sessions;
+  syncSessions().catch(e => console.error('syncSessions:', e.message));
+  try { fs.writeFileSync(SESSIONS_FILE, JSON.stringify(data, null, 2)); } catch {}
+}
+
+// ── GOOGLE SHEETS — persistência cross-device ────────────────────────────────
+const SHEET_ID = process.env.GOOGLE_SHEET_ID || '1RDqOKLKfwBQFT6jEhYvwjiRxRE4F4LLr0UwIidGO3UE';
+let _gcreds = null, _gtoken = null, _gtokenExp = 0;
+
+function loadGCreds() {
+  if (_gcreds) return _gcreds;
+  try {
+    if (process.env.GOOGLE_CREDENTIALS_JSON)
+      return (_gcreds = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON));
+    const p = path.join(__dirname, 'google-credentials.json');
+    if (fs.existsSync(p)) return (_gcreds = JSON.parse(fs.readFileSync(p, 'utf8')));
+  } catch {}
+  return null;
+}
+
+function makeJWT(c) {
+  const hdr = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
+  const now = Math.floor(Date.now() / 1000);
+  const clm = Buffer.from(JSON.stringify({
+    iss: c.client_email,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600, iat: now
+  })).toString('base64url');
+  const sgn = crypto.createSign('RSA-SHA256');
+  sgn.update(`${hdr}.${clm}`);
+  return `${hdr}.${clm}.${sgn.sign(c.private_key, 'base64url')}`;
+}
+
+async function getGToken() {
+  if (_gtoken && Date.now() < _gtokenExp) return _gtoken;
+  const c = loadGCreds(); if (!c) return null;
+  return new Promise(resolve => {
+    const https = require('https');
+    const body = 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + makeJWT(c);
+    const req = https.request({
+      hostname: 'oauth2.googleapis.com', path: '/token', method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) }
+    }, r => {
+      let d = ''; r.on('data', c => d += c); r.on('end', () => {
+        try {
+          const parsed = JSON.parse(d);
+          _gtoken = parsed.access_token || null;
+          if (_gtoken) _gtokenExp = Date.now() + 55 * 60 * 1000;
+          resolve(_gtoken);
+        } catch { resolve(null); }
+      });
+    });
+    req.on('error', () => resolve(null)); req.write(body); req.end();
+  });
+}
+
+function shReq(apiPath, method, token, body) {
+  return new Promise(resolve => {
+    const https = require('https');
+    const bodyStr = body ? JSON.stringify(body) : '';
+    const req = https.request({
+      hostname: 'sheets.googleapis.com', path: apiPath, method,
+      headers: {
+        Authorization: `Bearer ${token}`, 'Content-Type': 'application/json',
+        ...(bodyStr ? { 'Content-Length': Buffer.byteLength(bodyStr) } : {})
+      }
+    }, r => {
+      let d = ''; r.on('data', c => d += c);
+      r.on('end', () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+    });
+    req.on('error', e => { console.error('Sheets err:', e.message); resolve({}); });
+    if (bodyStr) req.write(bodyStr);
+    req.end();
+  });
+}
+
+const shBase = `/v4/spreadsheets/${SHEET_ID}/values`;
+const shBatch = `/v4/spreadsheets/${SHEET_ID}:batchUpdate`;
+const enc = s => encodeURIComponent(s);
+
+async function shGet(tok, tab)   { return shReq(`${shBase}/${enc(tab + '!A1:ZZ')}`, 'GET', tok, null); }
+async function shClear(tok, tab) { return shReq(`${shBase}/${enc(tab + '!A1:ZZ')}:clear`, 'POST', tok, {}); }
+async function shPut(tok, tab, rows) {
+  return shReq(`${shBase}/${enc(tab + '!A1')}?valueInputOption=RAW`, 'PUT', tok,
+    { range: tab + '!A1', majorDimension: 'ROWS', values: rows });
+}
+async function shAddTab(tok, title) {
+  return shReq(shBatch, 'POST', tok, { requests: [{ addSheet: { properties: { title } } }] });
+}
+
+const ICOLS = ['id','text','source','whatsapp_from','created_at','status','tags','evaluation','roadmap_phase','connections','session_id','updated_at'];
+const SCOLS = ['id','started_at','ended_at','location','initial_thoughts','duration_minutes','features_worked','ideas_captured','social_content'];
+
+const toStr    = v => Array.isArray(v) ? JSON.stringify(v) : (v ?? '');
+const fromArr  = v => { if (!v) return []; try { return JSON.parse(v); } catch { return v ? [v] : []; } };
+const ideaToRow = i => ICOLS.map(k => toStr(i[k]));
+const sessToRow = s => SCOLS.map(k => toStr(s[k]));
+function rowToIdea(r) {
+  const o = {}; ICOLS.forEach((k, i) => { const v = r[i] || ''; o[k] = (k === 'tags' || k === 'connections') ? fromArr(v) : (v || null); }); return o;
+}
+function rowToSess(r) {
+  const o = {}; SCOLS.forEach((k, i) => { const v = r[i] || ''; o[k] = (k === 'features_worked' || k === 'ideas_captured') ? fromArr(v) : (v || null); }); return o;
+}
+
+async function syncIdeas() {
+  const tok = await getGToken(); if (!tok) return;
+  await shClear(tok, 'Ideas');
+  await shPut(tok, 'Ideas', [ICOLS, ...ideasCache.map(ideaToRow)]);
+}
+
+async function syncSessions() {
+  const tok = await getGToken(); if (!tok) return;
+  await shClear(tok, 'Sessions');
+  await shPut(tok, 'Sessions', [SCOLS, ...sessCache.map(sessToRow)]);
+}
+
+async function initSheets() {
+  const tok = await getGToken();
+  if (!tok) {
+    console.log('⚠️  Google Sheets: sem credenciais — usando ficheiro local');
+    try { ideasCache = JSON.parse(fs.readFileSync(IDEAS_FILE, 'utf8')).ideas || []; } catch {}
+    try { sessCache  = JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8')).sessions || []; } catch {}
+    return;
+  }
+  // Garante que as abas existem
+  const ir = await shGet(tok, 'Ideas');
+  if (ir.error) { await shAddTab(tok, 'Ideas'); await shPut(tok, 'Ideas', [ICOLS]); }
+  const sr = await shGet(tok, 'Sessions');
+  if (sr.error) { await shAddTab(tok, 'Sessions'); await shPut(tok, 'Sessions', [SCOLS]); }
+  // Carrega dados
+  const ir2 = ir.error ? await shGet(tok, 'Ideas') : ir;
+  const rows = (ir2.values || []).slice(1);
+  if (rows.length) ideasCache = rows.map(rowToIdea).filter(i => i.id);
+  const sr2 = sr.error ? await shGet(tok, 'Sessions') : sr;
+  const srows = (sr2.values || []).slice(1);
+  if (srows.length) sessCache = srows.map(rowToSess).filter(s => s.id);
+  console.log(`✓ Google Sheets — ${ideasCache.length} ideias, ${sessCache.length} sessões`);
 }
 
 // ── WHATSAPP META CLOUD API ───────────────────────────────────────────────────
@@ -609,12 +756,14 @@ const server = http.createServer(async (req, res) => {
 });
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
-server.listen(PORT, () => {
-  const v        = readVersion().version;
-  const ideas    = readIdeas();
-  const sess     = readSessions();
-  const waOk     = !!(WA_ACCESS_TOKEN && WA_PHONE_ID);
-  const aiOk     = !!process.env.ANTHROPIC_API_KEY;
+server.listen(PORT, async () => {
+  await initSheets();
+  const v     = readVersion().version;
+  const ideas = readIdeas();
+  const sess  = readSessions();
+  const waOk  = !!(WA_ACCESS_TOKEN && WA_PHONE_ID);
+  const aiOk  = !!process.env.ANTHROPIC_API_KEY;
+  const shOk  = !!loadGCreds();
 
   console.log(`
 ╔═══════════════════════════════════════════════════════╗
@@ -627,6 +776,7 @@ server.listen(PORT, () => {
 ║  Ideias no BBrain:   ${String(ideas.meta.total).padEnd(35)}║
 ║  Sessões gravadas:   ${String(sess.meta.total_sessions).padEnd(35)}║
 ║  Horas registradas:  ${String(sess.meta.total_hours + 'h').padEnd(35)}║
+║  Google Sheets:      ${(shOk ? '✓ Conectado' : '✗ Sem credenciais').padEnd(35)}║
 ║  WhatsApp:           ${(waOk ? '✓ Configurado' : '✗ Não configurado').padEnd(35)}║
 ║  Claude AI:          ${(aiOk ? '✓ Configurado' : '✗ Não configurado (opcional)').padEnd(35)}║
 ╠═══════════════════════════════════════════════════════╣
