@@ -21,6 +21,7 @@ auth.json
 # Credenciais e acessos (NUNCA subir)
 ACESSOS.md
 GOVERNANCA_DRIVE.md
+google-credentials.json
 
 # Claude Code (configuração interna da ferramenta)
 .claude/
