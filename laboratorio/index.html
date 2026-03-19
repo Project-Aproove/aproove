@@ -57,7 +57,8 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .session-banner.visible { display: flex; }
 .session-pulse { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink: 0; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,.4); } 50% { box-shadow: 0 0 0 5px rgba(74,222,128,0); } }
-.session-info { flex: 1; }
+.session-info { flex: 1; min-width: 0; }
+.session-thoughts { color:rgba(255,255,255,.6); font-size:11px; margin-top:.2rem; line-height:1.5; }
 .session-info strong { color: white; }
 .session-timer { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,.5); }
 .btn-end-session {
@@ -322,7 +323,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   <div class="session-pulse"></div>
   <div class="session-info">
     <strong id="sb-location">—</strong>
-    <span id="sb-thoughts" style="color:rgba(255,255,255,.55);margin-left:.5rem"></span>
+    <div id="sb-thoughts" class="session-thoughts"></div>
   </div>
   <div class="session-timer" id="sb-timer">00:00:00</div>
   <button class="btn-end-session" onclick="endSession()" data-t="sessions.end">Encerrar sessão</button>
@@ -1117,7 +1118,7 @@ function showSessionBanner() {
   if (!activeSession) return;
   document.getElementById('sb-location').textContent = activeSession.location;
   const th = activeSession.initial_thoughts;
-  if (th) document.getElementById('sb-thoughts').textContent = '— ' + th.slice(0, 60) + (th.length > 60 ? '...' : '');
+  if (th) document.getElementById('sb-thoughts').textContent = th;
   document.getElementById('session-banner').classList.add('visible');
   document.getElementById('stat-session-active').style.display = 'flex';
 }
