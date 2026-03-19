@@ -18,6 +18,9 @@ ideas.json
 sessions.json
 auth.json
 
+# Credenciais e acessos (NUNCA subir)
+ACESSOS.md
+
 # Claude Code (configuração interna da ferramenta)
 .claude/
 
