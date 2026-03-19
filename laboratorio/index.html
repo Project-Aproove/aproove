@@ -385,11 +385,15 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 
   <!-- TAB: SESSÕES -->
   <div class="tab-panel" id="panel-sessions">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+      <div style="font-size:13px;color:var(--ink3)" id="sessions-header-hint">Registre cada bloco de trabalho com local e pensamentos.</div>
+      <button id="btn-new-session" class="btn-idea" onclick="openCheckin()" style="padding:.5rem 1.25rem;font-size:13px">+ Nova sessão</button>
+    </div>
     <div class="sessions-list" id="sessions-list">
       <div class="empty" id="empty-sessions">
         <div class="empty-icon">📓</div>
         <div class="empty-title" data-t="sessions.empty.title">Nenhuma sessão registrada</div>
-        <div class="empty-desc" data-t="sessions.empty.desc">Quando você começar a trabalhar e fazer o check-in, cada sessão vai aparecer aqui como parte do seu diário de fundador.</div>
+        <div class="empty-desc" data-t="sessions.empty.desc">Clique em "+ Nova sessão" para começar.</div>
       </div>
     </div>
   </div>
@@ -1091,6 +1095,16 @@ function skipCheckin() {
   document.getElementById('checkin-overlay').classList.remove('open');
 }
 
+function openCheckin() {
+  if (activeSession) { showToast('Já há uma sessão ativa — encerre antes de iniciar outra.'); return; }
+  updateCheckinDatetime();
+  document.getElementById('location-input').value = '';
+  document.getElementById('thoughts-input').value = '';
+  document.querySelectorAll('.loc-pill').forEach(p => p.classList.remove('sel'));
+  document.getElementById('checkin-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('location-input').focus(), 200);
+}
+
 // ── ENCERRAR SESSÃO ───────────────────────────────────────────
 async function endSession() {
   if (!activeSession) return;
@@ -1124,6 +1138,7 @@ async function endSession() {
   activeSession = null;
   document.getElementById('session-banner').classList.remove('visible');
   document.getElementById('stat-session-active').style.display = 'none';
+  clearSessionBannerBtn();
 
   showToast(`✓ Sessão encerrada — ${diffMin} min registrados`);
   await loadSessions();
@@ -1159,6 +1174,13 @@ function showSessionBanner() {
   if (th) document.getElementById('sb-thoughts').textContent = th;
   document.getElementById('session-banner').classList.add('visible');
   document.getElementById('stat-session-active').style.display = 'flex';
+  const btn = document.getElementById('btn-new-session');
+  if (btn) { btn.textContent = '● Sessão ativa'; btn.style.opacity = '.5'; btn.style.cursor = 'default'; }
+}
+
+function clearSessionBannerBtn() {
+  const btn = document.getElementById('btn-new-session');
+  if (btn) { btn.textContent = '+ Nova sessão'; btn.style.opacity = ''; btn.style.cursor = ''; }
 }
 
 // ── SUBMETER IDEIA ────────────────────────────────────────────
