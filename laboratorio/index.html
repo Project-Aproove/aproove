@@ -271,6 +271,23 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .auth-btn:disabled { opacity:.4;cursor:not-allowed; }
 .auth-err { font-size:12px;color:#f87171;margin-top:.75rem;min-height:1.4em; }
 .auth-hint { font-size:11px;color:rgba(255,255,255,.2);margin-top:1.75rem;line-height:1.7; }
+.auth-link { font-size:12px;color:rgba(255,255,255,.35);margin-top:1rem;cursor:pointer;display:inline-block; }
+.auth-link:hover { color:rgba(255,255,255,.65); }
+.auth-success { font-size:12px;color:#4ade80;margin-top:.75rem;min-height:1.4em; }
+
+/* ── LANGUAGE SELECTOR ── */
+.lang-bar { display:flex;justify-content:center;gap:.5rem;margin-bottom:2rem; }
+.lang-btn { background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;
+  padding:.3rem .65rem;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;font-family:inherit; }
+.lang-btn:hover { background:rgba(255,255,255,.12);color:rgba(255,255,255,.7); }
+.lang-btn.active { background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;font-weight:600; }
+
+/* ── HEADER LANG ── */
+.header-lang { display:flex;gap:.3rem;align-items:center; }
+.hlang-btn { background:none;border:1px solid var(--line2);border-radius:6px;padding:.15rem .4rem;
+  font-size:10px;color:var(--ink3);cursor:pointer;font-family:inherit;transition:all .15s; }
+.hlang-btn:hover { border-color:var(--line2);color:var(--ink2); }
+.hlang-btn.active { background:var(--paper2);color:var(--ink);font-weight:600; }
 </style>
 </head>
 <body>
@@ -281,16 +298,22 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <div class="brain-mark">🧠</div>
     <div>
       <div class="brain-name">BBrain</div>
-      <div class="brain-sub">Bruno Cérebro · Espaço privado do fundador</div>
+      <div class="brain-sub" id="hdr-sub" data-t="header.subtitle">Espaço privado do fundador</div>
     </div>
   </div>
   <div class="header-actions">
     <div class="stat-chip active" id="stat-session-active" style="display:none">
-      <b id="stat-session-time">00:00</b> sessão ativa
+      <b id="stat-session-time">00:00</b> <span data-t="header.active_session">sessão ativa</span>
     </div>
-    <div class="stat-chip"><b id="stat-total">0</b> ideias</div>
-    <div class="stat-chip"><b id="stat-roadmap">0</b> no roadmap</div>
-    <div class="stat-chip"><b id="stat-sessions">0</b> sessões</div>
+    <div class="stat-chip"><b id="stat-total">0</b> <span data-t="header.ideas">ideias</span></div>
+    <div class="stat-chip"><b id="stat-roadmap">0</b> <span data-t="header.roadmap">no roadmap</span></div>
+    <div class="stat-chip"><b id="stat-sessions">0</b> <span data-t="header.sessions">sessões</span></div>
+    <div class="header-lang" id="header-lang">
+      <button class="hlang-btn active" onclick="setLang('pt')">PT</button>
+      <button class="hlang-btn" onclick="setLang('en')">EN</button>
+      <button class="hlang-btn" onclick="setLang('fr')">FR</button>
+      <button class="hlang-btn" onclick="setLang('es')">ES</button>
+    </div>
   </div>
 </header>
 
@@ -302,16 +325,16 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <span id="sb-thoughts" style="color:rgba(255,255,255,.55);margin-left:.5rem"></span>
   </div>
   <div class="session-timer" id="sb-timer">00:00:00</div>
-  <button class="btn-end-session" onclick="endSession()">Encerrar sessão</button>
+  <button class="btn-end-session" onclick="endSession()" data-t="sessions.end">Encerrar sessão</button>
 </div>
 
 <!-- ── TABS ── -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('ideas', this)">
-    💡 Ideias <span class="tab-count" id="tc-ideas">0</span>
+    <span data-t="tab.ideas">💡 Ideias</span> <span class="tab-count" id="tc-ideas">0</span>
   </button>
   <button class="tab-btn" onclick="switchTab('sessions', this)">
-    📓 Diário de sessões <span class="tab-count" id="tc-sessions">0</span>
+    <span data-t="tab.sessions">📓 Diário de sessões</span> <span class="tab-count" id="tc-sessions">0</span>
   </button>
 </div>
 
@@ -321,27 +344,27 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   <!-- TAB: IDEIAS -->
   <div class="tab-panel active" id="panel-ideas">
     <div class="capture-card">
-      <div class="capture-label"><div class="live-dot"></div> Nova ideia</div>
-      <textarea class="idea-textarea" id="idea-input" placeholder="Qualquer pensamento, observação ou insight. Sem filtro — pode começar incompleto. O BBrain guarda tudo." onkeydown="handleKey(event)"></textarea>
+      <div class="capture-label"><div class="live-dot"></div> <span data-t="ideas.new">Nova ideia</span></div>
+      <textarea class="idea-textarea" id="idea-input" data-t-ph="ideas.placeholder" placeholder="Qualquer pensamento, observação ou insight. Sem filtro — pode começar incompleto. O BBrain guarda tudo." onkeydown="handleKey(event)"></textarea>
       <div class="capture-footer">
-        <div class="capture-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> para registrar</div>
-        <button class="btn-idea" id="submit-btn" onclick="submitIdea()">Registrar ideia</button>
+        <div class="capture-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> <span data-t="ideas.hint">para registrar</span></div>
+        <button class="btn-idea" id="submit-btn" onclick="submitIdea()" data-t="ideas.submit">Registrar ideia</button>
       </div>
     </div>
 
     <div class="filters">
-      <button class="filter-btn active" onclick="setFilter('todas',this)">Todas <span class="fc" id="fc-todas">0</span></button>
-      <button class="filter-btn" onclick="setFilter('nova',this)">Novas <span class="fc" id="fc-nova">0</span></button>
+      <button class="filter-btn active" onclick="setFilter('todas',this)"><span data-t="ideas.filter.all">Todas</span> <span class="fc" id="fc-todas">0</span></button>
+      <button class="filter-btn" onclick="setFilter('nova',this)"><span data-t="ideas.filter.new">Novas</span> <span class="fc" id="fc-nova">0</span></button>
       <button class="filter-btn" onclick="setFilter('no_roadmap',this)">Roadmap <span class="fc" id="fc-roadmap">0</span></button>
-      <button class="filter-btn" onclick="setFilter('em_analise',this)">Em análise <span class="fc" id="fc-analise">0</span></button>
-      <button class="filter-btn" onclick="setFilter('arquivada',this)">Arquivadas <span class="fc" id="fc-arquivada">0</span></button>
+      <button class="filter-btn" onclick="setFilter('em_analise',this)"><span data-t="ideas.filter.analysis">Em análise</span> <span class="fc" id="fc-analise">0</span></button>
+      <button class="filter-btn" onclick="setFilter('arquivada',this)"><span data-t="ideas.filter.archived">Arquivadas</span> <span class="fc" id="fc-arquivada">0</span></button>
     </div>
 
     <div class="ideas-list" id="ideas-list">
       <div class="empty" id="empty-ideas">
         <div class="empty-icon">💡</div>
-        <div class="empty-title">Nenhuma ideia ainda</div>
-        <div class="empty-desc">Registre sua primeira ideia acima ou mande uma mensagem via WhatsApp.</div>
+        <div class="empty-title" data-t="ideas.empty.title">Nenhuma ideia ainda</div>
+        <div class="empty-desc" data-t="ideas.empty.desc">Registre sua primeira ideia acima ou mande uma mensagem via WhatsApp.</div>
       </div>
     </div>
   </div>
@@ -351,8 +374,8 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <div class="sessions-list" id="sessions-list">
       <div class="empty" id="empty-sessions">
         <div class="empty-icon">📓</div>
-        <div class="empty-title">Nenhuma sessão registrada</div>
-        <div class="empty-desc">Quando você começar a trabalhar e fazer o check-in, cada sessão vai aparecer aqui como parte do seu diário de fundador.</div>
+        <div class="empty-title" data-t="sessions.empty.title">Nenhuma sessão registrada</div>
+        <div class="empty-desc" data-t="sessions.empty.desc">Quando você começar a trabalhar e fazer o check-in, cada sessão vai aparecer aqui como parte do seu diário de fundador.</div>
       </div>
     </div>
   </div>
@@ -367,29 +390,29 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   <div class="checkin-modal">
     <div class="checkin-header">
       <div class="checkin-brain">🧠</div>
-      <div class="checkin-title">Nova sessão de trabalho</div>
+      <div class="checkin-title" data-t="checkin.title">Nova sessão de trabalho</div>
       <div class="checkin-datetime" id="checkin-datetime">—</div>
     </div>
 
     <div class="checkin-field">
-      <label class="checkin-label">Onde você está?</label>
-      <div class="location-pills">
-        <div class="loc-pill" onclick="selectLocation('Em casa')">Em casa</div>
-        <div class="loc-pill" onclick="selectLocation('No escritório')">No escritório</div>
-        <div class="loc-pill" onclick="selectLocation('Em casa, de madrugada')">De madrugada</div>
-        <div class="loc-pill" onclick="selectLocation('No café')">No café</div>
-        <div class="loc-pill" onclick="selectLocation('Viajando')">Viajando</div>
+      <label class="checkin-label" data-t="checkin.where">Onde você está?</label>
+      <div class="location-pills" id="loc-pills">
+        <div class="loc-pill" data-loc-key="checkin.loc.home" onclick="selectLocation(t('checkin.loc.home'),this)">Em casa</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.office" onclick="selectLocation(t('checkin.loc.office'),this)">No escritório</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.home_night" onclick="selectLocation(t('checkin.loc.home_night'),this)">De madrugada</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.cafe" onclick="selectLocation(t('checkin.loc.cafe'),this)">No café</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.travel" onclick="selectLocation(t('checkin.loc.travel'),this)">Viajando</div>
       </div>
-      <input class="checkin-input" id="location-input" type="text" placeholder="ou escreva livremente..." oninput="clearPills()">
+      <input class="checkin-input" id="location-input" type="text" data-t-ph="checkin.loc.placeholder" placeholder="ou escreva livremente..." oninput="clearPills()">
     </div>
 
     <div class="checkin-field">
-      <label class="checkin-label">O que você está pensando?</label>
-      <textarea class="checkin-input checkin-textarea" id="thoughts-input" placeholder="Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante..."></textarea>
+      <label class="checkin-label" data-t="checkin.thoughts">O que você está pensando?</label>
+      <textarea class="checkin-input checkin-textarea" id="thoughts-input" data-t-ph="checkin.thoughts.placeholder" placeholder="Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante..."></textarea>
     </div>
 
-    <button class="btn-checkin" id="checkin-btn" onclick="startSession()">Começar a trabalhar</button>
-    <span class="checkin-skip" onclick="skipCheckin()">Continuar sem registrar sessão</span>
+    <button class="btn-checkin" id="checkin-btn" onclick="startSession()" data-t="checkin.start">Começar a trabalhar</button>
+    <span class="checkin-skip" onclick="skipCheckin()" data-t="checkin.skip">Continuar sem registrar sessão</span>
   </div>
 </div>
 
@@ -398,25 +421,64 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 
   <!-- SETUP: primeira vez -->
   <div id="auth-setup" class="auth-box" style="display:none">
+    <div class="lang-bar">
+      <button class="lang-btn active" onclick="setLang('pt')">🇧🇷 PT</button>
+      <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
+      <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+    </div>
     <span class="auth-icon">🧠</span>
-    <h1 class="auth-title">Bem-vindo ao BBrain</h1>
-    <p class="auth-subtitle">Primeira vez aqui.<br>Crie sua senha para proteger este espaço.</p>
-    <input type="password" id="setup-pwd"  class="auth-input" placeholder="Nova senha (mín. 6 caracteres)" autocomplete="new-password">
-    <input type="password" id="setup-pwd2" class="auth-input" placeholder="Confirmar senha" autocomplete="new-password">
-    <button id="setup-btn" class="auth-btn" onclick="doSetup()">Criar senha e entrar</button>
+    <h1 class="auth-title" data-t="auth.setup.title">Bem-vindo ao BBrain</h1>
+    <p class="auth-subtitle" data-t="auth.setup.subtitle">Primeira vez aqui.<br>Crie seu usuário e senha para proteger este espaço.</p>
+    <input type="text"     id="setup-user" class="auth-input" data-t-ph="auth.setup.username" placeholder="Usuário (ex: brunomassa)" autocomplete="username" spellcheck="false">
+    <input type="password" id="setup-pwd"  class="auth-input" data-t-ph="auth.setup.password" placeholder="Senha (mín. 6 caracteres)" autocomplete="new-password">
+    <input type="password" id="setup-pwd2" class="auth-input" data-t-ph="auth.setup.confirm" placeholder="Confirmar senha" autocomplete="new-password">
+    <button id="setup-btn" class="auth-btn" onclick="doSetup()" data-t="auth.setup.submit">Criar acesso e entrar</button>
     <p class="auth-err" id="setup-err"></p>
-    <p class="auth-hint">Você pode mudar sua senha a qualquer momento<br>nas configurações do BBrain.</p>
+    <p class="auth-hint" data-t="auth.setup.hint">Guarde seu usuário e senha — serão pedidos todo dia.</p>
   </div>
 
   <!-- LOGIN: visitas seguintes -->
   <div id="auth-login" class="auth-box" style="display:none">
+    <div class="lang-bar">
+      <button class="lang-btn active" onclick="setLang('pt')">🇧🇷 PT</button>
+      <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
+      <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+    </div>
     <span class="auth-icon">🧠</span>
-    <h1 class="auth-title">BBrain</h1>
-    <p class="auth-subtitle">Bruno Cérebro · Aproove</p>
-    <input type="text"     id="login-user" class="auth-input" value="brunomassa" readonly>
-    <input type="password" id="login-pwd"  class="auth-input" placeholder="Senha" autocomplete="current-password">
-    <button id="login-btn" class="auth-btn" onclick="doLogin()">Entrar</button>
+    <h1 class="auth-title" data-t="auth.login.title">BBrain</h1>
+    <p class="auth-subtitle" data-t="auth.login.subtitle">Aproove · Diário do Fundador</p>
+    <input type="text"     id="login-user" class="auth-input" data-t-ph="auth.login.username" placeholder="Usuário" autocomplete="username" spellcheck="false">
+    <input type="password" id="login-pwd"  class="auth-input" data-t-ph="auth.login.password" placeholder="Senha" autocomplete="current-password">
+    <button id="login-btn" class="auth-btn" onclick="doLogin()" data-t="auth.login.submit">Entrar</button>
     <p class="auth-err" id="login-err"></p>
+    <span class="auth-link" onclick="showForgot()" data-t="auth.login.forgot">Esqueci minha senha</span>
+  </div>
+
+  <!-- FORGOT: esqueci a senha -->
+  <div id="auth-forgot" class="auth-box" style="display:none">
+    <div class="lang-bar">
+      <button class="lang-btn active" onclick="setLang('pt')">🇧🇷 PT</button>
+      <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
+      <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
+      <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+    </div>
+    <span class="auth-icon">🔑</span>
+    <h1 class="auth-title" data-t="auth.forgot.title">Redefinir senha</h1>
+    <p class="auth-subtitle" data-t="auth.forgot.subtitle">Enviaremos um código para o seu email cadastrado.</p>
+    <div id="forgot-step1">
+      <button id="forgot-send-btn" class="auth-btn" onclick="doForgotRequest()" data-t="auth.forgot.submit">Enviar código</button>
+    </div>
+    <div id="forgot-step2" style="display:none">
+      <input type="text"     id="forgot-code"  class="auth-input" data-t-ph="auth.forgot.code_placeholder" placeholder="Código de 6 dígitos" maxlength="6" autocomplete="off">
+      <input type="password" id="forgot-pwd"   class="auth-input" data-t-ph="auth.forgot.new_password" placeholder="Nova senha" autocomplete="new-password">
+      <input type="password" id="forgot-pwd2"  class="auth-input" data-t-ph="auth.forgot.confirm_password" placeholder="Confirmar nova senha" autocomplete="new-password">
+      <button id="forgot-reset-btn" class="auth-btn" onclick="doForgotReset()" data-t="auth.forgot.reset">Redefinir senha</button>
+    </div>
+    <p class="auth-err" id="forgot-err"></p>
+    <p class="auth-success" id="forgot-ok"></p>
+    <span class="auth-link" onclick="showLogin()" data-t="auth.forgot.back">← Voltar ao login</span>
   </div>
 
 </div>
@@ -434,6 +496,201 @@ let activeFilter  = 'todas';
 let activeTab     = 'ideas';
 
 // ── AUTH ──────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// I18N — PT (padrão) · EN · FR · ES
+// ═══════════════════════════════════════════════════════════════
+const I18N = {
+  pt:{
+    'header.subtitle':'Espaço privado do fundador','header.active_session':'sessão ativa',
+    'header.ideas':'ideias','header.roadmap':'no roadmap','header.sessions':'sessões',
+    'tab.ideas':'💡 Ideias','tab.sessions':'📓 Diário de sessões',
+    'ideas.new':'Nova ideia','ideas.hint':'para registrar','ideas.submit':'Registrar ideia',
+    'ideas.placeholder':'Qualquer pensamento, observação ou insight. Sem filtro — pode começar incompleto. O BBrain guarda tudo.',
+    'ideas.filter.all':'Todas','ideas.filter.new':'Novas','ideas.filter.analysis':'Em análise','ideas.filter.archived':'Arquivadas',
+    'ideas.empty.title':'Nenhuma ideia ainda','ideas.empty.desc':'Registre sua primeira ideia acima ou mande uma mensagem via WhatsApp.',
+    'ideas.action.roadmap':'+ Roadmap','ideas.action.analyze':'Analisar','ideas.action.archive':'Arquivar','ideas.action.reopen':'Reabrir',
+    'ideas.status.new':'Nova','ideas.status.analysis':'Em análise','ideas.status.roadmap':'Roadmap','ideas.status.archived':'Arquivada','ideas.status.linked':'Vinculada',
+    'sessions.end':'Encerrar sessão','sessions.empty.title':'Nenhuma sessão registrada',
+    'sessions.empty.desc':'Quando você começar a trabalhar e fazer o check-in, cada sessão vai aparecer aqui como parte do seu diário de fundador.',
+    'sessions.ongoing':'Em andamento','sessions.active':'Ativa',
+    'sessions.generate':'✦ Gerar conteúdo','sessions.view_post':'📱 Ver post gerado',
+    'sessions.post_label':'Post sugerido · Instagram / LinkedIn','sessions.copy':'Copiar',
+    'checkin.title':'Nova sessão de trabalho','checkin.where':'Onde você está?',
+    'checkin.loc.home':'Em casa','checkin.loc.office':'No escritório','checkin.loc.home_night':'Em casa, de madrugada',
+    'checkin.loc.cafe':'No café','checkin.loc.travel':'Viajando','checkin.loc.placeholder':'ou escreva livremente...',
+    'checkin.thoughts':'O que você está pensando?','checkin.start':'Começar a trabalhar','checkin.skip':'Continuar sem registrar sessão',
+    'checkin.thoughts.placeholder':'Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante...',
+    'auth.setup.title':'Bem-vindo ao BBrain','auth.setup.subtitle':'Primeira vez aqui.\nCrie seu usuário e senha para proteger este espaço.',
+    'auth.setup.username':'Usuário (ex: brunomassa)','auth.setup.password':'Senha (mín. 6 caracteres)','auth.setup.confirm':'Confirmar senha',
+    'auth.setup.submit':'Criar acesso e entrar','auth.setup.hint':'Guarde seu usuário e senha — serão pedidos todo dia.',
+    'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Diário do Fundador',
+    'auth.login.username':'Usuário','auth.login.password':'Senha','auth.login.submit':'Entrar','auth.login.forgot':'Esqueci minha senha',
+    'auth.forgot.title':'Redefinir senha','auth.forgot.subtitle':'Enviaremos um código para o seu email cadastrado.',
+    'auth.forgot.submit':'Enviar código','auth.forgot.back':'← Voltar ao login',
+    'auth.forgot.code_placeholder':'Código de 6 dígitos','auth.forgot.new_password':'Nova senha',
+    'auth.forgot.confirm_password':'Confirmar nova senha','auth.forgot.reset':'Redefinir senha',
+    'auth.err.username_required':'Digite um nome de usuário','auth.err.username_short':'Mínimo 3 caracteres',
+    'auth.err.password_short':'Mínimo 6 caracteres','auth.err.password_mismatch':'As senhas não conferem',
+    'auth.err.password_required':'Digite sua senha','auth.err.wrong':'Usuário ou senha incorretos',
+    'auth.err.offline':'Servidor offline','auth.err.starting':'⏳ Servidor iniciando... Aguarde 30s e recarregue.',
+    'auth.err.reset_sent':'✓ Código enviado para o email cadastrado','auth.err.reset_invalid':'Código inválido ou expirado',
+    'toast.session_started':'✓ Sessão iniciada — bom trabalho!','toast.idea_saved':'💡 Ideia registrada!',
+    'toast.copied':'✓ Copiado!','toast.idea_removed':'Removida',
+    'confirm.end_session':'Encerrar sessão de trabalho?','confirm.delete_idea':'Deletar esta ideia?',
+    'status.roadmap':'✓ No roadmap','status.archived':'Arquivada','status.analysis':'Em análise','status.reopened':'Reaberta',
+    'ideas.captured.one':'ideia capturada','ideas.captured.many':'ideias capturadas'
+  },
+  en:{
+    'header.subtitle':'Founder\'s private space','header.active_session':'active session',
+    'header.ideas':'ideas','header.roadmap':'on roadmap','header.sessions':'sessions',
+    'tab.ideas':'💡 Ideas','tab.sessions':'📓 Session journal',
+    'ideas.new':'New idea','ideas.hint':'to save','ideas.submit':'Save idea',
+    'ideas.placeholder':'Any thought, observation or insight. No filter — can start incomplete. BBrain keeps everything.',
+    'ideas.filter.all':'All','ideas.filter.new':'New','ideas.filter.analysis':'In review','ideas.filter.archived':'Archived',
+    'ideas.empty.title':'No ideas yet','ideas.empty.desc':'Log your first idea above or send a message via WhatsApp.',
+    'ideas.action.roadmap':'+ Roadmap','ideas.action.analyze':'Review','ideas.action.archive':'Archive','ideas.action.reopen':'Reopen',
+    'ideas.status.new':'New','ideas.status.analysis':'In review','ideas.status.roadmap':'Roadmap','ideas.status.archived':'Archived','ideas.status.linked':'Linked',
+    'sessions.end':'End session','sessions.empty.title':'No sessions recorded',
+    'sessions.empty.desc':'When you start working and check in, each session will appear here as part of your founder\'s journal.',
+    'sessions.ongoing':'Ongoing','sessions.active':'Active',
+    'sessions.generate':'✦ Generate content','sessions.view_post':'📱 View generated post',
+    'sessions.post_label':'Suggested post · Instagram / LinkedIn','sessions.copy':'Copy',
+    'checkin.title':'New work session','checkin.where':'Where are you?',
+    'checkin.loc.home':'At home','checkin.loc.office':'At the office','checkin.loc.home_night':'At home, late night',
+    'checkin.loc.cafe':'At a café','checkin.loc.travel':'Traveling','checkin.loc.placeholder':'or type freely...',
+    'checkin.thoughts':'What are you thinking about?','checkin.start':'Start working','checkin.skip':'Continue without logging session',
+    'checkin.thoughts.placeholder':'Can be anything — a problem to solve, an insecurity, excitement, whatever feels relevant...',
+    'auth.setup.title':'Welcome to BBrain','auth.setup.subtitle':'First time here.\nCreate your username and password.',
+    'auth.setup.username':'Username (e.g. brunomassa)','auth.setup.password':'Password (min. 6 characters)','auth.setup.confirm':'Confirm password',
+    'auth.setup.submit':'Create access and enter','auth.setup.hint':'Keep your credentials — you\'ll need them every day.',
+    'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Founder\'s Journal',
+    'auth.login.username':'Username','auth.login.password':'Password','auth.login.submit':'Enter','auth.login.forgot':'Forgot my password',
+    'auth.forgot.title':'Reset password','auth.forgot.subtitle':'We\'ll send a code to your registered email.',
+    'auth.forgot.submit':'Send code','auth.forgot.back':'← Back to login',
+    'auth.forgot.code_placeholder':'6-digit code','auth.forgot.new_password':'New password',
+    'auth.forgot.confirm_password':'Confirm new password','auth.forgot.reset':'Reset password',
+    'auth.err.username_required':'Enter a username','auth.err.username_short':'Minimum 3 characters',
+    'auth.err.password_short':'Minimum 6 characters','auth.err.password_mismatch':'Passwords don\'t match',
+    'auth.err.password_required':'Enter your password','auth.err.wrong':'Incorrect username or password',
+    'auth.err.offline':'Server offline','auth.err.starting':'⏳ Server starting... Wait 30s and reload.',
+    'auth.err.reset_sent':'✓ Code sent to registered email','auth.err.reset_invalid':'Invalid or expired code',
+    'toast.session_started':'✓ Session started — good work!','toast.idea_saved':'💡 Idea saved!',
+    'toast.copied':'✓ Copied!','toast.idea_removed':'Removed',
+    'confirm.end_session':'End work session?','confirm.delete_idea':'Delete this idea?',
+    'status.roadmap':'✓ On roadmap','status.archived':'Archived','status.analysis':'In review','status.reopened':'Reopened',
+    'ideas.captured.one':'idea captured','ideas.captured.many':'ideas captured'
+  },
+  fr:{
+    'header.subtitle':'Espace privé du fondateur','header.active_session':'session active',
+    'header.ideas':'idées','header.roadmap':'en roadmap','header.sessions':'sessions',
+    'tab.ideas':'💡 Idées','tab.sessions':'📓 Journal de sessions',
+    'ideas.new':'Nouvelle idée','ideas.hint':'pour enregistrer','ideas.submit':'Enregistrer l\'idée',
+    'ideas.placeholder':'N\'importe quelle pensée, observation ou insight. Sans filtre. BBrain garde tout.',
+    'ideas.filter.all':'Toutes','ideas.filter.new':'Nouvelles','ideas.filter.analysis':'En analyse','ideas.filter.archived':'Archivées',
+    'ideas.empty.title':'Aucune idée pour l\'instant','ideas.empty.desc':'Enregistrez votre première idée ci-dessus ou envoyez un message via WhatsApp.',
+    'ideas.action.roadmap':'+ Roadmap','ideas.action.analyze':'Analyser','ideas.action.archive':'Archiver','ideas.action.reopen':'Rouvrir',
+    'ideas.status.new':'Nouvelle','ideas.status.analysis':'En analyse','ideas.status.roadmap':'Roadmap','ideas.status.archived':'Archivée','ideas.status.linked':'Liée',
+    'sessions.end':'Terminer la session','sessions.empty.title':'Aucune session enregistrée',
+    'sessions.empty.desc':'Quand vous commencerez à travailler et ferez le check-in, chaque session apparaîtra ici.',
+    'sessions.ongoing':'En cours','sessions.active':'Active',
+    'sessions.generate':'✦ Générer du contenu','sessions.view_post':'📱 Voir le post généré',
+    'sessions.post_label':'Post suggéré · Instagram / LinkedIn','sessions.copy':'Copier',
+    'checkin.title':'Nouvelle session de travail','checkin.where':'Où êtes-vous ?',
+    'checkin.loc.home':'À la maison','checkin.loc.office':'Au bureau','checkin.loc.home_night':'À la maison, tard la nuit',
+    'checkin.loc.cafe':'Au café','checkin.loc.travel':'En voyage','checkin.loc.placeholder':'ou écrivez librement...',
+    'checkin.thoughts':'À quoi pensez-vous ?','checkin.start':'Commencer à travailler','checkin.skip':'Continuer sans enregistrer',
+    'checkin.thoughts.placeholder':'Peut être n\'importe quoi — un problème, une insécurité, une excitation...',
+    'auth.setup.title':'Bienvenue sur BBrain','auth.setup.subtitle':'Première fois ici.\nCréez votre identifiant et mot de passe.',
+    'auth.setup.username':'Identifiant (ex: brunomassa)','auth.setup.password':'Mot de passe (min. 6 caractères)','auth.setup.confirm':'Confirmer le mot de passe',
+    'auth.setup.submit':'Créer l\'accès et entrer','auth.setup.hint':'Gardez vos identifiants — ils seront demandés chaque jour.',
+    'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Journal du Fondateur',
+    'auth.login.username':'Identifiant','auth.login.password':'Mot de passe','auth.login.submit':'Entrer','auth.login.forgot':'Mot de passe oublié',
+    'auth.forgot.title':'Réinitialiser le mot de passe','auth.forgot.subtitle':'Nous enverrons un code à votre email enregistré.',
+    'auth.forgot.submit':'Envoyer le code','auth.forgot.back':'← Retour à la connexion',
+    'auth.forgot.code_placeholder':'Code à 6 chiffres','auth.forgot.new_password':'Nouveau mot de passe',
+    'auth.forgot.confirm_password':'Confirmer le nouveau mot de passe','auth.forgot.reset':'Réinitialiser',
+    'auth.err.username_required':'Entrez un identifiant','auth.err.username_short':'Minimum 3 caractères',
+    'auth.err.password_short':'Minimum 6 caractères','auth.err.password_mismatch':'Les mots de passe ne correspondent pas',
+    'auth.err.password_required':'Entrez votre mot de passe','auth.err.wrong':'Identifiant ou mot de passe incorrect',
+    'auth.err.offline':'Serveur hors ligne','auth.err.starting':'⏳ Serveur en démarrage... Attendez 30s.',
+    'auth.err.reset_sent':'✓ Code envoyé à l\'email enregistré','auth.err.reset_invalid':'Code invalide ou expiré',
+    'toast.session_started':'✓ Session démarrée — bon travail !','toast.idea_saved':'💡 Idée enregistrée !',
+    'toast.copied':'✓ Copié !','toast.idea_removed':'Supprimée',
+    'confirm.end_session':'Terminer la session de travail ?','confirm.delete_idea':'Supprimer cette idée ?',
+    'status.roadmap':'✓ En roadmap','status.archived':'Archivée','status.analysis':'En analyse','status.reopened':'Rouverte',
+    'ideas.captured.one':'idée capturée','ideas.captured.many':'idées capturées'
+  },
+  es:{
+    'header.subtitle':'Espacio privado del fundador','header.active_session':'sesión activa',
+    'header.ideas':'ideas','header.roadmap':'en roadmap','header.sessions':'sesiones',
+    'tab.ideas':'💡 Ideas','tab.sessions':'📓 Diario de sesiones',
+    'ideas.new':'Nueva idea','ideas.hint':'para guardar','ideas.submit':'Guardar idea',
+    'ideas.placeholder':'Cualquier pensamiento, observación o insight. Sin filtro. BBrain guarda todo.',
+    'ideas.filter.all':'Todas','ideas.filter.new':'Nuevas','ideas.filter.analysis':'En análisis','ideas.filter.archived':'Archivadas',
+    'ideas.empty.title':'Ninguna idea todavía','ideas.empty.desc':'Registra tu primera idea arriba o envía un mensaje por WhatsApp.',
+    'ideas.action.roadmap':'+ Roadmap','ideas.action.analyze':'Analizar','ideas.action.archive':'Archivar','ideas.action.reopen':'Reabrir',
+    'ideas.status.new':'Nueva','ideas.status.analysis':'En análisis','ideas.status.roadmap':'Roadmap','ideas.status.archived':'Archivada','ideas.status.linked':'Vinculada',
+    'sessions.end':'Finalizar sesión','sessions.empty.title':'Ninguna sesión registrada',
+    'sessions.empty.desc':'Cuando empieces a trabajar y hagas el check-in, cada sesión aparecerá aquí.',
+    'sessions.ongoing':'En curso','sessions.active':'Activa',
+    'sessions.generate':'✦ Generar contenido','sessions.view_post':'📱 Ver post generado',
+    'sessions.post_label':'Post sugerido · Instagram / LinkedIn','sessions.copy':'Copiar',
+    'checkin.title':'Nueva sesión de trabajo','checkin.where':'¿Dónde estás?',
+    'checkin.loc.home':'En casa','checkin.loc.office':'En la oficina','checkin.loc.home_night':'En casa, de madrugada',
+    'checkin.loc.cafe':'En el café','checkin.loc.travel':'De viaje','checkin.loc.placeholder':'o escribe libremente...',
+    'checkin.thoughts':'¿En qué estás pensando?','checkin.start':'Empezar a trabajar','checkin.skip':'Continuar sin registrar sesión',
+    'checkin.thoughts.placeholder':'Puede ser cualquier cosa — un problema, una inseguridad, una emoción...',
+    'auth.setup.title':'Bienvenido a BBrain','auth.setup.subtitle':'Primera vez aquí.\nCrea tu usuario y contraseña.',
+    'auth.setup.username':'Usuario (ej: brunomassa)','auth.setup.password':'Contraseña (mín. 6 caracteres)','auth.setup.confirm':'Confirmar contraseña',
+    'auth.setup.submit':'Crear acceso y entrar','auth.setup.hint':'Guarda tus credenciales — se pedirán cada día.',
+    'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Diario del Fundador',
+    'auth.login.username':'Usuario','auth.login.password':'Contraseña','auth.login.submit':'Entrar','auth.login.forgot':'Olvidé mi contraseña',
+    'auth.forgot.title':'Restablecer contraseña','auth.forgot.subtitle':'Te enviaremos un código a tu email registrado.',
+    'auth.forgot.submit':'Enviar código','auth.forgot.back':'← Volver al login',
+    'auth.forgot.code_placeholder':'Código de 6 dígitos','auth.forgot.new_password':'Nueva contraseña',
+    'auth.forgot.confirm_password':'Confirmar nueva contraseña','auth.forgot.reset':'Restablecer contraseña',
+    'auth.err.username_required':'Ingresa un nombre de usuario','auth.err.username_short':'Mínimo 3 caracteres',
+    'auth.err.password_short':'Mínimo 6 caracteres','auth.err.password_mismatch':'Las contraseñas no coinciden',
+    'auth.err.password_required':'Ingresa tu contraseña','auth.err.wrong':'Usuario o contraseña incorrectos',
+    'auth.err.offline':'Servidor sin conexión','auth.err.starting':'⏳ Servidor iniciando... Espera 30s.',
+    'auth.err.reset_sent':'✓ Código enviado al email registrado','auth.err.reset_invalid':'Código inválido o expirado',
+    'toast.session_started':'✓ Sesión iniciada — ¡buen trabajo!','toast.idea_saved':'💡 ¡Idea guardada!',
+    'toast.copied':'✓ ¡Copiado!','toast.idea_removed':'Eliminada',
+    'confirm.end_session':'¿Finalizar sesión de trabajo?','confirm.delete_idea':'¿Eliminar esta idea?',
+    'status.roadmap':'✓ En roadmap','status.archived':'Archivada','status.analysis':'En análisis','status.reopened':'Reabierta',
+    'ideas.captured.one':'idea capturada','ideas.captured.many':'ideas capturadas'
+  }
+};
+
+let currentLang = localStorage.getItem('bbrain_lang') || 'pt';
+
+function t(key) { return I18N[currentLang]?.[key] || I18N['pt'][key] || key; }
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('bbrain_lang', lang);
+  applyTranslations();
+  // Atualiza botões ativos
+  document.querySelectorAll('.lang-btn, .hlang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().startsWith(lang.toUpperCase()) ||
+      b.textContent.trim().includes(lang.toUpperCase()));
+  });
+}
+
+function applyTranslations() {
+  document.querySelectorAll('[data-t]').forEach(el => {
+    el.textContent = t(el.dataset.t);
+  });
+  document.querySelectorAll('[data-t-ph]').forEach(el => {
+    el.placeholder = t(el.dataset.tPh || el.getAttribute('data-t-ph'));
+  });
+  // Pills de localização
+  document.querySelectorAll('[data-loc-key]').forEach(el => {
+    el.textContent = t(el.dataset.locKey);
+  });
+}
+
+// ── AUTH TOKEN ──────────────────────────────────────────────────
 let authToken = localStorage.getItem('bbrain_token') || '';
 
 function api(url, opts = {}) {
@@ -441,7 +698,26 @@ function api(url, opts = {}) {
   return fetch(url, opts);
 }
 
+function showLogin() {
+  document.getElementById('auth-setup').style.display  = 'none';
+  document.getElementById('auth-forgot').style.display = 'none';
+  document.getElementById('auth-login').style.display  = 'block';
+  setTimeout(() => {
+    const u = document.getElementById('login-user');
+    if (u && !u.value) u.focus(); else document.getElementById('login-pwd').focus();
+  }, 100);
+}
+function showForgot() {
+  document.getElementById('auth-login').style.display  = 'none';
+  document.getElementById('auth-forgot').style.display = 'block';
+  document.getElementById('forgot-step1').style.display = 'block';
+  document.getElementById('forgot-step2').style.display = 'none';
+  document.getElementById('forgot-err').textContent = '';
+  document.getElementById('forgot-ok').textContent  = '';
+}
+
 async function checkAuth() {
+  applyTranslations();
   const overlay = document.getElementById('auth-overlay');
 
   // Expiração diária: força novo login a cada dia
@@ -462,70 +738,124 @@ async function checkAuth() {
     overlay.classList.remove('hidden');
     if (d.setup_required) {
       document.getElementById('auth-setup').style.display = 'block';
-      setTimeout(() => document.getElementById('setup-pwd').focus(), 100);
+      setTimeout(() => document.getElementById('setup-user').focus(), 100);
     } else {
+      // Pré-preenche username se salvo
+      const savedUser = localStorage.getItem('bbrain_username') || d.username || '';
+      const loginUser = document.getElementById('login-user');
+      if (loginUser && savedUser) { loginUser.value = savedUser; }
       document.getElementById('auth-login').style.display = 'block';
-      setTimeout(() => document.getElementById('login-pwd').focus(), 100);
+      setTimeout(() => {
+        const u = document.getElementById('login-user');
+        if (u && !u.value) u.focus(); else document.getElementById('login-pwd').focus();
+      }, 100);
     }
     return false;
   } catch {
-    // Servidor offline ou iniciando (Render free tier dorme após inatividade)
     overlay.classList.remove('hidden');
     document.getElementById('auth-login').style.display = 'block';
     const err = document.getElementById('login-err');
-    if (err) err.textContent = '⏳ Servidor iniciando... Aguarde 30s e recarregue a página.';
+    if (err) err.textContent = t('auth.err.starting');
     return false;
   }
 }
 
 async function doSetup() {
+  const user = document.getElementById('setup-user').value.trim();
   const pwd  = document.getElementById('setup-pwd').value;
   const pwd2 = document.getElementById('setup-pwd2').value;
   const err  = document.getElementById('setup-err');
   const btn  = document.getElementById('setup-btn');
   err.textContent = '';
-  if (pwd.length < 6) { err.textContent = 'Mínimo 6 caracteres'; return; }
-  if (pwd !== pwd2)   { err.textContent = 'As senhas não conferem'; return; }
-  btn.disabled = true; btn.textContent = 'Criando...';
+  if (!user || user.length < 3) { err.textContent = t('auth.err.username_short'); return; }
+  if (pwd.length < 6)           { err.textContent = t('auth.err.password_short'); return; }
+  if (pwd !== pwd2)             { err.textContent = t('auth.err.password_mismatch'); return; }
+  btn.disabled = true; btn.textContent = '...';
   try {
     const r = await api('/api/auth/setup', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd })
+      body: JSON.stringify({ username: user, password: pwd })
     });
     const d = await r.json();
     if (d.token) {
       authToken = d.token;
       localStorage.setItem('bbrain_token', authToken);
       localStorage.setItem('bbrain_token_date', new Date().toDateString());
+      localStorage.setItem('bbrain_username', d.username || user);
       document.getElementById('auth-overlay').classList.add('hidden');
       init();
-    } else { err.textContent = d.error || 'Erro ao criar senha'; }
-  } catch { err.textContent = 'Servidor offline'; }
-  btn.disabled = false; btn.textContent = 'Criar senha e entrar';
+    } else { err.textContent = d.error || t('auth.err.offline'); }
+  } catch { err.textContent = t('auth.err.offline'); }
+  btn.disabled = false; btn.textContent = t('auth.setup.submit');
 }
 
 async function doLogin() {
-  const pwd = document.getElementById('login-pwd').value;
-  const err = document.getElementById('login-err');
-  const btn = document.getElementById('login-btn');
+  const user = document.getElementById('login-user').value.trim();
+  const pwd  = document.getElementById('login-pwd').value;
+  const err  = document.getElementById('login-err');
+  const btn  = document.getElementById('login-btn');
   err.textContent = '';
-  if (!pwd) { err.textContent = 'Digite sua senha'; return; }
-  btn.disabled = true; btn.textContent = 'Entrando...';
+  if (!user) { err.textContent = t('auth.err.username_required'); return; }
+  if (!pwd)  { err.textContent = t('auth.err.password_required'); return; }
+  btn.disabled = true; btn.textContent = '...';
   try {
     const r = await api('/api/auth/login', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pwd })
+      body: JSON.stringify({ username: user, password: pwd })
     });
     const d = await r.json();
     if (d.token) {
       authToken = d.token;
       localStorage.setItem('bbrain_token', authToken);
       localStorage.setItem('bbrain_token_date', new Date().toDateString());
+      localStorage.setItem('bbrain_username', d.username || user);
       document.getElementById('auth-overlay').classList.add('hidden');
       init();
-    } else { err.textContent = 'Senha incorreta'; document.getElementById('login-pwd').value = ''; }
-  } catch { err.textContent = 'Servidor offline'; }
-  btn.disabled = false; btn.textContent = 'Entrar';
+    } else { err.textContent = t('auth.err.wrong'); document.getElementById('login-pwd').value = ''; }
+  } catch { err.textContent = t('auth.err.offline'); }
+  btn.disabled = false; btn.textContent = t('auth.login.submit');
+}
+
+async function doForgotRequest() {
+  const btn = document.getElementById('forgot-send-btn');
+  const err = document.getElementById('forgot-err');
+  const ok  = document.getElementById('forgot-ok');
+  err.textContent = ''; ok.textContent = '';
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await fetch('/api/auth/reset-request', { method: 'POST' });
+    const d = await r.json();
+    if (d.success) {
+      ok.textContent = t('auth.err.reset_sent');
+      document.getElementById('forgot-step1').style.display = 'none';
+      document.getElementById('forgot-step2').style.display = 'block';
+      setTimeout(() => document.getElementById('forgot-code').focus(), 100);
+    } else { err.textContent = d.error || t('auth.err.offline'); btn.disabled = false; btn.textContent = t('auth.forgot.submit'); }
+  } catch { err.textContent = t('auth.err.offline'); btn.disabled = false; btn.textContent = t('auth.forgot.submit'); }
+}
+
+async function doForgotReset() {
+  const code = document.getElementById('forgot-code').value.trim();
+  const pwd  = document.getElementById('forgot-pwd').value;
+  const pwd2 = document.getElementById('forgot-pwd2').value;
+  const err  = document.getElementById('forgot-err');
+  const btn  = document.getElementById('forgot-reset-btn');
+  err.textContent = '';
+  if (pwd.length < 6)  { err.textContent = t('auth.err.password_short'); return; }
+  if (pwd !== pwd2)    { err.textContent = t('auth.err.password_mismatch'); return; }
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await fetch('/api/auth/reset', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, password: pwd })
+    });
+    const d = await r.json();
+    if (d.success) {
+      showLogin();
+      document.getElementById('login-err').textContent = '✓ Senha redefinida. Faça login.';
+    } else { err.textContent = d.error || t('auth.err.reset_invalid'); }
+  } catch { err.textContent = t('auth.err.offline'); }
+  btn.disabled = false; btn.textContent = t('auth.forgot.reset');
 }
 
 // Enter no campo de senha
@@ -647,10 +977,10 @@ function checkForActiveSession() {
   }, 400);
 }
 
-function selectLocation(loc) {
+function selectLocation(loc, el) {
   document.getElementById('location-input').value = loc;
   document.querySelectorAll('.loc-pill').forEach(p => p.classList.remove('sel'));
-  event.target.classList.add('sel');
+  (el || event.target).classList.add('sel');
 }
 
 function clearPills() {
@@ -704,10 +1034,10 @@ async function startSession() {
   showSessionBanner();
   startSessionTimer();
   renderSessions();
-  showToast('✓ Sessão iniciada — bom trabalho!');
+  showToast(t('toast.session_started'));
 
   btn.disabled = false;
-  btn.textContent = 'Começar a trabalhar';
+  btn.textContent = t('checkin.start');
 }
 
 function skipCheckin() {
@@ -717,7 +1047,7 @@ function skipCheckin() {
 // ── ENCERRAR SESSÃO ───────────────────────────────────────────
 async function endSession() {
   if (!activeSession) return;
-  if (!confirm('Encerrar sessão de trabalho?')) return;
+  if (!confirm(t('confirm.end_session'))) return;
 
   const now = new Date();
   const started = new Date(activeSession.started_at);
@@ -820,7 +1150,7 @@ async function submitIdea() {
   input.value = '';
   updateStats();
   renderIdeas();
-  showToast('💡 Ideia registrada!');
+  showToast(t('toast.idea_saved'));
 
   btn.disabled = false;
   btn.textContent = 'Registrar ideia';
@@ -842,17 +1172,17 @@ async function updateIdeaStatus(id, status) {
     });
   } catch { localStorage.setItem('bbrain_ideas', JSON.stringify(ideas)); }
   updateStats(); renderIdeas();
-  const labels = { no_roadmap:'✓ No roadmap', arquivada:'Arquivada', em_analise:'Em análise', nova:'Reaberta' };
-  showToast(labels[status] || 'Atualizado');
+  const labels = { no_roadmap: t('status.roadmap'), arquivada: t('status.archived'), em_analise: t('status.analysis'), nova: t('status.reopened') };
+  showToast(labels[status] || 'OK');
 }
 
 async function deleteIdea(id) {
-  if (!confirm('Deletar esta ideia?')) return;
+  if (!confirm(t('confirm.delete_idea'))) return;
   ideas = ideas.filter(i => i.id !== id);
   try { await fetch(`/api/ideas/${id}`, { method: 'DELETE' }); } catch {}
   localStorage.setItem('bbrain_ideas', JSON.stringify(ideas));
   updateStats(); renderIdeas();
-  showToast('Removida');
+  showToast(t('toast.idea_removed'));
 }
 
 // ── GERAR CONTEÚDO PARA REDES ─────────────────────────────────
@@ -892,7 +1222,7 @@ function toggleSocialContent(id) {
 function copyContent(id) {
   const el = document.getElementById(`social-text-${id}`);
   if (el) {
-    navigator.clipboard.writeText(el.textContent).then(() => showToast('✓ Copiado!'));
+    navigator.clipboard.writeText(el.textContent).then(() => showToast(t('toast.copied')));
   }
 }
 
@@ -920,7 +1250,7 @@ function renderIdeas() {
   if (list.length === 0) { container.innerHTML = ''; container.appendChild(empty); empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
-  const statusLabel = { nova:'Nova', em_analise:'Em análise', no_roadmap:'Roadmap', arquivada:'Arquivada', vinculada:'Vinculada' };
+  const statusLabel = { nova:t('ideas.status.new'), em_analise:t('ideas.status.analysis'), no_roadmap:t('ideas.status.roadmap'), arquivada:t('ideas.status.archived'), vinculada:t('ideas.status.linked') };
   const statusClass = { nova:'badge-nova', em_analise:'badge-analise', no_roadmap:'badge-roadmap', arquivada:'badge-arquivada', vinculada:'badge-vinculada' };
 
   container.innerHTML = list.map((idea, idx) => {
@@ -944,9 +1274,9 @@ function renderIdeas() {
           ${tags}
           ${evalBlock}
           <div class="idea-actions">
-            ${idea.status!=='no_roadmap'?`<button class="act green" onclick="updateIdeaStatus('${idea.id}','no_roadmap')">+ Roadmap</button>`:''}
-            ${idea.status!=='em_analise'&&idea.status!=='no_roadmap'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','em_analise')">Analisar</button>`:''}
-            ${idea.status!=='arquivada'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','arquivada')">Arquivar</button>`:`<button class="act" onclick="updateIdeaStatus('${idea.id}','nova')">Reabrir</button>`}
+            ${idea.status!=='no_roadmap'?`<button class="act green" onclick="updateIdeaStatus('${idea.id}','no_roadmap')">${t('ideas.action.roadmap')}</button>`:''}
+            ${idea.status!=='em_analise'&&idea.status!=='no_roadmap'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','em_analise')">${t('ideas.action.analyze')}</button>`:''}
+            ${idea.status!=='arquivada'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','arquivada')">${t('ideas.action.archive')}</button>`:`<button class="act" onclick="updateIdeaStatus('${idea.id}','nova')">${t('ideas.action.reopen')}</button>`}
             <button class="act del" onclick="deleteIdea('${idea.id}')">✕</button>
           </div>
         </div>
@@ -975,8 +1305,8 @@ function renderSessions() {
     const active = !s.ended_at;
 
     const socialBtn = s.social_content
-      ? `<button class="session-content-btn" onclick="toggleSocialContent('${s.id}')">📱 Ver post gerado</button>`
-      : `<button class="session-content-btn" onclick="generateSocialContent(${JSON.stringify(s).replace(/"/g,'&quot;')})">✦ Gerar conteúdo</button>`;
+      ? `<button class="session-content-btn" onclick="toggleSocialContent('${s.id}')">${t('sessions.view_post')}</button>`
+      : `<button class="session-content-btn" onclick="generateSocialContent(${JSON.stringify(s).replace(/"/g,'&quot;')})">${t('sessions.generate')}</button>`;
 
     const socialPreview = s.social_content
       ? `<div class="social-preview" id="social-${s.id}">

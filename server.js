@@ -209,6 +209,7 @@ function processWhatsAppMessage(entry) {
 
 // ── AUTH ─────────────────────────────────────────────────────────────────────
 const authSessions = new Map(); // token → expiresAt (ms)
+const resetCodes   = new Map(); // code  → expiresAt (ms)
 
 function hashPwd(password) {
   return crypto.createHash('sha256').update('bbrain:' + password).digest('hex');
@@ -216,7 +217,7 @@ function hashPwd(password) {
 
 function newToken() {
   const token = crypto.randomBytes(32).toString('hex');
-  authSessions.set(token, Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 dias
+  authSessions.set(token, Date.now() + 30 * 24 * 60 * 60 * 1000);
   return token;
 }
 
@@ -229,25 +230,50 @@ function validToken(token) {
 }
 
 function readAuth() {
-  // Prioridade 1: variável de ambiente (persiste no Render)
   if (process.env.BBRAIN_PASSWORD_HASH) {
-    return { hash: process.env.BBRAIN_PASSWORD_HASH };
+    return {
+      hash: process.env.BBRAIN_PASSWORD_HASH,
+      username: process.env.BBRAIN_USERNAME || 'admin'
+    };
   }
-  // Prioridade 2: arquivo local (dev)
   try { return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8')); }
   catch { return null; }
 }
 
 function writeAuth(data) {
   fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2));
-  // Instrução para produção
-  console.log('\n🔑 Para persistir a senha no Render, adicione esta variável de ambiente:');
-  console.log(`   BBRAIN_PASSWORD_HASH=${data.hash}\n`);
+  console.log('\n🔑 Para persistir no Render, adicione estas variáveis de ambiente:');
+  console.log(`   BBRAIN_PASSWORD_HASH=${data.hash}`);
+  console.log(`   BBRAIN_USERNAME=${data.username}\n`);
 }
 
 function getToken(req) {
   const auth = req.headers['authorization'] || '';
   return auth.startsWith('Bearer ') ? auth.slice(7) : '';
+}
+
+// ── EMAIL (Gmail SMTP via TLS) ────────────────────────────────────────────────
+async function sendEmail(to, subject, body) {
+  const from = process.env.GMAIL_FROM || '';
+  const pwd  = process.env.GMAIL_APP_PASSWORD || '';
+  if (!from || !pwd) { console.log('⚠️  Gmail não configurado — email não enviado'); return false; }
+  return new Promise(resolve => {
+    const tls = require('tls');
+    const socket = tls.connect(465, 'smtp.gmail.com', { servername: 'smtp.gmail.com' }, () => {});
+    const msg = [`From: BBrain <${from}>`, `To: ${to}`, `Subject: ${subject}`,
+      'MIME-Version: 1.0', 'Content-Type: text/plain; charset=utf-8', '', body].join('\r\n');
+    const cmds = ['EHLO bbrain', 'AUTH LOGIN',
+      Buffer.from(from).toString('base64'), Buffer.from(pwd).toString('base64'),
+      `MAIL FROM:<${from}>`, `RCPT TO:<${to}>`, 'DATA', msg + '\r\n.', 'QUIT'];
+    let step = 0;
+    socket.on('data', data => {
+      const line = data.toString().trim();
+      if (line.startsWith('4') || line.startsWith('5')) { resolve(false); socket.destroy(); return; }
+      if (step < cmds.length) socket.write(cmds[step++] + '\r\n');
+    });
+    socket.on('end', () => resolve(true));
+    socket.on('error', () => resolve(false));
+  });
 }
 
 // ── UTILITÁRIOS HTTP ──────────────────────────────────────────────────────────
@@ -294,35 +320,47 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/auth/status' && method === 'GET') {
     const auth = readAuth();
     if (!auth) return json(res, 200, { setup_required: true, authenticated: false });
-    return json(res, 200, { setup_required: false, authenticated: validToken(getToken(req)) });
+    return json(res, 200, {
+      setup_required: false,
+      authenticated: validToken(getToken(req)),
+      username: auth.username || null
+    });
   }
 
   if (pathname === '/api/auth/setup' && method === 'POST') {
     try {
-      if (readAuth()) return json(res, 403, { error: 'Senha já configurada' });
+      if (readAuth()) return json(res, 403, { error: 'Acesso já configurado' });
       const body = await readBody(req);
-      const { password } = JSON.parse(body);
-      if (!password || password.length < 6) return json(res, 400, { error: 'Mínimo 6 caracteres' });
-      writeAuth({ hash: hashPwd(password), created_at: new Date().toISOString() });
+      const { password, username } = JSON.parse(body);
+      if (!username || username.trim().length < 3) return json(res, 400, { error: 'Usuário muito curto (mín. 3 caracteres)' });
+      if (!password || password.length < 6) return json(res, 400, { error: 'Senha muito curta (mín. 6 caracteres)' });
+      writeAuth({ hash: hashPwd(password), username: username.trim(), created_at: new Date().toISOString() });
       const token = newToken();
-      console.log('🔐 BBrain → senha criada');
-      return json(res, 200, { token });
+      console.log(`🔐 BBrain → acesso criado para "${username.trim()}"`);
+      // Email de boas-vindas
+      const uname = username.trim();
+      sendEmail(process.env.GMAIL_FROM || '',
+        'Bem-vindo ao BBrain',
+        `Ola ${uname},\n\nSeu acesso ao BBrain foi criado.\n\nLogin: ${uname}\nURL: https://bbrain-aproove.onrender.com/laboratorio\n\nComo funciona:\n- Faca check-in no inicio de cada sessao de trabalho\n- Registre ideias e insights pelo app ou via WhatsApp\n- Acompanhe seu historico de sessoes e roadmap de ideias\n- Login e exigido uma vez por dia\n\nAtt,\nAproove\naproove.io@gmail.com`
+      );
+      return json(res, 200, { token, username: uname });
     } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
   if (pathname === '/api/auth/login' && method === 'POST') {
     try {
       const auth = readAuth();
-      if (!auth) return json(res, 400, { error: 'Senha não configurada' });
+      if (!auth) return json(res, 400, { error: 'Acesso não configurado' });
       const body = await readBody(req);
-      const { password } = JSON.parse(body);
-      if (hashPwd(password) !== auth.hash) {
+      const { password, username } = JSON.parse(body);
+      const usernameOk = !auth.username || !username || username.trim() === auth.username;
+      if (!usernameOk || hashPwd(password) !== auth.hash) {
         console.log('⚠️  BBrain → login inválido');
-        return json(res, 401, { error: 'Senha incorreta' });
+        return json(res, 401, { error: 'Usuário ou senha incorretos' });
       }
       const token = newToken();
-      console.log('🔐 BBrain → login realizado');
-      return json(res, 200, { token });
+      console.log(`🔐 BBrain → login: ${auth.username}`);
+      return json(res, 200, { token, username: auth.username });
     } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
@@ -330,6 +368,38 @@ const server = http.createServer(async (req, res) => {
     const token = getToken(req);
     if (token) authSessions.delete(token);
     return json(res, 200, { success: true });
+  }
+
+  if (pathname === '/api/auth/reset-request' && method === 'POST') {
+    try {
+      const auth = readAuth();
+      if (!auth) return json(res, 400, { error: 'Acesso não configurado' });
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      resetCodes.set(code, Date.now() + 15 * 60 * 1000); // 15 min
+      const to = process.env.GMAIL_FROM || BBRAIN_OWNER + '@gmail.com';
+      const sent = await sendEmail(to,
+        'BBrain — Codigo de redefinicao de senha',
+        `Seu codigo de redefinicao de senha BBrain:\n\n   ${code}\n\nValido por 15 minutos.\nSe nao foi voce, ignore este email.`
+      );
+      console.log(`🔑 BBrain → reset code gerado${sent ? ' e enviado' : ' (email offline)'}`);
+      return json(res, 200, { success: true, dev_code: process.env.NODE_ENV !== 'production' ? code : undefined });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
+  if (pathname === '/api/auth/reset' && method === 'POST') {
+    try {
+      const body = await readBody(req);
+      const { code, password } = JSON.parse(body);
+      const exp = resetCodes.get(code);
+      if (!exp || Date.now() > exp) return json(res, 401, { error: 'Código inválido ou expirado' });
+      if (!password || password.length < 6) return json(res, 400, { error: 'Senha muito curta (mín. 6 caracteres)' });
+      resetCodes.delete(code);
+      const auth = readAuth() || {};
+      writeAuth({ ...auth, hash: hashPwd(password) });
+      authSessions.clear(); // invalida todas as sessões ativas
+      console.log('🔑 BBrain → senha redefinida');
+      return json(res, 200, { success: true });
+    } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
   // ── GUARD: protege todas as rotas /api/* ──────────────────────────────────
