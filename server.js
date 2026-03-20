@@ -803,6 +803,13 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Servir arquivos estáticos ──────────────────────────────────────────────
+  // bbrainapp.you → redireciona para o BBrain diretamente
+  const host = req.headers.host || '';
+  if (host.includes('bbrainapp.you') && pathname === '/') {
+    res.writeHead(302, { Location: '/laboratorio' });
+    return res.end();
+  }
+
   let filePath;
   if (pathname === '/' || pathname === '/teste' || pathname === '/teste/') {
     filePath = path.join(TESTE_DIR, 'index.html');
