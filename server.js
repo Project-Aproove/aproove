@@ -192,6 +192,24 @@ function loadGCreds() {
       console.log('✓ Google Credentials: carregado da variável de ambiente');
       return _gcreds;
     }
+    // Monta credenciais a partir de vars individuais (Fly.io secrets)
+    if (process.env.client_email && process.env.private_key) {
+      _gcreds = {
+        type:                        process.env.type || 'service_account',
+        project_id:                  process.env.project_id,
+        private_key_id:              process.env.private_key_id,
+        private_key:                 process.env.private_key.replace(/\\n/g, '\n'),
+        client_email:                process.env.client_email,
+        client_id:                   process.env.client_id,
+        auth_uri:                    process.env.auth_uri,
+        token_uri:                   process.env.token_uri,
+        auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
+        client_x509_cert_url:        process.env.client_x509_cert_url,
+        universe_domain:             process.env.universe_domain || 'googleapis.com',
+      };
+      console.log('✓ Google Credentials: montado a partir de variáveis individuais');
+      return _gcreds;
+    }
     const p = path.join(__dirname, 'google-credentials.json');
     if (fs.existsSync(p)) {
       _gcreds = JSON.parse(fs.readFileSync(p, 'utf8'));
