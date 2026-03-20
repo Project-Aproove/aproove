@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBrain — O segundo cérebro de quem não para de pensar</title>
+  <meta name="description" content="BBrain organiza o que você pensa antes que desapareça. Para fundadores, criadores e quem constrói muito.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:    #0f0f14;
+      --ink2:   #4a4a58;
+      --ink3:   #9a9aaa;
+      --brain:  #1a0a3a;
+      --brain2: #2d1260;
+      --line:   rgba(15,15,20,.1);
+      --bg:     #ffffff;
+      --bg2:    #f8f7fc;
+      --green:  #16a34a;
+      --r: 14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100dvh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 2rem;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 15px; color: var(--brain); text-decoration: none; }
+    .nav-logo-icon { font-size: 20px; }
+    .nav-cta { padding: .45rem 1.1rem; background: var(--brain); color: white; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: opacity .15s; }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100dvh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 6rem 1.5rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74,29,122,.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .3rem .85rem; border-radius: 20px;
+      background: var(--bg2); border: 1px solid var(--line);
+      font-size: 11.5px; font-weight: 500; color: var(--ink2);
+      margin-bottom: 2rem; letter-spacing: .02em;
+    }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .hero-q {
+      font-size: clamp(1.05rem, 2.5vw, 1.2rem);
+      color: var(--ink3);
+      font-weight: 400;
+      margin-bottom: 1.25rem;
+      letter-spacing: .01em;
+    }
+    .hero-input-wrap {
+      width: 100%; max-width: 560px;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .hero-input {
+      width: 100%;
+      padding: 1.1rem 5rem 1.1rem 1.5rem;
+      font-family: inherit;
+      font-size: clamp(14px, 2vw, 16px);
+      color: var(--ink);
+      background: var(--bg2);
+      border: 1.5px solid var(--line);
+      border-radius: var(--r);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      resize: none;
+      line-height: 1.5;
+      min-height: 60px;
+    }
+    .hero-input::placeholder { color: var(--ink3); }
+    .hero-input:focus {
+      border-color: rgba(26,10,58,.35);
+      box-shadow: 0 0 0 3px rgba(74,29,122,.08);
+      background: #fff;
+    }
+    .hero-input-btn {
+      position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
+      padding: .5rem 1rem; background: var(--brain); color: white;
+      border: none; border-radius: 8px; font-family: inherit;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: opacity .15s;
+    }
+    .hero-input-btn:hover { opacity: .85; }
+    .hero-desc {
+      font-size: clamp(13px, 2vw, 15px);
+      color: var(--ink2);
+      max-width: 420px;
+      line-height: 1.65;
+      margin-bottom: 2.5rem;
+    }
+    .hero-desc strong { color: var(--ink); font-weight: 600; }
+    .btn-descobrir {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .875rem 2.25rem;
+      background: var(--brain); color: white;
+      border: none; border-radius: var(--r);
+      font-family: inherit; font-size: 15px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: all .15s;
+      box-shadow: 0 4px 16px rgba(26,10,58,.25);
+      margin-bottom: 3rem;
+    }
+    .btn-descobrir:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(26,10,58,.3); }
+    .btn-descobrir:active { transform: none; }
+    .stores {
+      display: flex; gap: .875rem; align-items: center; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .store-badge {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .6rem 1.1rem;
+      background: var(--ink); color: white;
+      border-radius: 10px; text-decoration: none;
+      transition: opacity .15s;
+      min-width: 140px;
+    }
+    .store-badge.disabled { opacity: .35; cursor: default; pointer-events: none; }
+    .store-badge:not(.disabled):hover { opacity: .85; }
+    .store-badge-icon { font-size: 20px; }
+    .store-badge-text { text-align: left; }
+    .store-badge-sub { font-size: 9px; opacity: .7; display: block; font-weight: 400; }
+    .store-badge-name { font-size: 13px; font-weight: 600; display: block; }
+    .store-soon { font-size: 11px; color: var(--ink3); margin-top: .35rem; }
+    .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); color: var(--ink3); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: .3rem; }
+    .hero-scroll-arrow { animation: bounce 2s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(4px)} }
+
+    /* ── FEATURES ── */
+    .section { padding: 5rem 1.5rem; }
+    .section-inner { max-width: 900px; margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: .875rem; }
+    .section-title { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 600; line-height: 1.25; color: var(--ink); margin-bottom: 1rem; }
+    .section-title em { font-style: italic; color: var(--ink2); }
+    .section-sub { font-size: 15px; color: var(--ink2); max-width: 520px; line-height: 1.65; margin-bottom: 3rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .feature-card {
+      padding: 1.5rem; border-radius: var(--r);
+      background: var(--bg2); border: 1px solid var(--line);
+    }
+    .feature-icon { font-size: 1.75rem; margin-bottom: .875rem; }
+    .feature-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: .4rem; }
+    .feature-desc { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+    .feature-card.highlight {
+      background: var(--brain); border-color: transparent;
+      grid-column: span 2;
+    }
+    .feature-card.highlight .feature-title { color: white; }
+    .feature-card.highlight .feature-desc { color: rgba(255,255,255,.7); }
+    @media(max-width:520px){ .feature-card.highlight { grid-column: span 1; } }
+
+    /* ── PRICING ── */
+    .pricing-section { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .pricing-controls {
+      display: flex; gap: .75rem; align-items: center; flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .billing-toggle {
+      display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 3px;
+    }
+    .billing-btn {
+      padding: .35rem .875rem; border-radius: 7px; border: none; background: none;
+      font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--ink2); cursor: pointer;
+    }
+    .billing-btn.active { background: var(--brain); color: white; }
+    .billing-annual-badge { font-size: 10.5px; padding: .2rem .5rem; background: #dcfce7; color: #15803d; border-radius: 5px; font-weight: 600; margin-left: .25rem; }
+    .country-select {
+      padding: .4rem .75rem; border: 1px solid var(--line); border-radius: 9px;
+      background: white; font-family: inherit; font-size: 12.5px; color: var(--ink2);
+      cursor: pointer; outline: none;
+    }
+    .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .plan-card {
+      background: white; border: 1px solid var(--line); border-radius: 16px;
+      padding: 1.75rem 1.5rem; position: relative; display: flex; flex-direction: column;
+    }
+    .plan-card.popular {
+      border-color: var(--brain); border-width: 2px;
+      box-shadow: 0 0 0 4px rgba(26,10,58,.06);
+    }
+    .plan-popular-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--brain); color: white;
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      padding: .25rem .75rem; border-radius: 6px;
+      white-space: nowrap;
+    }
+    .plan-name { font-size: 13px; font-weight: 600; color: var(--ink2); margin-bottom: .5rem; }
+    .plan-price-wrap { margin-bottom: 1.25rem; }
+    .plan-price { font-size: 2rem; font-weight: 700; color: var(--ink); font-family: 'DM Mono', monospace; }
+    .plan-period { font-size: 12px; color: var(--ink3); margin-left: .25rem; }
+    .plan-annual-note { font-size: 11px; color: var(--ink3); margin-top: .2rem; }
+    .plan-features { list-style: none; flex: 1; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: .5rem; }
+    .plan-features li { font-size: 13px; color: var(--ink2); display: flex; align-items: flex-start; gap: .5rem; }
+    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .plan-features li.off { color: var(--ink3); }
+    .plan-features li.off::before { content: '—'; color: var(--ink3); font-weight: 400; }
+    .plan-btn {
+      display: block; width: 100%; padding: .75rem;
+      border-radius: 10px; border: 1.5px solid var(--line);
+      background: white; color: var(--ink);
+      font-family: inherit; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; text-align: center; text-decoration: none;
+      transition: all .15s;
+    }
+    .plan-card.popular .plan-btn {
+      background: var(--brain); color: white; border-color: var(--brain);
+    }
+    .plan-btn:hover { opacity: .8; }
+    .pricing-note { font-size: 12px; color: var(--ink3); text-align: center; margin-top: 1.5rem; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer { padding: 2.5rem 1.5rem; border-top: 1px solid var(--line); }
+    .footer-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .footer-logo { font-size: 14px; font-weight: 700; color: var(--brain); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: 12.5px; color: var(--ink3); text-decoration: none; }
+    .footer-links a:hover { color: var(--ink); }
+    .footer-copy { font-size: 12px; color: var(--ink3); }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width: 640px) {
+      nav { padding: 0 1rem; }
+      .hero { padding: 5rem 1rem 3rem; }
+      .hero-input { padding: .9rem 4.5rem .9rem 1rem; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/">
+    <span class="nav-logo-icon">🧠</span>
+    <span>BBrain</span>
+  </a>
+  <a class="nav-cta" href="/laboratorio">Entrar</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Em desenvolvimento — acesso antecipado aberto
+  </div>
+
+  <p class="hero-q">Em que você está pensando?</p>
+
+  <div class="hero-input-wrap">
+    <textarea class="hero-input" id="hero-input" placeholder="Uma ideia, uma dúvida, um insight..." rows="1" oninput="autoResize(this)" onkeydown="heroEnter(event)"></textarea>
+    <button class="hero-input-btn" onclick="goToApp()">→</button>
+  </div>
+
+  <p class="hero-desc">
+    <strong>BBrain</strong> é o segundo cérebro de quem não para de pensar.<br>
+    Captura, organiza e transforma o que passa pela sua cabeça em algo que você realmente usa.
+  </p>
+
+  <a class="btn-descobrir" href="#como-funciona">Descobrir ↓</a>
+
+  <div class="stores">
+    <a class="store-badge disabled" href="#" aria-label="App Store — em breve">
+      <span class="store-badge-icon">🍎</span>
+      <span class="store-badge-text">
+        <span class="store-badge-sub">Em breve na</span>
+        <span class="store-badge-name">App Store</span>
+      </span>
+    </a>
+    <a class="store-badge disabled" href="#" aria-label="Google Play — em breve">
+      <span class="store-badge-icon">▶</span>
+      <span class="store-badge-text">
+        <span class="store-badge-sub">Em breve no</span>
+        <span class="store-badge-name">Google Play</span>
+      </span>
+    </a>
+  </div>
+  <p class="store-soon">Apps em desenvolvimento · Use pelo browser agora</p>
+
+  <div class="hero-scroll">
+    <span class="hero-scroll-arrow">↓</span>
+    <span>role para ver mais</span>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="como-funciona">
+  <div class="section-inner">
+    <p class="section-label">Como funciona</p>
+    <h2 class="section-title">Menos fricção.<br><em>Mais clareza.</em></h2>
+    <p class="section-sub">Projetado para quem tem muitas ideias e pouco tempo. Não é mais um app de notas — é um sistema que pensa junto com você.</p>
+
+    <div class="features-grid">
+      <div class="feature-card highlight">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Capture em segundos</div>
+        <div class="feature-desc">Uma caixa de texto. Nenhum menu, nenhuma pasta, nenhuma decisão. Você pensa, digita, acabou. Até pelo WhatsApp.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📓</div>
+        <div class="feature-title">Diário de sessões</div>
+        <div class="feature-desc">Registre onde você estava e o que estava construindo. Um histórico honesto do seu processo criativo.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <div class="feature-title">Roadmap de ideias</div>
+        <div class="feature-desc">Classifique o que vale a pena. Mova ideias do rascunho para o plano de ação sem perder nada pelo caminho.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✦</div>
+        <div class="feature-title">IA que avalia</div>
+        <div class="feature-desc">Cada ideia recebe uma análise de viabilidade. Não para decidir por você — para ajudar você a decidir mais rápido.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">100% privado</div>
+        <div class="feature-desc">Seus pensamentos não alimentam modelo nenhum. O que você escreve é só seu.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing-section" id="precos">
+  <div class="section-inner">
+    <p class="section-label">Planos</p>
+    <h2 class="section-title">Simples como deve ser.</h2>
+    <p class="section-sub">Comece grátis. Evolua quando precisar.</p>
+
+    <div class="pricing-controls">
+      <div class="billing-toggle">
+        <button class="billing-btn active" onclick="setBilling('monthly',this)">Mensal</button>
+        <button class="billing-btn" onclick="setBilling('annual',this)">Anual <span class="billing-annual-badge">−20%</span></button>
+      </div>
+      <select class="country-select" onchange="setCountry(this.value)" id="country-select">
+        <option value="BR">🇧🇷 Brasil (R$)</option>
+        <option value="US">🇺🇸 EUA ($)</option>
+        <option value="EU">🇪🇺 Europa (€)</option>
+        <option value="GB">🇬🇧 Reino Unido (£)</option>
+        <option value="CA">🇨🇦 Canadá (CAD$)</option>
+        <option value="AU">🇦🇺 Austrália (AUD$)</option>
+        <option value="MX">🇲🇽 México (MXN$)</option>
+      </select>
+    </div>
+
+    <div class="plans-grid" id="plans-grid">
+      <!-- rendered by JS -->
+    </div>
+
+    <p class="pricing-note">
+      Compra processada pelas lojas (App Store / Google Play) · Cancele quando quiser<br>
+      Preços podem variar levemente nas lojas por regras de arredondamento local
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">🧠 BBrain</span>
+    <div class="footer-links">
+      <a href="/laboratorio">Entrar no app</a>
+      <a href="/laboratorio/DOCUMENTACAO/guia-uso.html">Guia de uso</a>
+      <a href="https://aproove.io">Aproove</a>
+    </div>
+    <span class="footer-copy">© 2026 Aproove · Todos os direitos reservados</span>
+  </div>
+</footer>
+
+<script>
+// ── Pricing data ──────────────────────────────────────────────────────────────
+const PRICING = {
+  BR: { sym:'R$', dec:',', sep:'.', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,     annual:0     },
+    { id:'pro',   name:'BBrain',        monthly:25,    annual:19.90 },
+    { id:'power', name:'BBrain Pro',    monthly:59.90, annual:47.90 },
+  ]},
+  US: { sym:'$', dec:'.', sep:',', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,    annual:0    },
+    { id:'pro',   name:'BBrain',        monthly:4.99, annual:3.99 },
+    { id:'power', name:'BBrain Pro',    monthly:12,   annual:9.99 },
+  ]},
+  EU: { sym:'€', dec:',', sep:'.', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,    annual:0    },
+    { id:'pro',   name:'BBrain',        monthly:4.49, annual:3.49 },
+    { id:'power', name:'BBrain Pro',    monthly:10.99,annual:8.99 },
+  ]},
+  GB: { sym:'£', dec:'.', sep:',', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,    annual:0    },
+    { id:'pro',   name:'BBrain',        monthly:3.99, annual:3.19 },
+    { id:'power', name:'BBrain Pro',    monthly:9.99, annual:7.99 },
+  ]},
+  CA: { sym:'CAD$', dec:'.', sep:',', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,    annual:0    },
+    { id:'pro',   name:'BBrain',        monthly:6.99, annual:5.49 },
+    { id:'power', name:'BBrain Pro',    monthly:15.99,annual:12.99 },
+  ]},
+  AU: { sym:'AUD$', dec:'.', sep:',', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,    annual:0    },
+    { id:'pro',   name:'BBrain',        monthly:7.99, annual:6.49 },
+    { id:'power', name:'BBrain Pro',    monthly:18.99,annual:14.99 },
+  ]},
+  MX: { sym:'MXN$', dec:'.', sep:',', free:'0', plans:[
+    { id:'free',  name:'BBrain Free',   monthly:0,    annual:0    },
+    { id:'pro',   name:'BBrain',        monthly:99,   annual:79   },
+    { id:'power', name:'BBrain Pro',    monthly:239,  annual:189  },
+  ]},
+};
+
+const FEATURES = {
+  free:  ['Até 5 sessões por mês','Captura ilimitada de ideias','Diário de sessões básico','Acesso via browser','—IA de avaliação de ideias','—Captura via WhatsApp','—Geração de conteúdo','—Síntese mensal','—Suporte prioritário'],
+  pro:   ['Sessões ilimitadas','Captura ilimitada de ideias','Diário de sessões completo','Acesso via browser e app','IA de avaliação de ideias','Captura via WhatsApp','Geração de conteúdo','—Síntese mensal IA','—Suporte prioritário'],
+  power: ['Sessões ilimitadas','Captura ilimitada de ideias','Diário de sessões completo','Acesso via browser e app','IA de avaliação de ideias','Captura via WhatsApp','Geração de conteúdo','Síntese mensal IA','Suporte prioritário'],
+};
+
+let billing = 'monthly';
+let country = 'BR';
+
+function detectCountry() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    if (tz.includes('Sao_Paulo') || tz.includes('Brazil') || tz.includes('Fortaleza') || tz.includes('Recife') || tz.includes('Manaus') || tz.includes('Belem')) return 'BR';
+    if (tz.startsWith('America/')) return 'US';
+    if (tz.startsWith('Europe/London')) return 'GB';
+    if (tz.startsWith('Europe/')) return 'EU';
+    if (tz.includes('Toronto') || tz.includes('Vancouver')) return 'CA';
+    if (tz.startsWith('Australia/')) return 'AU';
+    if (tz.includes('Mexico')) return 'MX';
+  } catch {}
+  return 'BR';
+}
+
+function fmtPrice(val, c) {
+  if (val === 0) return 'Grátis';
+  const s = val.toFixed(2).replace('.', c.dec);
+  return c.sym + '\u202F' + s;
+}
+
+function renderPlans() {
+  const c = PRICING[country];
+  const grid = document.getElementById('plans-grid');
+  grid.innerHTML = c.plans.map((p, i) => {
+    const isPopular = i === 1;
+    const price = billing === 'monthly' ? p.monthly : p.annual;
+    const annualTotal = (p.annual * 12).toFixed(2).replace('.', c.dec);
+    const feats = FEATURES[p.id];
+    const featHtml = feats.map(f => {
+      const off = f.startsWith('—');
+      const text = off ? f.slice(1) : f;
+      return `<li class="${off?'off':''}">${text}</li>`;
+    }).join('');
+    const priceStr = fmtPrice(price, c);
+    const annualNote = billing === 'annual' && price > 0
+      ? `<div class="plan-annual-note">= ${c.sym}\u202F${annualTotal}/ano</div>` : '';
+    const periodStr = price === 0 ? '' : `<span class="plan-period">/mês</span>`;
+    const btnLabel = price === 0 ? 'Começar grátis' : 'Assinar';
+    return `
+    <div class="plan-card${isPopular?' popular':''}">
+      ${isPopular ? '<div class="plan-popular-badge">Mais popular</div>' : ''}
+      <div class="plan-name">${p.name}</div>
+      <div class="plan-price-wrap">
+        <span class="plan-price">${priceStr}</span>${periodStr}
+        ${annualNote}
+      </div>
+      <ul class="plan-features">${featHtml}</ul>
+      <a class="plan-btn" href="/laboratorio">${btnLabel}</a>
+    </div>`;
+  }).join('');
+}
+
+function setBilling(type, btn) {
+  billing = type;
+  document.querySelectorAll('.billing-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPlans();
+}
+
+function setCountry(c) {
+  country = c;
+  renderPlans();
+}
+
+// ── Hero input ────────────────────────────────────────────────────────────────
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function goToApp() {
+  const v = document.getElementById('hero-input').value.trim();
+  const dest = '/laboratorio' + (v ? '?thought=' + encodeURIComponent(v) : '');
+  window.location.href = dest;
+}
+
+function heroEnter(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); goToApp(); }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+country = detectCountry();
+document.getElementById('country-select').value = country;
+renderPlans();
+</script>
+</body>
+</html>

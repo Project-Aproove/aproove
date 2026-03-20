@@ -563,6 +563,11 @@ COLOR PALETTE:
 </div><!-- #tab-content -->
 </main>
 
+<!-- ── LEGACY FOOTER (Karina & Cecília) ── -->
+<footer id="legacy-footer" style="display:none; padding:1.25rem 2rem; border-top:1px solid var(--line2); text-align:center;">
+  <p id="legacy-footer-msg" style="font-size:12px; color:var(--ink3); font-style:italic; line-height:1.6;"></p>
+</footer>
+
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
 
@@ -634,6 +639,13 @@ COLOR PALETTE:
     <p class="auth-err" id="forgot-err"></p>
     <p class="auth-success" id="forgot-ok"></p>
     <span class="auth-link" onclick="showLogin()" data-t="auth.forgot.back">← Voltar ao login</span>
+  </div>
+
+  <!-- LEGACY MESSAGE: primeiro acesso Karina/Cecília -->
+  <div id="auth-legacy" class="auth-box" style="display:none">
+    <span class="auth-icon">🧠</span>
+    <p id="legacy-msg-text" style="font-size:15px; color:rgba(255,255,255,.9); line-height:1.75; text-align:center; white-space:pre-line; font-style:italic; margin-bottom:1.75rem;"></p>
+    <button class="auth-btn" onclick="closeLegacyMessage()">Entrar no BBrain</button>
   </div>
 
   <!-- CHANGE PASSWORD: troca forçada -->
@@ -1029,8 +1041,13 @@ async function doLogin() {
       localStorage.setItem('bbrain_username', d.username || user);
       if (d.force_password_change) {
         showChangePassword();
+      } else if (d.firstLoginMessage) {
+        // Primeiro acesso de usuária especial — salva mensagem para o rodapé
+        localStorage.setItem('bbrain_legacy_msg', d.firstLoginMessage);
+        showLegacyMessage(d.firstLoginMessage);
       } else {
         document.getElementById('auth-overlay').classList.add('hidden');
+        showLegacyFooter();
         init();
       }
     } else { err.textContent = t('auth.err.wrong'); document.getElementById('login-pwd').value = ''; }
@@ -1067,6 +1084,28 @@ async function doChangePassword() {
     } else { err.textContent = d.error || 'Erro ao alterar senha'; }
   } catch { err.textContent = t('auth.err.offline'); }
   btn.disabled = false; btn.textContent = 'Confirmar';
+}
+
+function showLegacyMessage(msg) {
+  document.getElementById('auth-login').style.display   = 'none';
+  document.getElementById('auth-change').style.display  = 'none';
+  document.getElementById('auth-legacy').style.display  = 'block';
+  document.getElementById('legacy-msg-text').textContent = msg;
+}
+
+function closeLegacyMessage() {
+  document.getElementById('auth-legacy').style.display = 'none';
+  document.getElementById('auth-overlay').classList.add('hidden');
+  showLegacyFooter();
+  init();
+}
+
+function showLegacyFooter() {
+  const msg = localStorage.getItem('bbrain_legacy_msg');
+  if (!msg) return;
+  const footer = document.getElementById('legacy-footer');
+  const el     = document.getElementById('legacy-footer-msg');
+  if (footer && el) { el.textContent = msg; footer.style.display = 'block'; }
 }
 
 async function doForgotRequest() {
@@ -1143,6 +1182,7 @@ async function init() {
   const authed = await checkAuth();
   if (!authed) return;
   showHeaderUser();
+  showLegacyFooter();
   updateCheckinDatetime();
   await loadData();
   checkForActiveSession();

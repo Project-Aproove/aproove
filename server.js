@@ -856,9 +856,13 @@ const server = http.createServer(async (req, res) => {
   // ── Servir arquivos estáticos ──────────────────────────────────────────────
   // Roteamento por domínio
   const host = req.headers.host || '';
-  if (host.includes('bbrainapp.you') && pathname === '/') {
-    res.writeHead(302, { Location: '/laboratorio' });
-    return res.end();
+  if (host.includes('bbrainapp.you')) {
+    if (pathname === '/' || pathname === '') {
+      return serveFile(res, path.join(LAB_DIR, 'landing.html'));
+    }
+    if (pathname === '/entrar') {
+      return serveFile(res, path.join(LAB_DIR, 'index.html'));
+    }
   }
   // aproove.io → landing page do Aproove (producao/)
   if (host.includes('aproove.io') && (pathname === '/' || pathname === '')) {
