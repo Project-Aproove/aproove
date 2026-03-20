@@ -341,6 +341,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
       <button class="hlang-btn" onclick="setLang('en')">EN</button>
       <button class="hlang-btn" onclick="setLang('fr')">FR</button>
       <button class="hlang-btn" onclick="setLang('es')">ES</button>
+      <button class="hlang-btn" onclick="setLang('de')">DE</button>
     </div>
     <span class="header-user" id="header-user" style="display:none"></span>
     <button class="btn-logout" id="btn-logout" onclick="logout()" style="display:none" title="Sair">↪ Sair</button>
@@ -574,6 +575,7 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
       <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+      <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
     <span class="auth-icon">🧠</span>
     <h1 class="auth-title" data-t="auth.setup.title">Bem-vindo ao BBrain</h1>
@@ -594,6 +596,7 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
       <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+      <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
     <span class="auth-icon">🧠</span>
     <h1 class="auth-title" data-t="auth.login.title">BBrain</h1>
@@ -613,6 +616,7 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('en')">🇺🇸 EN</button>
       <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+      <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
     <span class="auth-icon">🔑</span>
     <h1 class="auth-title" data-t="auth.forgot.title">Redefinir senha</h1>
@@ -809,6 +813,46 @@ const I18N = {
     'confirm.end_session':'¿Finalizar sesión de trabajo?','confirm.delete_idea':'¿Eliminar esta idea?',
     'status.roadmap':'✓ En roadmap','status.archived':'Archivada','status.analysis':'En análisis','status.reopened':'Reabierta',
     'ideas.captured.one':'idea capturada','ideas.captured.many':'ideas capturadas'
+  },
+  de:{
+    'header.subtitle':'Privater Raum des Gründers','header.active_session':'aktive Sitzung',
+    'header.ideas':'Ideen','header.roadmap':'im Roadmap','header.sessions':'Sitzungen',
+    'tab.ideas':'💡 Ideen','tab.sessions':'📓 Sitzungstagebuch',
+    'ideas.new':'Neue Idee','ideas.hint':'zum Speichern','ideas.submit':'Idee speichern',
+    'ideas.placeholder':'Jeden Gedanken, jede Beobachtung oder Erkenntnis. Ohne Filter. BBrain speichert alles.',
+    'ideas.filter.all':'Alle','ideas.filter.new':'Neu','ideas.filter.analysis':'In Prüfung','ideas.filter.archived':'Archiviert',
+    'ideas.empty.title':'Noch keine Ideen','ideas.empty.desc':'Speichern Sie oben Ihre erste Idee oder senden Sie eine Nachricht per WhatsApp.',
+    'ideas.action.roadmap':'+ Roadmap','ideas.action.analyze':'Analysieren','ideas.action.archive':'Archivieren','ideas.action.reopen':'Wieder öffnen',
+    'ideas.status.new':'Neu','ideas.status.analysis':'In Prüfung','ideas.status.roadmap':'Roadmap','ideas.status.archived':'Archiviert','ideas.status.linked':'Verknüpft',
+    'sessions.end':'Sitzung beenden','sessions.empty.title':'Keine Sitzungen gespeichert',
+    'sessions.empty.desc':'Wenn Sie mit der Arbeit beginnen und einchecken, erscheint jede Sitzung hier.',
+    'sessions.ongoing':'Laufend','sessions.active':'Aktiv',
+    'sessions.generate':'✦ Inhalt generieren','sessions.view_post':'📱 Generierten Beitrag sehen',
+    'sessions.post_label':'Vorgeschlagener Beitrag · Instagram / LinkedIn','sessions.copy':'Kopieren',
+    'checkin.title':'Neue Arbeitssitzung','checkin.where':'Wo sind Sie?',
+    'checkin.loc.home':'Zu Hause','checkin.loc.office':'Im Büro','checkin.loc.home_night':'Zu Hause, spät nachts',
+    'checkin.loc.cafe':'Im Café','checkin.loc.travel':'Auf Reisen','checkin.loc.placeholder':'oder frei schreiben...',
+    'checkin.thoughts':'Worüber denken Sie nach?','checkin.start':'Arbeit beginnen','checkin.skip':'Ohne Sitzungsprotokoll fortfahren',
+    'checkin.thoughts.placeholder':'Kann alles sein — ein Problem, eine Unsicherheit, eine Begeisterung...',
+    'auth.setup.title':'Willkommen bei BBrain','auth.setup.subtitle':'Erstes Mal hier.\nErstellen Sie Ihren Benutzernamen und Ihr Passwort.',
+    'auth.setup.username':'Benutzername (z.B. brunomassa)','auth.setup.password':'Passwort (min. 6 Zeichen)','auth.setup.confirm':'Passwort bestätigen',
+    'auth.setup.submit':'Zugang erstellen und eintreten','auth.setup.hint':'Bewahren Sie Ihre Zugangsdaten auf — sie werden täglich benötigt.',
+    'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Gründertagebuch',
+    'auth.login.username':'Benutzername','auth.login.password':'Passwort','auth.login.submit':'Eintreten','auth.login.forgot':'Passwort vergessen',
+    'auth.forgot.title':'Passwort zurücksetzen','auth.forgot.subtitle':'Wir senden einen Code an Ihre registrierte E-Mail.',
+    'auth.forgot.submit':'Code senden','auth.forgot.back':'← Zurück zur Anmeldung',
+    'auth.forgot.code_placeholder':'6-stelliger Code','auth.forgot.new_password':'Neues Passwort',
+    'auth.forgot.confirm_password':'Neues Passwort bestätigen','auth.forgot.reset':'Passwort zurücksetzen',
+    'auth.err.username_required':'Benutzernamen eingeben','auth.err.username_short':'Mindestens 3 Zeichen',
+    'auth.err.password_short':'Mindestens 6 Zeichen','auth.err.password_mismatch':'Passwörter stimmen nicht überein',
+    'auth.err.password_required':'Passwort eingeben','auth.err.wrong':'Falscher Benutzername oder falsches Passwort',
+    'auth.err.offline':'Server offline','auth.err.starting':'⏳ Server startet... 30s warten und neu laden.',
+    'auth.err.reset_sent':'✓ Code an registrierte E-Mail gesendet','auth.err.reset_invalid':'Ungültiger oder abgelaufener Code',
+    'toast.session_started':'✓ Sitzung gestartet — gute Arbeit!','toast.idea_saved':'💡 Idee gespeichert!',
+    'toast.copied':'✓ Kopiert!','toast.idea_removed':'Entfernt',
+    'confirm.end_session':'Arbeitssitzung beenden?','confirm.delete_idea':'Diese Idee löschen?',
+    'status.roadmap':'✓ Im Roadmap','status.archived':'Archiviert','status.analysis':'In Prüfung','status.reopened':'Wieder geöffnet',
+    'ideas.captured.one':'Idee erfasst','ideas.captured.many':'Ideen erfasst'
   }
 };
 
