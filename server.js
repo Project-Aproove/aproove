@@ -393,6 +393,49 @@ async function saveAuthToSheets(data) {
   } catch (e) { console.error('saveAuthToSheets:', e.message); }
 }
 
+// ── STRIPE ────────────────────────────────────────────────────────────────────
+const STRIPE_SECRET          = process.env.STRIPE_SECRET_KEY        || '';
+const STRIPE_WEBHOOK_SECRET  = process.env.STRIPE_WEBHOOK_SECRET    || '';
+const STRIPE_PRICE_PRO       = process.env.STRIPE_PRICE_PRO         || '';
+const STRIPE_PRICE_POWER     = process.env.STRIPE_PRICE_POWER       || '';
+const APP_BASE_URL            = process.env.APP_BASE_URL             || 'https://bbrainapp.you';
+
+// Stripe HTTP helper (sem npm — usa HTTPS nativo)
+function stripePost(path, params) {
+  return new Promise(resolve => {
+    const https = require('https');
+    const body  = new URLSearchParams(params).toString();
+    const req   = https.request({
+      hostname: 'api.stripe.com', path: `/v1/${path}`, method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${STRIPE_SECRET}`,
+        'Content-Type':  'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, r => {
+      let d = ''; r.on('data', c => d += c);
+      r.on('end', () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+    });
+    req.on('error', e => { console.error('Stripe:', e.message); resolve({}); });
+    req.write(body); req.end();
+  });
+}
+
+function stripeGet(path) {
+  return new Promise(resolve => {
+    const https = require('https');
+    const req   = https.request({
+      hostname: 'api.stripe.com', path: `/v1/${path}`, method: 'GET',
+      headers: { 'Authorization': `Bearer ${STRIPE_SECRET}` }
+    }, r => {
+      let d = ''; r.on('data', c => d += c);
+      r.on('end', () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+    });
+    req.on('error', () => resolve({}));
+    req.end();
+  });
+}
+
 // ── WHATSAPP META CLOUD API ───────────────────────────────────────────────────
 const WA_VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || '';
 const WA_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN || '';
@@ -730,6 +773,31 @@ const server = http.createServer(async (req, res) => {
     } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
+  // ── POST /api/stripe/webhook ── (sem auth — chamada direta do Stripe)
+  if (pathname === '/api/stripe/webhook' && method === 'POST') {
+    try {
+      const rawBody = await readBody(req);
+      const event   = JSON.parse(rawBody);
+      const type    = event.type || '';
+
+      if (type === 'checkout.session.completed' || type === 'invoice.payment_succeeded') {
+        const obj  = event.data?.object || {};
+        const plan = obj.metadata?.plan || obj.subscription_data?.metadata?.plan || 'pro';
+        settingsCache.plan = plan;
+        const auth = readAuth() || {};
+        saveAuthToSheets(auth).catch(() => {});
+        console.log(`💳 Stripe webhook → plano atualizado: ${plan}`);
+      }
+      if (type === 'customer.subscription.deleted') {
+        settingsCache.plan = 'free';
+        const auth = readAuth() || {};
+        saveAuthToSheets(auth).catch(() => {});
+        console.log('💳 Stripe webhook → assinatura cancelada → free');
+      }
+      return json(res, 200, { received: true });
+    } catch (e) { return json(res, 400, { error: 'Webhook inválido' }); }
+  }
+
   // ── GUARD: protege todas as rotas /api/* ──────────────────────────────────
   if (pathname.startsWith('/api/')) {
     if (!validToken(getToken(req))) {
@@ -740,6 +808,71 @@ const server = http.createServer(async (req, res) => {
   // ── GET /api/version ──
   if (pathname === '/api/version' && method === 'GET') {
     return json(res, 200, readVersion());
+  }
+
+  // ── POST /api/stripe/checkout ──
+  if (pathname === '/api/stripe/checkout' && method === 'POST') {
+    if (!STRIPE_SECRET) return json(res, 400, { error: 'Stripe não configurado — defina STRIPE_SECRET_KEY' });
+    try {
+      const body   = await readBody(req);
+      const { plan } = JSON.parse(body);
+      const priceId = plan === 'power' ? STRIPE_PRICE_POWER : STRIPE_PRICE_PRO;
+      if (!priceId) return json(res, 400, { error: 'Defina STRIPE_PRICE_PRO e STRIPE_PRICE_POWER nas env vars' });
+      const session = await stripePost('checkout/sessions', {
+        'payment_method_types[]':        'card',
+        'mode':                          'subscription',
+        'line_items[0][price]':          priceId,
+        'line_items[0][quantity]':       '1',
+        'success_url':                   `${APP_BASE_URL}/entrar?upgrade=success`,
+        'cancel_url':                    `${APP_BASE_URL}/entrar?upgrade=cancelled`,
+        'metadata[plan]':                plan,
+        'subscription_data[metadata][plan]': plan,
+      });
+      if (!session.url) return json(res, 500, { error: session.error?.message || 'Erro ao criar sessão Stripe' });
+      console.log(`💳 Stripe → checkout criado para plano ${plan}`);
+      return json(res, 200, { url: session.url, session_id: session.id });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
+  // ── GET /api/stripe/portal ──
+  if (pathname === '/api/stripe/portal' && method === 'GET') {
+    if (!STRIPE_SECRET) return json(res, 400, { error: 'Stripe não configurado' });
+    try {
+      // Busca o customer pelo email do admin
+      const auth       = readAuth() || {};
+      const email      = auth.email || MASTER_ADMIN_EMAIL;
+      const customers  = await stripeGet(`customers?email=${encodeURIComponent(email)}&limit=1`);
+      const customerId = customers.data?.[0]?.id;
+      if (!customerId) return json(res, 404, { error: 'Cliente não encontrado no Stripe' });
+      const portal = await stripePost('billing_portal/sessions', {
+        customer:    customerId,
+        return_url:  `${APP_BASE_URL}/entrar`,
+      });
+      return json(res, 200, { url: portal.url });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
+  // ── GET /api/stripe/plans ── (público — sem auth necessária)
+  if (pathname === '/api/stripe/plans' && method === 'GET') {
+    return json(res, 200, {
+      plans: [
+        { id: 'free',  name: 'BBrain Free',  price_brl: 0,     price_usd: 0,    features: ['Captura ilimitada de ideias','Diário de sessões','Roadmap básico','Relatório mensal','Lembrete a cada 15 ou 30 dias','E-mail'] },
+        { id: 'pro',   name: 'BBrain Pro',   price_brl: 1490,  price_usd: 299,  features: ['Tudo do Free','Lembrete a cada 2 dias','WhatsApp'] },
+        { id: 'power', name: 'BBrain Power', price_brl: 2990,  price_usd: 599,  features: ['Tudo do Pro','Lembrete diário','Acesso antecipado a novos recursos','Suporte prioritário'] },
+      ]
+    });
+  }
+
+  // ── POST /api/admin/send-prompt-email ──
+  if (pathname === '/api/admin/send-prompt-email' && method === 'POST') {
+    const auth = readAuth();
+    if (!isMasterAdmin(auth?.username)) return json(res, 403, { error: 'Acesso negado' });
+    const promptUrl = `${APP_BASE_URL}/laboratorio/DOCUMENTACAO/publicar-app.html#ai-prompt`;
+    const subject   = 'BBrain — Prompt técnico completo para React Native (AI Studio)';
+    const body      = `Prompt técnico completo para geração do app BBrain no AI Studio.\n\nAcesse:\n${promptUrl}\n\nOu copie diretamente do documento publicar-app.html na seção "Gerar App com IA".\n\n---\nBBrain · Aproove · Selo7`;
+    const sent = await sendEmail(MASTER_ADMIN_EMAIL, subject, body);
+    console.log(`📧 Prompt email ${sent ? 'enviado' : 'offline'} → ${MASTER_ADMIN_EMAIL}`);
+    return json(res, 200, { success: true, sent, to: MASTER_ADMIN_EMAIL });
   }
 
   // ── POST /api/deploy ──

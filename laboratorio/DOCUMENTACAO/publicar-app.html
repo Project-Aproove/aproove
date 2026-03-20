@@ -846,6 +846,628 @@ Política de privacidade: https://bbrainapp.you/privacidade</textarea>
 
   <!-- ── END ASSETS SECTION ── -->
 
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- GERAR APP COM IA -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="ai-prompt" style="background:#fff;border:1px solid rgba(17,17,16,.08);border-radius:14px;overflow:hidden;margin-bottom:24px;">
+    <div style="padding:24px 28px 20px;border-bottom:1px solid rgba(17,17,16,.06);background:linear-gradient(135deg,#1a0a3a,#3a1f7a);display:flex;align-items:center;gap:14px;">
+      <span style="font-size:36px;">🤖</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:white;margin-bottom:2px;">Gerar App com IA</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);">Prompt técnico completo para Google AI Studio · React Native + Expo</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:.5rem;">
+        <button onclick="downloadPrompt()" style="padding:.5rem 1rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">↓ .txt</button>
+        <button onclick="copyPrompt(this)" style="padding:.5rem 1rem;background:white;border:none;color:#1a0a3a;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">Copiar</button>
+        <button onclick="sendPromptEmail(this)" style="padding:.5rem 1rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:white;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">📧 Email</button>
+      </div>
+    </div>
+    <div style="padding:28px;">
+      <p style="font-size:14px;color:var(--ink2);margin-bottom:20px;line-height:1.6;">Cole este prompt em <strong><a href="https://aistudio.google.com/apps" target="_blank" style="color:var(--brain-mid);">aistudio.google.com/apps</a></strong> para gerar o projeto completo React Native/Expo do BBrain. O prompt cobre backend, frontend, design system, autenticação, Stripe e todas as telas.</p>
+      <pre id="ai-prompt-text" style="background:var(--brain);color:#c8bfe8;border-radius:12px;padding:24px;font-size:11.5px;font-family:'Courier New',monospace;line-height:1.75;overflow-x:auto;white-space:pre-wrap;max-height:600px;overflow-y:auto;">You are an expert React Native developer. Build a complete, production-ready mobile app called **BBrain** for iOS and Android using Expo SDK 51+ and TypeScript.
+
+═══════════════════════════════════════════
+OVERVIEW
+═══════════════════════════════════════════
+BBrain is a private founder's journal and idea capture tool.
+Single user, premium, offline-capable.
+Backend: REST API at https://bbrainapp.you (Node.js, no framework)
+Auth: Bearer token, daily expiry (client-side), SHA-256 passwords
+
+═══════════════════════════════════════════
+TECH STACK
+═══════════════════════════════════════════
+- React Native 0.74+ with Expo SDK 51
+- TypeScript (strict)
+- React Navigation v6 (Bottom Tabs + Stack)
+- Expo SecureStore (token storage)
+- Expo Notifications (push reminders)
+- @stripe/stripe-react-native (payments)
+- React Query (TanStack) for data fetching
+- NativeWind v4 (Tailwind CSS for RN) OR StyleSheet
+- Expo Router (file-based routing)
+- expo-web-browser (for Stripe Checkout)
+- dayjs (dates)
+
+═══════════════════════════════════════════
+DESIGN SYSTEM
+═══════════════════════════════════════════
+Colors:
+  brain:      #1A0A3A  (primary dark purple — auth screens, CTAs)
+  brain-mid:  #3A1F7A  (secondary purple — accents)
+  paper:      #F7F5EF  (warm off-white — app background)
+  surface:    #FFFFFF  (cards)
+  paper2:     #EFEDE6  (muted areas)
+  ink:        #111110  (primary text)
+  ink2:       #4A4A47  (secondary text)
+  ink3:       #9A9A96  (muted text)
+  green:      #2A5F2A on #EDF5ED  (roadmap status)
+  amber:      #7A4A0A on #FDF2E2  (in-analysis status)
+  blue:       #0D4A8A on #E8F0FB  (new idea status)
+  red:        #8A1A1A on #FBEAEA  (delete/error)
+  purple:     #4A1D7A on #F3EEFB  (evaluation)
+  whatsapp:   #25D366 on #E8FDF2
+
+Typography:
+  Font: DM Sans (Google Fonts via expo-font)
+  Mono: DM Mono (idea IDs, timers, counters)
+  Sizes: xs=10, sm=11, base=13, md=14, lg=15, xl=16, 2xl=20, 3xl=26
+
+Spacing: 4px base unit (4,8,12,16,20,24,32,40,48)
+Radius: sm=6, md=10, lg=12, xl=16, 2xl=18, full=9999
+Shadows: subtle — elevation 1-4, shadowOpacity 0.05-0.15
+
+═══════════════════════════════════════════
+NAVIGATION STRUCTURE
+═══════════════════════════════════════════
+Unauthenticated stack:
+  - LoginScreen
+  - ChangePasswordScreen (force_password_change flow)
+  - LegacyMessageScreen (special users: Karina, Cecília)
+  - ForgotPasswordScreen
+  - ResetPasswordScreen
+
+Authenticated bottom tabs:
+  💡 Ideas    → IdeasScreen (home)
+  📓 Sessions → SessionsScreen
+  🗺️ Roadmap  → RoadmapScreen
+  📊 Report   → ReportScreen
+  ⚙️ Settings → SettingsScreen
+
+═══════════════════════════════════════════
+API BASE URL: https://bbrainapp.you
+AUTH HEADER:  Authorization: Bearer {token}
+═══════════════════════════════════════════
+
+ALL API ENDPOINTS:
+
+[AUTH — no token required]
+GET  /api/auth/status
+  → { setup_required: bool, authenticated: bool }
+
+POST /api/auth/login
+  body: { username, password }
+  → { token, username, force_password_change: bool, firstLoginMessage?: string }
+
+POST /api/auth/setup
+  body: { username, password }
+  → { token, username }
+
+POST /api/auth/change-password  [requires token]
+  body: { password }
+  → { success: true }
+
+POST /api/auth/logout  [requires token]
+  → { success: true }
+
+POST /api/auth/reset-request
+  → { success: true }
+
+POST /api/auth/reset
+  body: { code, password }
+  → { success: true }
+
+[IDEAS — requires token]
+GET  /api/ideas?status=nova&source=whatsapp
+  → { ideas: Idea[], meta: { total, on_roadmap, archived, from_whatsapp } }
+
+POST /api/ideas
+  body: { text, source?, session_id? }
+  → { idea: Idea }
+
+PATCH /api/ideas/:id
+  body: { status?, tags?, evaluation?, roadmap_phase?, connections? }
+  → { idea: Idea }
+
+DELETE /api/ideas/:id
+  → { success: true }
+
+Idea object:
+{
+  id: string,            // "20260320-ABC12"
+  text: string,
+  source: "web"|"whatsapp"|"api",
+  whatsapp_from: string|null,
+  created_at: string,    // ISO 8601
+  status: "nova"|"em_analise"|"no_roadmap"|"arquivada",
+  tags: string[],
+  evaluation: string|null,
+  roadmap_phase: "backlog"|"planejado"|"em_execucao"|"concluido"|null,
+  connections: string[],
+  session_id: string|null,
+  updated_at: string|null
+}
+
+[SESSIONS — requires token]
+GET  /api/sessions
+  → { sessions: Session[], meta: { total_sessions, total_hours, last_session } }
+
+POST /api/sessions
+  body: { location, initial_thoughts? }
+  → { session: Session }
+
+PATCH /api/sessions/:id
+  body: { ended_at, duration_minutes }
+  → { session: Session }
+
+Session object:
+{
+  id: string,
+  started_at: string,
+  ended_at: string|null,
+  location: string,
+  initial_thoughts: string|null,
+  duration_minutes: number|null,
+  features_worked: string[],
+  ideas_captured: string[],
+  social_content: string|null
+}
+
+[SETTINGS — requires token]
+GET  /api/settings
+  → { settings: { plan, reminder_frequency, reminder_time, reminder_channels } }
+
+POST /api/settings
+  body: { plan?, reminder_frequency?, reminder_time?, reminder_channels? }
+  → { settings: {...} }
+
+settings.plan values: "free"|"pro"|"power"
+settings.reminder_frequency: ""|"monthly"|"every15days"|"every2days"|"daily"
+  - free plan: monthly, every15days only
+  - pro plan: + every2days
+  - power plan: all (including daily)
+settings.reminder_channels: "email"|"whatsapp"|"email,whatsapp"
+  - whatsapp only for pro and power plans
+
+[REPORT — requires token]
+GET  /api/report/monthly?month=2026-03
+  → {
+      month, ideas_count, sessions_count, roadmap_count,
+      total_duration (minutes), best_day: { date, count }|null,
+      ideas: IdeaReport[], sessions: SessionReport[]
+    }
+
+[STRIPE — requires token except webhook]
+GET  /api/stripe/plans
+  → { plans: [{ id, name, price_brl, price_usd, features[] }] }
+
+POST /api/stripe/checkout
+  body: { plan: "pro"|"power" }
+  → { url: string, session_id: string }
+
+GET  /api/stripe/portal
+  → { url: string }
+
+POST /api/stripe/webhook  [Stripe calls this — no auth]
+  Stripe events handled: checkout.session.completed, customer.subscription.deleted
+
+[VERSION]
+GET /api/version
+  → { version, updated_at }
+
+═══════════════════════════════════════════
+SCREEN SPECIFICATIONS
+═══════════════════════════════════════════
+
+── LoginScreen ──
+Background: brain (#1A0A3A), full screen
+Layout: centered, max-width 340px
+Elements:
+  - Language selector top: PT 🇧🇷 | EN 🇺🇸 | FR 🇫🇷 | ES 🇪🇸 | DE 🇩🇪
+  - Brain emoji 🧠 (52px)
+  - Title "BBrain" (26px bold, white)
+  - Subtitle "Aproove · Diário do Fundador" (muted white)
+  - Username input (dark glass morphism: rgba(255,255,255,0.07))
+  - Password input + show/hide toggle
+  - "Entrar" button (white bg, brain text, full width)
+  - Error text (red #F87171)
+  - "Esqueci minha senha" link
+  - "Criar conta" link (only if setup_required)
+On login success:
+  - Save token to SecureStore
+  - Save today's date to SecureStore
+  - If force_password_change → navigate to ChangePasswordScreen
+  - If firstLoginMessage → navigate to LegacyMessageScreen
+  - Else → navigate to main tabs
+
+── ChangePasswordScreen ──
+Background: brain
+Elements:
+  - Lock emoji 🔐
+  - "Defina sua senha" title
+  - "Por segurança, crie uma senha pessoal antes de continuar." subtitle
+  - New password input
+  - Confirm password input
+  - "Confirmar" button
+On success: navigate to main tabs
+
+── LegacyMessageScreen ──
+Background: brain
+Elements:
+  - Brain emoji
+  - Message text (italic, white, pre-line whitespace)
+  - "Entrar no BBrain" button
+Persist message in AsyncStorage for permanent footer display.
+
+── IdeasScreen (Main Tab) ──
+Header:
+  - BBrain logo + subtitle
+  - Stat chips: N ideias, N no roadmap, N sessões
+  - Active session indicator (green dot + timer)
+  - 🔔 reminder settings button
+  - Language selector
+  - Logout button
+
+Session banner (when active):
+  - Background: #EEF0F4 (light gray)
+  - Text: #1A2A4A (dark blue)
+  - Green pulse dot + location + elapsed timer
+  - "Encerrar sessão" button
+
+Capture area:
+  - White card, rounded
+  - TextInput multiline "Qualquer pensamento..."
+  - "Registrar ideia" button + Ctrl+Enter hint
+
+Filter pills row:
+  Todas | Novas | Roadmap | Em análise | Arquivadas (with counts)
+
+Ideas list (FlatList):
+  Each card (white, rounded 12):
+    - Index number (#001) DM Mono
+    - Idea text
+    - Meta row: date, source badge (WhatsApp/Web), status badge
+    - If roadmap_phase: phase badge
+    - If session_id: linked session tag
+    - If evaluation: purple evaluation block
+    - Action buttons: +Roadmap | Analisar | Arquivar / Reabrir | ✕
+
+Status badge colors:
+  nova → blue, em_analise → amber, no_roadmap → green, arquivada → paper/muted
+
+Swipe gesture on idea card (optional):
+  Left → Archive; Right → Roadmap
+
+── SessionsScreen ──
+Header: "+ Nova sessão" button
+
+When no active session:
+  Show check-in form (inline, full screen):
+    - "Nova sessão de trabalho" title + datetime
+    - Location pills: Em casa | No escritório | De madrugada | No café | Viajando + free text
+    - "O que você está pensando?" textarea
+    - "Começar a trabalhar" CTA button (brain, full width)
+    - "Continuar sem registrar sessão" skip link
+
+Sessions list (FlatList):
+  Each session card:
+    - Date block (large day number + month)
+    - Time range: 09:30 → 11:45
+    - Location with 📍
+    - Duration (DM Mono)
+    - Ideas captured count
+    - Initial thoughts (italic quote)
+    - Ideas from this session (expandable)
+    - "✦ Gerar conteúdo" / "📱 Ver post" button
+    - Social post preview (Instagram/LinkedIn draft)
+
+── RoadmapScreen ──
+Toggle: Kanban | Lista
+
+Kanban view (4 columns, horizontal scroll):
+  📋 Backlog | 🔧 Planejado | ⚡ Em execução | ✅ Concluído
+  Each column: idea cards with move-to-phase buttons
+
+List view:
+  Each row: phase badge (colored) + idea text + "Mover para" select
+
+Empty state: "Adicione ideias ao Roadmap na aba 💡"
+
+── ReportScreen ──
+Month picker (default: current month)
+"Gerar" button
+
+Report sections:
+  Stats grid (2x2 or 2x3):
+    - N ideias capturadas
+    - N sessões registradas
+    - N no roadmap
+    - Xh Xmin trabalhadas
+    - Melhor dia (date + count)
+
+  Ideas list section:
+    Each: date chip + idea text (truncated 200 chars)
+
+  Sessions list section:
+    Each: date chip + location + duration + initial thoughts excerpt
+
+"↓ Exportar HTML" button → Share sheet with HTML string
+
+── SettingsScreen ──
+User info section:
+  - Username + plan badge
+  - "Gerenciar assinatura" → Stripe portal (for paid plans)
+
+Reminders section:
+  - Frequency select (restrictions by plan, show "upgrade" for locked options)
+  - Time picker
+  - Channel: Email checkbox + WhatsApp checkbox (pro/power only)
+  - "Salvar" button
+
+Plans section (if free plan):
+  Plan cards: Free | Pro R$14,90/mês | Power R$29,90/mês
+  "Fazer upgrade" → stripeCheckout() → open in browser
+
+Language section:
+  Flag buttons PT | EN | FR | ES | DE
+
+App section:
+  - App version
+  - "Política de Privacidade" link
+  - "Logout" button (red tint)
+
+═══════════════════════════════════════════
+AUTHENTICATION FLOW (client-side)
+═══════════════════════════════════════════
+1. On app start: read token from SecureStore
+2. Check if token date === today (local expiry)
+3. Call GET /api/auth/status with token
+4. If authenticated → load main tabs
+5. If not → show LoginScreen
+6. After login: store { token, tokenDate } in SecureStore
+7. On logout: delete from SecureStore, call POST /api/auth/logout
+
+═══════════════════════════════════════════
+STRIPE PAYMENT FLOW
+═══════════════════════════════════════════
+1. User taps "Fazer upgrade" on SettingsScreen
+2. App calls POST /api/stripe/checkout with { plan }
+3. Server creates Checkout Session, returns { url }
+4. App opens url in expo-web-browser
+5. User completes payment on Stripe Checkout
+6. Stripe calls POST /api/stripe/webhook → server updates plan in Sheets
+7. App polls GET /api/settings on return from browser
+8. Plan badge updates in UI
+
+For subscription management:
+1. User taps "Gerenciar assinatura"
+2. App calls GET /api/stripe/portal
+3. Opens returned url in expo-web-browser
+
+Plan restrictions (enforced client-side, validated server-side):
+  free:  reminder_frequency ∈ { monthly, every15days }; channel = email only
+  pro:   + every2days; + whatsapp channel
+  power: + daily; all channels; early access to new features
+
+═══════════════════════════════════════════
+OFFLINE SUPPORT
+═══════════════════════════════════════════
+- Cache ideas and sessions in AsyncStorage on fetch
+- On API failure: read from cache, show "offline" indicator
+- Queue failed POST/PATCH operations and retry on reconnect
+- Use NetInfo to detect connectivity
+
+═══════════════════════════════════════════
+I18N (5 languages)
+═══════════════════════════════════════════
+Supported: pt-BR (default), en-US, fr-FR, es-ES, de-DE
+Use react-i18next with inline namespace.
+Language stored in AsyncStorage. Settable from Login screen and Settings.
+
+═══════════════════════════════════════════
+PROJECT FILE STRUCTURE
+═══════════════════════════════════════════
+bbrain-app/
+├── app.json                    # Expo config
+├── package.json
+├── tsconfig.json
+├── app/
+│   ├── _layout.tsx             # Root navigator
+│   ├── (auth)/
+│   │   ├── login.tsx
+│   │   ├── change-password.tsx
+│   │   ├── legacy-message.tsx
+│   │   ├── forgot-password.tsx
+│   │   └── reset-password.tsx
+│   └── (tabs)/
+│       ├── _layout.tsx         # Bottom tabs
+│       ├── ideas.tsx
+│       ├── sessions.tsx
+│       ├── roadmap.tsx
+│       ├── report.tsx
+│       └── settings.tsx
+├── components/
+│   ├── IdeaCard.tsx
+│   ├── SessionCard.tsx
+│   ├── RoadmapKanban.tsx
+│   ├── SessionBanner.tsx
+│   ├── CheckInForm.tsx
+│   ├── ReminderBanner.tsx
+│   ├── PlanBadge.tsx
+│   └── ui/                     # Button, Input, Badge, Toast, Modal
+├── hooks/
+│   ├── useAuth.ts
+│   ├── useIdeas.ts
+│   ├── useSessions.ts
+│   ├── useSettings.ts
+│   └── useStripe.ts
+├── lib/
+│   ├── api.ts                  # Axios/fetch wrapper with auth header
+│   ├── auth.ts                 # Token storage (SecureStore)
+│   ├── i18n.ts                 # Translations
+│   └── stripe.ts               # Stripe helpers
+├── types/
+│   └── index.ts                # Idea, Session, Settings, Plan interfaces
+└── assets/
+    ├── icon.png                # 1024x1024 PNG
+    └── splash.png
+
+═══════════════════════════════════════════
+PACKAGE.JSON DEPENDENCIES
+═══════════════════════════════════════════
+{
+  "expo": "~51.0.0",
+  "react": "18.2.0",
+  "react-native": "0.74.x",
+  "expo-router": "~3.5.0",
+  "expo-secure-store": "~13.0.0",
+  "@react-navigation/bottom-tabs": "^6.6.0",
+  "@tanstack/react-query": "^5.40.0",
+  "@stripe/stripe-react-native": "0.37.x",
+  "expo-web-browser": "~13.0.0",
+  "expo-notifications": "~0.28.0",
+  "react-i18next": "^14.1.0",
+  "i18next": "^23.11.0",
+  "dayjs": "^1.11.11",
+  "nativewind": "^4.0.36",
+  "@react-native-async-storage/async-storage": "1.23.1",
+  "@react-native-community/netinfo": "11.3.x"
+}
+
+═══════════════════════════════════════════
+app.json (Expo config)
+═══════════════════════════════════════════
+{
+  "expo": {
+    "name": "BBrain",
+    "slug": "bbrain",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "bbrain",
+    "userInterfaceStyle": "light",
+    "splash": { "image": "./assets/splash.png", "backgroundColor": "#1A0A3A" },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "you.bbrainapp.bbrain",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": { "foregroundImage": "./assets/icon.png", "backgroundColor": "#1A0A3A" },
+      "package": "you.bbrainapp.bbrain",
+      "versionCode": 1
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      ["expo-notifications", { "sounds": [] }],
+      ["@stripe/stripe-react-native", { "merchantIdentifier": "merchant.you.bbrainapp" }]
+    ],
+    "extra": {
+      "apiBaseUrl": "https://bbrainapp.you",
+      "stripePublishableKey": "pk_live_YOUR_KEY_HERE"
+    }
+  }
+}
+
+═══════════════════════════════════════════
+IMPORTANT IMPLEMENTATION NOTES
+═══════════════════════════════════════════
+1. The API uses NO CORS restrictions — all requests must include Authorization header.
+2. Idea IDs are formatted as "YYYYMMDD-XXXXX" (date + 5-char alphanumeric).
+3. Token expiry is client-side daily check (compare stored date to today).
+4. The master admin "brunomassa" always has plan="power" (server-enforced).
+5. For Stripe: use WebBrowser.openAuthSessionAsync() to handle redirect back to app.
+6. Special users Karina and Cecília receive a legacy message on first login — store in AsyncStorage permanently.
+7. Session timer: start counting from session.started_at using setInterval every second.
+8. Roadmap phases: backlog → planejado → em_execucao → concluido (in order).
+9. Report export: use expo-sharing + expo-file-system to save HTML and share.
+10. Language preference: store in AsyncStorage, apply to all text via i18next.
+
+Generate the complete, production-ready code for all files listed in the project structure above.
+Start with: types/index.ts → lib/api.ts → lib/auth.ts → lib/i18n.ts → hooks/ → components/ui/ → components/ → app/(auth)/ → app/(tabs)/ → app/_layout.tsx</pre>
+    </div>
+  </div>
+
+  <!-- STRIPE SETUP -->
+  <div style="background:#fff;border:1px solid rgba(17,17,16,.08);border-radius:14px;overflow:hidden;margin-bottom:24px;">
+    <div style="padding:24px 28px 20px;border-bottom:1px solid rgba(17,17,16,.06);background:linear-gradient(135deg,#0a2540,#1a4f8a);display:flex;align-items:center;gap:14px;">
+      <span style="font-size:36px;">💳</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:white;margin-bottom:2px;">Stripe — Configuração de Pagamentos</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);">3 planos · Free / Pro R$14,90 / Power R$29,90</div>
+      </div>
+    </div>
+    <div style="padding:28px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:24px;">
+        <div style="background:var(--paper2);border:1px solid var(--paper3);border-radius:10px;padding:16px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:6px;">Free</div>
+          <div style="font-size:24px;font-weight:700;color:var(--brain);">R$ 0</div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px;">Lembrete a cada 15/30 dias · E-mail</div>
+        </div>
+        <div style="background:#ede7f6;border:1px solid rgba(74,29,122,.15);border-radius:10px;padding:16px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brain-mid);margin-bottom:6px;">BBrain Pro ✦</div>
+          <div style="font-size:24px;font-weight:700;color:var(--brain);">R$14,90<span style="font-size:13px;font-weight:400;color:var(--ink3);">/mês</span></div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px;">Lembrete a cada 2 dias · WhatsApp</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#1a0a3a11,#3a1f7a11);border:1.5px solid rgba(74,29,122,.25);border-radius:10px;padding:16px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--brain-mid);margin-bottom:6px;">BBrain Power ✦✦</div>
+          <div style="font-size:24px;font-weight:700;color:var(--brain);">R$29,90<span style="font-size:13px;font-weight:400;color:var(--ink3);">/mês</span></div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:4px;">Lembrete diário · Acesso antecipado</div>
+        </div>
+      </div>
+
+      <p style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:12px;">Variáveis de ambiente para configurar no Fly.io:</p>
+      <pre style="background:var(--brain);color:#a78bfa;padding:16px 20px;border-radius:10px;font-size:12px;line-height:1.9;overflow-x:auto;"># Obter em: dashboard.stripe.com → API Keys
+flyctl secrets set STRIPE_SECRET_KEY=sk_live_...
+flyctl secrets set STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Criar produtos em: dashboard.stripe.com → Products
+# Produto "BBrain Pro" → Preço recorrente R$14,90/mês
+flyctl secrets set STRIPE_PRICE_PRO=price_...
+
+# Produto "BBrain Power" → Preço recorrente R$29,90/mês
+flyctl secrets set STRIPE_PRICE_POWER=price_...
+
+# URL base do app (já deve estar configurada)
+flyctl secrets set APP_BASE_URL=https://bbrainapp.you</pre>
+
+      <p style="font-size:14px;font-weight:600;color:var(--ink);margin:20px 0 12px;">Configurar webhook no Stripe Dashboard:</p>
+      <pre style="background:var(--brain);color:#a78bfa;padding:16px 20px;border-radius:10px;font-size:12px;line-height:1.9;overflow-x:auto;"># Em: dashboard.stripe.com → Webhooks → Add endpoint
+Endpoint URL: https://bbrainapp.you/api/stripe/webhook
+
+Eventos a escutar:
+  ✓ checkout.session.completed
+  ✓ invoice.payment_succeeded
+  ✓ customer.subscription.deleted</pre>
+
+      <p style="font-size:14px;font-weight:600;color:var(--ink);margin:20px 0 12px;">Endpoints disponíveis na API:</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:var(--paper2);">
+          <th style="text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);">Método</th>
+          <th style="text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);">Endpoint</th>
+          <th style="text-align:left;padding:8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);">Descrição</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--paper2);"><td style="padding:10px 12px;"><span style="background:#ede7f6;color:#3a1f7a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">POST</span></td><td style="padding:10px 12px;font-family:monospace;font-size:12px;color:var(--ink2);">/api/stripe/checkout</td><td style="padding:10px 12px;font-size:13px;color:var(--ink2);">Cria checkout session · body: { plan: "pro"|"power" } → { url }</td></tr>
+          <tr style="border-bottom:1px solid var(--paper2);"><td style="padding:10px 12px;"><span style="background:#e8f5e9;color:#2a5f2a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">GET</span></td><td style="padding:10px 12px;font-family:monospace;font-size:12px;color:var(--ink2);">/api/stripe/portal</td><td style="padding:10px 12px;font-size:13px;color:var(--ink2);">Customer portal (gerenciar assinatura) → { url }</td></tr>
+          <tr style="border-bottom:1px solid var(--paper2);"><td style="padding:10px 12px;"><span style="background:#e8f5e9;color:#2a5f2a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">GET</span></td><td style="padding:10px 12px;font-family:monospace;font-size:12px;color:var(--ink2);">/api/stripe/plans</td><td style="padding:10px 12px;font-size:13px;color:var(--ink2);">Lista planos e preços (público)</td></tr>
+          <tr><td style="padding:10px 12px;"><span style="background:#ede7f6;color:#3a1f7a;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">POST</span></td><td style="padding:10px 12px;font-family:monospace;font-size:12px;color:var(--ink2);">/api/stripe/webhook</td><td style="padding:10px 12px;font-size:13px;color:var(--ink2);">Recebe eventos Stripe (sem auth)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   </main>
 
   <footer>BBrain — Documentação · Aproove · Selo7 · 2026</footer>
@@ -1005,6 +1627,54 @@ Seja objetivo, direto, com foco nos benefícios para fundadores brasileiros. Use
         btn.textContent = '✓ Copiado!';
         setTimeout(() => btn.textContent = 'Copiar', 2000);
       });
+    }
+
+    // ── AI Studio Prompt functions ──
+    function getPromptText() {
+      return document.getElementById('ai-prompt-text').textContent;
+    }
+
+    function downloadPrompt() {
+      const text = getPromptText();
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'bbrain-ai-studio-prompt.txt'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyPrompt(btn) {
+      const text = getPromptText();
+      try {
+        await navigator.clipboard.writeText(text);
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copiado!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
+    }
+
+    async function sendPromptEmail(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/admin/send-prompt-email', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+          btn.textContent = '✓ Enviado!';
+          setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+        } else {
+          btn.textContent = 'Erro: ' + (data.error || res.status);
+          setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+        }
+      } catch (e) {
+        btn.textContent = 'Erro de rede';
+        setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+      }
     }
 
     // ── Copy all metadata ──
