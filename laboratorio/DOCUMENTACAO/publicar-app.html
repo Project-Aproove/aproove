@@ -1468,6 +1468,310 @@ Eventos a escutar:
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- PROMPT GOOGLE STITCH -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="stitch-prompt" style="background:#fff;border:1px solid rgba(17,17,16,.08);border-radius:14px;overflow:hidden;margin-bottom:24px;">
+    <div style="padding:24px 28px 20px;border-bottom:1px solid rgba(17,17,16,.06);background:linear-gradient(135deg,#1565c0,#1976d2);display:flex;align-items:center;gap:14px;">
+      <span style="font-size:36px;">🪡</span>
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:white;margin-bottom:2px;">Gerar App com Google Stitch</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);">Prompt para stitch.withgoogle.com · Web App / PWA</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:.5rem;">
+        <button onclick="downloadStitchPrompt()" style="padding:.5rem 1rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">↓ .txt</button>
+        <button onclick="copyStitchPrompt(this)" style="padding:.5rem 1rem;background:white;border:none;color:#1565c0;border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;">Copiar</button>
+      </div>
+    </div>
+    <div style="padding:28px;">
+      <p style="font-size:14px;color:var(--ink2);margin-bottom:20px;line-height:1.6;">Cole este prompt em <strong><a href="https://stitch.withgoogle.com/" target="_blank" style="color:#1565c0;">stitch.withgoogle.com</a></strong> para gerar uma Web App / PWA completa do BBrain. O Stitch gera apps web responsivos prontos para deploy — ideal para ter uma versão web funcional do app enquanto o React Native é desenvolvido.</p>
+      <pre id="stitch-prompt-text" style="background:#0d2340;color:#90caf9;border-radius:12px;padding:24px;font-size:11.5px;font-family:'Courier New',monospace;line-height:1.75;overflow-x:auto;white-space:pre-wrap;max-height:600px;overflow-y:auto;">Build a complete, production-ready Progressive Web App (PWA) called **BBrain** — a private founder's journal and idea capture tool for iOS and Android home screen installation.
+
+═══════════════════════════════════════════
+PRODUCT OVERVIEW
+═══════════════════════════════════════════
+BBrain is a personal "second brain" for founders, indie hackers, and content creators.
+Single user, premium app. Mobile-first, installable as PWA.
+Tagline: "Capture ideas in 3 seconds. Review them forever."
+
+Backend API: https://bbrainapp.you (REST, Node.js)
+Auth: Bearer token stored in localStorage, daily expiry (client manages TTL)
+Language: start in PT-BR; user can switch to EN / FR / ES / DE in settings
+
+═══════════════════════════════════════════
+DESIGN SYSTEM
+═══════════════════════════════════════════
+Font: DM Sans (body), DM Serif Display (headings) — from Google Fonts
+Colors:
+  --brain:      #1a0a3a   (deep navy — primary brand)
+  --brain-mid:  #3a1f7a   (purple — accents, buttons)
+  --brain-lite: #a78bfa   (light purple — highlights)
+  --paper:      #f7f5ef   (warm off-white — background)
+  --paper2:     #efede6
+  --paper3:     #e4e1d8
+  --ink:        #111110
+  --ink2:       #4a4a47
+  --ink3:       #9a9a96
+  --green:      #2a5f2a
+  --amber:      #7a4a0a
+
+Border radius: 12–14px for cards, 8px for buttons/inputs
+Shadows: subtle (0 4px 16px rgba(26,10,58,.08))
+Motion: 200ms ease transitions, no heavy animations
+
+═══════════════════════════════════════════
+PWA REQUIREMENTS
+═══════════════════════════════════════════
+- manifest.json: name "BBrain", short_name "BBrain", theme_color #1a0a3a, background_color #f7f5ef, display standalone, orientation portrait
+- Service Worker: cache shell + API GET responses for offline read
+- Icons: generate from the letter B on brain (#1a0a3a) background — sizes 192, 512
+- iOS meta tags: apple-mobile-web-app-capable, apple-mobile-web-app-status-bar-style black-translucent
+- Install prompt: show "Add to home screen" banner after 3rd visit
+
+═══════════════════════════════════════════
+AUTH FLOW
+═══════════════════════════════════════════
+POST /api/auth/login
+  body: { username, password }
+  → { token, username, force_password_change }
+
+If force_password_change === true → show ChangePasswordScreen before app
+
+POST /api/auth/change-password
+  headers: Authorization: Bearer {token}
+  body: { current_password, new_password }
+  → { success }
+
+POST /api/auth/logout
+  headers: Authorization: Bearer {token}
+
+All authenticated requests must include:
+  Authorization: Bearer {token}
+
+Store token in localStorage key "bbrain_token"
+Token TTL: compute from login timestamp, expire after 86400s client-side
+On 401 → clear localStorage, redirect to login
+
+═══════════════════════════════════════════
+API REFERENCE
+═══════════════════════════════════════════
+Base URL: https://bbrainapp.you
+
+── IDEAS ──
+GET  /api/ideas
+  params: ?status=nova|analisando|arquivada&source=web|whatsapp
+  → { ideas: Idea[], meta: { total, by_status: {nova,analisando,arquivada} } }
+
+POST /api/ideas
+  body: { text, source?, tags?, roadmap_phase?, session_id? }
+  → { idea: Idea }
+
+PATCH /api/ideas/:id
+  body: { status?, roadmap_phase?, tags?, connections? }
+  → { idea: Idea }
+
+DELETE /api/ideas/:id
+  → { success: true }
+
+── SESSIONS ──
+GET  /api/sessions
+  → { sessions: Session[] }
+
+POST /api/sessions
+  body: { location?, focus?, energy? }
+  → { session: Session }
+
+PATCH /api/sessions/:id
+  body: { checked_out_at?, ideas_captured?, features_worked? }
+  → { session: Session }
+
+── SETTINGS ──
+GET  /api/settings
+  → { settings: { email, plan: "free"|"pro"|"power", reminder_frequency, reminder_time, reminder_channels, last_reminder } }
+
+POST /api/settings
+  body: { email?, reminder_frequency?, reminder_time?, reminder_channels?, plan? }
+  → { success: true }
+
+── REPORT ──
+GET  /api/report/monthly?month=YYYY-MM
+  → { month, total_ideas, by_status, by_source, sessions_count, avg_ideas_per_session, top_ideas: Idea[] }
+
+── STRIPE ──
+GET  /api/stripe/plans   (public — no auth)
+  → { plans: [{ id, name, price_brl, price_usd, features[] }] }
+
+POST /api/stripe/checkout
+  body: { plan: "pro"|"power" }
+  → { url: string }   — redirect user to this URL
+
+GET  /api/stripe/portal
+  → { url: string }   — redirect to Stripe customer portal
+
+── MISC ──
+GET  /api/status  (public)
+  → { server, version, ai_configured, whatsapp_configured }
+
+═══════════════════════════════════════════
+DATA MODELS
+═══════════════════════════════════════════
+Idea {
+  id: string
+  text: string
+  source: "web" | "whatsapp"
+  status: "nova" | "analisando" | "arquivada"
+  tags: string[]
+  roadmap_phase: "now" | "next" | "later" | "icebox" | null
+  session_id: string | null
+  created_at: ISO string
+  updated_at: ISO string
+}
+
+Session {
+  id: string
+  started_at: ISO string
+  checked_out_at: ISO string | null
+  location: string
+  focus: string
+  energy: 1|2|3|4|5
+  ideas_captured: number
+  features_worked: string
+}
+
+Plan {
+  free:  50 ideas/month, reminders monthly/every15days, email only
+  pro:   unlimited, +every2days, +whatsapp
+  power: unlimited, all frequencies (daily included), all channels
+}
+
+═══════════════════════════════════════════
+SCREEN SPECIFICATIONS
+═══════════════════════════════════════════
+
+── /login ──
+Full-screen brain (#1a0a3a) background
+Center card (max-width 340px, white, border-radius 20px, shadow)
+  - Language selector: 🇧🇷 PT | 🇺🇸 EN | 🇫🇷 FR | 🇪🇸 ES | 🇩🇪 DE
+  - 🧠 emoji (52px) + "BBrain" title (DM Serif, 28px, white)
+  - Subtitle: "Aproove · Diário do Fundador" (muted)
+  - Input: username (text, placeholder "Usuário")
+  - Input: password (password, placeholder "Senha", show/hide toggle)
+  - Button "Entrar" (full-width, brain-mid background, white, bold)
+  - Link "Esqueci a senha" below button
+  - Forgot password inline: email field + "Enviar link" + back link
+
+── / (Home — Ideas tab) ──
+Header (fixed, 56px, blur backdrop):
+  - Logo "BBrain" (DM Serif, 20px, brain color)
+  - Right: 🔔 button (if plan ≥ free), username chip, logout
+
+Bottom tab bar (4 tabs):
+  💡 Ideias | 🗓 Sessões | 🗺 Roadmap | 📊 Relatório
+
+Ideas tab content:
+  - Status counters bar: Nova (N) · Analisando (N) · Arquivadas (N)
+  - Active session banner (if session active): "Em sessão · {location} · {focus}"
+    with Check-out button
+  - "Nova Ideia" FAB (bottom-right, brain-mid color, +)
+  - Idea list: card per idea
+    Card: text (clamp 2 lines), status badge, created_at relative, tag chips
+    Swipe left → archive; Swipe right → analyze
+    Tap → expand (full text, edit status, edit tags, roadmap_phase selector, delete)
+  - Filter chips above list: Todas | Nova | Analisando | Arquivada
+
+"Nova Ideia" modal (bottom sheet, handle bar):
+  - Textarea (autofocus, large, placeholder "O que está na sua cabeça?")
+  - Tags input (comma separated, shown as chips)
+  - Roadmap phase selector: Now / Next / Later / Icebox
+  - Submit button "Capturar" (full-width, brain-mid)
+  - Keyboard shortcut: Enter to submit (Cmd/Ctrl+Enter on desktop)
+
+── /sessions ──
+"Nova Sessão" button top-right
+Session list (reverse chronological):
+  - Card: date/time, location, focus, energy (★ stars), badge (active/closed)
+  - Ideas captured count chip
+  - Tap to expand: full details + ideas linked to this session
+
+"Nova Sessão" modal (bottom sheet):
+  - Where are you? (text, placeholder "Casa, Café, Escritório...")
+  - What will you focus on? (textarea)
+  - Energy level: 1–5 star selector
+  - Button "Iniciar sessão" (brain-mid)
+
+── /roadmap ──
+Kanban board with 4 columns: Now | Next | Later | Icebox
+  - Each column header shows count badge
+  - Idea cards: drag-and-drop between columns (or tap → select phase)
+  - Cards: text (2 lines), status badge, created_at
+  - Empty column: dashed border placeholder "Solte aqui"
+
+Toggle above: 🗂 Kanban | 📋 Lista
+Lista view: flat list filtered by phase, grouped headers
+
+── /report ──
+Month picker: ← Fev 2026 → (navigate months)
+Stats cards grid (2 cols):
+  - Total de Ideias (large number)
+  - Sessões Realizadas
+  - Média ideias/sessão
+  - Arquivadas este mês
+
+Donut chart: Nova / Analisando / Arquivada (use CSS or simple SVG — no chart lib)
+Top 5 ideias do mês: ranked list with index badges
+
+── /settings (accessible from header or profile) ──
+Sections:
+  1. Conta: email display, change-password link
+  2. Plano atual: badge (Free / Pro / Power)
+     If free/pro: "Fazer upgrade" button → /plans
+  3. Lembretes:
+     Frequency selector (options per plan):
+       free: A cada 30 dias, A cada 15 dias
+       pro:  + A cada 2 dias
+       power: + Todo dia
+     Time picker (HH:MM)
+     Channel: Email (free+) · WhatsApp (pro+)
+     Save button
+  4. Idioma: 5 flag buttons
+  5. Logout button (danger style)
+
+── /plans ──
+3 plan cards (stacked on mobile, side-by-side on tablet):
+  Free: R$0 — 50 ideias/mês, lembretes mensais, email
+  Pro:  R$14,90/mês — ilimitado, lembretes a cada 2 dias, WhatsApp — "Mais popular" badge
+  Power:R$29,90/mês — tudo + todo dia + prioridade IA
+
+Each card: features list with ✓/✗, CTA button
+  Free → active chip "Seu plano"
+  Pro/Power → "Assinar" → POST /api/stripe/checkout → redirect to url
+
+═══════════════════════════════════════════
+TECHNICAL REQUIREMENTS
+═══════════════════════════════════════════
+Framework: vanilla JS + Web Components, OR React (your choice — prefer minimal bundle)
+State management: simple module pattern or React Context — NO Redux
+HTTP layer: a single api() helper that auto-attaches Authorization header and handles 401
+Routing: client-side SPA, History API or hash routing
+i18n: JSON translation files for 5 languages, detected from localStorage "bbrain_lang"
+Offline: Service Worker caches GET /api/ideas and GET /api/sessions for read-only offline
+Bundle: single HTML file output preferred (Stitch default), or index.html + assets
+No external UI libraries — implement all components from scratch using the design tokens above
+
+═══════════════════════════════════════════
+EXTRA DETAILS
+═══════════════════════════════════════════
+- All dates shown in Brazilian format: DD/MM/YYYY HH:mm
+- Relative time: "há 2 horas", "ontem", "há 3 dias"
+- Empty states: friendly illustrations using CSS/emoji — no image files
+- Error states: inline, non-blocking toast notifications (bottom center, 3s auto-dismiss)
+- Loading states: skeleton screens, not spinners
+- Accessibility: semantic HTML, aria-labels on icon buttons, focus rings
+- Dark mode: NOT required for v1
+- Analytics: NOT required for v1</pre>
+    </div>
+  </div>
+
   </main>
 
   <footer>BBrain — Documentação · Aproove · Selo7 · 2026</footer>
@@ -1627,6 +1931,34 @@ Seja objetivo, direto, com foco nos benefícios para fundadores brasileiros. Use
         btn.textContent = '✓ Copiado!';
         setTimeout(() => btn.textContent = 'Copiar', 2000);
       });
+    }
+
+    // ── Stitch Prompt functions ──
+    function getStitchPromptText() {
+      return document.getElementById('stitch-prompt-text').textContent;
+    }
+
+    function downloadStitchPrompt() {
+      const text = getStitchPromptText();
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'bbrain-stitch-prompt.txt'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyStitchPrompt(btn) {
+      const text = getStitchPromptText();
+      try {
+        await navigator.clipboard.writeText(text);
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copiado!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
     }
 
     // ── AI Studio Prompt functions ──
