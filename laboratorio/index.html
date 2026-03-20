@@ -357,6 +357,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   <button class="tab-btn" onclick="switchTab('sessions', this)">
     <span data-t="tab.sessions">📓 Diário de sessões</span> <span class="tab-count" id="tc-sessions">0</span>
   </button>
+  <button class="tab-btn" onclick="switchTab('stitch', this)">
+    <span>📱 App</span>
+  </button>
 </div>
 
 <!-- ── MAIN ── -->
@@ -402,6 +405,118 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
         <div class="empty-title" data-t="sessions.empty.title">Nenhuma sessão registrada</div>
         <div class="empty-desc" data-t="sessions.empty.desc">Clique em "+ Nova sessão" para começar.</div>
       </div>
+    </div>
+  </div>
+
+  <!-- TAB: STITCH PROMPT -->
+  <div class="tab-panel" id="panel-stitch">
+    <div style="background:var(--brain);border-radius:16px;padding:2rem;position:relative;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.75rem;">Prompt para Google Stitch</div>
+      <div style="font-size:1.25rem;font-weight:700;color:white;margin-bottom:.375rem;">Cole este prompt no Stitch</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:1.5rem;">Selecione tudo abaixo, copie e cole em stitch.withgoogle.com</div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.25rem;position:relative;">
+        <button onclick="copyStitchPrompt(this)" style="position:absolute;top:.75rem;right:.75rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:white;font-family:inherit;font-size:11px;font-weight:600;padding:.3rem .625rem;border-radius:7px;cursor:pointer;">Copiar</button>
+        <pre id="stitch-prompt" style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.75;white-space:pre-wrap;font-family:inherit;user-select:all;">Design a mobile app called BBrain — a private founder's journal and idea capture tool for solo builders and startup founders.
+
+APP CONCEPT:
+BBrain is a personal, private tool for founders to log work sessions with location and mood check-in, capture raw ideas without filter, and build a personal roadmap. Think of it as a smart diary that combines journaling, idea management, and AI-powered insights.
+
+DESIGN STYLE:
+- Clean, minimal, premium mobile UI
+- Light theme for the main app (warm off-white background #F7F5EF, white cards)
+- Dark deep purple overlay for authentication screens (#1A0A3A)
+- Typography: modern geometric sans-serif (similar to DM Sans or Inter)
+- Accent color: deep purple (#3A1F7A) for CTAs and highlights
+- Subtle amber/green status badges
+- Generous white space, rounded corners (12-16px), soft shadows
+- iOS-first design language
+
+SCREENS TO DESIGN (8 screens):
+
+1. LOGIN SCREEN
+- Dark deep purple background (#1A0A3A)
+- Brain emoji logo centered at top
+- "BBrain" title in large bold white text
+- "Aproove · Founder's Journal" subtitle in muted white
+- Username input field (dark glass morphism style)
+- Password input field
+- "Enter" primary button (white background, purple text)
+- "Forgot my password" and "Create account" subtle text links below
+- Language selector (PT / EN / FR / ES) at top
+
+2. DASHBOARD / HOME
+- Sticky header: BBrain logo left, stat chips (total ideas, roadmap count, sessions count), language selector, logout button right
+- Active session banner (deep purple, pulsing green dot, timer, location, "End session" button) — shown when session is active
+- Tab navigation: "💡 Ideas" and "📓 Session Journal" with count badges
+- Idea capture card (white, rounded, textarea with placeholder "Any thought, observation or insight...")
+- Filter pills below: All, New, Analysis, Roadmap, Archived
+- List of idea cards below
+
+3. IDEA CARD (in list)
+- White card, 12px radius
+- Index number (#001) in monospace, gray
+- Idea text in readable body size
+- Meta row: date, source badge (WhatsApp or Web), status badge (colored: blue=New, amber=Analysis, green=Roadmap, gray=Archived)
+- Action buttons row: "+ Roadmap", "Analyze", "Archive", "✕ Delete" — small pill buttons
+
+4. SESSION CHECK-IN MODAL (bottom sheet)
+- Bottom sheet with handle indicator
+- Brain emoji header
+- "New work session" title + current date/time
+- "Where are you?" section with location pills (At home, At the office, Late night, At a café, Traveling) + free text input
+- "What are you thinking?" multiline textarea
+- "Start working" full-width CTA button (deep purple)
+- "Continue without logging session" text link
+
+5. ACTIVE SESSION (dashboard state)
+- Top banner in deep purple: pulsing green dot + session location text + elapsed timer (00:23:15 format) + "End Session" ghost button
+- Rest of screen shows dashboard with idea capture and ideas list
+
+6. IDEAS LIST (filtered view)
+- Same as dashboard tab but focused, full screen
+- Filter pills active state clearly visible
+- Empty state illustration if no ideas in filter
+- Ideas in chronological order (newest first)
+
+7. SESSION JOURNAL
+- Card list, newest first
+- Each card: date block (large day number + month), start→end time, location with pin emoji, duration in monospace
+- Italic blockquote style for initial thoughts text
+- "✦ Generate content" or "📱 View generated post" button
+- Expandable social post preview (Instagram/LinkedIn draft)
+
+8. SETTINGS SCREEN
+- Clean list with sections
+- Language selector (flag icons: 🇧🇷 PT / 🇺🇸 EN / 🇫🇷 FR / 🇪🇸 ES)
+- Notifications toggle
+- Export data option
+- Logout button (red tint)
+- App version at bottom
+
+INTERACTION NOTES:
+- Bottom navigation bar with 3 tabs: Home (ideas), Journal (sessions), Settings
+- Floating action button (+) for quick idea capture from any screen
+- Swipe gestures on idea cards for quick actions
+- Haptic feedback on session start/end
+- Dark mode support (invert warm whites to dark warm grays)
+
+COLOR PALETTE:
+- Background: #F7F5EF (warm off-white)
+- Cards: #FFFFFF
+- Primary accent: #1A0A3A (deep brain purple)
+- Secondary: #3A1F7A
+- Text primary: #111110
+- Text secondary: #4A4A47
+- Text muted: #9A9A96
+- Green (roadmap): #2A5F2A on #EDF5ED
+- Amber (analysis): #7A4A0A on #FDF2E2
+- Blue (new): #0D4A8A on #E8F0FB
+- Auth background: #1A0A3A</pre>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.25);margin-top:1rem;line-height:1.6;">
+        ✦ Acesse stitch.withgoogle.com com aproove.io@gmail.com · Cole o prompt e gere os mockups
+      </div>
+      <a href="https://stitch.withgoogle.com" target="_blank" style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1.25rem;padding:.625rem 1.25rem;background:white;color:var(--brain);border:none;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;">🎨 Abrir Google Stitch →</a>
     </div>
   </div>
 
@@ -1446,6 +1561,15 @@ function generateId() {
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function copyStitchPrompt(btn) {
+  const text = document.getElementById('stitch-prompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copiado!';
+    btn.style.background = 'rgba(74,222,128,.2)';
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = ''; }, 2500);
+  });
 }
 
 function showToast(msg) {
