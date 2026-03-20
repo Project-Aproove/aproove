@@ -49,7 +49,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 
 /* ── SESSION ACTIVE BANNER ── */
 .session-banner {
-  background: var(--brain); color: rgba(255,255,255,.9);
+  background: var(--brain); color: #fff;
   padding: .75rem 2rem;
   display: none; align-items: center; gap: 1rem; flex-wrap: wrap;
   font-size: 12px;
@@ -58,9 +58,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .session-pulse { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink: 0; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,.4); } 50% { box-shadow: 0 0 0 5px rgba(74,222,128,0); } }
 .session-info { flex: 1; min-width: 0; }
-.session-thoughts { color:rgba(255,255,255,.6); font-size:11px; margin-top:.2rem; line-height:1.5; }
-.session-info strong { color: white; }
-.session-timer { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,.5); }
+.session-thoughts { color:rgba(255,255,255,.9); font-size:12px; margin-top:.25rem; line-height:1.5; font-style:italic; }
+.session-info strong { color: #fff; font-size:13px; }
+.session-timer { font-family: 'DM Mono', monospace; font-size: 13px; color: rgba(255,255,255,.9); font-weight:600; }
 .btn-end-session {
   padding: .3rem .875rem; border-radius: 6px; border: 1px solid rgba(255,255,255,.2);
   background: rgba(255,255,255,.1); color: rgba(255,255,255,.8);
