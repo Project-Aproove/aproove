@@ -40,7 +40,8 @@ const ROOT    = __dirname;
 // Não pode ser removido, substituído ou sobrescrito por nenhum outro usuário.
 // Em caso de transferência ou venda do produto, este acesso deve ser mantido
 // e os recursos gerados pelo aplicativo devem considerar Karina e Cecília Massa.
-const MASTER_ADMIN = 'brunomassa';
+const MASTER_ADMIN       = 'brunomassa';
+const MASTER_ADMIN_EMAIL = 'brunobrm@gmail.com';
 
 // Usuárias com acesso vitalício e mensagem de primeiro acesso
 const LEGACY_USERS = {
@@ -343,7 +344,12 @@ async function initSheets() {
     const rows = (cr.values || []).slice(1);
     const cfg = Object.fromEntries(rows.map(r => [r[0], r[1]]));
     if (cfg.password_hash) {
-      authCache = { hash: cfg.password_hash, username: cfg.username || 'admin' };
+      authCache = {
+        hash:                  cfg.password_hash,
+        username:              cfg.username || MASTER_ADMIN,
+        email:                 cfg.email || MASTER_ADMIN_EMAIL,
+        force_password_change: cfg.force_password_change === 'true',
+      };
       console.log(`✓ Auth carregado do Sheets — usuário: ${authCache.username}`);
     }
   }
@@ -364,8 +370,10 @@ async function saveAuthToSheets(data) {
     await shClear(tok, 'Config');
     await shPut(tok, 'Config', [
       ['key', 'value'],
-      ['password_hash', data.hash],
-      ['username', data.username]
+      ['password_hash',         data.hash],
+      ['username',              data.username],
+      ['email',                 data.email || MASTER_ADMIN_EMAIL],
+      ['force_password_change', data.force_password_change ? 'true' : 'false'],
     ]);
     authCache = data;
   } catch (e) { console.error('saveAuthToSheets:', e.message); }
@@ -464,10 +472,9 @@ function readAuth() {
     const username = process.env.BBRAIN_USERNAME || MASTER_ADMIN;
     return { hash: process.env.BBRAIN_PASSWORD_HASH, username };
   }
-  // 1b. Senha em texto (Fly.io secret) — hash calculado em runtime
+  // 1b. Senha em texto (Fly.io secret) — hash calculado em runtime, troca forçada
   if (process.env.BBRAIN_PASSWORD) {
-    const username = process.env.BBRAIN_USERNAME || MASTER_ADMIN;
-    return { hash: hashPwd(process.env.BBRAIN_PASSWORD), username };
+    return { hash: hashPwd(process.env.BBRAIN_PASSWORD), username: MASTER_ADMIN, email: MASTER_ADMIN_EMAIL, force_password_change: true };
   }
   // 2. Cache do Sheets (carregado no boot)
   if (authCache) {
@@ -567,7 +574,6 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, {
       setup_required: false,
       authenticated: validToken(getToken(req)),
-      username: auth.username || null
     });
   }
 
@@ -608,7 +614,7 @@ const server = http.createServer(async (req, res) => {
       const uLower = (username || '').toLowerCase();
       const legacyUser = Object.values(LEGACY_USERS).find(u => u.name && uLower === u.name.split(' ')[0].toLowerCase());
       const firstLoginMsg = legacyUser ? legacyUser.firstLoginMessage : null;
-      return json(res, 200, { token, username: auth.username, firstLoginMessage: firstLoginMsg });
+      return json(res, 200, { token, username: auth.username, firstLoginMessage: firstLoginMsg, force_password_change: !!auth.force_password_change });
     } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
@@ -618,13 +624,26 @@ const server = http.createServer(async (req, res) => {
     return json(res, 200, { success: true });
   }
 
+  if (pathname === '/api/auth/change-password' && method === 'POST') {
+    try {
+      if (!validToken(getToken(req))) return json(res, 401, { error: 'Não autenticado' });
+      const body = await readBody(req);
+      const { password } = JSON.parse(body);
+      if (!password || password.length < 6) return json(res, 400, { error: 'Senha muito curta (mín. 6 caracteres)' });
+      const auth = readAuth() || {};
+      writeAuth({ ...auth, hash: hashPwd(password), force_password_change: false });
+      console.log('🔑 BBrain → senha alterada pelo usuário');
+      return json(res, 200, { success: true });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
   if (pathname === '/api/auth/reset-request' && method === 'POST') {
     try {
       const auth = readAuth();
       if (!auth) return json(res, 400, { error: 'Acesso não configurado' });
       const code = String(Math.floor(100000 + Math.random() * 900000));
       resetCodes.set(code, Date.now() + 15 * 60 * 1000); // 15 min
-      const to = process.env.GMAIL_FROM || BBRAIN_OWNER + '@gmail.com';
+      const to = auth.email || MASTER_ADMIN_EMAIL;
       const sent = await sendEmail(to,
         'BBrain — Codigo de redefinicao de senha',
         `Seu codigo de redefinicao de senha BBrain:\n\n   ${code}\n\nValido por 15 minutos.\nSe nao foi voce, ignore este email.`

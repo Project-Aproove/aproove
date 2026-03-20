@@ -580,7 +580,7 @@ COLOR PALETTE:
     <span class="auth-icon">🧠</span>
     <h1 class="auth-title" data-t="auth.setup.title">Bem-vindo ao BBrain</h1>
     <p class="auth-subtitle" data-t="auth.setup.subtitle">Primeira vez aqui.<br>Crie seu usuário e senha para proteger este espaço.</p>
-    <input type="text"     id="setup-user" class="auth-input" data-t-ph="auth.setup.username" placeholder="Usuário (ex: brunomassa)" autocomplete="username" spellcheck="false">
+    <input type="text"     id="setup-user" class="auth-input" data-t-ph="auth.setup.username" placeholder="Usuário" autocomplete="username" spellcheck="false">
     <input type="password" id="setup-pwd"  class="auth-input" data-t-ph="auth.setup.password" placeholder="Senha (mín. 6 caracteres)" autocomplete="new-password">
     <input type="password" id="setup-pwd2" class="auth-input" data-t-ph="auth.setup.confirm" placeholder="Confirmar senha" autocomplete="new-password">
     <button id="setup-btn" class="auth-btn" onclick="doSetup()" data-t="auth.setup.submit">Criar acesso e entrar</button>
@@ -635,6 +635,17 @@ COLOR PALETTE:
     <span class="auth-link" onclick="showLogin()" data-t="auth.forgot.back">← Voltar ao login</span>
   </div>
 
+  <!-- CHANGE PASSWORD: troca forçada -->
+  <div id="auth-change" class="auth-box" style="display:none">
+    <span class="auth-icon">🔐</span>
+    <h1 class="auth-title">Defina sua senha</h1>
+    <p class="auth-subtitle">Por segurança, crie uma senha pessoal antes de continuar.</p>
+    <input type="password" id="change-pwd"  class="auth-input" placeholder="Nova senha (mín. 6 caracteres)" autocomplete="new-password">
+    <input type="password" id="change-pwd2" class="auth-input" placeholder="Confirmar senha" autocomplete="new-password">
+    <button id="change-btn" class="auth-btn" onclick="doChangePassword()">Confirmar</button>
+    <p class="auth-err" id="change-err"></p>
+  </div>
+
 </div>
 
 <script>
@@ -675,7 +686,7 @@ const I18N = {
     'checkin.thoughts':'O que você está pensando?','checkin.start':'Começar a trabalhar','checkin.skip':'Continuar sem registrar sessão',
     'checkin.thoughts.placeholder':'Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante...',
     'auth.setup.title':'Bem-vindo ao BBrain','auth.setup.subtitle':'Primeira vez aqui.\nCrie seu usuário e senha para proteger este espaço.',
-    'auth.setup.username':'Usuário (ex: brunomassa)','auth.setup.password':'Senha (mín. 6 caracteres)','auth.setup.confirm':'Confirmar senha',
+    'auth.setup.username':'Usuário','auth.setup.password':'Senha (mín. 6 caracteres)','auth.setup.confirm':'Confirmar senha',
     'auth.setup.submit':'Criar acesso e entrar','auth.setup.hint':'Guarde seu usuário e senha — serão pedidos todo dia.',
     'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Diário do Fundador',
     'auth.login.username':'Usuário','auth.login.password':'Senha','auth.login.submit':'Entrar','auth.login.forgot':'Esqueci minha senha',
@@ -715,7 +726,7 @@ const I18N = {
     'checkin.thoughts':'What are you thinking about?','checkin.start':'Start working','checkin.skip':'Continue without logging session',
     'checkin.thoughts.placeholder':'Can be anything — a problem to solve, an insecurity, excitement, whatever feels relevant...',
     'auth.setup.title':'Welcome to BBrain','auth.setup.subtitle':'First time here.\nCreate your username and password.',
-    'auth.setup.username':'Username (e.g. brunomassa)','auth.setup.password':'Password (min. 6 characters)','auth.setup.confirm':'Confirm password',
+    'auth.setup.username':'Username','auth.setup.password':'Password (min. 6 characters)','auth.setup.confirm':'Confirm password',
     'auth.setup.submit':'Create access and enter','auth.setup.hint':'Keep your credentials — you\'ll need them every day.',
     'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Founder\'s Journal',
     'auth.login.username':'Username','auth.login.password':'Password','auth.login.submit':'Enter','auth.login.forgot':'Forgot my password',
@@ -755,7 +766,7 @@ const I18N = {
     'checkin.thoughts':'À quoi pensez-vous ?','checkin.start':'Commencer à travailler','checkin.skip':'Continuer sans enregistrer',
     'checkin.thoughts.placeholder':'Peut être n\'importe quoi — un problème, une insécurité, une excitation...',
     'auth.setup.title':'Bienvenue sur BBrain','auth.setup.subtitle':'Première fois ici.\nCréez votre identifiant et mot de passe.',
-    'auth.setup.username':'Identifiant (ex: brunomassa)','auth.setup.password':'Mot de passe (min. 6 caractères)','auth.setup.confirm':'Confirmer le mot de passe',
+    'auth.setup.username':'Identifiant','auth.setup.password':'Mot de passe (min. 6 caractères)','auth.setup.confirm':'Confirmer le mot de passe',
     'auth.setup.submit':'Créer l\'accès et entrer','auth.setup.hint':'Gardez vos identifiants — ils seront demandés chaque jour.',
     'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Journal du Fondateur',
     'auth.login.username':'Identifiant','auth.login.password':'Mot de passe','auth.login.submit':'Entrer','auth.login.forgot':'Mot de passe oublié',
@@ -795,7 +806,7 @@ const I18N = {
     'checkin.thoughts':'¿En qué estás pensando?','checkin.start':'Empezar a trabajar','checkin.skip':'Continuar sin registrar sesión',
     'checkin.thoughts.placeholder':'Puede ser cualquier cosa — un problema, una inseguridad, una emoción...',
     'auth.setup.title':'Bienvenido a BBrain','auth.setup.subtitle':'Primera vez aquí.\nCrea tu usuario y contraseña.',
-    'auth.setup.username':'Usuario (ej: brunomassa)','auth.setup.password':'Contraseña (mín. 6 caracteres)','auth.setup.confirm':'Confirmar contraseña',
+    'auth.setup.username':'Usuario','auth.setup.password':'Contraseña (mín. 6 caracteres)','auth.setup.confirm':'Confirmar contraseña',
     'auth.setup.submit':'Crear acceso y entrar','auth.setup.hint':'Guarda tus credenciales — se pedirán cada día.',
     'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Diario del Fundador',
     'auth.login.username':'Usuario','auth.login.password':'Contraseña','auth.login.submit':'Entrar','auth.login.forgot':'Olvidé mi contraseña',
@@ -835,7 +846,7 @@ const I18N = {
     'checkin.thoughts':'Worüber denken Sie nach?','checkin.start':'Arbeit beginnen','checkin.skip':'Ohne Sitzungsprotokoll fortfahren',
     'checkin.thoughts.placeholder':'Kann alles sein — ein Problem, eine Unsicherheit, eine Begeisterung...',
     'auth.setup.title':'Willkommen bei BBrain','auth.setup.subtitle':'Erstes Mal hier.\nErstellen Sie Ihren Benutzernamen und Ihr Passwort.',
-    'auth.setup.username':'Benutzername (z.B. brunomassa)','auth.setup.password':'Passwort (min. 6 Zeichen)','auth.setup.confirm':'Passwort bestätigen',
+    'auth.setup.username':'Benutzername','auth.setup.password':'Passwort (min. 6 Zeichen)','auth.setup.confirm':'Passwort bestätigen',
     'auth.setup.submit':'Zugang erstellen und eintreten','auth.setup.hint':'Bewahren Sie Ihre Zugangsdaten auf — sie werden täglich benötigt.',
     'auth.login.title':'BBrain','auth.login.subtitle':'Aproove · Gründertagebuch',
     'auth.login.username':'Benutzername','auth.login.password':'Passwort','auth.login.submit':'Eintreten','auth.login.forgot':'Passwort vergessen',
@@ -937,7 +948,7 @@ async function checkAuth() {
     if (d.authenticated) { overlay.classList.add('hidden'); return true; }
     overlay.classList.remove('hidden');
     // Sempre mostra login primeiro — setup aparece só como link se necessário
-    const savedUser = localStorage.getItem('bbrain_username') || d.username || '';
+    const savedUser = localStorage.getItem('bbrain_username') || '';
     const loginUser = document.getElementById('login-user');
     if (loginUser && savedUser) loginUser.value = savedUser;
     // Mostra/esconde link de "Criar conta" conforme setup_required
@@ -1015,11 +1026,46 @@ async function doLogin() {
       localStorage.setItem('bbrain_token', authToken);
       localStorage.setItem('bbrain_token_date', new Date().toDateString());
       localStorage.setItem('bbrain_username', d.username || user);
-      document.getElementById('auth-overlay').classList.add('hidden');
-      init();
+      if (d.force_password_change) {
+        showChangePassword();
+      } else {
+        document.getElementById('auth-overlay').classList.add('hidden');
+        init();
+      }
     } else { err.textContent = t('auth.err.wrong'); document.getElementById('login-pwd').value = ''; }
   } catch { err.textContent = t('auth.err.offline'); }
   btn.disabled = false; btn.textContent = t('auth.login.submit');
+}
+
+function showChangePassword() {
+  document.getElementById('auth-login').style.display  = 'none';
+  document.getElementById('auth-forgot').style.display = 'none';
+  document.getElementById('auth-change').style.display = 'block';
+  setTimeout(() => document.getElementById('change-pwd').focus(), 100);
+}
+
+async function doChangePassword() {
+  const pwd  = document.getElementById('change-pwd').value;
+  const pwd2 = document.getElementById('change-pwd2').value;
+  const err  = document.getElementById('change-err');
+  const btn  = document.getElementById('change-btn');
+  err.textContent = '';
+  if (pwd.length < 6)  { err.textContent = t('auth.err.password_short'); return; }
+  if (pwd !== pwd2)    { err.textContent = t('auth.err.password_mismatch'); return; }
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const r = await api('/api/auth/change-password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify({ password: pwd })
+    });
+    const d = await r.json();
+    if (r.ok) {
+      document.getElementById('auth-change').style.display = 'none';
+      document.getElementById('auth-overlay').classList.add('hidden');
+      init();
+    } else { err.textContent = d.error || 'Erro ao alterar senha'; }
+  } catch { err.textContent = t('auth.err.offline'); }
+  btn.disabled = false; btn.textContent = 'Confirmar';
 }
 
 async function doForgotRequest() {
