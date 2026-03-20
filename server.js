@@ -266,6 +266,8 @@ async function syncSessions() {
   await shPut(tok, 'Sessions', [SCOLS, ...sessCache.map(sessToRow)]);
 }
 
+let authCache = null; // auth carregado do Sheets
+
 async function initSheets() {
   const tok = await getGToken();
   if (!tok) {
@@ -279,6 +281,19 @@ async function initSheets() {
   if (ir.error) { await shAddTab(tok, 'Ideas'); await shPut(tok, 'Ideas', [ICOLS]); }
   const sr = await shGet(tok, 'Sessions');
   if (sr.error) { await shAddTab(tok, 'Sessions'); await shPut(tok, 'Sessions', [SCOLS]); }
+  // Aba Config (persiste auth entre deploys)
+  const cr = await shGet(tok, 'Config');
+  if (cr.error) {
+    await shAddTab(tok, 'Config');
+    await shPut(tok, 'Config', [['key','value']]);
+  } else {
+    const rows = (cr.values || []).slice(1);
+    const cfg = Object.fromEntries(rows.map(r => [r[0], r[1]]));
+    if (cfg.password_hash) {
+      authCache = { hash: cfg.password_hash, username: cfg.username || 'admin' };
+      console.log(`✓ Auth carregado do Sheets — usuário: ${authCache.username}`);
+    }
+  }
   // Carrega dados
   const ir2 = ir.error ? await shGet(tok, 'Ideas') : ir;
   const rows = (ir2.values || []).slice(1);
@@ -287,6 +302,20 @@ async function initSheets() {
   const srows = (sr2.values || []).slice(1);
   if (srows.length) sessCache = srows.map(rowToSess).filter(s => s.id);
   console.log(`✓ Google Sheets — ${ideasCache.length} ideias, ${sessCache.length} sessões`);
+}
+
+async function saveAuthToSheets(data) {
+  try {
+    const tok = await getGToken();
+    if (!tok) return;
+    await shClear(tok, 'Config');
+    await shPut(tok, 'Config', [
+      ['key', 'value'],
+      ['password_hash', data.hash],
+      ['username', data.username]
+    ]);
+    authCache = data;
+  } catch (e) { console.error('saveAuthToSheets:', e.message); }
 }
 
 // ── WHATSAPP META CLOUD API ───────────────────────────────────────────────────
@@ -377,21 +406,23 @@ function validToken(token) {
 }
 
 function readAuth() {
+  // 1. Env var (prioridade máxima)
   if (process.env.BBRAIN_PASSWORD_HASH) {
-    return {
-      hash: process.env.BBRAIN_PASSWORD_HASH,
-      username: process.env.BBRAIN_USERNAME || 'admin'
-    };
+    return { hash: process.env.BBRAIN_PASSWORD_HASH, username: process.env.BBRAIN_USERNAME || 'admin' };
   }
+  // 2. Cache do Sheets (carregado no boot)
+  if (authCache) return authCache;
+  // 3. Fallback: arquivo local
   try { return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8')); }
   catch { return null; }
 }
 
 function writeAuth(data) {
-  fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2));
-  console.log('\n🔑 Para persistir no Render, adicione estas variáveis de ambiente:');
-  console.log(`   BBRAIN_PASSWORD_HASH=${data.hash}`);
-  console.log(`   BBRAIN_USERNAME=${data.username}\n`);
+  // Salva localmente
+  try { fs.writeFileSync(AUTH_FILE, JSON.stringify(data, null, 2)); } catch {}
+  // Salva no Sheets de forma assíncrona (persiste entre deploys)
+  saveAuthToSheets(data).catch(() => {});
+  console.log(`✓ Auth salvo — usuário: ${data.username}`);
 }
 
 function getToken(req) {

@@ -202,6 +202,15 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .toast.show { opacity: 1; }
 
 /* ── CHECK-IN MODAL ── */
+.modal-overlay.inline-mode {
+  position: static; background: none; backdrop-filter: none;
+  opacity: 1; pointer-events: all; display: flex;
+  padding: 2rem 1rem 3rem; align-items: flex-start;
+}
+.modal-overlay.inline-mode .checkin-modal {
+  transform: none; box-shadow: 0 2px 24px rgba(0,0,0,.06);
+  border: 1px solid var(--line);
+}
 .modal-overlay {
   position: fixed; inset: 0; z-index: 500;
   background: rgba(26,10,58,.7); backdrop-filter: blur(4px);
@@ -365,6 +374,35 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 <!-- ── MAIN ── -->
 <main class="main">
 
+<!-- CHECK-IN INLINE (aparece no lugar das tabs quando não há sessão ativa) -->
+<div class="modal-overlay" id="checkin-overlay">
+  <div class="checkin-modal">
+    <div class="checkin-header">
+      <div class="checkin-brain">🧠</div>
+      <div class="checkin-title" data-t="checkin.title">Nova sessão de trabalho</div>
+      <div class="checkin-datetime" id="checkin-datetime">—</div>
+    </div>
+    <div class="checkin-field">
+      <label class="checkin-label" data-t="checkin.where">Onde você está?</label>
+      <div class="location-pills" id="loc-pills">
+        <div class="loc-pill" data-loc-key="checkin.loc.home" onclick="selectLocation(t('checkin.loc.home'),this)">Em casa</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.office" onclick="selectLocation(t('checkin.loc.office'),this)">No escritório</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.home_night" onclick="selectLocation(t('checkin.loc.home_night'),this)">De madrugada</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.cafe" onclick="selectLocation(t('checkin.loc.cafe'),this)">No café</div>
+        <div class="loc-pill" data-loc-key="checkin.loc.travel" onclick="selectLocation(t('checkin.loc.travel'),this)">Viajando</div>
+      </div>
+      <input class="checkin-input" id="location-input" type="text" data-t-ph="checkin.loc.placeholder" placeholder="ou escreva livremente..." oninput="clearPills()">
+    </div>
+    <div class="checkin-field">
+      <label class="checkin-label" data-t="checkin.thoughts">O que você está pensando?</label>
+      <textarea class="checkin-input checkin-textarea" id="thoughts-input" data-t-ph="checkin.thoughts.placeholder" placeholder="Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante..."></textarea>
+    </div>
+    <button class="btn-checkin" id="checkin-btn" onclick="startSession()" data-t="checkin.start">Começar a trabalhar</button>
+    <span class="checkin-skip" onclick="skipCheckin()" data-t="checkin.skip">Continuar sem registrar sessão</span>
+  </div>
+</div>
+
+<div id="tab-content">
   <!-- TAB: IDEIAS -->
   <div class="tab-panel active" id="panel-ideas">
     <div class="capture-card">
@@ -520,41 +558,11 @@ COLOR PALETTE:
     </div>
   </div>
 
+</div><!-- #tab-content -->
 </main>
 
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
-
-<!-- ── CHECK-IN MODAL ── -->
-<div class="modal-overlay" id="checkin-overlay">
-  <div class="checkin-modal">
-    <div class="checkin-header">
-      <div class="checkin-brain">🧠</div>
-      <div class="checkin-title" data-t="checkin.title">Nova sessão de trabalho</div>
-      <div class="checkin-datetime" id="checkin-datetime">—</div>
-    </div>
-
-    <div class="checkin-field">
-      <label class="checkin-label" data-t="checkin.where">Onde você está?</label>
-      <div class="location-pills" id="loc-pills">
-        <div class="loc-pill" data-loc-key="checkin.loc.home" onclick="selectLocation(t('checkin.loc.home'),this)">Em casa</div>
-        <div class="loc-pill" data-loc-key="checkin.loc.office" onclick="selectLocation(t('checkin.loc.office'),this)">No escritório</div>
-        <div class="loc-pill" data-loc-key="checkin.loc.home_night" onclick="selectLocation(t('checkin.loc.home_night'),this)">De madrugada</div>
-        <div class="loc-pill" data-loc-key="checkin.loc.cafe" onclick="selectLocation(t('checkin.loc.cafe'),this)">No café</div>
-        <div class="loc-pill" data-loc-key="checkin.loc.travel" onclick="selectLocation(t('checkin.loc.travel'),this)">Viajando</div>
-      </div>
-      <input class="checkin-input" id="location-input" type="text" data-t-ph="checkin.loc.placeholder" placeholder="ou escreva livremente..." oninput="clearPills()">
-    </div>
-
-    <div class="checkin-field">
-      <label class="checkin-label" data-t="checkin.thoughts">O que você está pensando?</label>
-      <textarea class="checkin-input checkin-textarea" id="thoughts-input" data-t-ph="checkin.thoughts.placeholder" placeholder="Pode ser sobre qualquer coisa — um problema que quer resolver, uma insegurança, uma empolgação, o que achar relevante..."></textarea>
-    </div>
-
-    <button class="btn-checkin" id="checkin-btn" onclick="startSession()" data-t="checkin.start">Começar a trabalhar</button>
-    <span class="checkin-skip" onclick="skipCheckin()" data-t="checkin.skip">Continuar sem registrar sessão</span>
-  </div>
-</div>
 
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay hidden">
@@ -1127,6 +1135,25 @@ async function loadSessions() {
 }
 
 // ── CHECK-IN DE SESSÃO ────────────────────────────────────────
+function showCheckinInline() {
+  updateCheckinDatetime();
+  document.getElementById('location-input').value = '';
+  document.getElementById('thoughts-input').value = '';
+  document.querySelectorAll('.loc-pill').forEach(p => p.classList.remove('sel'));
+  const ov = document.getElementById('checkin-overlay');
+  ov.classList.add('inline-mode');
+  document.getElementById('tab-content').style.display = 'none';
+  document.querySelector('.tabs').style.display = 'none';
+}
+
+function hideCheckinInline() {
+  const ov = document.getElementById('checkin-overlay');
+  ov.classList.remove('inline-mode');
+  ov.classList.remove('open');
+  document.getElementById('tab-content').style.display = '';
+  document.querySelector('.tabs').style.display = '';
+}
+
 function checkForActiveSession() {
   // Verifica se há sessão ativa no localStorage
   const active = localStorage.getItem('bbrain_active_session');
@@ -1145,10 +1172,7 @@ function checkForActiveSession() {
   }
 
   // Mostra modal de check-in
-  setTimeout(() => {
-    updateCheckinDatetime();
-    document.getElementById('checkin-overlay').classList.add('open');
-  }, 400);
+  setTimeout(() => showCheckinInline(), 400);
 }
 
 function selectLocation(loc, el) {
@@ -1205,7 +1229,7 @@ async function startSession() {
   sessions.unshift(activeSession);
   localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
   localStorage.setItem('bbrain_active_session', JSON.stringify(activeSession));
-  document.getElementById('checkin-overlay').classList.remove('open');
+  hideCheckinInline();
   showSessionBanner();
   startSessionTimer();
   renderSessions();
@@ -1217,16 +1241,12 @@ async function startSession() {
 }
 
 function skipCheckin() {
-  document.getElementById('checkin-overlay').classList.remove('open');
+  hideCheckinInline();
 }
 
 function openCheckin() {
   if (activeSession) { showToast('Já há uma sessão ativa — encerre antes de iniciar outra.'); return; }
-  updateCheckinDatetime();
-  document.getElementById('location-input').value = '';
-  document.getElementById('thoughts-input').value = '';
-  document.querySelectorAll('.loc-pill').forEach(p => p.classList.remove('sel'));
-  document.getElementById('checkin-overlay').classList.add('open');
+  showCheckinInline();
   setTimeout(() => document.getElementById('location-input').focus(), 200);
 }
 
