@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicar nas Lojas — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 88px 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 4vw, 36px);
+      color: var(--brain);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--ink2);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .store-section {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .store-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid rgba(17,17,16,.06);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .store-header.ios { background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%); }
+    .store-header.android { background: linear-gradient(135deg, #e8f5e9 0%, #ddf5e0 100%); }
+    .store-icon { font-size: 36px; }
+    .store-title-block {}
+    .store-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      margin-bottom: 2px;
+    }
+    .store-subtitle { font-size: 13px; color: var(--ink3); }
+    .store-cost {
+      margin-left: auto;
+      background: rgba(17,17,16,.06);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink2);
+      white-space: nowrap;
+    }
+    .store-body { padding: 28px; }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 20px;
+      position: relative;
+    }
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 13px;
+      top: 30px;
+      bottom: 0;
+      width: 2px;
+      background: var(--paper3);
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--brain);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .step-num.ios { background: #1c1c1e; }
+    .step-num.android { background: var(--green); }
+    .step-content {}
+    .sc-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; margin-top: 3px; }
+    .sc-desc { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+    .sc-link {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--brain-mid);
+      text-decoration: none;
+    }
+    .sc-link:hover { text-decoration: underline; }
+    .assets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .asset-item {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .asset-name { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .asset-spec { font-size: 11px; color: var(--ink3); }
+    p {
+      font-size: 15px;
+      color: var(--ink2);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    /* IA Generator Section */
+    .ai-section {
+      background: var(--brain);
+      border-radius: 14px;
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+    .ai-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .ai-icon { font-size: 28px; }
+    .ai-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: #fff;
+    }
+    .ai-subtitle { font-size: 13px; color: rgba(200,190,230,.65); margin-top: 2px; }
+    .ai-form { display: flex; flex-direction: column; gap: 12px; }
+    .ai-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(200,190,230,.2);
+      background: rgba(255,255,255,.07);
+      color: rgba(200,190,230,.9);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .ai-input::placeholder { color: rgba(200,190,230,.35); }
+    .ai-input:focus { border-color: rgba(200,190,230,.5); }
+    .ai-btn {
+      align-self: flex-start;
+      padding: 12px 24px;
+      border-radius: 10px;
+      background: rgba(200,190,230,.15);
+      border: 1px solid rgba(200,190,230,.3);
+      color: rgba(200,190,230,.9);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-btn:hover:not(:disabled) { background: rgba(200,190,230,.25); }
+    .ai-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .ai-output {
+      width: 100%;
+      min-height: 240px;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(200,190,230,.15);
+      background: rgba(255,255,255,.05);
+      color: rgba(200,190,230,.85);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      line-height: 1.7;
+      resize: vertical;
+      outline: none;
+    }
+    .ai-status {
+      font-size: 12px;
+      color: rgba(200,190,230,.5);
+      margin-top: 4px;
+      min-height: 18px;
+    }
+    .ai-note {
+      font-size: 12px;
+      color: rgba(200,190,230,.45);
+      line-height: 1.6;
+      margin-top: 8px;
+    }
+    .copy-btn {
+      align-self: flex-start;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(200,190,230,.1);
+      border: 1px solid rgba(200,190,230,.2);
+      color: rgba(200,190,230,.7);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .copy-btn:hover { background: rgba(200,190,230,.2); }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">Publicar nas Lojas</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>Publicar nas Lojas</h1>
+    <p class="subtitle">Guia passo a passo para publicar o BBrain na App Store (iOS) e Google Play (Android).</p>
+
+    <!-- App Store -->
+    <div class="store-section">
+      <div class="store-header ios">
+        <span class="store-icon">🍎</span>
+        <div class="store-title-block">
+          <div class="store-title">App Store</div>
+          <div class="store-subtitle">iOS — iPhone e iPad</div>
+        </div>
+        <span class="store-cost">$99/ano</span>
+      </div>
+      <div class="store-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num ios">1</div>
+            <div class="step-content">
+              <div class="sc-title">Apple Developer Program</div>
+              <div class="sc-desc">Cadastre-se no programa de desenvolvedor da Apple. Custa $99/ano e é obrigatório para publicar qualquer app.</div>
+              <a href="https://developer.apple.com/programs" target="_blank" class="sc-link">developer.apple.com/programs →</a>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">2</div>
+            <div class="step-content">
+              <div class="sc-title">Criar App ID no Apple Developer Portal</div>
+              <div class="sc-desc">No portal, crie um novo App ID com bundle identifier único (ex: <code>io.aproove.bbrain</code>). Ative as capabilities necessárias (Push Notifications, etc.).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">3</div>
+            <div class="step-content">
+              <div class="sc-title">Criar app no App Store Connect</div>
+              <div class="sc-desc">Acesse App Store Connect, clique em "+" e crie um novo app usando o App ID criado. Escolha a plataforma e o idioma primário.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">4</div>
+            <div class="step-content">
+              <div class="sc-title">Preparar os assets visuais</div>
+              <div class="sc-desc">Você precisará de:</div>
+              <div class="assets-grid" style="margin-top:10px;">
+                <div class="asset-item"><div class="asset-name">Ícone do app</div><div class="asset-spec">1024×1024px, PNG sem transparência</div></div>
+                <div class="asset-item"><div class="asset-name">Screenshots iPhone 6.7"</div><div class="asset-spec">1290×2796px (obrigatório)</div></div>
+                <div class="asset-item"><div class="asset-name">Screenshots iPhone 6.1"</div><div class="asset-spec">1179×2556px</div></div>
+                <div class="asset-item"><div class="asset-name">Screenshots iPad</div><div class="asset-spec">2048×2732px (se suportar iPad)</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">5</div>
+            <div class="step-content">
+              <div class="sc-title">Preencher metadados</div>
+              <div class="sc-desc">No App Store Connect, preencha: nome do app (30 chars), subtítulo (30 chars), descrição (4000 chars), palavras-chave (100 chars), URL de suporte e URL de privacidade. Escolha a categoria primária.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">6</div>
+            <div class="step-content">
+              <div class="sc-title">Build e upload</div>
+              <div class="sc-desc">Compile o app via React Native ou Flutter para iOS. Archive via Xcode e faça upload pelo Xcode Organizer ou pelo app Transporter (gratuito na Mac App Store).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">7</div>
+            <div class="step-content">
+              <div class="sc-title">Submeter para review</div>
+              <div class="sc-desc">Selecione o build no App Store Connect e clique em "Submit for Review". O processo leva de 1 a 3 dias úteis na primeira submissão.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num ios">8</div>
+            <div class="step-content">
+              <div class="sc-title">Precificação</div>
+              <div class="sc-desc">BBrain pode ser publicado como Free com In-App Purchase (para o plano Pro), ou como Paid App. Recomendado: Free + IAP via RevenueCat ou Stripe.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Play Store -->
+    <div class="store-section">
+      <div class="store-header android">
+        <span class="store-icon">🤖</span>
+        <div class="store-title-block">
+          <div class="store-title">Google Play</div>
+          <div class="store-subtitle">Android</div>
+        </div>
+        <span class="store-cost">$25 taxa única</span>
+      </div>
+      <div class="store-body">
+        <div class="steps">
+          <div class="step">
+            <div class="step-num android">1</div>
+            <div class="step-content">
+              <div class="sc-title">Google Play Console</div>
+              <div class="sc-desc">Crie uma conta no Google Play Console. A taxa de registro é única ($25) — sem anuidade.</div>
+              <a href="https://play.google.com/console" target="_blank" class="sc-link">play.google.com/console →</a>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num android">2</div>
+            <div class="step-content">
+              <div class="sc-title">Criar aplicativo</div>
+              <div class="sc-desc">No Console, clique em "Criar app", escolha o idioma padrão e o tipo (app ou jogo). Defina se é gratuito ou pago (não pode mudar depois de gratuito para pago).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num android">3</div>
+            <div class="step-content">
+              <div class="sc-title">Ficha do app</div>
+              <div class="sc-desc">Preencha: título (50 chars), descrição curta (80 chars), descrição completa (4000 chars). Faça upload de screenshots (mínimo 2), feature graphic (1024×500px) e ícone (512×512px).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num android">4</div>
+            <div class="step-content">
+              <div class="sc-title">Política de privacidade</div>
+              <div class="sc-desc">Obrigatória para todos os apps. Deve estar hospedada em uma URL pública. Use um gerador gratuito se necessário.</div>
+              <a href="https://www.privacypolicygenerator.info" target="_blank" class="sc-link">privacypolicygenerator.info →</a>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num android">5</div>
+            <div class="step-content">
+              <div class="sc-title">Build assinado</div>
+              <div class="sc-desc">Compile o APK ou AAB (Android App Bundle — recomendado). Assine com sua keystore. Para Flutter: <code>flutter build appbundle --release</code>. Para React Native: siga o guia oficial.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num android">6</div>
+            <div class="step-content">
+              <div class="sc-title">Lançamento em estágios</div>
+              <div class="sc-desc">Recomendado: comece com Teste Interno (qualquer pessoa com link) → Alpha (até 50 usuários) → Beta (grupo maior) → Produção (lançamento público).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num android">7</div>
+            <div class="step-content">
+              <div class="sc-title">Review</div>
+              <div class="sc-desc">O primeiro review leva de 1 a 7 dias. Updates subsequentes são mais rápidos (geralmente horas). A Play Store é mais permissiva que a App Store.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IA Generator -->
+    <div class="ai-section">
+      <div class="ai-section-header">
+        <span class="ai-icon">🤖</span>
+        <div>
+          <div class="ai-title">Gerar metadados com IA</div>
+          <div class="ai-subtitle">Use o Gemini (Google AI Studio) para gerar todos os textos das lojas em segundos</div>
+        </div>
+      </div>
+
+      <div class="ai-form">
+        <input
+          type="password"
+          class="ai-input"
+          id="geminiKey"
+          placeholder="Cole sua API Key do Google AI Studio"
+          autocomplete="off"
+        />
+        <button class="ai-btn" id="generateBtn" onclick="generateMetadata()">
+          <span id="btnIcon">✨</span>
+          <span id="btnText">Gerar metadados do BBrain</span>
+        </button>
+        <div class="ai-status" id="aiStatus"></div>
+
+        <textarea
+          class="ai-output"
+          id="aiOutput"
+          placeholder="Os metadados gerados aparecerão aqui — nome, subtítulo, descrições, palavras-chave, política de privacidade..."
+          readonly
+        ></textarea>
+
+        <button class="copy-btn" onclick="copyOutput()">Copiar resultado</button>
+
+        <div class="ai-note">
+          Sua API Key não é armazenada nem enviada a nenhum servidor além do Google. A chave fica apenas no seu navegador durante esta sessão. Obtenha uma chave gratuita em <a href="https://aistudio.google.com/apikey" target="_blank" style="color:rgba(200,190,230,.6); text-decoration:underline;">aistudio.google.com/apikey</a>.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+
+  <script>
+    async function generateMetadata() {
+      const key = document.getElementById('geminiKey').value.trim();
+      if (!key) {
+        document.getElementById('aiStatus').textContent = 'Por favor, insira sua API Key do Google AI Studio.';
+        return;
+      }
+
+      const btn = document.getElementById('generateBtn');
+      const btnText = document.getElementById('btnText');
+      const btnIcon = document.getElementById('btnIcon');
+      const status = document.getElementById('aiStatus');
+      const output = document.getElementById('aiOutput');
+
+      btn.disabled = true;
+      btnIcon.textContent = '⏳';
+      btnText.textContent = 'Gerando...';
+      status.textContent = 'Conectando ao Gemini...';
+      output.value = '';
+
+      const prompt = `Você é um especialista em ASO (App Store Optimization) e marketing de apps mobile.
+
+Gere todos os metadados necessários para publicar o app BBrain nas lojas App Store (iOS) e Google Play (Android), em PT-BR.
+
+Sobre o BBrain:
+- É um "segundo cérebro" para fundadores, indie hackers e criadores de conteúdo
+- Permite capturar ideias em 3 segundos durante sessões de trabalho
+- Tem check-in de sessão (onde você está, o que vai focar), captura de ideias sem fricção, vinculação de ideias a sessões, análise por IA, geração de conteúdo para redes sociais
+- É diferente do Notion/Obsidian: específico para fundadores, tem diário de sessão, gera conteúdo para redes
+- Modelo freemium: plano grátis (50 ideias/mês) e BBrain Pro ($4,99/mês)
+- Feito pela Aproove, startup brasileira
+
+Gere exatamente:
+
+## NOME DO APP
+(máx 30 chars para iOS, 50 para Android)
+
+## SUBTÍTULO (App Store)
+(máx 30 chars — aparece abaixo do nome)
+
+## DESCRIÇÃO CURTA (Google Play)
+(máx 80 chars — aparece na busca)
+
+## DESCRIÇÃO COMPLETA
+(máx 4000 chars — para ambas as lojas, pode ser a mesma)
+
+## PALAVRAS-CHAVE (App Store)
+(10 palavras separadas por vírgula, máx 100 chars total)
+
+## TAGS (Google Play)
+(5 tags relevantes)
+
+## POLÍTICA DE PRIVACIDADE BÁSICA
+(texto simples e objetivo, apto para hospedar em URL pública)
+
+Seja objetivo, direto, com foco nos benefícios para fundadores brasileiros. Use linguagem de startup.`;
+
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }]
+            })
+          }
+        );
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error?.message || `Erro HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!text) throw new Error('Resposta vazia do Gemini.');
+
+        output.value = text;
+        status.textContent = 'Metadados gerados com sucesso!';
+      } catch (e) {
+        status.textContent = `Erro: ${e.message}`;
+        output.value = '';
+      } finally {
+        btn.disabled = false;
+        btnIcon.textContent = '✨';
+        btnText.textContent = 'Gerar metadados do BBrain';
+      }
+    }
+
+    async function copyOutput() {
+      const output = document.getElementById('aiOutput').value;
+      if (!output) return;
+      try {
+        await navigator.clipboard.writeText(output);
+        const btn = event.target;
+        btn.textContent = 'Copiado!';
+        setTimeout(() => btn.textContent = 'Copiar resultado', 2000);
+      } catch {
+        // fallback
+        document.getElementById('aiOutput').select();
+        document.execCommand('copy');
+      }
+    }
+
+    document.getElementById('geminiKey').addEventListener('keydown', e => {
+      if (e.key === 'Enter') generateMetadata();
+    });
+  </script>
+</body>
+</html>

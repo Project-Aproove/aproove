@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conceito do Produto — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 0 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero {
+      background: var(--brain);
+      border-radius: 0 0 24px 24px;
+      padding: 100px 40px 56px;
+      text-align: center;
+      margin: 0 -24px 48px;
+    }
+    .hero-eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(200,190,230,.7);
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 5vw, 48px);
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero p {
+      font-size: 17px;
+      color: rgba(200,190,230,.8);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .section {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--brain);
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 15px;
+      color: var(--ink2);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    p:last-child { margin-bottom: 0; }
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+    @media (max-width: 580px) {
+      .pillars { grid-template-columns: 1fr; }
+    }
+    .pillar {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .pillar-icon { font-size: 28px; margin-bottom: 10px; }
+    .pillar-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--brain);
+      margin-bottom: 8px;
+    }
+    .pillar-desc { font-size: 13px; color: var(--ink3); line-height: 1.5; margin: 0; }
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .audience-card {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .audience-card .ac-icon { font-size: 24px; margin-bottom: 8px; }
+    .audience-card .ac-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .audience-card .ac-desc { font-size: 12px; color: var(--ink3); line-height: 1.5; margin: 0; }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 20px;
+    }
+    .compare-table th {
+      padding: 10px 14px;
+      text-align: left;
+      background: var(--paper2);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink2);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .compare-table th:first-child { border-radius: 8px 0 0 8px; }
+    .compare-table th:last-child { border-radius: 0 8px 8px 0; }
+    .compare-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--paper2);
+      color: var(--ink2);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table .bbrain-col { color: var(--brain-mid); font-weight: 500; }
+    .yes { color: var(--green); }
+    .no { color: var(--ink3); }
+    .vision-quote {
+      border-left: 3px solid var(--brain-mid);
+      padding: 20px 24px;
+      margin: 20px 0 0;
+      background: var(--paper2);
+      border-radius: 0 10px 10px 0;
+    }
+    .vision-quote p {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--brain);
+      font-style: italic;
+      margin: 0;
+      line-height: 1.5;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">Conceito do Produto</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-eyebrow">BBrain · Conceito</div>
+      <h1>O segundo cérebro<br>de quem constrói</h1>
+      <p>Captura, organiza e transforma suas ideias em ação — projetado para fundadores que pensam enquanto vivem.</p>
+    </div>
+
+    <!-- O Problema -->
+    <div class="section">
+      <h2>O problema</h2>
+      <p>Fundadores têm dezenas de ideias por dia. No chuveiro, no carro, durante uma corrida, no meio de uma conversa. Mas sem um sistema de captura confiável, mais de <strong>70% dessas ideias se perdem</strong> antes de chegarem a um computador.</p>
+      <p>As ferramentas existentes pedem demais: criar uma nota, escolher a pasta, formatar, tagear. No momento em que você abre o Notion, a ideia já foi embora. E os diários de fundador — quando existem — são anárquicos, sem estrutura, sem retrospectiva fácil.</p>
+      <p>O resultado é um fundador que sente que "tem muito na cabeça" mas não consegue transformar isso em progresso concreto.</p>
+    </div>
+
+    <!-- A Solução -->
+    <div class="section">
+      <h2>A solução BBrain</h2>
+      <p>BBrain é construído em torno de três pilares simples que juntos formam um ciclo completo de captura a ação:</p>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon">⚡</div>
+          <div class="pillar-title">Capturar</div>
+          <p class="pillar-desc">Uma caixa de texto. Um atalho. Ctrl+Enter. Ideia salva em 3 segundos, sem fricção.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🗂</div>
+          <div class="pillar-title">Organizar</div>
+          <p class="pillar-desc">Ideias vinculadas a sessões, movidas para o roadmap, analisadas por IA — quando você quiser.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🚀</div>
+          <div class="pillar-title">Agir</div>
+          <p class="pillar-desc">Gere conteúdo para redes sociais, identifique padrões, tranforme sessões em entregas visíveis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Para quem é -->
+    <div class="section">
+      <h2>Para quem é</h2>
+      <p>BBrain foi criado para pessoas que constroem em público e precisam de um sistema de pensamento, não apenas de uma lista de tarefas.</p>
+      <div class="audience-grid">
+        <div class="audience-card">
+          <div class="ac-icon">🏗</div>
+          <div class="ac-title">Fundadores solo</div>
+          <p class="ac-desc">Que precisam documentar suas decisões e manter o histórico do produto.</p>
+        </div>
+        <div class="audience-card">
+          <div class="ac-icon">💻</div>
+          <div class="ac-title">Indie hackers</div>
+          <p class="ac-desc">Que constroem múltiplos projetos e precisam organizar ideias sem perder foco.</p>
+        </div>
+        <div class="audience-card">
+          <div class="ac-icon">📢</div>
+          <div class="ac-title">Criadores de conteúdo</div>
+          <p class="ac-desc">Que constroem em público e precisam transformar o trabalho diário em posts.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diferencial -->
+    <div class="section">
+      <h2>Como é diferente das outras ferramentas</h2>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Funcionalidade</th>
+            <th class="bbrain-col">BBrain</th>
+            <th>Notion</th>
+            <th>Obsidian</th>
+            <th>Apple Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Captura em 3 segundos</td>
+            <td class="bbrain-col yes">Sim</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+            <td class="yes">Sim</td>
+          </tr>
+          <tr>
+            <td>Específico para fundadores</td>
+            <td class="bbrain-col yes">Sim</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+          </tr>
+          <tr>
+            <td>Check-in de sessão de trabalho</td>
+            <td class="bbrain-col yes">Sim</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+          </tr>
+          <tr>
+            <td>IA integrada (análise + geração)</td>
+            <td class="bbrain-col yes">Sim</td>
+            <td class="no">Parcial</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+          </tr>
+          <tr>
+            <td>Gera conteúdo para redes</td>
+            <td class="bbrain-col yes">Sim</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+            <td class="no">Não</td>
+          </tr>
+          <tr>
+            <td>Zero custo para começar</td>
+            <td class="bbrain-col yes">Sim</td>
+            <td class="yes">Sim</td>
+            <td class="yes">Sim</td>
+            <td class="yes">Sim</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Visão -->
+    <div class="section">
+      <h2>Visão de longo prazo</h2>
+      <p>BBrain não quer ser mais uma ferramenta de produtividade genérica. A visão é específica e ambiciosa:</p>
+      <div class="vision-quote">
+        <p>"Ser o Diário do Fundador mais usado no Brasil — o lugar onde as melhores ideias de produto do país foram primeiro escritas."</p>
+      </div>
+      <p style="margin-top:20px;">Isso significa construir comunidade, gerar insights a partir de dados agregados (anonimizados), e eventualmente tornar o BBrain o padrão de como fundadores brasileiros documentam sua jornada — da ideia à empresa.</p>
+      <p>A cada sessão registrada, a cada ideia capturada, o fundador está construindo um ativo valioso: o histórico da construção do seu negócio.</p>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia de Uso — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 88px 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 4vw, 36px);
+      color: var(--brain);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--ink2);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .toc {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 32px;
+    }
+    .toc-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--ink3);
+      margin-bottom: 14px;
+    }
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 6px;
+    }
+    .toc-list li a {
+      font-size: 13px;
+      color: var(--brain-mid);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-list li a:hover { text-decoration: underline; }
+    .guide-section {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 24px;
+      scroll-margin-top: 72px;
+    }
+    .guide-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .guide-section h2 .s-icon { font-size: 22px; }
+    p {
+      font-size: 15px;
+      color: var(--ink2);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    p:last-child { margin-bottom: 0; }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--brain);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-content .sc-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .step-content .sc-desc { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+    kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-family: monospace;
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      color: var(--ink);
+    }
+    .tip {
+      background: #ede7f6;
+      border: 1px solid rgba(58,31,122,.15);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--brain-mid);
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .tip-icon { flex-shrink: 0; font-size: 16px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .option-pill {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--ink2);
+      text-align: center;
+    }
+    .lang-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .lang-card {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .lang-flag { font-size: 28px; margin-bottom: 6px; }
+    .lang-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .lang-code { font-size: 11px; color: var(--ink3); }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">Guia de Uso</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>Guia de Uso</h1>
+    <p class="subtitle">Do primeiro acesso ao checkout de sessão — tudo que você precisa para usar o BBrain no seu dia a dia.</p>
+
+    <div class="toc">
+      <div class="toc-title">Nesta página</div>
+      <ul class="toc-list">
+        <li><a href="#primeiro-acesso">Primeiro acesso</a></li>
+        <li><a href="#check-in">Check-in de sessão</a></li>
+        <li><a href="#ideias">Capturar ideias</a></li>
+        <li><a href="#gerenciar">Gerenciar ideias</a></li>
+        <li><a href="#encerrar">Encerrar sessão</a></li>
+        <li><a href="#diario">Diário de sessões</a></li>
+        <li><a href="#idiomas">Idiomas</a></li>
+        <li><a href="#seguranca">Segurança</a></li>
+        <li><a href="#aba-app">Aba App</a></li>
+      </ul>
+    </div>
+
+    <!-- Primeiro acesso -->
+    <div class="guide-section" id="primeiro-acesso">
+      <h2><span class="s-icon">👤</span> Primeiro acesso</h2>
+      <p>Na primeira vez que você acessa o BBrain, será direcionado para a tela de configuração inicial.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="sc-title">Abra o BBrain</div>
+            <div class="sc-desc">Acesse a URL do seu BBrain no navegador. Você verá a tela de login.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="sc-title">Clique em "Criar conta"</div>
+            <div class="sc-desc">Na tela de login, selecione "Criar conta" para acessar o setup.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="sc-title">Escolha usuário e senha</div>
+            <div class="sc-desc">Digite um nome de usuário e uma senha forte. A senha é armazenada como hash — o servidor nunca vê seu texto.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="sc-title">Pronto</div>
+            <div class="sc-desc">Você será redirecionado automaticamente para a tela principal do BBrain.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-in -->
+    <div class="guide-section" id="check-in">
+      <h2><span class="s-icon">📍</span> Check-in de sessão</h2>
+      <p>O check-in é o ponto de partida de cada sessão de trabalho. Ele cria contexto para as ideias que você vai capturar.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="sc-title">Clique em "Nova sessão"</div>
+            <div class="sc-desc">No topo da tela ou na aba Sessões. Isso abre o modal de check-in.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="sc-title">Escolha o local</div>
+            <div class="sc-desc">Onde você está trabalhando hoje? Isso ajuda na retrospectiva.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="sc-title">Escreva seu pensamento inicial</div>
+            <div class="sc-desc">O que está na sua cabeça agora? Em que você vai focar? Qualquer coisa — sem filtro.</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:16px;">Locais mais usados:</p>
+      <div class="options-grid">
+        <div class="option-pill">Casa</div>
+        <div class="option-pill">Escritório</div>
+        <div class="option-pill">Café</div>
+        <div class="option-pill">Coworking</div>
+        <div class="option-pill">Em trânsito</div>
+        <div class="option-pill">Outro</div>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">💡</span>
+        <span>Use o check-in sempre que começar um bloco de trabalho focado — mesmo que seja 30 minutos. O histórico de sessões é valioso.</span>
+      </div>
+    </div>
+
+    <!-- Capturar ideias -->
+    <div class="guide-section" id="ideias">
+      <h2><span class="s-icon">⚡</span> Capturar ideias</h2>
+      <p>A captura deve ser zero fricção. O objetivo é que a ideia saia da sua cabeça e vá para o sistema em menos de 5 segundos.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="sc-title">Foque no campo de texto</div>
+            <div class="sc-desc">O campo fica na parte superior da tela principal, sempre visível.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="sc-title">Digite a ideia</div>
+            <div class="sc-desc">Sem formatação, sem título, sem categoria. Apenas o texto bruto.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="sc-title">Pressione <kbd>Ctrl</kbd> + <kbd>Enter</kbd></div>
+            <div class="sc-desc">A ideia é salva instantaneamente. O campo limpa e fica pronto para a próxima.</div>
+          </div>
+        </div>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">🧠</span>
+        <span>Sem filtro na captura. Capture tudo — ideias ruins, pensamentos soltos, observações. A curadoria vem depois.</span>
+      </div>
+    </div>
+
+    <!-- Gerenciar ideias -->
+    <div class="guide-section" id="gerenciar">
+      <h2><span class="s-icon">🗂</span> Gerenciar ideias</h2>
+      <p>Após capturar, você pode organizar suas ideias quando tiver tempo para revisão.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="sc-title">Filtrar por status</div>
+            <div class="sc-desc">Use os filtros (Todas, Ativas, Roadmap, Arquivadas) para navegar pelo acervo.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="sc-title">Mover para o roadmap</div>
+            <div class="sc-desc">Ideias que viram features ou projetos podem ser marcadas como "Roadmap" para destacá-las.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="sc-title">Analisar com IA</div>
+            <div class="sc-desc">Clique no botão de IA em qualquer ideia para receber avaliação automática: viabilidade, impacto, próximos passos.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="sc-title">Arquivar</div>
+            <div class="sc-desc">Ideias que não evoluirão podem ser arquivadas — ficam no histórico mas saem da vista principal.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Encerrar sessão -->
+    <div class="guide-section" id="encerrar">
+      <h2><span class="s-icon">🏁</span> Encerrar sessão</h2>
+      <p>O checkout marca o fim do bloco de trabalho e permite gerar conteúdo para suas redes sociais.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="sc-title">Clique em "Encerrar sessão"</div>
+            <div class="sc-desc">Disponível na sessão ativa no topo da tela.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="sc-title">Revise o resumo</div>
+            <div class="sc-desc">O BBrain mostra duração, número de ideias capturadas e as ideias da sessão.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="sc-title">Gere conteúdo para redes</div>
+            <div class="sc-desc">Com um clique, a IA transforma o resumo da sessão em um post para Twitter/X, LinkedIn ou Instagram.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diário -->
+    <div class="guide-section" id="diario">
+      <h2><span class="s-icon">📖</span> Diário de sessões</h2>
+      <p>A aba "Sessões" guarda o histórico completo de todas as suas sessões de trabalho — seu diário de fundador.</p>
+      <p>Cada card de sessão mostra: data, local, duração, número de ideias capturadas, pensamento inicial e — se gerado — o conteúdo para redes sociais.</p>
+      <div class="tip">
+        <span class="tip-icon">📊</span>
+        <span>Revise seu diário semanalmente. Os padrões que aparecem — locais mais produtivos, horários, tipos de ideia — são insights valiosos sobre como você trabalha melhor.</span>
+      </div>
+    </div>
+
+    <!-- Idiomas -->
+    <div class="guide-section" id="idiomas">
+      <h2><span class="s-icon">🌍</span> Idiomas</h2>
+      <p>O BBrain está disponível em 4 idiomas. Você pode trocar a qualquer momento pelo menu de configurações no canto superior direito.</p>
+      <div class="lang-grid">
+        <div class="lang-card">
+          <div class="lang-flag">🇧🇷</div>
+          <div class="lang-name">Português</div>
+          <div class="lang-code">pt-BR</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇺🇸</div>
+          <div class="lang-name">English</div>
+          <div class="lang-code">en-US</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇫🇷</div>
+          <div class="lang-name">Français</div>
+          <div class="lang-code">fr-FR</div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇪🇸</div>
+          <div class="lang-name">Español</div>
+          <div class="lang-code">es-ES</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Segurança -->
+    <div class="guide-section" id="seguranca">
+      <h2><span class="s-icon">🔒</span> Segurança</h2>
+      <p><strong>Login diário:</strong> O token de sessão expira à meia-noite. Isso é intencional — garante que a sessão não fique aberta indefinidamente em dispositivos não autorizados.</p>
+      <p><strong>Esqueci minha senha:</strong> Na tela de login, clique em "Esqueci minha senha". Um email com um link de reset será enviado para o endereço cadastrado. O link expira em 1 hora.</p>
+      <p><strong>Sua senha:</strong> A senha nunca é armazenada em texto puro. O servidor guarda apenas o hash SHA-256 em uma variável de ambiente — nem mesmo o banco de dados tem acesso.</p>
+    </div>
+
+    <!-- Aba App -->
+    <div class="guide-section" id="aba-app">
+      <h2><span class="s-icon">📱</span> Aba App</h2>
+      <p>A aba "App" no BBrain contém o prompt otimizado para uso com o <strong>Google Stitch</strong> — a ferramenta do Google AI Studio para criar apps a partir de linguagem natural.</p>
+      <p>Use esse prompt para gerar rapidamente protótipos de novas funcionalidades ou para criar a versão mobile do BBrain. O prompt já está contextualizado com a arquitetura do projeto.</p>
+      <div class="tip">
+        <span class="tip-icon">🤖</span>
+        <span>O Google Stitch é gratuito via Google AI Studio. Combine com o prompt da aba App para iterar no produto sem custo de desenvolvimento.</span>
+      </div>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+</body>
+</html>

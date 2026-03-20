@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para Investidores — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 0 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero {
+      background: var(--brain);
+      border-radius: 0 0 24px 24px;
+      padding: 100px 40px 56px;
+      text-align: center;
+      margin: 0 -24px 48px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: rgba(200,190,230,.6);
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 5vw, 44px);
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 16px;
+      color: rgba(200,190,230,.75);
+      max-width: 460px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .section {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--brain);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--paper3);
+    }
+    p {
+      font-size: 15px;
+      color: var(--ink2);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    p:last-child { margin-bottom: 0; }
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .stat-card {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--brain);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label { font-size: 12px; color: var(--ink3); line-height: 1.4; }
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      margin-top: 20px;
+      padding-bottom: 8px;
+    }
+    .flow-step {
+      flex-shrink: 0;
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 10px;
+      padding: 16px 18px;
+      text-align: center;
+      min-width: 120px;
+    }
+    .flow-step .fs-num {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--ink3);
+      margin-bottom: 6px;
+    }
+    .flow-step .fs-icon { font-size: 22px; margin-bottom: 8px; }
+    .flow-step .fs-label { font-size: 12px; font-weight: 600; color: var(--ink); }
+    .flow-arrow {
+      flex-shrink: 0;
+      font-size: 18px;
+      color: var(--paper3);
+      padding: 0 8px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .price-card {
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 12px;
+      padding: 24px 20px;
+      background: var(--paper2);
+    }
+    .price-card.highlight {
+      background: var(--brain);
+      border-color: var(--brain);
+    }
+    .price-plan { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); margin-bottom: 8px; }
+    .price-card.highlight .price-plan { color: rgba(200,190,230,.6); }
+    .price-amount {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--brain);
+      margin-bottom: 4px;
+    }
+    .price-card.highlight .price-amount { color: #fff; }
+    .price-period { font-size: 12px; color: var(--ink3); margin-bottom: 14px; }
+    .price-card.highlight .price-period { color: rgba(200,190,230,.6); }
+    .price-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .price-features li {
+      font-size: 12px;
+      color: var(--ink2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .price-card.highlight .price-features li { color: rgba(200,190,230,.85); }
+    .price-features li::before { content: '—'; color: var(--ink3); font-size: 10px; }
+    .price-card.highlight .price-features li::before { color: rgba(200,190,230,.4); }
+    .traction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .traction-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--paper2);
+      border-radius: 10px;
+      border: 1px solid var(--paper3);
+    }
+    .traction-icon { font-size: 22px; flex-shrink: 0; }
+    .traction-text { font-size: 14px; color: var(--ink2); line-height: 1.5; }
+    .team-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: var(--paper2);
+      border-radius: 12px;
+      border: 1px solid var(--paper3);
+      padding: 24px;
+      margin-top: 8px;
+    }
+    .team-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--brain);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: rgba(200,190,230,.9);
+      flex-shrink: 0;
+    }
+    .team-name { font-size: 18px; font-weight: 600; color: var(--brain); margin-bottom: 4px; }
+    .team-role { font-size: 13px; color: var(--ink3); margin-bottom: 10px; }
+    .team-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--paper3);
+      color: var(--ink2);
+    }
+    .next-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .next-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      background: var(--paper2);
+      border-radius: 10px;
+    }
+    .next-step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--brain);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .next-step-content .ns-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .next-step-content .ns-desc { font-size: 13px; color: var(--ink3); }
+    .cta-section {
+      background: var(--brain);
+      border-radius: 14px;
+      padding: 36px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .cta-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .cta-section p { color: rgba(200,190,230,.75); font-size: 14px; margin-bottom: 20px; }
+    .cta-link {
+      display: inline-block;
+      background: rgba(200,190,230,.15);
+      border: 1px solid rgba(200,190,230,.3);
+      color: rgba(200,190,230,.9);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .cta-link:hover { background: rgba(200,190,230,.25); }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">Para Investidores</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div class="hero-eyebrow">BBrain · Pitch</div>
+      <h1>O segundo cérebro<br>para fundadores</h1>
+      <p>Captura de ideias em 3 segundos, diário de sessões estruturado e IA integrada — construído para quem constrói.</p>
+    </div>
+
+    <!-- Problema -->
+    <div class="section">
+      <h2>O problema</h2>
+      <p>Fundadores têm dezenas de ideias por dia. A maioria nunca chega ao papel — ou ao computador.</p>
+      <p>Pesquisas com founders mostram que <strong>70% das ideias geradas fora do ambiente de trabalho se perdem</strong>. As ferramentas existentes exigem contexto demais para uma captura rápida: criar pasta, escolher template, escrever título, formatar. Quando você termina o setup, a ideia foi embora.</p>
+      <p>E o diário de fundador — quando existe — é caótico, sem estrutura de sessão, sem retrospectiva, sem geração de valor.</p>
+    </div>
+
+    <!-- Solução -->
+    <div class="section">
+      <h2>A solução</h2>
+      <p><strong>BBrain</strong> — o diário do fundador. Captura uma ideia em 3 segundos, organiza automaticamente, gera conteúdo para redes sociais e permite análise por IA.</p>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="fs-num">Passo 1</div>
+          <div class="fs-icon">📍</div>
+          <div class="fs-label">Check-in</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-num">Passo 2</div>
+          <div class="fs-icon">⚡</div>
+          <div class="fs-label">Captura</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-num">Passo 3</div>
+          <div class="fs-icon">🗺</div>
+          <div class="fs-label">Roadmap</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-num">Passo 4</div>
+          <div class="fs-icon">🧠</div>
+          <div class="fs-label">IA</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="fs-num">Passo 5</div>
+          <div class="fs-icon">📣</div>
+          <div class="fs-label">Conteúdo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mercado -->
+    <div class="section">
+      <h2>Mercado</h2>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-number">15M+</div>
+          <div class="stat-label">Fundadores e criadores no Brasil</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">$102B</div>
+          <div class="stat-label">Mercado global de produtividade pessoal</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">$4,99</div>
+          <div class="stat-label">Ticket médio mensal do plano Pro</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1%</div>
+          <div class="stat-label">Do mercado BR = 150k assinantes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modelo de negócio -->
+    <div class="section">
+      <h2>Modelo de negócio</h2>
+      <p>Freemium com monetização via assinatura — o mesmo modelo validado por Notion, Obsidian e Linear.</p>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-plan">Free</div>
+          <div class="price-amount">$0</div>
+          <div class="price-period">para sempre</div>
+          <ul class="price-features">
+            <li>50 ideias por mês</li>
+            <li>5 sessões de trabalho</li>
+            <li>Web app</li>
+            <li>Sem IA</li>
+          </ul>
+        </div>
+        <div class="price-card highlight">
+          <div class="price-plan">BBrain Pro</div>
+          <div class="price-amount">$4,99</div>
+          <div class="price-period">/mês · ou $39,99/ano</div>
+          <ul class="price-features">
+            <li>Ideias ilimitadas</li>
+            <li>Sessões ilimitadas</li>
+            <li>IA integrada</li>
+            <li>App mobile</li>
+            <li>Widget de captura</li>
+          </ul>
+        </div>
+        <div class="price-card">
+          <div class="price-plan">BBrain Teams</div>
+          <div class="price-amount">$12</div>
+          <div class="price-period">/usuário/mês</div>
+          <ul class="price-features">
+            <li>Tudo do Pro</li>
+            <li>Ideias compartilhadas</li>
+            <li>Sessões coletivas</li>
+            <li>Dashboard de equipe</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tração -->
+    <div class="section">
+      <h2>Tração atual</h2>
+      <div class="traction-list">
+        <div class="traction-item">
+          <div class="traction-icon">✅</div>
+          <div class="traction-text"><strong>MVP funcional e deployado</strong> — rodando em produção no Fly.io, região São Paulo</div>
+        </div>
+        <div class="traction-item">
+          <div class="traction-icon">📊</div>
+          <div class="traction-text"><strong>Fundador usando diariamente</strong> — produto validado em uso real, não apenas protótipo</div>
+        </div>
+        <div class="traction-item">
+          <div class="traction-icon">📱</div>
+          <div class="traction-text"><strong>App mobile em desenvolvimento</strong> — Q2 2026, iOS + Android</div>
+        </div>
+        <div class="traction-item">
+          <div class="traction-icon">🔧</div>
+          <div class="traction-text"><strong>Stack de custo zero</strong> — Google Sheets + Fly.io free tier, zero burn rate de infraestrutura</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time -->
+    <div class="section">
+      <h2>Time</h2>
+      <div class="team-card">
+        <div class="team-avatar">B</div>
+        <div>
+          <div class="team-name">Bruno Massa</div>
+          <div class="team-role">Fundador — Produto, Tecnologia e Negócio</div>
+          <div class="team-tags">
+            <span class="tag">Full-stack</span>
+            <span class="tag">Produto</span>
+            <span class="tag">Aproove</span>
+            <span class="tag">B2B SaaS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Próximos passos -->
+    <div class="section">
+      <h2>Próximos passos</h2>
+      <div class="next-steps">
+        <div class="next-step">
+          <div class="next-step-num">1</div>
+          <div class="next-step-content">
+            <div class="ns-title">Lançamento App Store + Play Store</div>
+            <div class="ns-desc">Q2 2026 — versão mobile com captura por voz e widget</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step-num">2</div>
+          <div class="next-step-content">
+            <div class="ns-title">Primeira receita recorrente</div>
+            <div class="ns-desc">Q3 2026 — conversão do free para BBrain Pro via Stripe</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step-num">3</div>
+          <div class="next-step-content">
+            <div class="ns-title">Escala e comunidade</div>
+            <div class="ns-desc">Q4 2026 — WhatsApp bot, AI insights, BBrain Teams, API pública</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <h2>Interessado?</h2>
+      <p>Estamos abertos a conversas com investidores que acreditam em ferramentas de produtividade para founders.</p>
+      <a href="mailto:contato@aproove.io" class="cta-link">contato@aproove.io</a>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+</body>
+</html>

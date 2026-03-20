@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Documentação — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 96px 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 5vw, 42px);
+      color: var(--brain);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 17px;
+      color: var(--ink2);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .doc-card {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 28px 24px;
+      text-decoration: none;
+      color: var(--ink);
+      transition: box-shadow .2s, transform .2s, border-color .2s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .doc-card:hover {
+      box-shadow: 0 8px 32px rgba(26,10,58,.1);
+      transform: translateY(-2px);
+      border-color: rgba(58,31,122,.2);
+    }
+    .doc-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+    .doc-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--brain);
+    }
+    .doc-desc {
+      font-size: 13px;
+      color: var(--ink3);
+      line-height: 1.5;
+    }
+    .bbrain-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 40px;
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1px solid var(--paper3);
+      border-radius: 8px;
+      background: var(--paper2);
+      transition: background .15s, border-color .15s;
+    }
+    .bbrain-link:hover {
+      background: var(--paper3);
+      border-color: rgba(17,17,16,.15);
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="/laboratorio" class="logo">BBrain</a>
+        <span class="page-label">Documentação</span>
+      </div>
+      <a href="/laboratorio" class="back-link">← Voltar ao BBrain</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Central de Documentação BBrain</h1>
+      <p>Tudo que você precisa saber sobre o produto — do conceito técnico ao pitch para investidores.</p>
+    </div>
+
+    <div style="text-align:center; margin-bottom: 40px;">
+      <a href="/laboratorio" class="bbrain-link">← Voltar ao BBrain</a>
+    </div>
+
+    <div class="grid">
+      <a href="tecnica.html" class="doc-card">
+        <span class="doc-icon">📐</span>
+        <span class="doc-title">Documentação Técnica</span>
+        <span class="doc-desc">Stack, arquitetura, banco de dados, endpoints da API e instruções de deploy.</span>
+      </a>
+      <a href="roadmap.html" class="doc-card">
+        <span class="doc-icon">🗺</span>
+        <span class="doc-title">Roadmap</span>
+        <span class="doc-desc">Fases do produto: do MVP web atual até monetização e escala em 2026.</span>
+      </a>
+      <a href="conceito.html" class="doc-card">
+        <span class="doc-icon">🧠</span>
+        <span class="doc-title">Conceito do Produto</span>
+        <span class="doc-desc">Visão, problema, solução e diferencial do BBrain como segundo cérebro para fundadores.</span>
+      </a>
+      <a href="investidores.html" class="doc-card">
+        <span class="doc-icon">💼</span>
+        <span class="doc-title">Para Investidores</span>
+        <span class="doc-desc">Pitch deck em formato web: mercado, modelo de negócio, tração e próximos passos.</span>
+      </a>
+      <a href="guia-uso.html" class="doc-card">
+        <span class="doc-icon">📖</span>
+        <span class="doc-title">Guia de Uso</span>
+        <span class="doc-desc">Passo a passo completo para usar o BBrain — do primeiro acesso ao checkout de sessão.</span>
+      </a>
+      <a href="api.html" class="doc-card">
+        <span class="doc-icon">🔌</span>
+        <span class="doc-title">API Reference</span>
+        <span class="doc-desc">Referência completa da API: endpoints, autenticação, exemplos em JS, Python e curl.</span>
+      </a>
+      <a href="publicar-app.html" class="doc-card">
+        <span class="doc-icon">📱</span>
+        <span class="doc-title">Publicar nas Lojas</span>
+        <span class="doc-desc">Guia passo a passo para publicar o BBrain na App Store e Google Play, com geração de metadados por IA.</span>
+      </a>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+</body>
+</html>

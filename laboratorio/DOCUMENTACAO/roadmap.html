@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadmap — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 88px 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 4vw, 36px);
+      color: var(--brain);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--ink2);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: var(--paper3);
+    }
+    .phase {
+      position: relative;
+      padding-left: 68px;
+      padding-bottom: 40px;
+    }
+    .phase:last-child { padding-bottom: 0; }
+    .phase-dot {
+      position: absolute;
+      left: 18px;
+      top: 20px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--paper3);
+      background: var(--paper);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+    .phase-dot.done { background: var(--green); border-color: var(--green); }
+    .phase-dot.active { background: var(--brain-mid); border-color: var(--brain-mid); }
+    .phase-dot.upcoming { background: var(--paper); border-color: var(--paper3); }
+    .phase-dot svg { width: 12px; height: 12px; }
+    .phase-card {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+    }
+    .phase-card.done { border-left: 4px solid var(--green); }
+    .phase-card.active { border-left: 4px solid var(--brain-mid); }
+    .phase-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .phase-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+    }
+    .phase-period {
+      font-size: 12px;
+      color: var(--ink3);
+      margin-top: 4px;
+    }
+    .phase-badge {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-done { background: #e8f5e9; color: var(--green); }
+    .badge-active { background: #ede7f6; color: var(--brain-mid); }
+    .badge-upcoming { background: var(--paper2); color: var(--ink3); }
+    .phase-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .phase-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--ink2);
+      line-height: 1.5;
+    }
+    .check-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid var(--paper3);
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .check-box.checked {
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .check-box.checked::after {
+      content: '';
+      width: 4px;
+      height: 7px;
+      border: 2px solid #fff;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg) translateY(-1px);
+    }
+    .check-box.half {
+      background: var(--brain-mid);
+      border-color: var(--brain-mid);
+    }
+    .check-box.half::after {
+      content: '';
+      width: 8px;
+      height: 2px;
+      background: #fff;
+      border-radius: 1px;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">Roadmap</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>Roadmap do Projeto</h1>
+    <p class="subtitle">Da ideia ao produto — quatro fases para construir o diário do fundador mais usado no Brasil.</p>
+
+    <div class="timeline">
+
+      <!-- Fase 1 -->
+      <div class="phase">
+        <div class="phase-dot done"></div>
+        <div class="phase-card done">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">Fase 1 — MVP Web</div>
+              <div class="phase-period">Mar 2026</div>
+            </div>
+            <span class="phase-badge badge-done">Concluída ✓</span>
+          </div>
+          <ul class="phase-items">
+            <li class="phase-item"><span class="check-box checked"></span>Autenticação segura (SHA-256 + token diário)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Captura e gerenciamento de ideias</li>
+            <li class="phase-item"><span class="check-box checked"></span>Check-in e checkout de sessões de trabalho</li>
+            <li class="phase-item"><span class="check-box checked"></span>Banco de dados Google Sheets (zero custo)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Deploy no Fly.io free tier (região GRU)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Reset de senha por email (Gmail SMTP)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Interface multilingual (PT/EN/FR/ES)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Vínculo visual ideia ↔ sessão</li>
+            <li class="phase-item"><span class="check-box checked"></span>Geração de conteúdo para redes sociais via IA</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Fase 2 -->
+      <div class="phase">
+        <div class="phase-dot active"></div>
+        <div class="phase-card active">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">Fase 2 — App Mobile</div>
+              <div class="phase-period">Q2 2026</div>
+            </div>
+            <span class="phase-badge badge-active">Em andamento</span>
+          </div>
+          <ul class="phase-items">
+            <li class="phase-item"><span class="check-box half"></span>Definição do framework: React Native ou Flutter</li>
+            <li class="phase-item"><span class="check-box"></span>App nativo para iOS + Android</li>
+            <li class="phase-item"><span class="check-box"></span>Push notifications para check-in diário</li>
+            <li class="phase-item"><span class="check-box"></span>Captura de ideia por voz (Speech-to-Text)</li>
+            <li class="phase-item"><span class="check-box"></span>Widget de captura rápida na tela inicial</li>
+            <li class="phase-item"><span class="check-box"></span>Sincronização offline com sync ao conectar</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Fase 3 -->
+      <div class="phase">
+        <div class="phase-dot upcoming"></div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">Fase 3 — Monetização</div>
+              <div class="phase-period">Q3 2026</div>
+            </div>
+            <span class="phase-badge badge-upcoming">Planejada</span>
+          </div>
+          <ul class="phase-items">
+            <li class="phase-item"><span class="check-box"></span>Publicação na App Store (iOS)</li>
+            <li class="phase-item"><span class="check-box"></span>Publicação no Google Play (Android)</li>
+            <li class="phase-item"><span class="check-box"></span>Plano gratuito: 50 ideias/mês</li>
+            <li class="phase-item"><span class="check-box"></span>BBrain Pro: $4,99/mês ou $39,99/ano</li>
+            <li class="phase-item"><span class="check-box"></span>Integração de pagamento via Stripe</li>
+            <li class="phase-item"><span class="check-box"></span>BBrain para equipes ($12/usuário/mês)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Fase 4 -->
+      <div class="phase">
+        <div class="phase-dot upcoming"></div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div>
+              <div class="phase-title">Fase 4 — Escala</div>
+              <div class="phase-period">Q4 2026</div>
+            </div>
+            <span class="phase-badge badge-upcoming">Planejada</span>
+          </div>
+          <ul class="phase-items">
+            <li class="phase-item"><span class="check-box"></span>Integração com WhatsApp (bot de captura)</li>
+            <li class="phase-item"><span class="check-box"></span>IA avançada — análise de padrões de ideias</li>
+            <li class="phase-item"><span class="check-box"></span>Insights semanais gerados por IA</li>
+            <li class="phase-item"><span class="check-box"></span>Export em PDF (relatório de sessões + ideias)</li>
+            <li class="phase-item"><span class="check-box"></span>API pública para desenvolvedores</li>
+            <li class="phase-item"><span class="check-box"></span>Comunidade de fundadores BBrain</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+</body>
+</html>

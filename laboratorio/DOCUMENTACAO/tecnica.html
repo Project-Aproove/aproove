@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentação Técnica — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 88px 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 4vw, 36px);
+      color: var(--brain);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--ink2);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .section {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--paper3);
+    }
+    .section h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink2);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin: 24px 0 10px;
+    }
+    .section h3:first-child { margin-top: 0; }
+    p { font-size: 15px; color: var(--ink2); line-height: 1.7; margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .stack-item {
+      background: var(--paper2);
+      border: 1px solid var(--paper3);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .stack-item .si-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--ink3);
+      margin-bottom: 6px;
+    }
+    .stack-item .si-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .arch-diagram {
+      background: var(--brain);
+      color: #c8bfe8;
+      border-radius: 10px;
+      padding: 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .arch-diagram .arch-highlight { color: #e0d8ff; font-weight: bold; }
+    .arch-diagram .arch-arrow { color: #7a6aaa; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--paper2);
+      color: var(--ink2);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    th:first-child { border-radius: 8px 0 0 8px; }
+    th:last-child { border-radius: 0 8px 8px 0; }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--paper2);
+      color: var(--ink2);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    tr:last-child td { border-bottom: none; }
+    td code, p code {
+      background: var(--paper2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      color: var(--brain-mid);
+    }
+    .method {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    .method.get { background: #e8f5e9; color: #2a5f2a; }
+    .method.post { background: #ede7f6; color: #3a1f7a; }
+    .file-tree {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      color: var(--ink2);
+      background: var(--paper2);
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+    .file-tree .dir { color: var(--brain-mid); font-weight: 600; }
+    .file-tree .comment { color: var(--ink3); }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">Documentação Técnica</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>Documentação Técnica</h1>
+    <p class="subtitle">Stack, arquitetura, banco de dados e instruções de deploy do BBrain.</p>
+
+    <!-- Stack -->
+    <div class="section">
+      <h2>Stack Tecnológica</h2>
+      <div class="stack-grid">
+        <div class="stack-item">
+          <div class="si-label">Runtime</div>
+          <div class="si-value">Node.js nativo</div>
+        </div>
+        <div class="stack-item">
+          <div class="si-label">Framework</div>
+          <div class="si-value">Nenhum (http built-in)</div>
+        </div>
+        <div class="stack-item">
+          <div class="si-label">Hospedagem</div>
+          <div class="si-value">Fly.io — free tier (GRU)</div>
+        </div>
+        <div class="stack-item">
+          <div class="si-label">Banco de dados</div>
+          <div class="si-value">Google Sheets API v4</div>
+        </div>
+        <div class="stack-item">
+          <div class="si-label">Email</div>
+          <div class="si-value">Gmail SMTP TLS 465</div>
+        </div>
+        <div class="stack-item">
+          <div class="si-label">Frontend</div>
+          <div class="si-value">HTML + CSS + JS vanilla</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arquitetura -->
+    <div class="section">
+      <h2>Arquitetura</h2>
+      <p>O BBrain é uma aplicação monolítica simples. Não há frameworks, ORMs ou dependências externas além da googleapis.</p>
+      <div class="arch-diagram">
+        <span class="arch-highlight">Browser (cliente)</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="arch-arrow">↓ HTTP (JSON REST)</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;│<br>
+        <span class="arch-highlight">Fly.io — server.js</span> &nbsp;<span class="arch-arrow">← Node.js nativo, porta 3000</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="arch-arrow">→</span> <span class="arch-highlight">Google Sheets API v4</span> &nbsp;<span class="arch-arrow">← banco de dados</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└── <span class="arch-arrow">→</span> <span class="arch-highlight">Gmail SMTP (465/TLS)</span> &nbsp;<span class="arch-arrow">← emails de reset</span>
+      </div>
+    </div>
+
+    <!-- Autenticação -->
+    <div class="section">
+      <h2>Autenticação</h2>
+      <h3>Mecanismo</h3>
+      <p>A senha é armazenada como <strong>SHA-256 hash</strong> na variável de ambiente <code>BBRAIN_PASSWORD_HASH</code>. Nunca há texto puro em disco ou memória.</p>
+      <h3>Token de sessão</h3>
+      <p>Após login bem-sucedido, o servidor gera um token diário (SHA-256 do hash + data atual). O token é salvo no <code>localStorage</code> do browser e enviado no header <code>Authorization: Bearer &lt;token&gt;</code> em todas as requisições.</p>
+      <h3>Expiração</h3>
+      <p>O token expira automaticamente à meia-noite (baseado em data UTC). O usuário é redirecionado para a tela de login sem interrupção.</p>
+    </div>
+
+    <!-- Banco de dados -->
+    <div class="section">
+      <h2>Banco de Dados</h2>
+      <p>O Google Sheets funciona como banco relacional simples. A planilha possui duas abas:</p>
+      <h3>Aba: Ideas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Coluna</th><th>Tipo</th><th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>UUID gerado no servidor</td></tr>
+          <tr><td><code>text</code></td><td>string</td><td>Texto da ideia</td></tr>
+          <tr><td><code>source</code></td><td>string</td><td>Origem: session, manual, api</td></tr>
+          <tr><td><code>status</code></td><td>string</td><td>active, archived, roadmap</td></tr>
+          <tr><td><code>evaluation</code></td><td>string</td><td>Avaliação por IA (JSON)</td></tr>
+          <tr><td><code>created_at</code></td><td>ISO 8601</td><td>Data/hora de criação</td></tr>
+        </tbody>
+      </table>
+      <h3>Aba: Sessions</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Coluna</th><th>Tipo</th><th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>UUID gerado no servidor</td></tr>
+          <tr><td><code>location</code></td><td>string</td><td>Local da sessão</td></tr>
+          <tr><td><code>initial_thoughts</code></td><td>string</td><td>Pensamento inicial do check-in</td></tr>
+          <tr><td><code>started_at</code></td><td>ISO 8601</td><td>Início da sessão</td></tr>
+          <tr><td><code>ended_at</code></td><td>ISO 8601</td><td>Fim da sessão</td></tr>
+          <tr><td><code>duration_minutes</code></td><td>number</td><td>Duração calculada em minutos</td></tr>
+          <tr><td><code>social_content</code></td><td>string</td><td>Conteúdo gerado para redes sociais</td></tr>
+        </tbody>
+      </table>
+      <h3>Service Account</h3>
+      <p>Acesso à API via service account: <code>aproove-server@aproove.iam.gserviceaccount.com</code>. As credenciais JSON ficam na variável de ambiente <code>GOOGLE_CREDENTIALS_JSON</code>.</p>
+    </div>
+
+    <!-- Variáveis de ambiente -->
+    <div class="section">
+      <h2>Variáveis de Ambiente</h2>
+      <table>
+        <thead>
+          <tr><th>Variável</th><th>Obrigatória</th><th>Descrição</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>BBRAIN_PASSWORD_HASH</code></td><td>Sim</td><td>SHA-256 da senha do usuário (hex)</td></tr>
+          <tr><td><code>BBRAIN_USERNAME</code></td><td>Sim</td><td>Nome de usuário para login</td></tr>
+          <tr><td><code>GMAIL_FROM</code></td><td>Sim</td><td>Endereço Gmail remetente</td></tr>
+          <tr><td><code>GMAIL_APP_PASSWORD</code></td><td>Sim</td><td>App Password do Gmail (16 chars)</td></tr>
+          <tr><td><code>GOOGLE_CREDENTIALS_JSON</code></td><td>Sim</td><td>JSON da service account (minificado)</td></tr>
+          <tr><td><code>PORT</code></td><td>Não</td><td>Porta do servidor (padrão: 3000)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Endpoints -->
+    <div class="section">
+      <h2>Endpoints da API</h2>
+      <table>
+        <thead>
+          <tr><th>Método</th><th>Endpoint</th><th>Auth</th><th>Descrição</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/ideas</code></td>
+            <td>Sim</td>
+            <td>Lista todas as ideias</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/ideas</code></td>
+            <td>Sim</td>
+            <td>Cria nova ideia</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/sessions</code></td>
+            <td>Sim</td>
+            <td>Lista todas as sessões</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/sessions</code></td>
+            <td>Sim</td>
+            <td>Cria nova sessão (check-in)</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/auth/status</code></td>
+            <td>Sim</td>
+            <td>Verifica token ativo</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/auth/login</code></td>
+            <td>Não</td>
+            <td>Autenticação com usuário e senha</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/auth/setup</code></td>
+            <td>Não</td>
+            <td>Configuração inicial (primeiro acesso)</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/auth/reset-request</code></td>
+            <td>Não</td>
+            <td>Solicita reset de senha por email</td>
+          </tr>
+          <tr>
+            <td><span class="method post">POST</span></td>
+            <td><code>/api/auth/reset</code></td>
+            <td>Não</td>
+            <td>Confirma reset com token por email</td>
+          </tr>
+          <tr>
+            <td><span class="method get">GET</span></td>
+            <td><code>/api/version</code></td>
+            <td>Não</td>
+            <td>Versão atual — healthcheck</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Deploy -->
+    <div class="section">
+      <h2>Deploy</h2>
+      <h3>Requisitos</h3>
+      <p>Fly.io CLI instalado (<code>flyctl</code>), autenticado com a conta Aproove. O arquivo <code>fly.toml</code> deve estar na raiz do projeto.</p>
+      <h3>Comando</h3>
+      <div class="arch-diagram" style="font-size:14px; padding:16px 20px; line-height:1.6;">
+        fly deploy
+      </div>
+      <h3>Fluxo</h3>
+      <p>O Fly.io detecta automaticamente Node.js via Dockerfile ou buildpack. A aplicação é implantada na região GRU (São Paulo) no free tier, com uma máquina compartilhada de 256MB RAM.</p>
+    </div>
+
+    <!-- Estrutura -->
+    <div class="section">
+      <h2>Estrutura de Arquivos</h2>
+      <div class="file-tree">
+        <span class="dir">projeto/</span><br>
+        ├── server.js &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← servidor principal</span><br>
+        ├── fly.toml &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← config do Fly.io</span><br>
+        ├── Dockerfile &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← imagem Docker</span><br>
+        ├── package.json<br>
+        ├── <span class="dir">laboratorio/</span><br>
+        │&nbsp;&nbsp;&nbsp;├── index.html &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← BBrain app (frontend)</span><br>
+        │&nbsp;&nbsp;&nbsp;├── bbrain-conceito.html<br>
+        │&nbsp;&nbsp;&nbsp;└── <span class="dir">DOCUMENTACAO/</span><br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── index.html &nbsp;&nbsp;<span class="comment">← hub de docs</span><br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── tecnica.html<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── roadmap.html<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── conceito.html<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── investidores.html<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── guia-uso.html<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── api.html<br>
+        │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── publicar-app.html
+      </div>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+</body>
+</html>

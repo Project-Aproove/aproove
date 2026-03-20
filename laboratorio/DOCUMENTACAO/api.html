@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference — BBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #111110;
+      --ink2: #4a4a47;
+      --ink3: #9a9a96;
+      --paper: #f7f5ef;
+      --paper2: #efede6;
+      --paper3: #e4e1d8;
+      --brain: #1a0a3a;
+      --brain-mid: #3a1f7a;
+      --green: #2a5f2a;
+      --amber: #7a4a0a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(247,245,239,.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(17,17,16,.08);
+      z-index: 100;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      text-decoration: none;
+    }
+    .page-label {
+      font-size: 13px;
+      color: var(--ink3);
+      padding-left: 12px;
+      border-left: 1px solid var(--paper3);
+    }
+    .back-link {
+      font-size: 13px;
+      color: var(--ink2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .back-link:hover { color: var(--brain-mid); }
+    main {
+      flex: 1;
+      padding: 88px 24px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 4vw, 36px);
+      color: var(--brain);
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--ink2);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .section {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--brain);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--paper3);
+    }
+    p {
+      font-size: 15px;
+      color: var(--ink2);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    p:last-child { margin-bottom: 0; }
+    .endpoint {
+      background: #fff;
+      border: 1px solid rgba(17,17,16,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(17,17,16,.06);
+      background: var(--paper2);
+    }
+    .method {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-family: monospace;
+      flex-shrink: 0;
+    }
+    .method.get { background: #e8f5e9; color: var(--green); }
+    .method.post { background: #ede7f6; color: var(--brain-mid); }
+    .endpoint-path {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .endpoint-desc {
+      font-size: 13px;
+      color: var(--ink3);
+      margin-left: auto;
+    }
+    .endpoint-body {
+      padding: 20px;
+    }
+    .endpoint-body p {
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    pre {
+      background: var(--brain);
+      color: #c8bfe8;
+      border-radius: 10px;
+      padding: 18px 20px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    pre .key { color: #9b9bde; }
+    pre .str { color: #86ddb4; }
+    pre .comment { color: #6a6a8a; }
+    pre .url { color: #e8c56a; }
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--paper3);
+      background: var(--paper2);
+      color: var(--ink2);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--brain);
+      color: #fff;
+      border-color: var(--brain);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .auth-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fff8e1;
+      border: 1px solid rgba(122,74,10,.15);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--amber);
+      margin-bottom: 20px;
+    }
+    code {
+      background: var(--paper2);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      color: var(--brain-mid);
+    }
+    .rate-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .rate-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--paper2);
+      color: var(--ink2);
+    }
+    .rate-table tr:last-child td { border-bottom: none; }
+    .rate-table td:first-child { font-weight: 600; color: var(--ink); width: 140px; }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--ink3);
+      border-top: 1px solid rgba(17,17,16,.06);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="index.html" class="logo">BBrain</a>
+        <span class="page-label">API Reference</span>
+      </div>
+      <a href="index.html" class="back-link">← Voltar</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>API Reference</h1>
+    <p class="subtitle">Documentação completa da API REST do BBrain — para integrações com WhatsApp, Make, Zapier e automações personalizadas.</p>
+
+    <!-- Autenticação -->
+    <div class="section">
+      <h2>Autenticação</h2>
+      <p>O BBrain usa autenticação via Bearer Token. Primeiro faça login para obter o token, depois envie-o em todas as requisições protegidas.</p>
+
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/api/auth/login</span>
+          <span class="endpoint-desc">Obter token</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Corpo da requisição:</p>
+          <pre>{
+  <span class="key">"username"</span>: <span class="str">"seu_usuario"</span>,
+  <span class="key">"password"</span>: <span class="str">"sua_senha"</span>
+}</pre>
+          <p>Resposta de sucesso (<code>200</code>):</p>
+          <pre>{
+  <span class="key">"token"</span>: <span class="str">"a3f8b2c1d4e5..."</span>,
+  <span class="key">"username"</span>: <span class="str">"seu_usuario"</span>
+}</pre>
+        </div>
+      </div>
+
+      <div class="auth-notice">
+        <span>🔑</span>
+        <span>Todos os endpoints protegidos exigem o header: <code>Authorization: Bearer &lt;token&gt;</code>. O token expira à meia-noite (UTC).</span>
+      </div>
+    </div>
+
+    <!-- Endpoints -->
+    <div class="section">
+      <h2>Endpoints</h2>
+
+      <!-- GET ideas -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/api/ideas</span>
+          <span class="endpoint-desc">Listar ideias</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Retorna todas as ideias do usuário, ordenadas por data de criação (mais recentes primeiro).</p>
+          <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(this, 'get-ideas')">curl</button>
+            <button class="tab-btn" onclick="switchTab(this, 'get-ideas-js')">JavaScript</button>
+            <button class="tab-btn" onclick="switchTab(this, 'get-ideas-py')">Python</button>
+          </div>
+          <div id="get-ideas" class="tab-content active">
+            <pre>curl -X GET <span class="url">https://seu-bbrain.fly.dev/api/ideas</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span></pre>
+          </div>
+          <div id="get-ideas-js" class="tab-content">
+            <pre>const res = await fetch(<span class="str">'/api/ideas'</span>, {
+  headers: { <span class="key">'Authorization'</span>: <span class="str">`Bearer ${token}`</span> }
+});
+const ideas = await res.json();</pre>
+          </div>
+          <div id="get-ideas-py" class="tab-content">
+            <pre>import requests
+
+res = requests.get(
+  <span class="str">'https://seu-bbrain.fly.dev/api/ideas'</span>,
+  headers={<span class="str">'Authorization'</span>: f<span class="str">'Bearer {token}'</span>}
+)
+ideas = res.json()</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- POST ideas -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/api/ideas</span>
+          <span class="endpoint-desc">Criar ideia</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Corpo da requisição:</p>
+          <pre>{
+  <span class="key">"text"</span>: <span class="str">"Adicionar integração com WhatsApp"</span>,
+  <span class="key">"source"</span>: <span class="str">"api"</span>
+}</pre>
+          <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(this, 'post-ideas')">curl</button>
+            <button class="tab-btn" onclick="switchTab(this, 'post-ideas-js')">JavaScript</button>
+            <button class="tab-btn" onclick="switchTab(this, 'post-ideas-py')">Python</button>
+          </div>
+          <div id="post-ideas" class="tab-content active">
+            <pre>curl -X POST <span class="url">https://seu-bbrain.fly.dev/api/ideas</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"text":"Minha ideia","source":"api"}'</span></pre>
+          </div>
+          <div id="post-ideas-js" class="tab-content">
+            <pre>const res = await fetch(<span class="str">'/api/ideas'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: {
+    <span class="key">'Authorization'</span>: <span class="str">`Bearer ${token}`</span>,
+    <span class="key">'Content-Type'</span>: <span class="str">'application/json'</span>
+  },
+  body: JSON.stringify({
+    <span class="key">text</span>: <span class="str">'Minha ideia'</span>,
+    <span class="key">source</span>: <span class="str">'api'</span>
+  })
+});</pre>
+          </div>
+          <div id="post-ideas-py" class="tab-content">
+            <pre>res = requests.post(
+  <span class="str">'https://seu-bbrain.fly.dev/api/ideas'</span>,
+  headers={<span class="str">'Authorization'</span>: f<span class="str">'Bearer {token}'</span>},
+  json={<span class="str">'text'</span>: <span class="str">'Minha ideia'</span>, <span class="str">'source'</span>: <span class="str">'api'</span>}
+)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- GET sessions -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/api/sessions</span>
+          <span class="endpoint-desc">Listar sessões</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Retorna todas as sessões de trabalho registradas, ordenadas por data.</p>
+          <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(this, 'get-sessions')">curl</button>
+          </div>
+          <div id="get-sessions" class="tab-content active">
+            <pre>curl -X GET <span class="url">https://seu-bbrain.fly.dev/api/sessions</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- POST sessions -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/api/sessions</span>
+          <span class="endpoint-desc">Criar sessão</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Corpo da requisição:</p>
+          <pre>{
+  <span class="key">"location"</span>: <span class="str">"Casa"</span>,
+  <span class="key">"initial_thoughts"</span>: <span class="str">"Hoje vou focar no onboarding"</span>
+}</pre>
+          <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(this, 'post-sessions')">curl</button>
+          </div>
+          <div id="post-sessions" class="tab-content active">
+            <pre>curl -X POST <span class="url">https://seu-bbrain.fly.dev/api/sessions</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"location":"Casa","initial_thoughts":"Foco no produto"}'</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- GET version -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/api/version</span>
+          <span class="endpoint-desc">Healthcheck</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Sem autenticação necessária. Use para verificar se o servidor está rodando.</p>
+          <pre>curl <span class="url">https://seu-bbrain.fly.dev/api/version</span>
+
+<span class="comment"># Resposta</span>
+{ <span class="key">"version"</span>: <span class="str">"1.0.0"</span>, <span class="key">"status"</span>: <span class="str">"ok"</span> }</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rate limits -->
+    <div class="section">
+      <h2>Rate limits</h2>
+      <table class="rate-table">
+        <tr>
+          <td>Limite atual</td>
+          <td>Sem limite definido (uso pessoal)</td>
+        </tr>
+        <tr>
+          <td>Limite futuro</td>
+          <td>60 requisições/minuto para planos pagos</td>
+        </tr>
+        <tr>
+          <td>Header de resposta</td>
+          <td><code>X-RateLimit-Remaining</code> (implementado futuramente)</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Casos de uso -->
+    <div class="section">
+      <h2>Integrações sugeridas</h2>
+      <p>A API foi projetada para uso pessoal e automações. Casos de uso comuns:</p>
+      <pre><span class="comment"># WhatsApp Bot (via Make/Zapier)</span>
+<span class="comment"># Mensagem no WhatsApp → POST /api/ideas</span>
+
+<span class="comment"># Atalho iOS Shortcuts</span>
+<span class="comment"># Siri + atalho → captura por voz → POST /api/ideas</span>
+
+<span class="comment"># Make / Zapier</span>
+<span class="comment"># Formulário → nova ideia no BBrain → notificação</span>
+
+<span class="comment"># Script diário</span>
+<span class="comment"># GET /api/sessions → relatório semanal em PDF</span></pre>
+    </div>
+  </main>
+
+  <footer>BBrain — Documentação · Aproove · 2026</footer>
+
+  <script>
+    function switchTab(btn, targetId) {
+      const endpoint = btn.closest('.endpoint-body');
+      endpoint.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      endpoint.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(targetId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
