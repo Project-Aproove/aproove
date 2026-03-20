@@ -803,11 +803,20 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── Servir arquivos estáticos ──────────────────────────────────────────────
-  // bbrainapp.you → redireciona para o BBrain diretamente
+  // Roteamento por domínio
   const host = req.headers.host || '';
   if (host.includes('bbrainapp.you') && pathname === '/') {
     res.writeHead(302, { Location: '/laboratorio' });
     return res.end();
+  }
+  // aproove.io → landing page do Aproove (producao/)
+  if (host.includes('aproove.io') && (pathname === '/' || pathname === '')) {
+    const f = path.join(PROD_DIR, 'index.html');
+    try {
+      const content = fs.readFileSync(f);
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      return res.end(content);
+    } catch { /* fallback abaixo */ }
   }
 
   let filePath;
