@@ -47,12 +47,12 @@ const LEGACY_USERS = {
   'karina': {
     email: 'klisboacerqueira@gmail.com',
     name: 'Karina Lisboa Cerqueira Massa',
-    firstLoginMessage: 'Tudo sempre foi por vocês, eu te amo até para além dos meus dias. Lembre-se disso'
+    firstLoginMessage: 'Tudo sempre foi por vocês, eu te amo até para além dos meus dias. Lembre-se disso\n\n— 7 Letras'
   },
   'cecilia': {
     email: null, // a confirmar — Bruno informará em 20/03/2026
     name: 'Cecília Lisboa Massa',
-    firstLoginMessage: 'Tudo sempre foi por vocês, eu te amo até para além dos meus dias. Lembre-se disso'
+    firstLoginMessage: 'Tudo sempre foi por vocês, eu te amo até para além dos meus dias. Lembre-se disso\n\n— 7 Letras'
   }
 };
 
