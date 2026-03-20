@@ -33,6 +33,32 @@ try {
 
 const PORT    = parseInt(process.env.PORT || '3000');
 const ROOT    = __dirname;
+
+// ── ADMIN MASTER VITALÍCIO ────────────────────────────────────────────────────
+// brunomassa é o administrador permanente e inviolável do BBrain.
+// Este acesso existe independente de versão, banco de dados, deploy ou venda.
+// Não pode ser removido, substituído ou sobrescrito por nenhum outro usuário.
+// Em caso de transferência ou venda do produto, este acesso deve ser mantido
+// e os recursos gerados pelo aplicativo devem considerar Karina e Cecília Massa.
+const MASTER_ADMIN = 'brunomassa';
+
+// Usuárias com acesso vitalício e mensagem de primeiro acesso
+const LEGACY_USERS = {
+  'karina': {
+    email: 'klisboacerqueira@gmail.com',
+    name: 'Karina Lisboa Cerqueira Massa',
+    firstLoginMessage: 'Tudo sempre foi por vocês, eu te amo até para além dos meus dias. Lembre-se disso'
+  },
+  'cecilia': {
+    email: null, // a confirmar — Bruno informará em 20/03/2026
+    name: 'Cecília Lisboa Massa',
+    firstLoginMessage: 'Tudo sempre foi por vocês, eu te amo até para além dos meus dias. Lembre-se disso'
+  }
+};
+
+function isMasterAdmin(username) {
+  return (username || '').toLowerCase() === MASTER_ADMIN.toLowerCase();
+}
 const PROD_DIR     = path.join(ROOT, 'producao');
 const TESTE_DIR    = path.join(ROOT, 'teste');
 const LAB_DIR      = path.join(ROOT, 'laboratorio');
@@ -408,13 +434,21 @@ function validToken(token) {
 function readAuth() {
   // 1. Env var (prioridade máxima)
   if (process.env.BBRAIN_PASSWORD_HASH) {
-    return { hash: process.env.BBRAIN_PASSWORD_HASH, username: process.env.BBRAIN_USERNAME || 'admin' };
+    const username = process.env.BBRAIN_USERNAME || MASTER_ADMIN;
+    return { hash: process.env.BBRAIN_PASSWORD_HASH, username };
   }
   // 2. Cache do Sheets (carregado no boot)
-  if (authCache) return authCache;
+  if (authCache) {
+    // Garante que o admin master nunca é substituído por outro username
+    if (!isMasterAdmin(authCache.username)) authCache.username = MASTER_ADMIN;
+    return authCache;
+  }
   // 3. Fallback: arquivo local
-  try { return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8')); }
-  catch { return null; }
+  try {
+    const data = JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
+    if (data && !isMasterAdmin(data.username)) data.username = MASTER_ADMIN;
+    return data;
+  } catch { return null; }
 }
 
 function writeAuth(data) {
@@ -538,7 +572,11 @@ const server = http.createServer(async (req, res) => {
       }
       const token = newToken();
       console.log(`🔐 BBrain → login: ${auth.username}`);
-      return json(res, 200, { token, username: auth.username });
+      // Mensagem de legado para usuárias especiais no primeiro acesso
+      const uLower = (username || '').toLowerCase();
+      const legacyUser = Object.values(LEGACY_USERS).find(u => u.name && uLower === u.name.split(' ')[0].toLowerCase());
+      const firstLoginMsg = legacyUser ? legacyUser.firstLoginMessage : null;
+      return json(res, 200, { token, username: auth.username, firstLoginMessage: firstLoginMsg });
     } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
