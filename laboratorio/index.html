@@ -961,9 +961,7 @@ async function checkAuth() {
     if (d.authenticated) { overlay.classList.add('hidden'); return true; }
     overlay.classList.remove('hidden');
     // Sempre mostra login primeiro — setup aparece só como link se necessário
-    const savedUser = localStorage.getItem('bbrain_username') || '';
     const loginUser = document.getElementById('login-user');
-    if (loginUser && savedUser) loginUser.value = savedUser;
     // Mostra/esconde link de "Criar conta" conforme setup_required
     const createLink = document.getElementById('login-create-link');
     if (createLink) createLink.style.display = d.setup_required ? 'inline-block' : 'none';
