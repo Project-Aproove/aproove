@@ -187,11 +187,20 @@ let _gcreds = null, _gtoken = null, _gtokenExp = 0;
 function loadGCreds() {
   if (_gcreds) return _gcreds;
   try {
-    if (process.env.GOOGLE_CREDENTIALS_JSON)
-      return (_gcreds = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON));
+    if (process.env.GOOGLE_CREDENTIALS_JSON) {
+      _gcreds = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
+      console.log('✓ Google Credentials: carregado da variável de ambiente');
+      return _gcreds;
+    }
     const p = path.join(__dirname, 'google-credentials.json');
-    if (fs.existsSync(p)) return (_gcreds = JSON.parse(fs.readFileSync(p, 'utf8')));
-  } catch {}
+    if (fs.existsSync(p)) {
+      _gcreds = JSON.parse(fs.readFileSync(p, 'utf8'));
+      console.log('✓ Google Credentials: carregado do arquivo local');
+      return _gcreds;
+    }
+  } catch (e) {
+    console.error('❌ loadGCreds erro:', e.message.slice(0, 120));
+  }
   return null;
 }
 
