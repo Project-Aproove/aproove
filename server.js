@@ -773,6 +773,17 @@ const server = http.createServer(async (req, res) => {
     } catch (e) { return json(res, 400, { error: e.message }); }
   }
 
+  // ── POST /api/admin/send-prompt-email ── (sem auth — chamada da página de docs)
+  if (pathname === '/api/admin/send-prompt-email' && method === 'POST') {
+    const promptUrl = `${APP_BASE_URL}/laboratorio/DOCUMENTACAO/publicar-app.html#ai-prompt`;
+    const subject   = 'BBrain — Prompt técnico completo para React Native (AI Studio)';
+    const body      = `Olá Bruno,\n\nAqui está o prompt técnico completo para gerar o app BBrain no Google AI Studio.\n\nAcesse o documento com o prompt completo:\n${promptUrl}\n\nNo documento, clique em "Copiar" para copiar o prompt inteiro e cole diretamente em:\nhttps://aistudio.google.com/apps\n\n---\nBBrain · Aproove · Selo7`;
+    const sent = await sendEmail(MASTER_ADMIN_EMAIL, subject, body);
+    console.log(`📧 Prompt email ${sent ? 'enviado' : 'Gmail não configurado'} → ${MASTER_ADMIN_EMAIL}`);
+    return json(res, 200, { success: true, sent, to: MASTER_ADMIN_EMAIL,
+      note: sent ? 'Email enviado' : 'Gmail não configurado — defina GMAIL_FROM e GMAIL_APP_PASSWORD' });
+  }
+
   // ── POST /api/stripe/webhook ── (sem auth — chamada direta do Stripe)
   if (pathname === '/api/stripe/webhook' && method === 'POST') {
     try {
@@ -861,18 +872,6 @@ const server = http.createServer(async (req, res) => {
         { id: 'power', name: 'BBrain Power', price_brl: 2990,  price_usd: 599,  features: ['Tudo do Pro','Lembrete diário','Acesso antecipado a novos recursos','Suporte prioritário'] },
       ]
     });
-  }
-
-  // ── POST /api/admin/send-prompt-email ──
-  if (pathname === '/api/admin/send-prompt-email' && method === 'POST') {
-    const auth = readAuth();
-    if (!isMasterAdmin(auth?.username)) return json(res, 403, { error: 'Acesso negado' });
-    const promptUrl = `${APP_BASE_URL}/laboratorio/DOCUMENTACAO/publicar-app.html#ai-prompt`;
-    const subject   = 'BBrain — Prompt técnico completo para React Native (AI Studio)';
-    const body      = `Prompt técnico completo para geração do app BBrain no AI Studio.\n\nAcesse:\n${promptUrl}\n\nOu copie diretamente do documento publicar-app.html na seção "Gerar App com IA".\n\n---\nBBrain · Aproove · Selo7`;
-    const sent = await sendEmail(MASTER_ADMIN_EMAIL, subject, body);
-    console.log(`📧 Prompt email ${sent ? 'enviado' : 'offline'} → ${MASTER_ADMIN_EMAIL}`);
-    return json(res, 200, { success: true, sent, to: MASTER_ADMIN_EMAIL });
   }
 
   // ── POST /api/deploy ──

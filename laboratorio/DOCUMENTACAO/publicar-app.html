@@ -1664,8 +1664,12 @@ Seja objetivo, direto, com foco nos benefícios para fundadores brasileiros. Use
       try {
         const res = await fetch('/api/admin/send-prompt-email', { method: 'POST' });
         const data = await res.json();
-        if (res.ok) {
+        if (res.ok && data.sent) {
           btn.textContent = '✓ Enviado!';
+          setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
+        } else if (res.ok && !data.sent) {
+          btn.textContent = 'Gmail não configurado';
+          alert('Para enviar o email, configure as variáveis no Fly.io:\n\nflyctl secrets set GMAIL_FROM=seu@gmail.com GMAIL_APP_PASSWORD=xxxx');
           setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3000);
         } else {
           btn.textContent = 'Erro: ' + (data.error || res.status);
