@@ -251,14 +251,19 @@
           </div>
           <ul class="phase-items">
             <li class="phase-item"><span class="check-box checked"></span>Autenticação segura (SHA-256 + token diário)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Auth persistente entre deploys via aba Config do Sheets</li>
+            <li class="phase-item"><span class="check-box checked"></span>Admin master vitalício (MASTER_ADMIN hardcoded)</li>
             <li class="phase-item"><span class="check-box checked"></span>Captura e gerenciamento de ideias</li>
-            <li class="phase-item"><span class="check-box checked"></span>Check-in e checkout de sessões de trabalho</li>
-            <li class="phase-item"><span class="check-box checked"></span>Banco de dados Google Sheets (zero custo)</li>
-            <li class="phase-item"><span class="check-box checked"></span>Deploy no Fly.io free tier (região GRU)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Check-in inline (formulário aparece na página, sem popup)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Checkout de sessões de trabalho</li>
+            <li class="phase-item"><span class="check-box checked"></span>Banco de dados Google Sheets com 3 abas (Ideas, Sessions, Config)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Deploy no Fly.io free tier (região GRU — não dorme)</li>
             <li class="phase-item"><span class="check-box checked"></span>Reset de senha por email (Gmail SMTP)</li>
-            <li class="phase-item"><span class="check-box checked"></span>Interface multilingual (PT/EN/FR/ES)</li>
+            <li class="phase-item"><span class="check-box checked"></span>Interface multilingual (PT/EN/FR/ES/DE — 5 idiomas)</li>
             <li class="phase-item"><span class="check-box checked"></span>Vínculo visual ideia ↔ sessão</li>
             <li class="phase-item"><span class="check-box checked"></span>Geração de conteúdo para redes sociais via IA</li>
+            <li class="phase-item"><span class="check-box checked"></span>Logout com username exibido no header</li>
+            <li class="phase-item"><span class="check-box checked"></span>Aba App com prompt Stitch (visível só para logados)</li>
           </ul>
         </div>
       </div>
@@ -269,18 +274,19 @@
         <div class="phase-card active">
           <div class="phase-header">
             <div>
-              <div class="phase-title">Fase 2 — App Mobile</div>
+              <div class="phase-title">Fase 2 — Síntese e Distribuição</div>
               <div class="phase-period">Q2 2026</div>
             </div>
             <span class="phase-badge badge-active">Em andamento</span>
           </div>
           <ul class="phase-items">
-            <li class="phase-item"><span class="check-box half"></span>Definição do framework: React Native ou Flutter</li>
-            <li class="phase-item"><span class="check-box"></span>App nativo para iOS + Android</li>
+            <li class="phase-item"><span class="check-box half"></span>Síntese periódica com IA (Gemini free) — concatena ideias + sessões do período</li>
+            <li class="phase-item"><span class="check-box"></span>Digest enviado por WhatsApp (Meta Business API — 1.000/mês grátis) e email</li>
+            <li class="phase-item"><span class="check-box"></span>Configurações do usuário: período de síntese, tom de voz, WhatsApp</li>
+            <li class="phase-item"><span class="check-box"></span>OAuth com Google e GitHub (substituir username/senha)</li>
+            <li class="phase-item"><span class="check-box"></span>App mobile via Google Stitch (iOS + Android)</li>
             <li class="phase-item"><span class="check-box"></span>Push notifications para check-in diário</li>
-            <li class="phase-item"><span class="check-box"></span>Captura de ideia por voz (Speech-to-Text)</li>
             <li class="phase-item"><span class="check-box"></span>Widget de captura rápida na tela inicial</li>
-            <li class="phase-item"><span class="check-box"></span>Sincronização offline com sync ao conectar</li>
           </ul>
         </div>
       </div>
@@ -299,10 +305,11 @@
           <ul class="phase-items">
             <li class="phase-item"><span class="check-box"></span>Publicação na App Store (iOS)</li>
             <li class="phase-item"><span class="check-box"></span>Publicação no Google Play (Android)</li>
-            <li class="phase-item"><span class="check-box"></span>Plano gratuito: 50 ideias/mês</li>
-            <li class="phase-item"><span class="check-box"></span>BBrain Pro: $4,99/mês ou $39,99/ano</li>
+            <li class="phase-item"><span class="check-box"></span>Free: síntese manual, ideias ilimitadas, sem WhatsApp</li>
+            <li class="phase-item"><span class="check-box"></span>BBrain Pro: $4,99/mês — síntese automática + WhatsApp digest</li>
+            <li class="phase-item"><span class="check-box"></span>BBrain Teams: $12/usuário/mês — ideias compartilhadas + dashboard</li>
             <li class="phase-item"><span class="check-box"></span>Integração de pagamento via Stripe</li>
-            <li class="phase-item"><span class="check-box"></span>BBrain para equipes ($12/usuário/mês)</li>
+            <li class="phase-item"><span class="check-box"></span>Domínio bbrain.app (~R$80/ano no Porkbun)</li>
           </ul>
         </div>
       </div>

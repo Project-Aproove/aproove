@@ -258,8 +258,8 @@
         <li><a href="#gerenciar">Gerenciar ideias</a></li>
         <li><a href="#encerrar">Encerrar sessão</a></li>
         <li><a href="#diario">Diário de sessões</a></li>
-        <li><a href="#idiomas">Idiomas</a></li>
-        <li><a href="#seguranca">Segurança</a></li>
+        <li><a href="#idiomas">Idiomas (5)</a></li>
+        <li><a href="#seguranca">Segurança e logout</a></li>
         <li><a href="#aba-app">Aba App</a></li>
       </ul>
     </div>
@@ -309,7 +309,7 @@
           <div class="step-num">1</div>
           <div class="step-content">
             <div class="sc-title">Clique em "Nova sessão"</div>
-            <div class="sc-desc">No topo da tela ou na aba Sessões. Isso abre o modal de check-in.</div>
+            <div class="sc-desc">No topo da tela ou na aba Sessões. O formulário de check-in aparece diretamente na página — sem popup nem modal.</div>
           </div>
         </div>
         <div class="step">
@@ -454,7 +454,7 @@
     <!-- Idiomas -->
     <div class="guide-section" id="idiomas">
       <h2><span class="s-icon">🌍</span> Idiomas</h2>
-      <p>O BBrain está disponível em 4 idiomas. Você pode trocar a qualquer momento pelo menu de configurações no canto superior direito.</p>
+      <p>O BBrain está disponível em 5 idiomas. Você pode trocar a qualquer momento pelo seletor de idioma no topo da interface (botões de bandeira).</p>
       <div class="lang-grid">
         <div class="lang-card">
           <div class="lang-flag">🇧🇷</div>
@@ -476,15 +476,21 @@
           <div class="lang-name">Español</div>
           <div class="lang-code">es-ES</div>
         </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇩🇪</div>
+          <div class="lang-name">Deutsch</div>
+          <div class="lang-code">de-DE</div>
+        </div>
       </div>
     </div>
 
     <!-- Segurança -->
     <div class="guide-section" id="seguranca">
-      <h2><span class="s-icon">🔒</span> Segurança</h2>
+      <h2><span class="s-icon">🔒</span> Segurança e logout</h2>
+      <p><strong>Logout:</strong> O botão de logout fica no header, ao lado do seu nome de usuário. Clique para encerrar a sessão imediatamente em qualquer dispositivo.</p>
       <p><strong>Login diário:</strong> O token de sessão expira à meia-noite. Isso é intencional — garante que a sessão não fique aberta indefinidamente em dispositivos não autorizados.</p>
       <p><strong>Esqueci minha senha:</strong> Na tela de login, clique em "Esqueci minha senha". Um email com um link de reset será enviado para o endereço cadastrado. O link expira em 1 hora.</p>
-      <p><strong>Sua senha:</strong> A senha nunca é armazenada em texto puro. O servidor guarda apenas o hash SHA-256 em uma variável de ambiente — nem mesmo o banco de dados tem acesso.</p>
+      <p><strong>Sua senha:</strong> A senha nunca é armazenada em texto puro. O servidor guarda apenas o hash SHA-256 — na aba Config do Google Sheets ou em variável de ambiente. Nem mesmo o banco de dados tem acesso ao texto original.</p>
     </div>
 
     <!-- Aba App -->
