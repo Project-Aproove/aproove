@@ -553,7 +553,7 @@ const server = http.createServer(async (req, res) => {
       const uname = username.trim();
       sendEmail(process.env.GMAIL_FROM || '',
         'Bem-vindo ao BBrain',
-        `Ola ${uname},\n\nSeu acesso ao BBrain foi criado.\n\nLogin: ${uname}\nURL: https://bbrain-aproove.onrender.com/laboratorio\n\nComo funciona:\n- Faca check-in no inicio de cada sessao de trabalho\n- Registre ideias e insights pelo app ou via WhatsApp\n- Acompanhe seu historico de sessoes e roadmap de ideias\n- Login e exigido uma vez por dia\n\nAtt,\nAproove\naproove.io@gmail.com`
+        `Ola ${uname},\n\nSeu acesso ao BBrain foi criado.\n\nLogin: ${uname}\nURL: https://bbrainapp.you/laboratorio\n\nComo funciona:\n- Faca check-in no inicio de cada sessao de trabalho\n- Registre ideias e insights pelo app ou via WhatsApp\n- Acompanhe seu historico de sessoes e roadmap de ideias\n- Login e exigido uma vez por dia\n\nAtt,\nAproove\naproove.io@gmail.com`
       );
       return json(res, 200, { token, username: uname });
     } catch (e) { return json(res, 400, { error: e.message }); }

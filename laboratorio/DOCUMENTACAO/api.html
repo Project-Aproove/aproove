@@ -301,7 +301,7 @@
             <button class="tab-btn" onclick="switchTab(this, 'get-ideas-py')">Python</button>
           </div>
           <div id="get-ideas" class="tab-content active">
-            <pre>curl -X GET <span class="url">https://bbrain-aproove.fly.dev/api/ideas</span> \
+            <pre>curl -X GET <span class="url">https://bbrainapp.you/api/ideas</span> \
   -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span></pre>
           </div>
           <div id="get-ideas-js" class="tab-content">
@@ -314,7 +314,7 @@ const ideas = await res.json();</pre>
             <pre>import requests
 
 res = requests.get(
-  <span class="str">'https://bbrain-aproove.fly.dev/api/ideas'</span>,
+  <span class="str">'https://bbrainapp.you/api/ideas'</span>,
   headers={<span class="str">'Authorization'</span>: f<span class="str">'Bearer {token}'</span>}
 )
 ideas = res.json()</pre>
@@ -341,7 +341,7 @@ ideas = res.json()</pre>
             <button class="tab-btn" onclick="switchTab(this, 'post-ideas-py')">Python</button>
           </div>
           <div id="post-ideas" class="tab-content active">
-            <pre>curl -X POST <span class="url">https://bbrain-aproove.fly.dev/api/ideas</span> \
+            <pre>curl -X POST <span class="url">https://bbrainapp.you/api/ideas</span> \
   -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
   -H <span class="str">"Content-Type: application/json"</span> \
   -d <span class="str">'{"text":"Minha ideia","source":"api"}'</span></pre>
@@ -361,7 +361,7 @@ ideas = res.json()</pre>
           </div>
           <div id="post-ideas-py" class="tab-content">
             <pre>res = requests.post(
-  <span class="str">'https://bbrain-aproove.fly.dev/api/ideas'</span>,
+  <span class="str">'https://bbrainapp.you/api/ideas'</span>,
   headers={<span class="str">'Authorization'</span>: f<span class="str">'Bearer {token}'</span>},
   json={<span class="str">'text'</span>: <span class="str">'Minha ideia'</span>, <span class="str">'source'</span>: <span class="str">'api'</span>}
 )</pre>
@@ -382,7 +382,7 @@ ideas = res.json()</pre>
             <button class="tab-btn active" onclick="switchTab(this, 'get-sessions')">curl</button>
           </div>
           <div id="get-sessions" class="tab-content active">
-            <pre>curl -X GET <span class="url">https://bbrain-aproove.fly.dev/api/sessions</span> \
+            <pre>curl -X GET <span class="url">https://bbrainapp.you/api/sessions</span> \
   -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span></pre>
           </div>
         </div>
@@ -405,7 +405,7 @@ ideas = res.json()</pre>
             <button class="tab-btn active" onclick="switchTab(this, 'post-sessions')">curl</button>
           </div>
           <div id="post-sessions" class="tab-content active">
-            <pre>curl -X POST <span class="url">https://bbrain-aproove.fly.dev/api/sessions</span> \
+            <pre>curl -X POST <span class="url">https://bbrainapp.you/api/sessions</span> \
   -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
   -H <span class="str">"Content-Type: application/json"</span> \
   -d <span class="str">'{"location":"Casa","initial_thoughts":"Foco no produto"}'</span></pre>
@@ -422,7 +422,7 @@ ideas = res.json()</pre>
         </div>
         <div class="endpoint-body">
           <p>Sem autenticação necessária. Use para verificar se o servidor está rodando.</p>
-          <pre>curl <span class="url">https://bbrain-aproove.fly.dev/api/version</span>
+          <pre>curl <span class="url">https://bbrainapp.you/api/version</span>
 
 <span class="comment"># Resposta</span>
 { <span class="key">"version"</span>: <span class="str">"1.0.0"</span>, <span class="key">"status"</span>: <span class="str">"ok"</span> }</pre>
