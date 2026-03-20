@@ -464,6 +464,11 @@ function readAuth() {
     const username = process.env.BBRAIN_USERNAME || MASTER_ADMIN;
     return { hash: process.env.BBRAIN_PASSWORD_HASH, username };
   }
+  // 1b. Senha em texto (Fly.io secret) — hash calculado em runtime
+  if (process.env.BBRAIN_PASSWORD) {
+    const username = process.env.BBRAIN_USERNAME || MASTER_ADMIN;
+    return { hash: hashPwd(process.env.BBRAIN_PASSWORD), username };
+  }
   // 2. Cache do Sheets (carregado no boot)
   if (authCache) {
     // Garante que o admin master nunca é substituído por outro username
