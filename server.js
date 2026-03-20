@@ -643,7 +643,10 @@ const server = http.createServer(async (req, res) => {
   // ── GET /api/settings ──
   if (pathname === '/api/settings' && method === 'GET') {
     if (!validToken(getToken(req))) return json(res, 401, { error: 'Não autenticado' });
-    return json(res, 200, { settings: settingsCache });
+    // MASTER_ADMIN tem plano power permanente — acesso total a todos os recursos
+    const auth = readAuth();
+    const plan = isMasterAdmin(auth?.username) ? 'power' : (settingsCache.plan || 'free');
+    return json(res, 200, { settings: { ...settingsCache, plan } });
   }
 
   // ── POST /api/settings ──

@@ -413,6 +413,118 @@ ideas = res.json()</pre>
         </div>
       </div>
 
+      <!-- PATCH ideas -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post" style="background:#fff3cd;color:#7a5800;">PATCH</span>
+          <span class="endpoint-path">/api/ideas/:id</span>
+          <span class="endpoint-desc">Atualizar status / fase</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Atualiza campos de uma ideia. Campos permitidos: <code>status</code>, <code>tags</code>, <code>evaluation</code>, <code>roadmap_phase</code>, <code>connections</code>.</p>
+          <pre>curl -X PATCH <span class="url">https://bbrainapp.you/api/ideas/20260320-ABC12</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"status":"no_roadmap","roadmap_phase":"backlog"}'</span></pre>
+        </div>
+      </div>
+
+      <!-- DELETE ideas -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post" style="background:#fbeaea;color:#8a1a1a;">DELETE</span>
+          <span class="endpoint-path">/api/ideas/:id</span>
+          <span class="endpoint-desc">Remover ideia</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Remove a ideia permanentemente do banco de dados.</p>
+          <pre>curl -X DELETE <span class="url">https://bbrainapp.you/api/ideas/20260320-ABC12</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span></pre>
+        </div>
+      </div>
+
+      <!-- GET settings -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/api/settings</span>
+          <span class="endpoint-desc">Configurações do usuário</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Retorna as configurações salvas: plano, frequência de lembretes, horário e canais.</p>
+          <pre>curl <span class="url">https://bbrainapp.you/api/settings</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span>
+
+<span class="comment"># Resposta</span>
+{
+  <span class="key">"settings"</span>: {
+    <span class="key">"plan"</span>: <span class="str">"free"</span>,
+    <span class="key">"reminder_frequency"</span>: <span class="str">"monthly"</span>,
+    <span class="key">"reminder_time"</span>: <span class="str">"08:00"</span>,
+    <span class="key">"reminder_channels"</span>: <span class="str">"email"</span>
+  }
+}</pre>
+        </div>
+      </div>
+
+      <!-- POST settings -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/api/settings</span>
+          <span class="endpoint-desc">Salvar configurações</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Salva configurações de lembretes e plano. Persiste na aba Config do Google Sheets.</p>
+          <pre>curl -X POST <span class="url">https://bbrainapp.you/api/settings</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"reminder_frequency":"every2days","reminder_time":"09:00","reminder_channels":"email,whatsapp"}'</span></pre>
+        </div>
+      </div>
+
+      <!-- GET report -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method get">GET</span>
+          <span class="endpoint-path">/api/report/monthly</span>
+          <span class="endpoint-desc">Relatório mensal</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Retorna dados agregados do mês especificado. Parâmetro: <code>?month=YYYY-MM</code> (padrão: mês atual).</p>
+          <pre>curl <span class="url">"https://bbrainapp.you/api/report/monthly?month=2026-03"</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span>
+
+<span class="comment"># Resposta</span>
+{
+  <span class="key">"month"</span>: <span class="str">"2026-03"</span>,
+  <span class="key">"ideas_count"</span>: 24,
+  <span class="key">"sessions_count"</span>: 8,
+  <span class="key">"roadmap_count"</span>: 5,
+  <span class="key">"total_duration"</span>: 640,
+  <span class="key">"best_day"</span>: { <span class="key">"date"</span>: <span class="str">"2026-03-14"</span>, <span class="key">"count"</span>: 7 },
+  <span class="key">"ideas"</span>: [...],
+  <span class="key">"sessions"</span>: [...]
+}</pre>
+        </div>
+      </div>
+
+      <!-- POST change-password -->
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method post">POST</span>
+          <span class="endpoint-path">/api/auth/change-password</span>
+          <span class="endpoint-desc">Trocar senha</span>
+        </div>
+        <div class="endpoint-body">
+          <p>Troca a senha do usuário autenticado. Exigido quando <code>force_password_change: true</code> no login. Salva o novo hash na aba Config do Sheets.</p>
+          <pre>curl -X POST <span class="url">https://bbrainapp.you/api/auth/change-password</span> \
+  -H <span class="str">"Authorization: Bearer SEU_TOKEN"</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"password":"nova_senha_segura"}'</span></pre>
+        </div>
+      </div>
+
       <!-- GET version -->
       <div class="endpoint">
         <div class="endpoint-header">
@@ -425,7 +537,7 @@ ideas = res.json()</pre>
           <pre>curl <span class="url">https://bbrainapp.you/api/version</span>
 
 <span class="comment"># Resposta</span>
-{ <span class="key">"version"</span>: <span class="str">"1.0.0"</span>, <span class="key">"status"</span>: <span class="str">"ok"</span> }</pre>
+{ <span class="key">"version"</span>: <span class="str">"1.0.0"</span>, <span class="key">"updated_at"</span>: <span class="str">"2026-03-20"</span> }</pre>
         </div>
       </div>
     </div>

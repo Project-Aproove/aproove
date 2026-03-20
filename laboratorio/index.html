@@ -367,6 +367,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
       <button class="hlang-btn" onclick="setLang('es')">ES</button>
       <button class="hlang-btn" onclick="setLang('de')">DE</button>
     </div>
+    <button class="btn-logout" id="btn-reminder" onclick="applySettingsToUI();document.getElementById('reminder-banner').style.display='block'" style="display:none" title="Configurar lembretes">🔔</button>
     <span class="header-user" id="header-user" style="display:none"></span>
     <button class="btn-logout" id="btn-logout" onclick="logout()" style="display:none" title="Sair">↪ Sair</button>
   </div>
@@ -1349,22 +1350,36 @@ function applySettingsToUI() {
 
 function updateReminderUI() {
   const plan = userSettings.plan || 'free';
-  const freq = document.getElementById('reminder-freq')?.value || '';
   const waLabel = document.getElementById('ch-wa-label');
   const waCheck = document.getElementById('ch-whatsapp');
   const canWa = plan === 'pro' || plan === 'power';
   if (waLabel) { waLabel.style.opacity = canWa ? '1' : '.4'; waLabel.style.pointerEvents = canWa ? 'auto' : 'none'; }
   if (waCheck) waCheck.disabled = !canWa;
-  // Bloqueia opções acima do plano
+  // Bloqueia opções acima do plano — mostra aviso de upgrade ao tentar selecionar
   const freqSel = document.getElementById('reminder-freq');
   if (freqSel) {
     [...freqSel.options].forEach(opt => {
       const minPlan = opt.dataset.minPlan || 'free';
       const blocked = (minPlan==='pro' && plan==='free') || (minPlan==='power' && plan!=='power');
-      opt.disabled = blocked;
+      if (blocked) {
+        opt.disabled = true;
+        // Adiciona aviso se não existir
+        if (!opt.dataset.originalText) opt.dataset.originalText = opt.textContent.replace(' — upgrade', '');
+        opt.textContent = (opt.dataset.originalText || opt.textContent) + ' — upgrade';
+      } else {
+        opt.disabled = false;
+        if (opt.dataset.originalText) opt.textContent = opt.dataset.originalText;
+      }
     });
   }
 }
+
+const FREQ_LABELS = {
+  monthly:     'a cada 30 dias',
+  every15days: 'a cada 15 dias',
+  every2days:  'a cada 2 dias',
+  daily:       'todo dia',
+};
 
 async function saveReminderSettings() {
   const freq  = document.getElementById('reminder-freq').value;
@@ -1375,7 +1390,8 @@ async function saveReminderSettings() {
   try {
     await api('/api/settings', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({ reminder_frequency:freq, reminder_time:time, reminder_channels:channels }) });
     userSettings = { ...userSettings, reminder_frequency:freq, reminder_time:time, reminder_channels:channels };
-    showToast(freq ? `✓ Lembrete salvo — ${freq}` : '✓ Lembretes desativados');
+    const label = freq ? `✓ Lembrete salvo — ${FREQ_LABELS[freq] || freq} às ${time}` : '✓ Lembretes desativados';
+    showToast(label);
     document.getElementById('reminder-banner').style.display = 'none';
   } catch { showToast('Erro ao salvar'); }
 }
@@ -1445,8 +1461,10 @@ function showHeaderUser() {
   const user = localStorage.getItem('bbrain_username') || '';
   const uEl  = document.getElementById('header-user');
   const bEl  = document.getElementById('btn-logout');
+  const rEl  = document.getElementById('btn-reminder');
   if (uEl && user) { uEl.textContent = user; uEl.style.display = ''; }
   if (bEl) bEl.style.display = '';
+  if (rEl) rEl.style.display = '';
 }
 
 // ── INIT ──────────────────────────────────────────────────────

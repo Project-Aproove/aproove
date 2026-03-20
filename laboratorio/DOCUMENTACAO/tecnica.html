@@ -285,15 +285,21 @@
     <div class="section">
       <h2>Autenticação</h2>
       <h3>Mecanismo</h3>
-      <p>A senha é armazenada como <strong>SHA-256 hash</strong>. O hash é lido em ordem de prioridade: variável de ambiente → aba Config do Google Sheets → arquivo local. Nunca há texto puro em disco ou memória.</p>
+      <p>A senha é armazenada como <strong>SHA-256 hash</strong>. Nunca há texto puro em disco ou memória. A função <code>readAuth()</code> segue esta ordem de prioridade:</p>
+      <ol style="margin:8px 0 14px 20px;font-size:14px;color:var(--ink2);line-height:2;">
+        <li><strong>authCache (Google Sheets)</strong> — carregado no boot via <code>initSheets()</code>. Prioridade máxima — garante que a senha definida pelo usuário persiste entre deploys sem ser sobrescrita.</li>
+        <li><strong>BBRAIN_PASSWORD_HASH</strong> — hash SHA-256 definido diretamente como secret no Fly.io. Usado se não há Sheets configurado.</li>
+        <li><strong>BBRAIN_PASSWORD</strong> — senha provisória em texto. O servidor calcula o hash em runtime e força troca de senha no primeiro login.</li>
+        <li><strong>Arquivo local</strong> — <code>auth.json</code> na raiz. Fallback para desenvolvimento local.</li>
+      </ol>
       <h3>MASTER_ADMIN</h3>
-      <p><code>brunomassa</code> é o admin master vitalício, hardcoded em <code>server.js</code> como <code>MASTER_ADMIN</code>. Esse usuário não pode ser alterado por nenhum deploy, reset de senha ou venda do produto. É a conta de fallback absoluto do sistema.</p>
+      <p><code>brunomassa</code> é o admin master vitalício, hardcoded em <code>server.js</code> como <code>MASTER_ADMIN</code>. Email fixo: <code>brunobrm@gmail.com</code>. Esse usuário não pode ser alterado por nenhum deploy, reset de senha ou venda do produto.</p>
       <h3>LEGACY_USERS</h3>
-      <p>Usuárias legadas estão definidas no código: Karina Lisboa Cerqueira Massa (<code>klisboacerqueira@gmail.com</code>) e Cecília Lisboa Massa. No primeiro acesso dessas contas, o sistema exibe uma mensagem de boas-vindas especial.</p>
+      <p>Usuárias com acesso vitalício e mensagem de primeiro acesso: Karina Lisboa Cerqueira Massa (<code>klisboacerqueira@gmail.com</code>) e Cecília Lisboa Massa. No primeiro login, o sistema exibe uma mensagem especial e a persiste no rodapé do app via <code>localStorage</code>.</p>
+      <h3>Troca forçada de senha</h3>
+      <p>Quando o login retorna <code>force_password_change: true</code>, o frontend exibe um formulário obrigatório antes de liberar o app. A nova senha é salva via <code>POST /api/auth/change-password</code> com o token Bearer. Após a troca, <code>force_password_change</code> é gravado como <code>false</code> na aba Config do Sheets.</p>
       <h3>Token de sessão</h3>
-      <p>Após login bem-sucedido, o servidor gera um token diário (SHA-256 do hash + data atual). O token é salvo no <code>localStorage</code> do browser e enviado no header <code>Authorization: Bearer &lt;token&gt;</code> em todas as requisições.</p>
-      <h3>Expiração</h3>
-      <p>O token expira automaticamente à meia-noite (baseado em data UTC). O usuário é redirecionado para a tela de login sem interrupção.</p>
+      <p>Após login bem-sucedido, o servidor gera um token aleatório (32 bytes). O token é salvo no <code>localStorage</code> do browser com validade de 30 dias e enviado no header <code>Authorization: Bearer &lt;token&gt;</code> em todas as requisições. O frontend invalida o token localmente ao trocar de dia (expiração diária por cliente).</p>
     </div>
 
     <!-- Banco de dados -->
@@ -302,52 +308,55 @@
       <p>O Google Sheets funciona como banco relacional simples. A planilha possui <strong>três abas</strong>:</p>
       <h3>Aba: Ideas</h3>
       <table>
-        <thead>
-          <tr>
-            <th>Coluna</th><th>Tipo</th><th>Descrição</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Coluna</th><th>Tipo</th><th>Descrição</th></tr></thead>
         <tbody>
-          <tr><td><code>id</code></td><td>string</td><td>UUID gerado no servidor</td></tr>
+          <tr><td><code>id</code></td><td>string</td><td>ID gerado no servidor (YYYYMMDD-XXXXX)</td></tr>
           <tr><td><code>text</code></td><td>string</td><td>Texto da ideia</td></tr>
-          <tr><td><code>source</code></td><td>string</td><td>Origem: session, manual, api</td></tr>
-          <tr><td><code>status</code></td><td>string</td><td>active, archived, roadmap</td></tr>
-          <tr><td><code>evaluation</code></td><td>string</td><td>Avaliação por IA (JSON)</td></tr>
+          <tr><td><code>source</code></td><td>string</td><td>Origem: <code>web</code>, <code>whatsapp</code>, <code>api</code></td></tr>
+          <tr><td><code>whatsapp_from</code></td><td>string</td><td>Número de origem (só WhatsApp)</td></tr>
           <tr><td><code>created_at</code></td><td>ISO 8601</td><td>Data/hora de criação</td></tr>
+          <tr><td><code>status</code></td><td>string</td><td><code>nova</code>, <code>em_analise</code>, <code>no_roadmap</code>, <code>arquivada</code></td></tr>
+          <tr><td><code>tags</code></td><td>JSON array</td><td>Tags atribuídas</td></tr>
+          <tr><td><code>evaluation</code></td><td>string</td><td>Avaliação gerada pela IA</td></tr>
+          <tr><td><code>roadmap_phase</code></td><td>string</td><td><code>backlog</code>, <code>planejado</code>, <code>em_execucao</code>, <code>concluido</code></td></tr>
+          <tr><td><code>connections</code></td><td>JSON array</td><td>IDs de ideias relacionadas</td></tr>
+          <tr><td><code>session_id</code></td><td>string</td><td>ID da sessão em que foi capturada</td></tr>
+          <tr><td><code>updated_at</code></td><td>ISO 8601</td><td>Última atualização</td></tr>
         </tbody>
       </table>
       <h3>Aba: Sessions</h3>
       <table>
-        <thead>
-          <tr>
-            <th>Coluna</th><th>Tipo</th><th>Descrição</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Coluna</th><th>Tipo</th><th>Descrição</th></tr></thead>
         <tbody>
-          <tr><td><code>id</code></td><td>string</td><td>UUID gerado no servidor</td></tr>
-          <tr><td><code>location</code></td><td>string</td><td>Local da sessão</td></tr>
-          <tr><td><code>initial_thoughts</code></td><td>string</td><td>Pensamento inicial do check-in</td></tr>
+          <tr><td><code>id</code></td><td>string</td><td>ID gerado no servidor</td></tr>
           <tr><td><code>started_at</code></td><td>ISO 8601</td><td>Início da sessão</td></tr>
           <tr><td><code>ended_at</code></td><td>ISO 8601</td><td>Fim da sessão</td></tr>
+          <tr><td><code>location</code></td><td>string</td><td>Local da sessão</td></tr>
+          <tr><td><code>initial_thoughts</code></td><td>string</td><td>Pensamento inicial do check-in</td></tr>
           <tr><td><code>duration_minutes</code></td><td>number</td><td>Duração calculada em minutos</td></tr>
-          <tr><td><code>social_content</code></td><td>string</td><td>Conteúdo gerado para redes sociais</td></tr>
+          <tr><td><code>features_worked</code></td><td>JSON array</td><td>Features trabalhadas na sessão</td></tr>
+          <tr><td><code>ideas_captured</code></td><td>JSON array</td><td>IDs das ideias capturadas</td></tr>
+          <tr><td><code>social_content</code></td><td>string</td><td>Post sugerido para redes sociais</td></tr>
         </tbody>
       </table>
       <h3>Aba: Config</h3>
+      <p>Persiste autenticação e configurações de usuário entre deploys.</p>
       <table>
-        <thead>
-          <tr>
-            <th>Chave</th><th>Tipo</th><th>Descrição</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Chave</th><th>Tipo</th><th>Descrição</th></tr></thead>
         <tbody>
-          <tr><td><code>password_hash</code></td><td>string</td><td>SHA-256 hash da senha do usuário</td></tr>
-          <tr><td><code>username</code></td><td>string</td><td>Nome de usuário para login</td></tr>
+          <tr><td><code>password_hash</code></td><td>string</td><td>SHA-256 hash da senha</td></tr>
+          <tr><td><code>username</code></td><td>string</td><td>Nome de usuário</td></tr>
+          <tr><td><code>email</code></td><td>string</td><td>Email para recuperação de senha</td></tr>
+          <tr><td><code>force_password_change</code></td><td>bool</td><td>Se <code>true</code>, força troca de senha no próximo login</td></tr>
+          <tr><td><code>plan</code></td><td>string</td><td>Plano atual: <code>free</code>, <code>pro</code>, <code>power</code></td></tr>
+          <tr><td><code>reminder_frequency</code></td><td>string</td><td>Frequência de lembretes: <code>daily</code>, <code>every2days</code>, <code>every15days</code>, <code>monthly</code></td></tr>
+          <tr><td><code>reminder_time</code></td><td>string</td><td>Horário do lembrete (HH:MM)</td></tr>
+          <tr><td><code>reminder_channels</code></td><td>string</td><td>Canais: <code>email</code>, <code>whatsapp</code> ou ambos</td></tr>
+          <tr><td><code>last_reminder</code></td><td>ISO 8601</td><td>Timestamp do último lembrete enviado</td></tr>
         </tbody>
       </table>
-      <p style="margin-top:12px;">A aba Config permite que a autenticação persista entre deploys. O servidor lê essa aba no boot via <code>initSheets()</code>. Prioridade de leitura: env var → Sheets Config → arquivo local.</p>
       <h3>Service Account</h3>
-      <p>Acesso à API via service account: <code>aproove-server@aproove.iam.gserviceaccount.com</code>. As credenciais JSON ficam na variável de ambiente <code>GOOGLE_CREDENTIALS_JSON</code>.</p>
+      <p>Acesso à API via service account Google. As credenciais podem ser fornecidas como JSON completo em <code>GOOGLE_CREDENTIALS_JSON</code> ou como variáveis individuais (<code>client_email</code>, <code>private_key</code>, etc). O servidor monta o objeto automaticamente.</p>
     </div>
 
     <!-- Variáveis de ambiente -->
@@ -358,16 +367,23 @@
           <tr><th>Variável</th><th>Obrigatória</th><th>Descrição</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>BBRAIN_PASSWORD_HASH</code></td><td>Não*</td><td>SHA-256 da senha do usuário (hex) — sobrescreve o Sheets Config</td></tr>
-          <tr><td><code>BBRAIN_USERNAME</code></td><td>Não*</td><td>Nome de usuário — sobrescreve o Sheets Config</td></tr>
-          <tr><td><code>GMAIL_FROM</code></td><td>Sim</td><td>Endereço Gmail remetente</td></tr>
-          <tr><td><code>GMAIL_APP_PASSWORD</code></td><td>Sim</td><td>App Password do Gmail (16 chars)</td></tr>
-          <tr><td><code>GOOGLE_CREDENTIALS_JSON</code></td><td>Sim</td><td>JSON da service account (minificado)</td></tr>
-          <tr><td><code>BBRAIN_SHEET_ID</code></td><td>Sim</td><td>ID da planilha Google Sheets</td></tr>
+          <tr><td><code>GOOGLE_SHEET_ID</code></td><td>Sim</td><td>ID da planilha Google Sheets</td></tr>
+          <tr><td><code>GOOGLE_CREDENTIALS_JSON</code></td><td>Sim*</td><td>JSON completo da service account (minificado)</td></tr>
+          <tr><td><code>client_email</code></td><td>Sim*</td><td>Email da service account (alternativa ao JSON)</td></tr>
+          <tr><td><code>private_key</code></td><td>Sim*</td><td>Chave privada RSA da service account</td></tr>
+          <tr><td><code>BBRAIN_PASSWORD</code></td><td>Não**</td><td>Senha provisória em texto — forçará troca no primeiro login</td></tr>
+          <tr><td><code>BBRAIN_PASSWORD_HASH</code></td><td>Não**</td><td>SHA-256 da senha (hex) — sem troca forçada</td></tr>
+          <tr><td><code>BBRAIN_USERNAME</code></td><td>Não</td><td>Nome de usuário (padrão: brunomassa)</td></tr>
+          <tr><td><code>GMAIL_FROM</code></td><td>Não</td><td>Endereço Gmail remetente para reset de senha</td></tr>
+          <tr><td><code>GMAIL_APP_PASSWORD</code></td><td>Não</td><td>App Password do Gmail (16 chars)</td></tr>
+          <tr><td><code>WHATSAPP_ACCESS_TOKEN</code></td><td>Não</td><td>Token Meta Cloud API para envio via WhatsApp</td></tr>
+          <tr><td><code>WHATSAPP_PHONE_NUMBER_ID</code></td><td>Não</td><td>ID do número WhatsApp Business</td></tr>
+          <tr><td><code>WHATSAPP_VERIFY_TOKEN</code></td><td>Não</td><td>Token de verificação do webhook Meta</td></tr>
           <tr><td><code>PORT</code></td><td>Não</td><td>Porta do servidor (padrão: 3000)</td></tr>
         </tbody>
       </table>
-      <p style="margin-top:12px;">* Se não definidas como env var, o servidor busca na aba Config do Google Sheets no boot. Isso permite que a auth persista entre deploys sem precisar redefinir variáveis.</p>
+      <p style="margin-top:12px;">* Forneça <code>GOOGLE_CREDENTIALS_JSON</code> <em>ou</em> as variáveis individuais (<code>client_email</code>, <code>private_key</code>, etc.) — o servidor monta as credenciais automaticamente de qualquer uma das formas.</p>
+      <p>** Se não definidas, o servidor usa a auth salva na aba Config do Sheets (carregada no boot). Isso garante que a senha persiste entre deploys sem redefinir variáveis.</p>
     </div>
 
     <!-- Endpoints -->
@@ -378,66 +394,24 @@
           <tr><th>Método</th><th>Endpoint</th><th>Auth</th><th>Descrição</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td><span class="method get">GET</span></td>
-            <td><code>/api/ideas</code></td>
-            <td>Sim</td>
-            <td>Lista todas as ideias</td>
-          </tr>
-          <tr>
-            <td><span class="method post">POST</span></td>
-            <td><code>/api/ideas</code></td>
-            <td>Sim</td>
-            <td>Cria nova ideia</td>
-          </tr>
-          <tr>
-            <td><span class="method get">GET</span></td>
-            <td><code>/api/sessions</code></td>
-            <td>Sim</td>
-            <td>Lista todas as sessões</td>
-          </tr>
-          <tr>
-            <td><span class="method post">POST</span></td>
-            <td><code>/api/sessions</code></td>
-            <td>Sim</td>
-            <td>Cria nova sessão (check-in)</td>
-          </tr>
-          <tr>
-            <td><span class="method get">GET</span></td>
-            <td><code>/api/auth/status</code></td>
-            <td>Sim</td>
-            <td>Verifica token ativo</td>
-          </tr>
-          <tr>
-            <td><span class="method post">POST</span></td>
-            <td><code>/api/auth/login</code></td>
-            <td>Não</td>
-            <td>Autenticação com usuário e senha</td>
-          </tr>
-          <tr>
-            <td><span class="method post">POST</span></td>
-            <td><code>/api/auth/setup</code></td>
-            <td>Não</td>
-            <td>Configuração inicial (primeiro acesso)</td>
-          </tr>
-          <tr>
-            <td><span class="method post">POST</span></td>
-            <td><code>/api/auth/reset-request</code></td>
-            <td>Não</td>
-            <td>Solicita reset de senha por email</td>
-          </tr>
-          <tr>
-            <td><span class="method post">POST</span></td>
-            <td><code>/api/auth/reset</code></td>
-            <td>Não</td>
-            <td>Confirma reset com token por email</td>
-          </tr>
-          <tr>
-            <td><span class="method get">GET</span></td>
-            <td><code>/api/version</code></td>
-            <td>Não</td>
-            <td>Versão atual — healthcheck</td>
-          </tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/ideas</code></td><td>Sim</td><td>Lista todas as ideias (filtros: <code>?status=</code>, <code>?source=</code>)</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/ideas</code></td><td>Sim</td><td>Cria nova ideia</td></tr>
+          <tr><td><span class="method post">PATCH</span></td><td><code>/api/ideas/:id</code></td><td>Sim</td><td>Atualiza status, tags, evaluation, roadmap_phase, connections</td></tr>
+          <tr><td><span class="method post">DELETE</span></td><td><code>/api/ideas/:id</code></td><td>Sim</td><td>Remove ideia permanentemente</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/sessions</code></td><td>Sim</td><td>Lista todas as sessões</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/sessions</code></td><td>Sim</td><td>Cria nova sessão (check-in)</td></tr>
+          <tr><td><span class="method post">PATCH</span></td><td><code>/api/sessions/:id</code></td><td>Sim</td><td>Encerra sessão (ended_at, duration_minutes)</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/settings</code></td><td>Sim</td><td>Retorna configurações do usuário (plano, lembretes)</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/settings</code></td><td>Sim</td><td>Salva configurações (plan, reminder_frequency, reminder_time, reminder_channels)</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/report/monthly</code></td><td>Sim</td><td>Relatório do mês (<code>?month=2026-03</code>)</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/auth/status</code></td><td>—</td><td>Verifica token ativo</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/auth/login</code></td><td>—</td><td>Login — retorna token, force_password_change, firstLoginMessage</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/auth/change-password</code></td><td>Sim</td><td>Troca de senha forçada (requer token válido)</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/auth/logout</code></td><td>Sim</td><td>Invalida o token atual</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/auth/setup</code></td><td>—</td><td>Configuração inicial (primeiro acesso)</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/auth/reset-request</code></td><td>—</td><td>Solicita reset de senha (envia email)</td></tr>
+          <tr><td><span class="method post">POST</span></td><td><code>/api/auth/reset</code></td><td>—</td><td>Confirma reset com código de 6 dígitos</td></tr>
+          <tr><td><span class="method get">GET</span></td><td><code>/api/version</code></td><td>—</td><td>Healthcheck — retorna versão atual</td></tr>
         </tbody>
       </table>
     </div>
@@ -460,13 +434,15 @@
       <h2>Estrutura de Arquivos</h2>
       <div class="file-tree">
         <span class="dir">projeto/</span><br>
-        ├── server.js &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← servidor principal</span><br>
+        ├── server.js &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← servidor principal (Node.js nativo)</span><br>
         ├── fly.toml &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← config do Fly.io</span><br>
         ├── Dockerfile &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← imagem Docker</span><br>
+        ├── .github/workflows/ &nbsp;<span class="comment">← GitHub Actions (fly-deploy.yml)</span><br>
         ├── package.json<br>
         ├── <span class="dir">laboratorio/</span><br>
-        │&nbsp;&nbsp;&nbsp;├── index.html &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← BBrain app (frontend)</span><br>
-        │&nbsp;&nbsp;&nbsp;├── bbrain-conceito.html<br>
+        │&nbsp;&nbsp;&nbsp;├── index.html &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← BBrain app (acessado via /entrar)</span><br>
+        │&nbsp;&nbsp;&nbsp;├── landing.html &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← LP pública (bbrainapp.you/)</span><br>
+        │&nbsp;&nbsp;&nbsp;├── privacidade.html <span class="comment">← Política de Privacidade (/privacidade)</span><br>
         │&nbsp;&nbsp;&nbsp;└── <span class="dir">DOCUMENTACAO/</span><br>
         │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── index.html &nbsp;&nbsp;<span class="comment">← hub de docs</span><br>
         │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── tecnica.html<br>
@@ -477,6 +453,18 @@
         │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── api.html<br>
         │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── publicar-app.html
       </div>
+      <h3>Rotas de front-end</h3>
+      <table>
+        <thead><tr><th>URL</th><th>Arquivo</th><th>Descrição</th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code> (bbrainapp.you)</td><td>landing.html</td><td>Landing page pública com planos</td></tr>
+          <tr><td><code>/entrar</code></td><td>index.html</td><td>App BBrain (autenticado)</td></tr>
+          <tr><td><code>/laboratorio</code></td><td>index.html</td><td>Alias para o app</td></tr>
+          <tr><td><code>/privacidade</code></td><td>privacidade.html</td><td>Política de Privacidade</td></tr>
+          <tr><td><code>/conceito</code></td><td>conceito.html</td><td>Conceito do produto</td></tr>
+          <tr><td><code>/guia</code></td><td>guia-uso.html</td><td>Guia de uso</td></tr>
+        </tbody>
+      </table>
     </div>
   </main>
 
