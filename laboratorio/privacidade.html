@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidade — BBrain</title>
+  <meta name="description" content="Como o BBrain coleta, usa e protege seus dados pessoais.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:  #0f0f14;
+      --ink2: #4a4a58;
+      --ink3: #9a9aaa;
+      --line: rgba(15,15,20,.1);
+      --bg:   #ffffff;
+      --bg2:  #f8f7fc;
+      --brain: #1a0a3a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      padding: 0 2rem; height: 52px;
+      display: flex; align-items: center; gap: .75rem;
+      background: rgba(255,255,255,.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-back { font-size: 13px; color: var(--ink3); text-decoration: none; }
+    .nav-back:hover { color: var(--ink); }
+    .nav-sep { color: var(--line); }
+    .nav-title { font-size: 13px; font-weight: 500; color: var(--ink2); }
+
+    main {
+      flex: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 5rem;
+      width: 100%;
+    }
+    .doc-header { margin-bottom: 3rem; }
+    .doc-label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: .75rem; }
+    h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 600; line-height: 1.25; color: var(--brain); margin-bottom: .75rem; }
+    .doc-meta { font-size: 12.5px; color: var(--ink3); }
+    .doc-intro { font-size: 15px; color: var(--ink2); line-height: 1.75; padding: 1.25rem 1.5rem; background: var(--bg2); border-left: 3px solid var(--brain); border-radius: 0 8px 8px 0; margin-bottom: 2.5rem; }
+
+    h2 { font-size: 1rem; font-weight: 600; color: var(--ink); margin: 2.5rem 0 .75rem; }
+    h3 { font-size: .875rem; font-weight: 600; color: var(--ink2); margin: 1.5rem 0 .5rem; }
+    p  { font-size: 14px; color: var(--ink2); line-height: 1.8; margin-bottom: .875rem; }
+    ul { padding-left: 1.25rem; margin-bottom: .875rem; }
+    li { font-size: 14px; color: var(--ink2); line-height: 1.8; margin-bottom: .25rem; }
+    strong { color: var(--ink); font-weight: 600; }
+    a  { color: var(--brain); }
+    .highlight-box { background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+    .highlight-box p { margin-bottom: 0; }
+    hr { border: none; border-top: 1px solid var(--line); margin: 2.5rem 0; }
+    .contact-card { background: var(--bg2); border: 1px solid var(--line); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; }
+    .contact-card p { margin-bottom: .25rem; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: .75rem;
+    }
+    .footer-brand { font-size: 12px; color: var(--ink3); }
+    .footer-links { display: flex; gap: 1.25rem; }
+    .footer-links a { font-size: 12px; color: var(--ink3); text-decoration: none; }
+    .footer-links a:hover { color: var(--ink); }
+
+    @media(max-width:640px) {
+      nav { padding: 0 1rem; }
+      main { padding: 2rem 1rem 4rem; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="/">← BBrain</a>
+  <span class="nav-sep">·</span>
+  <span class="nav-title">Política de Privacidade</span>
+</nav>
+
+<main>
+  <div class="doc-header">
+    <p class="doc-label">Documento legal</p>
+    <h1>Política de Privacidade</h1>
+    <p class="doc-meta">Versão 1.0 · Vigência: 20 de março de 2026 · Última atualização: 20/03/2026</p>
+  </div>
+
+  <div class="doc-intro">
+    O BBrain é uma ferramenta pessoal. O que você escreve aqui é seu — e vai continuar sendo.
+    Não vendemos, compartilhamos nem usamos seus dados para fins comerciais, análises de mercado ou treinamento de modelos de IA de terceiros.
+  </div>
+
+  <h2>1. Quem somos</h2>
+  <p>O BBrain é desenvolvido e operado pela <strong>Aproove</strong>, com sede no Brasil. Para fins desta política, "BBrain", "nós", "nosso" referem-se à Aproove e ao serviço BBrain disponível em <strong>bbrainapp.you</strong>.</p>
+  <p>Contato do responsável pela proteção de dados (DPO): <a href="mailto:privacidade@aproove.io">privacidade@aproove.io</a></p>
+
+  <h2>2. Dados que coletamos</h2>
+  <h3>2.1 Dados fornecidos por você</h3>
+  <ul>
+    <li><strong>Conta:</strong> nome de usuário e senha (armazenada apenas como hash SHA-256 — nunca em texto puro).</li>
+    <li><strong>Conteúdo:</strong> ideias, pensamentos, registros de sessão e qualquer texto que você inserir no app.</li>
+    <li><strong>Contato (opcional):</strong> endereço de e-mail para recuperação de senha e número de WhatsApp para integração de captura de ideias.</li>
+  </ul>
+
+  <h3>2.2 Dados técnicos coletados automaticamente</h3>
+  <ul>
+    <li>Logs de acesso (IP, data/hora, endpoint acessado) — mantidos por até 30 dias exclusivamente para segurança e diagnóstico de erros.</li>
+    <li>Preferências de idioma e configurações locais, armazenadas no seu próprio dispositivo (localStorage).</li>
+  </ul>
+
+  <div class="highlight-box">
+    <p><strong>Não coletamos:</strong> dados de navegação entre sites, cookies de rastreamento, informações de pagamento (processamento feito pelas lojas App Store e Google Play), dados biométricos, localização precisa nem qualquer dado sensível desnecessário à operação do serviço.</p>
+  </div>
+
+  <h2>3. Como usamos seus dados</h2>
+  <p>Seus dados são usados <strong>exclusivamente</strong> para:</p>
+  <ul>
+    <li>Autenticar seu acesso e proteger sua conta.</li>
+    <li>Armazenar e sincronizar seu conteúdo pessoal entre dispositivos.</li>
+    <li>Enviar notificações e comunicações que você solicitou (recuperação de senha, código de acesso).</li>
+    <li>Melhorar a estabilidade e o desempenho do serviço com base em dados técnicos anônimos e agregados.</li>
+  </ul>
+
+  <div class="highlight-box">
+    <p><strong>Seus dados não serão utilizados para:</strong> fins comerciais, publicidade direcionada, venda a terceiros, treinamento de modelos de inteligência artificial externos, análise de mercado ou qualquer finalidade não listada acima.</p>
+  </div>
+
+  <h2>4. Base legal para tratamento (LGPD — Lei 13.709/2018)</h2>
+  <p>O tratamento dos seus dados pessoais é realizado com base nas seguintes hipóteses da Lei Geral de Proteção de Dados (LGPD):</p>
+  <ul>
+    <li><strong>Execução de contrato:</strong> para fornecer o serviço BBrain conforme os Termos de Uso aceitos.</li>
+    <li><strong>Legítimo interesse:</strong> para manutenção da segurança e integridade do serviço.</li>
+    <li><strong>Consentimento:</strong> para comunicações opcionais e funcionalidades como integração via WhatsApp.</li>
+  </ul>
+
+  <h2>5. Conformidade com legislações internacionais</h2>
+  <p>Para usuários em outras jurisdições, aplicamos adicionalmente:</p>
+  <ul>
+    <li><strong>União Europeia / EEA (GDPR):</strong> você tem direito de acesso, retificação, exclusão, portabilidade e oposição ao tratamento. A base legal principal é execução contratual e consentimento.</li>
+    <li><strong>Reino Unido (UK GDPR):</strong> tratamento equivalente ao GDPR, com adequação às orientações da ICO.</li>
+    <li><strong>EUA — Califórnia (CCPA/CPRA):</strong> você tem direito de saber, excluir e optar por não compartilhar dados pessoais. Não vendemos dados pessoais de residentes californianos.</li>
+    <li><strong>México (LFPDPPP):</strong> respeitamos o aviso de privacidade e os direitos ARCO (Acesso, Retificação, Cancelamento e Oposição).</li>
+    <li><strong>Demais países:</strong> aplicamos os princípios de minimização de dados, finalidade específica e transparência conforme as melhores práticas internacionais.</li>
+  </ul>
+
+  <h2>6. Onde seus dados são armazenados</h2>
+  <p>Seus dados são armazenados em servidores localizados no <strong>Brasil (região GRU — São Paulo)</strong> via Fly.io, e sincronizados com o Google Sheets sob sua conta de serviço exclusiva. O Google Sheets funciona como banco de dados privado — seus dados não são acessíveis pela Google para nenhum fim comercial.</p>
+  <p>Transferências internacionais de dados, quando ocorrem (ex: servidores de infraestrutura da Fly.io), são feitas para países com nível adequado de proteção ou com cláusulas contratuais padrão.</p>
+
+  <h2>7. Segurança</h2>
+  <ul>
+    <li>Senhas armazenadas apenas como hash SHA-256 com salt — nunca em texto puro.</li>
+    <li>Comunicação protegida por HTTPS/TLS em toda a plataforma.</li>
+    <li>Tokens de sessão com expiração diária automática.</li>
+    <li>Acesso ao banco de dados restrito a credenciais de serviço com escopo mínimo necessário.</li>
+    <li>Logs de acesso não contêm conteúdo das suas ideias ou sessões.</li>
+  </ul>
+
+  <h2>8. Retenção de dados</h2>
+  <p>Seus dados são mantidos enquanto sua conta estiver ativa. Após solicitação de exclusão, seus dados são removidos em até <strong>30 dias</strong>. Logs técnicos são excluídos automaticamente em até 30 dias. Backups são destruídos em até 90 dias após a exclusão da conta.</p>
+
+  <h2>9. Seus direitos</h2>
+  <p>Você tem o direito de, a qualquer momento:</p>
+  <ul>
+    <li><strong>Acessar</strong> os dados pessoais que temos sobre você.</li>
+    <li><strong>Corrigir</strong> dados incorretos ou desatualizados.</li>
+    <li><strong>Excluir</strong> sua conta e todos os dados associados.</li>
+    <li><strong>Exportar</strong> seus dados em formato legível (CSV).</li>
+    <li><strong>Revogar consentimentos</strong> para funcionalidades opcionais (ex: WhatsApp).</li>
+    <li><strong>Opor-se</strong> a qualquer tratamento baseado em legítimo interesse.</li>
+  </ul>
+  <p>Para exercer qualquer desses direitos, envie um e-mail para <a href="mailto:privacidade@aproove.io">privacidade@aproove.io</a>. Respondemos em até 15 dias úteis.</p>
+
+  <h2>10. Cookies e armazenamento local</h2>
+  <p>O BBrain não utiliza cookies de rastreamento ou publicidade. Utilizamos exclusivamente o <strong>localStorage</strong> do seu navegador para armazenar preferências (idioma, token de sessão temporário). Esses dados ficam no seu dispositivo e não são enviados a terceiros.</p>
+
+  <h2>11. Integrações externas</h2>
+  <ul>
+    <li><strong>WhatsApp (opcional):</strong> se você ativar a integração, mensagens enviadas ao número do BBrain são processadas para criar registros de ideias na sua conta. Não acessamos o histórico de outras conversas.</li>
+    <li><strong>Google AI (opcional):</strong> se a funcionalidade de avaliação de ideias estiver ativa, o texto das suas ideias pode ser enviado à API do Google AI para gerar análises. Não utilizamos dados pessoais identificáveis nessas chamadas.</li>
+  </ul>
+
+  <h2>12. Menores de idade</h2>
+  <p>O BBrain não é direcionado a menores de 13 anos. Se identificarmos que um menor forneceu dados sem autorização parental, excluiremos as informações imediatamente.</p>
+
+  <h2>13. Alterações nesta política</h2>
+  <p>Podemos atualizar esta política periodicamente. Alterações significativas serão comunicadas via e-mail cadastrado ou notificação no app com pelo menos 15 dias de antecedência. O uso continuado do serviço após a vigência das alterações implica aceitação.</p>
+
+  <hr>
+
+  <div class="contact-card">
+    <h2 style="margin-top:0">Contato e DPO</h2>
+    <p><strong>Responsável pelo tratamento:</strong> Aproove · BBrain</p>
+    <p><strong>DPO (Data Protection Officer):</strong> <a href="mailto:privacidade@aproove.io">privacidade@aproove.io</a></p>
+    <p><strong>Para solicitações de dados:</strong> <a href="mailto:privacidade@aproove.io">privacidade@aproove.io</a></p>
+    <p style="margin-top:.75rem; font-size:13px; color:var(--ink3);">Você também pode registrar reclamações junto à Autoridade Nacional de Proteção de Dados (ANPD) em <a href="https://www.gov.br/anpd" target="_blank">gov.br/anpd</a>.</p>
+  </div>
+</main>
+
+<footer>
+  <span class="footer-brand">🧠 BBrain · Uma produção <a href="https://selo7.com" target="_blank" style="color:var(--ink3);text-decoration:none;">Selo7</a></span>
+  <div class="footer-links">
+    <a href="/">Início</a>
+    <a href="/laboratorio">Entrar no app</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -863,6 +863,19 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/entrar') {
       return serveFile(res, path.join(LAB_DIR, 'index.html'));
     }
+    if (pathname === '/privacidade') {
+      return serveFile(res, path.join(LAB_DIR, 'privacidade.html'));
+    }
+    if (pathname === '/conceito') {
+      return serveFile(res, path.join(LAB_DIR, 'DOCUMENTACAO', 'conceito.html'));
+    }
+    if (pathname === '/guia') {
+      return serveFile(res, path.join(LAB_DIR, 'DOCUMENTACAO', 'guia-uso.html'));
+    }
+  }
+  // Rotas públicas diretas (qualquer domínio)
+  if (pathname === '/privacidade') {
+    return serveFile(res, path.join(LAB_DIR, 'privacidade.html'));
   }
   // aproove.io → landing page do Aproove (producao/)
   if (host.includes('aproove.io') && (pathname === '/' || pathname === '')) {

@@ -378,14 +378,69 @@
       <h2>Visão de longo prazo</h2>
       <p>BBrain não quer ser mais uma ferramenta de produtividade genérica. A visão é específica e ambiciosa:</p>
       <div class="vision-quote">
-        <p>"Ser o Diário do Fundador mais usado no Brasil — o lugar onde as melhores ideias de produto do país foram primeiro escritas."</p>
+        <p>"Ser o segundo cérebro de quem não para de pensar — o lugar onde as melhores ideias de produto do mundo foram primeiro escritas."</p>
       </div>
-      <p style="margin-top:20px;">Isso significa construir comunidade, gerar insights a partir de dados agregados (anonimizados), e eventualmente tornar o BBrain o padrão de como fundadores brasileiros documentam sua jornada — da ideia à empresa.</p>
+      <p style="margin-top:20px;">Isso significa construir comunidade, gerar insights a partir de dados agregados (anonimizados), e eventualmente tornar o BBrain o padrão de como fundadores documentam sua jornada — da ideia à empresa.</p>
       <p>A cada sessão registrada, a cada ideia capturada, o fundador está construindo um ativo valioso: o histórico da construção do seu negócio. E a cada síntese periódica entregue no WhatsApp, o BBrain lembra o fundador de que pensar não basta — é preciso agir.</p>
       <p>A síntese periódica com IA é o que transforma o BBrain de um diário passivo em um <strong>parceiro ativo de construção</strong>. Não é um Notion com mais campos — é o sistema que pergunta "O que fazemos com isso?" toda semana.</p>
     </div>
+
+    <!-- Modelo de negócio -->
+    <div class="section">
+      <h2>Modelo de negócio</h2>
+      <p>Distribuição via App Store (iOS) e Google Play (Android). Assinatura mensal ou anual, processada pelas lojas. Sem cobranças diretas pelo BBrain — a loja é o canal exclusivo de pagamento.</p>
+
+      <h3 style="margin:1.25rem 0 .75rem; font-size:15px; font-weight:600;">Planos</h3>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Recurso</th>
+            <th class="bbrain-col">Free</th>
+            <th class="bbrain-col">BBrain</th>
+            <th class="bbrain-col">BBrain Pro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Sessões por mês</td><td>5</td><td class="yes">Ilimitadas</td><td class="yes">Ilimitadas</td></tr>
+          <tr><td>Captura de ideias</td><td class="yes">Ilimitada</td><td class="yes">Ilimitada</td><td class="yes">Ilimitada</td></tr>
+          <tr><td>Diário de sessões</td><td>Básico</td><td class="yes">Completo</td><td class="yes">Completo</td></tr>
+          <tr><td>IA — avaliação de ideias</td><td class="no">—</td><td class="yes">Sim</td><td class="yes">Sim</td></tr>
+          <tr><td>Captura via WhatsApp</td><td class="no">—</td><td class="yes">Sim</td><td class="yes">Sim</td></tr>
+          <tr><td>Geração de conteúdo</td><td class="no">—</td><td class="yes">Sim</td><td class="yes">Sim</td></tr>
+          <tr><td>Síntese mensal IA</td><td class="no">—</td><td class="no">—</td><td class="yes">Sim</td></tr>
+          <tr><td>Suporte prioritário</td><td class="no">—</td><td class="no">—</td><td class="yes">Sim</td></tr>
+          <tr><td>Preço Brasil (mensal)</td><td>Grátis</td><td>R$ 25/mês</td><td>R$ 59,90/mês</td></tr>
+          <tr><td>Preço EUA (mensal)</td><td>Free</td><td>$4.99/mo</td><td>$12.00/mo</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:1rem; font-size:13px; color:var(--ink3);">Preços anuais com 20% de desconto. Valores localizados por país via detecção de timezone.</p>
+
+      <h3 style="margin:1.5rem 0 .75rem; font-size:15px; font-weight:600;">Acesso presente — 10 convidados</h3>
+      <p>Brunomassa, como administrador, pode presentear até 10 pessoas com acesso gratuito por 1 mês. O gerenciamento é feito via painel de admin exclusivo, visível apenas quando logado como brunomassa. Inputs: nome, e-mail e WhatsApp do convidado. O convite é enviado automaticamente.</p>
+    </div>
+
+    <!-- Infraestrutura -->
+    <div class="section">
+      <h2>Infraestrutura atual</h2>
+      <ul style="padding-left:1.25rem; line-height:2;">
+        <li><strong>Servidor:</strong> Fly.io (Node.js), região GRU — São Paulo</li>
+        <li><strong>Banco de dados:</strong> Google Sheets (via Service Account)</li>
+        <li><strong>Domínios:</strong> bbrainapp.you (BBrain app) · aproove.io (landing Aproove)</li>
+        <li><strong>Deploy:</strong> GitHub Actions → Fly.io (push na main)</li>
+        <li><strong>Auth:</strong> hash SHA-256, tokens com expiração diária, reset por e-mail</li>
+        <li><strong>WhatsApp:</strong> Meta Cloud API (a configurar)</li>
+        <li><strong>IA:</strong> Google AI Studio / Gemini (opcional, gratuito)</li>
+      </ul>
+    </div>
+
+    <!-- Produção -->
+    <div class="section">
+      <h2>Créditos e produção</h2>
+      <p>BBrain é desenvolvido pela <strong>Aproove</strong>, uma produção <strong>Selo7</strong>.</p>
+      <p style="margin-top:.75rem; font-size:13px; color:var(--ink3);">Atualizado em 20/03/2026</p>
+    </div>
   </main>
 
-  <footer>BBrain — Documentação · Aproove · 2026</footer>
+  <footer>BBrain — Documentação · Aproove · Selo7 · 2026</footer>
 </body>
 </html>
