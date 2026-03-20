@@ -198,6 +198,29 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .spinner { display: inline-block; width: 11px; height: 11px; border: 1.5px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── ROADMAP KANBAN ── */
+.roadmap-board { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; align-items:start; }
+@media(max-width:700px){ .roadmap-board { grid-template-columns:1fr 1fr; } }
+@media(max-width:420px){ .roadmap-board { grid-template-columns:1fr; } }
+.rm-col { background:var(--paper2); border-radius:12px; padding:1rem; min-height:120px; }
+.rm-col-header { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); margin-bottom:.875rem; display:flex; align-items:center; gap:.4rem; }
+.rm-col-count { background:var(--paper3); border-radius:10px; padding:1px 7px; font-size:10px; color:var(--ink3); }
+.rm-card { background:white; border:1px solid var(--line2); border-radius:8px; padding:.75rem; margin-bottom:.625rem; font-size:13px; color:var(--ink2); line-height:1.5; cursor:pointer; transition:box-shadow .12s; }
+.rm-card:hover { box-shadow:0 2px 8px rgba(0,0,0,.08); }
+.rm-card-date { font-size:10px; color:var(--ink3); margin-top:.3rem; font-family:'DM Mono',monospace; }
+.rm-card-actions { display:flex; gap:.35rem; margin-top:.5rem; flex-wrap:wrap; }
+.rm-card-btn { font-size:10px; padding:2px 8px; border-radius:5px; border:1px solid var(--line2); background:var(--paper2); color:var(--ink3); cursor:pointer; font-family:inherit; transition:all .12s; }
+.rm-card-btn:hover { background:var(--brain); color:white; border-color:var(--brain); }
+.rm-list-item { display:flex; gap:.75rem; align-items:flex-start; padding:.75rem; background:white; border:1px solid var(--line2); border-radius:8px; margin-bottom:.5rem; }
+.rm-phase-badge { font-size:10px; padding:2px 8px; border-radius:5px; font-weight:600; white-space:nowrap; }
+/* ── REPORT ── */
+.report-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.875rem; margin-bottom:2rem; }
+.report-stat { background:var(--paper2); border-radius:10px; padding:1.25rem; text-align:center; }
+.report-stat-value { font-size:2rem; font-weight:700; color:var(--brain); font-family:'DM Mono',monospace; }
+.report-stat-label { font-size:11px; color:var(--ink3); margin-top:.25rem; }
+.report-section { margin-bottom:1.75rem; }
+.report-section h3 { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:.875rem; padding-bottom:.5rem; border-bottom:1px solid var(--line2); }
+.report-idea-item { font-size:13px; color:var(--ink2); padding:.5rem .75rem; border-radius:6px; background:var(--paper2); margin-bottom:.4rem; display:flex; align-items:flex-start; gap:.6rem; line-height:1.5; }
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--brain); color: white; padding: .625rem 1.25rem; border-radius: 8px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .2s; pointer-events: none; white-space: nowrap; z-index: 300; }
 .toast.show { opacity: 1; }
@@ -360,6 +383,33 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   <button class="btn-end-session" onclick="endSession()" data-t="sessions.end">Encerrar sessão</button>
 </div>
 
+<!-- ── BANNER LEMBRETES ── -->
+<div id="reminder-banner" style="display:none; background:var(--brain); color:white; padding:1rem 2rem; border-bottom:1px solid rgba(255,255,255,.1);">
+  <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <span style="font-size:18px;">🔔</span>
+    <div style="flex:1;min-width:200px;">
+      <p style="font-size:13px;font-weight:700;margin-bottom:.2rem;">De quanto em quanto tempo quer que eu te lembre sobre as suas ideias?</p>
+      <p style="font-size:11px;opacity:.7;">Configure abaixo e receba por e-mail ou WhatsApp conforme seu plano.</p>
+    </div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <select id="reminder-freq" onchange="updateReminderUI()" style="padding:.4rem .75rem;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:white;font-family:inherit;font-size:12px;cursor:pointer;outline:none;">
+        <option value="">Nunca</option>
+        <option value="monthly" data-min-plan="free">A cada 30 dias</option>
+        <option value="every15days" data-min-plan="free">A cada 15 dias</option>
+        <option value="every2days" data-min-plan="pro">A cada 2 dias ✦</option>
+        <option value="daily" data-min-plan="power">Todo dia ✦✦</option>
+      </select>
+      <input type="time" id="reminder-time" value="08:00" style="padding:.4rem .6rem;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:white;font-family:inherit;font-size:12px;outline:none;">
+      <div id="reminder-channels" style="display:flex;gap:.4rem;">
+        <label style="font-size:12px;display:flex;align-items:center;gap:.3rem;cursor:pointer;"><input type="checkbox" id="ch-email" checked style="accent-color:white;"> E-mail</label>
+        <label id="ch-wa-label" style="font-size:12px;display:flex;align-items:center;gap:.3rem;cursor:pointer;opacity:.4;pointer-events:none;" title="Disponível nos planos BBrain e BBrain Pro"><input type="checkbox" id="ch-whatsapp" disabled style="accent-color:white;"> WhatsApp ✦</label>
+      </div>
+      <button onclick="saveReminderSettings()" style="padding:.4rem 1rem;background:white;color:var(--brain);border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">Salvar</button>
+      <button onclick="document.getElementById('reminder-banner').style.display='none'" style="padding:.4rem .75rem;background:transparent;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2);border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;">✕</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── TABS ── -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('ideas', this)">
@@ -367,6 +417,12 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   </button>
   <button class="tab-btn" onclick="switchTab('sessions', this)">
     <span data-t="tab.sessions">📓 Diário de sessões</span> <span class="tab-count" id="tc-sessions">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('roadmap', this)">
+    <span>🗺️ Roadmap</span> <span class="tab-count" id="tc-roadmap">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('report', this); loadReport()">
+    <span>📊 Relatório</span>
   </button>
   <button class="tab-btn" onclick="switchTab('stitch', this)">
     <span>📱 App</span>
@@ -446,6 +502,37 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
         <div class="empty-desc" data-t="sessions.empty.desc">Clique em "+ Nova sessão" para começar.</div>
       </div>
     </div>
+  </div>
+
+  <!-- TAB: ROADMAP -->
+  <div class="tab-panel" id="panel-roadmap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;">
+      <div>
+        <h2 style="font-size:16px;font-weight:700;color:var(--ink);">🗺️ Roadmap de ideias</h2>
+        <p style="font-size:12px;color:var(--ink3);margin-top:.2rem;">Arraste ou clique para mover entre fases</p>
+      </div>
+      <div style="display:flex;gap:.5rem;">
+        <button onclick="setRoadmapView('kanban')" id="btn-view-kanban" class="btn-idea" style="padding:.4rem .875rem;font-size:12px;">Kanban</button>
+        <button onclick="setRoadmapView('list')"   id="btn-view-list"   class="filter-btn" style="padding:.4rem .875rem;font-size:12px;">Lista</button>
+      </div>
+    </div>
+    <div id="roadmap-board"></div>
+  </div>
+
+  <!-- TAB: RELATÓRIO -->
+  <div class="tab-panel" id="panel-report">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;">
+      <div>
+        <h2 style="font-size:16px;font-weight:700;color:var(--ink);">📊 Relatório mensal de pensamentos</h2>
+        <p style="font-size:12px;color:var(--ink3);margin-top:.2rem;">Gerado a partir das suas ideias e sessões</p>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center;">
+        <input type="month" id="report-month" style="padding:.4rem .75rem;border:1px solid var(--line2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--ink2);">
+        <button onclick="loadReport()" class="btn-idea" style="padding:.4rem .875rem;font-size:12px;">Gerar</button>
+        <button onclick="exportReport()" class="filter-btn" style="padding:.4rem .875rem;font-size:12px;">↓ HTML</button>
+      </div>
+    </div>
+    <div id="report-content"><p style="color:var(--ink3);font-size:13px;">Selecione o mês e clique em Gerar.</p></div>
   </div>
 
   <!-- TAB: STITCH PROMPT -->
@@ -1106,9 +1193,196 @@ function showLegacyFooter() {
   if (footer && el) { el.textContent = msg; footer.style.display = 'block'; }
 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// ROADMAP
+// ══════════════════════════════════════════════════════════════════════════════
+const PHASES = [
+  { key: 'backlog',      label: '📋 Backlog',      color: '#9a9aaa' },
+  { key: 'planejado',    label: '🔧 Planejado',    color: '#6366f1' },
+  { key: 'em_execucao',  label: '⚡ Em execução',  color: '#f59e0b' },
+  { key: 'concluido',    label: '✅ Concluído',    color: '#16a34a' },
+];
+let roadmapView = 'kanban';
+
+function setRoadmapView(v) {
+  roadmapView = v;
+  document.getElementById('btn-view-kanban').className = v==='kanban' ? 'btn-idea' : 'filter-btn';
+  document.getElementById('btn-view-list').className   = v==='list'   ? 'btn-idea' : 'filter-btn';
+  document.getElementById('btn-view-kanban').style.cssText = 'padding:.4rem .875rem;font-size:12px;';
+  document.getElementById('btn-view-list').style.cssText   = 'padding:.4rem .875rem;font-size:12px;';
+  renderRoadmap();
+}
+
+function renderRoadmap() {
+  const board   = document.getElementById('roadmap-board');
+  const rmIdeas = ideas.filter(i => i.status === 'no_roadmap');
+  document.getElementById('tc-roadmap').textContent = rmIdeas.length;
+  if (!rmIdeas.length) {
+    board.innerHTML = `<div class="empty"><div class="empty-icon">🗺️</div><div class="empty-title">Nenhuma ideia no roadmap</div><div class="empty-desc">Marque ideias como "Roadmap" na aba de ideias para vê-las aqui.</div></div>`;
+    return;
+  }
+  if (roadmapView === 'kanban') {
+    board.innerHTML = `<div class="roadmap-board">${PHASES.map(ph => {
+      const phIdeas = rmIdeas.filter(i => (i.roadmap_phase || 'backlog') === ph.key);
+      return `<div class="rm-col">
+        <div class="rm-col-header" style="color:${ph.color}">${ph.label} <span class="rm-col-count">${phIdeas.length}</span></div>
+        ${phIdeas.map(i => `
+          <div class="rm-card" onclick="">
+            <div>${esc(i.text.length>120?i.text.slice(0,120)+'…':i.text)}</div>
+            <div class="rm-card-date">#${i.id?.slice(-5)} · ${fmtDate(i.created_at)}</div>
+            <div class="rm-card-actions">
+              ${PHASES.filter(p=>p.key!==ph.key).map(p=>`<button class="rm-card-btn" onclick="moveRoadmapPhase('${i.id}','${p.key}',event)">${p.label}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+        ${!phIdeas.length ? `<div style="font-size:12px;color:var(--ink3);text-align:center;padding:.5rem;">Vazio</div>` : ''}
+      </div>`;
+    }).join('')}</div>`;
+  } else {
+    board.innerHTML = rmIdeas.map(i => {
+      const ph = PHASES.find(p=>p.key===(i.roadmap_phase||'backlog')) || PHASES[0];
+      return `<div class="rm-list-item">
+        <span class="rm-phase-badge" style="background:${ph.color}22;color:${ph.color}">${ph.label}</span>
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--ink2);line-height:1.5;">${esc(i.text)}</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:.25rem;">#${i.id?.slice(-5)} · ${fmtDate(i.created_at)}</div>
+        </div>
+        <select onchange="moveRoadmapPhase('${i.id}',this.value,event);this.value=''" style="padding:.3rem .5rem;border:1px solid var(--line2);border-radius:6px;font-size:11px;font-family:inherit;color:var(--ink2);">
+          <option value="">Mover para...</option>
+          ${PHASES.map(p=>`<option value="${p.key}">${p.label}</option>`).join('')}
+        </select>
+      </div>`;
+    }).join('');
+  }
+}
+
+async function moveRoadmapPhase(id, phase, e) {
+  if (e) e.stopPropagation();
+  try {
+    await api(`/api/ideas/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({roadmap_phase:phase}) });
+    const idx = ideas.findIndex(i=>i.id===id);
+    if (idx>-1) ideas[idx].roadmap_phase = phase;
+    renderRoadmap();
+  } catch { showToast('Erro ao mover ideia'); }
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}); } catch { return '—'; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RELATÓRIO MENSAL
+// ══════════════════════════════════════════════════════════════════════════════
+let reportData = null;
+
+async function loadReport() {
+  const monthInput = document.getElementById('report-month');
+  if (!monthInput.value) monthInput.value = new Date().toISOString().slice(0,7);
+  const month = monthInput.value;
+  const content = document.getElementById('report-content');
+  content.innerHTML = '<p style="color:var(--ink3);font-size:13px;">Gerando relatório...</p>';
+  try {
+    const r = await api(`/api/report/monthly?month=${month}`, { headers:{'Authorization':'Bearer '+authToken} });
+    reportData = await r.json();
+    renderReport(reportData);
+  } catch { content.innerHTML = '<p style="color:red;font-size:13px;">Erro ao gerar relatório.</p>'; }
+}
+
+function renderReport(d) {
+  const content = document.getElementById('report-content');
+  const [y, m] = d.month.split('-');
+  const monthName = new Date(+y, +m-1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const hrs = Math.floor(d.total_duration/60);
+  const min = d.total_duration % 60;
+  content.innerHTML = `
+    <h3 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:1.25rem;">Resumo — ${monthName}</h3>
+    <div class="report-grid">
+      <div class="report-stat"><div class="report-stat-value">${d.ideas_count}</div><div class="report-stat-label">ideias capturadas</div></div>
+      <div class="report-stat"><div class="report-stat-value">${d.sessions_count}</div><div class="report-stat-label">sessões registradas</div></div>
+      <div class="report-stat"><div class="report-stat-value">${d.roadmap_count}</div><div class="report-stat-label">no roadmap</div></div>
+      <div class="report-stat"><div class="report-stat-value">${hrs}h${min>0?min+'m':''}</div><div class="report-stat-label">trabalhadas</div></div>
+      ${d.best_day ? `<div class="report-stat"><div class="report-stat-value">${d.best_day.count}</div><div class="report-stat-label">ideias no melhor dia<br><span style="font-size:9px;">${new Date(d.best_day.date+'T12:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})}</span></div></div>` : ''}
+    </div>
+    ${d.ideas_count ? `<div class="report-section"><h3>💡 Ideias do mês</h3>${d.ideas.map(i=>`<div class="report-idea-item"><span style="font-size:9px;background:var(--paper3);padding:1px 5px;border-radius:4px;white-space:nowrap;">${fmtDate(i.created_at)}</span>${esc(i.text.length>200?i.text.slice(0,200)+'…':i.text)}</div>`).join('')}</div>` : ''}
+    ${d.sessions_count ? `<div class="report-section"><h3>📓 Sessões do mês</h3>${d.sessions.map(s=>`<div class="report-idea-item"><span style="font-size:9px;background:var(--paper3);padding:1px 5px;border-radius:4px;white-space:nowrap;">${fmtDate(s.started_at)}</span><div><strong>${esc(s.location||'—')}</strong> · ${s.duration_minutes||0} min${s.initial_thoughts?`<br><em style="font-size:12px;color:var(--ink3);">"${esc(s.initial_thoughts.slice(0,120))}"</em>`:''}</div></div>`).join('')}</div>` : ''}
+    ${!d.ideas_count && !d.sessions_count ? '<p style="color:var(--ink3);font-size:13px;">Nenhuma atividade registrada neste mês.</p>' : ''}
+  `;
+}
+
+function exportReport() {
+  if (!reportData) { showToast('Gere o relatório primeiro'); return; }
+  const el = document.getElementById('report-content');
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>BBrain — Relatório ${reportData.month}</title><style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;color:#1a1a2e}h3{margin:24px 0 12px;border-bottom:1px solid #eee;padding-bottom:8px}.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px}.report-stat{background:#f3f0ff;border-radius:8px;padding:16px;text-align:center}.report-stat-value{font-size:2rem;font-weight:700;color:#1a0a3a}.report-stat-label{font-size:11px;color:#888;margin-top:4px}.report-idea-item{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;background:#f8f7fc;border-radius:6px;margin-bottom:6px;font-size:13px;color:#4a4a58;line-height:1.5}</style></head><body><h1 style="color:#1a0a3a;font-size:20px;">🧠 BBrain — Relatório</h1>${el.innerHTML}</body></html>`;
+  const b = new Blob([html],{type:'text/html'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href=u; a.download=`bbrain-relatorio-${reportData.month}.html`; a.click();
+  URL.revokeObjectURL(u);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LEMBRETES
+// ══════════════════════════════════════════════════════════════════════════════
+let userSettings = {};
+
+async function loadSettings() {
+  try {
+    const r = await api('/api/settings', { headers:{'Authorization':'Bearer '+authToken} });
+    userSettings = (await r.json()).settings || {};
+    applySettingsToUI();
+    // Mostra banner se não configurado ainda
+    if (!userSettings.reminder_frequency) {
+      setTimeout(() => { document.getElementById('reminder-banner').style.display='block'; }, 2000);
+    }
+    document.getElementById('tc-roadmap').textContent = ideas.filter(i=>i.status==='no_roadmap').length;
+  } catch {}
+}
+
+function applySettingsToUI() {
+  const freq = userSettings.reminder_frequency || '';
+  const time = userSettings.reminder_time || '08:00';
+  const plan = userSettings.plan || 'free';
+  if (document.getElementById('reminder-freq')) document.getElementById('reminder-freq').value = freq;
+  if (document.getElementById('reminder-time')) document.getElementById('reminder-time').value = time;
+  updateReminderUI();
+}
+
+function updateReminderUI() {
+  const plan = userSettings.plan || 'free';
+  const freq = document.getElementById('reminder-freq')?.value || '';
+  const waLabel = document.getElementById('ch-wa-label');
+  const waCheck = document.getElementById('ch-whatsapp');
+  const canWa = plan === 'pro' || plan === 'power';
+  if (waLabel) { waLabel.style.opacity = canWa ? '1' : '.4'; waLabel.style.pointerEvents = canWa ? 'auto' : 'none'; }
+  if (waCheck) waCheck.disabled = !canWa;
+  // Bloqueia opções acima do plano
+  const freqSel = document.getElementById('reminder-freq');
+  if (freqSel) {
+    [...freqSel.options].forEach(opt => {
+      const minPlan = opt.dataset.minPlan || 'free';
+      const blocked = (minPlan==='pro' && plan==='free') || (minPlan==='power' && plan!=='power');
+      opt.disabled = blocked;
+    });
+  }
+}
+
+async function saveReminderSettings() {
+  const freq  = document.getElementById('reminder-freq').value;
+  const time  = document.getElementById('reminder-time').value;
+  const email = document.getElementById('ch-email').checked;
+  const wa    = document.getElementById('ch-whatsapp').checked;
+  const channels = [email&&'email', wa&&'whatsapp'].filter(Boolean).join(',') || 'email';
+  try {
+    await api('/api/settings', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({ reminder_frequency:freq, reminder_time:time, reminder_channels:channels }) });
+    userSettings = { ...userSettings, reminder_frequency:freq, reminder_time:time, reminder_channels:channels };
+    showToast(freq ? `✓ Lembrete salvo — ${freq}` : '✓ Lembretes desativados');
+    document.getElementById('reminder-banner').style.display = 'none';
+  } catch { showToast('Erro ao salvar'); }
+}
+
 async function doForgotRequest() {
-  const btn = document.getElementById('forgot-send-btn');
   const err = document.getElementById('forgot-err');
+  const btn = document.getElementById('forgot-send-btn');
   const ok  = document.getElementById('forgot-ok');
   err.textContent = ''; ok.textContent = '';
   btn.disabled = true; btn.textContent = '...';
@@ -1183,6 +1457,8 @@ async function init() {
   showLegacyFooter();
   updateCheckinDatetime();
   await loadData();
+  renderRoadmap();
+  loadSettings();
   checkForActiveSession();
 }
 
@@ -1392,7 +1668,7 @@ async function endSession() {
   activeSession.duration_minutes = diffMin;
 
   try {
-    await fetch(`/api/sessions/${activeSession.id}`, {
+    await api(`/api/sessions/${activeSession.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ended_at: activeSession.ended_at, duration_minutes: diffMin })
@@ -1509,7 +1785,7 @@ async function updateIdeaStatus(id, status) {
   if (!i) return;
   i.status = status;
   try {
-    await fetch(`/api/ideas/${id}`, {
+    await api(`/api/ideas/${id}`, {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
     });
@@ -1522,7 +1798,7 @@ async function updateIdeaStatus(id, status) {
 async function deleteIdea(id) {
   if (!confirm(t('confirm.delete_idea'))) return;
   ideas = ideas.filter(i => i.id !== id);
-  try { await fetch(`/api/ideas/${id}`, { method: 'DELETE' }); } catch {}
+  try { await api(`/api/ideas/${id}`, { method: 'DELETE' }); } catch {}
   localStorage.setItem('bbrain_ideas', JSON.stringify(ideas));
   updateStats(); renderIdeas();
   showToast(t('toast.idea_removed'));

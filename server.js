@@ -320,7 +320,8 @@ async function syncSessions() {
   await shPut(tok, 'Sessions', [SCOLS, ...sessCache.map(sessToRow)]);
 }
 
-let authCache = null; // auth carregado do Sheets
+let authCache     = null; // auth carregado do Sheets
+let settingsCache = {};  // configurações do usuário (lembretes, plano)
 
 async function initSheets() {
   const tok = await getGToken();
@@ -352,6 +353,14 @@ async function initSheets() {
       };
       console.log(`✓ Auth carregado do Sheets — usuário: ${authCache.username}`);
     }
+    // Carrega configurações de lembretes e plano
+    settingsCache = {
+      plan:               cfg.plan               || 'free',
+      reminder_frequency: cfg.reminder_frequency || '',
+      reminder_time:      cfg.reminder_time      || '08:00',
+      reminder_channels:  cfg.reminder_channels  || 'email',
+      last_reminder:      cfg.last_reminder      || '',
+    };
   }
   // Carrega dados
   const ir2 = ir.error ? await shGet(tok, 'Ideas') : ir;
@@ -374,6 +383,11 @@ async function saveAuthToSheets(data) {
       ['username',              data.username],
       ['email',                 data.email || MASTER_ADMIN_EMAIL],
       ['force_password_change', data.force_password_change ? 'true' : 'false'],
+      ['plan',                  settingsCache.plan               || 'free'],
+      ['reminder_frequency',    settingsCache.reminder_frequency || ''],
+      ['reminder_time',         settingsCache.reminder_time      || '08:00'],
+      ['reminder_channels',     settingsCache.reminder_channels  || 'email'],
+      ['last_reminder',         settingsCache.last_reminder      || ''],
     ]);
     authCache = data;
   } catch (e) { console.error('saveAuthToSheets:', e.message); }
@@ -467,22 +481,24 @@ function validToken(token) {
 }
 
 function readAuth() {
-  // 1. Env var (prioridade máxima)
+  // 1. Cache do Sheets (carregado no boot) — tem prioridade se existir
+  //    Isso garante que, após o usuário trocar a senha, deploys seguintes
+  //    não resetam a autenticação via BBRAIN_PASSWORD.
+  if (authCache) {
+    if (!isMasterAdmin(authCache.username)) authCache.username = MASTER_ADMIN;
+    return authCache;
+  }
+  // 2. Hash direto (Fly.io secret BBRAIN_PASSWORD_HASH) — sem troca forçada
   if (process.env.BBRAIN_PASSWORD_HASH) {
     const username = process.env.BBRAIN_USERNAME || MASTER_ADMIN;
     return { hash: process.env.BBRAIN_PASSWORD_HASH, username };
   }
-  // 1b. Senha em texto (Fly.io secret) — hash calculado em runtime, troca forçada
+  // 3. Senha provisória em texto (BBRAIN_PASSWORD) — hash em runtime + troca forçada
+  //    Ativado apenas se não houver authCache (primeiro boot antes de qualquer troca)
   if (process.env.BBRAIN_PASSWORD) {
     return { hash: hashPwd(process.env.BBRAIN_PASSWORD), username: MASTER_ADMIN, email: MASTER_ADMIN_EMAIL, force_password_change: true };
   }
-  // 2. Cache do Sheets (carregado no boot)
-  if (authCache) {
-    // Garante que o admin master nunca é substituído por outro username
-    if (!isMasterAdmin(authCache.username)) authCache.username = MASTER_ADMIN;
-    return authCache;
-  }
-  // 3. Fallback: arquivo local
+  // 4. Fallback: arquivo local
   try {
     const data = JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'));
     if (data && !isMasterAdmin(data.username)) data.username = MASTER_ADMIN;
@@ -622,6 +638,48 @@ const server = http.createServer(async (req, res) => {
     const token = getToken(req);
     if (token) authSessions.delete(token);
     return json(res, 200, { success: true });
+  }
+
+  // ── GET /api/settings ──
+  if (pathname === '/api/settings' && method === 'GET') {
+    if (!validToken(getToken(req))) return json(res, 401, { error: 'Não autenticado' });
+    return json(res, 200, { settings: settingsCache });
+  }
+
+  // ── POST /api/settings ──
+  if (pathname === '/api/settings' && method === 'POST') {
+    if (!validToken(getToken(req))) return json(res, 401, { error: 'Não autenticado' });
+    try {
+      const body = await readBody(req);
+      const updates = JSON.parse(body);
+      const allowed = ['plan','reminder_frequency','reminder_time','reminder_channels'];
+      allowed.forEach(k => { if (k in updates) settingsCache[k] = updates[k]; });
+      // Persiste no Sheets (via auth save, reutilizando a aba Config)
+      const auth = readAuth() || {};
+      saveAuthToSheets(auth).catch(() => {});
+      console.log(`⚙️  Settings atualizados — freq:${settingsCache.reminder_frequency} canal:${settingsCache.reminder_channels}`);
+      return json(res, 200, { settings: settingsCache });
+    } catch (e) { return json(res, 400, { error: e.message }); }
+  }
+
+  // ── GET /api/report/monthly ──
+  if (pathname === '/api/report/monthly' && method === 'GET') {
+    if (!validToken(getToken(req))) return json(res, 401, { error: 'Não autenticado' });
+    const month  = new URLSearchParams(req.url.split('?')[1] || '').get('month') || new Date().toISOString().slice(0,7);
+    const ideas  = readIdeas().ideas.filter(i => i.created_at?.startsWith(month));
+    const sessions = readSessions().sessions.filter(s => s.started_at?.startsWith(month));
+    const roadmap  = ideas.filter(i => i.status === 'no_roadmap');
+    const byDay    = {};
+    ideas.forEach(i => { const d = i.created_at?.slice(0,10); if (d) byDay[d] = (byDay[d]||0)+1; });
+    const bestDay  = Object.entries(byDay).sort((a,b)=>b[1]-a[1])[0];
+    return json(res, 200, {
+      month, ideas_count: ideas.length, sessions_count: sessions.length,
+      roadmap_count: roadmap.length,
+      total_duration: sessions.reduce((s,x)=>s+(x.duration_minutes||0),0),
+      best_day: bestDay ? { date: bestDay[0], count: bestDay[1] } : null,
+      ideas: ideas.map(i => ({ id:i.id, text:i.text, status:i.status, created_at:i.created_at, roadmap_phase:i.roadmap_phase })),
+      sessions: sessions.map(s => ({ id:s.id, location:s.location, started_at:s.started_at, duration_minutes:s.duration_minutes, initial_thoughts:s.initial_thoughts })),
+    });
   }
 
   if (pathname === '/api/auth/change-password' && method === 'POST') {
@@ -943,3 +1001,34 @@ server.listen(PORT, async () => {
 ╚═══════════════════════════════════════════════════════╝
 `);
 });
+
+// ── SCHEDULER DE LEMBRETES ────────────────────────────────────────────────────
+async function checkAndSendReminder() {
+  const s = settingsCache;
+  if (!s || !s.reminder_frequency) return;
+  const freqDays = { daily:1, every2days:2, every15days:15, monthly:30 }[s.reminder_frequency];
+  if (!freqDays) return;
+  const now = new Date();
+  const [hh, mm] = (s.reminder_time || '08:00').split(':').map(Number);
+  if (now.getHours() !== hh || now.getMinutes() > mm + 5) return; // janela de 5min
+  if (s.last_reminder) {
+    const daysSince = (now - new Date(s.last_reminder)) / 86400000;
+    if (daysSince < freqDays) return;
+  }
+  // Monta lembrete
+  const ideas  = readIdeas().ideas;
+  const roadmap = ideas.filter(i => i.status === 'no_roadmap');
+  const novas   = ideas.filter(i => i.status === 'nova');
+  const msg = `🧠 BBrain — Lembrete de ideias\n\nVocê tem ${novas.length} ideia(s) nova(s) e ${roadmap.length} no roadmap.\n\nAcesse: https://bbrainapp.you/laboratorio`;
+  const channels = (s.reminder_channels || 'email').split(',');
+  if (channels.includes('email')) {
+    const auth = readAuth();
+    const to = auth?.email || MASTER_ADMIN_EMAIL;
+    await sendEmail(to, '🧠 BBrain — Lembrete de ideias', msg);
+    console.log(`📧 Lembrete enviado para ${to}`);
+  }
+  settingsCache.last_reminder = now.toISOString();
+  const auth = readAuth() || {};
+  saveAuthToSheets(auth).catch(() => {});
+}
+setInterval(checkAndSendReminder, 60 * 60 * 1000); // a cada hora
