@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BBrain — Bruno Cérebro · Aproove</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink: #111110; --ink2: #4a4a47; --ink3: #9a9a96;
@@ -16,7 +16,8 @@
   --blue: #0d4a8a; --blue-bg: #e8f0fb; --blue-bd: rgba(13,74,138,.2);
   --red: #8a1a1a; --red-bg: #fbeaea; --red-bd: rgba(138,26,26,.2);
   --purple: #4a1d7a; --purple-bg: #f3eefb; --purple-bd: rgba(74,29,122,.2);
-  --brain: #1a0a3a; --brain-mid: #3a1f7a; --brain-glow: rgba(74,45,138,.15);
+  --brain: #0A0A10; --brain-mid: #13131F; --brain-glow: rgba(245,166,35,.12);
+  --amber-brand: #F5A623; --amber-brand-dk: #C47A00;
   --wa: #25d366; --wa-bg: #e8fdf2; --wa-bd: rgba(37,211,102,.25);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,13 +34,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
 }
 .brain-logo { display: flex; align-items: center; gap: .625rem; }
-.brain-mark {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--brain); display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
-  box-shadow: 0 0 0 1px rgba(74,45,138,.3), 0 2px 8px var(--brain-glow);
-}
-.brain-name { font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+.brain-mark { display: none; }
+.brain-name { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 18px; letter-spacing: .18em; color: var(--ink); }
+.brain-name-amber { color: #F5A623; }
 .brain-sub { font-size: 11px; color: var(--ink3); }
 .header-actions { margin-left: auto; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
 .stat-chip { display: flex; align-items: center; gap: .3rem; padding: .25rem .625rem; background: var(--paper2); border: 1px solid var(--line2); border-radius: 12px; font-size: 11px; color: var(--ink2); }
@@ -100,13 +97,13 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   color: var(--ink); line-height: 1.6; outline: none; transition: border-color .15s, box-shadow .15s;
 }
 .idea-textarea::placeholder { color: var(--ink3); }
-.idea-textarea:focus { border-color: rgba(74,29,122,.4); box-shadow: 0 0 0 3px var(--brain-glow); }
+.idea-textarea:focus { border-color: rgba(245,166,35,.4); box-shadow: 0 0 0 3px rgba(245,166,35,.08); }
 .capture-footer { display: flex; align-items: center; justify-content: space-between; margin-top: .875rem; gap: .75rem; flex-wrap: wrap; }
 .capture-hint { font-size: 11px; color: var(--ink3); }
 .capture-hint kbd { font-family: 'DM Mono', monospace; font-size: 10px; padding: 1px 5px; background: var(--paper2); border: 1px solid var(--line2); border-radius: 3px; }
 .btn-idea {
-  background: var(--brain); color: white; border: none; border-radius: 8px;
-  padding: .5rem 1.25rem; font-family: inherit; font-size: 13px; font-weight: 600;
+  background: #F5A623; color: #0A0A10; border: none; border-radius: 8px;
+  padding: .5rem 1.25rem; font-family: inherit; font-size: 13px; font-weight: 700;
   cursor: pointer; transition: opacity .15s;
 }
 .btn-idea:hover { opacity: .85; }
@@ -116,7 +113,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .filters { display: flex; gap: .4rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
 .filter-btn { padding: .3rem .75rem; border: 1px solid var(--line2); border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--paper2); color: var(--ink2); cursor: pointer; transition: all .12s; }
 .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
-.filter-btn.active { background: var(--brain); color: white; border-color: var(--brain); }
+.filter-btn.active { background: #F5A623; color: #0A0A10; border-color: #F5A623; font-weight: 700; }
 .fc { font-family: 'DM Mono', monospace; font-size: 10px; opacity: .65; }
 
 /* ── IDEA CARDS ── */
@@ -304,44 +301,45 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 }
 
 /* ── AUTH OVERLAY ── */
-.auth-overlay { position:fixed;inset:0;z-index:9999;background:var(--brain);display:flex;align-items:center;justify-content:center;padding:1.5rem; }
+.auth-overlay { position:fixed;inset:0;z-index:9999;background:#0A0A10;display:flex;align-items:center;justify-content:center;padding:1.5rem; }
 .auth-overlay.hidden { display:none; }
 .auth-box { width:100%;max-width:360px;text-align:center; }
-.auth-icon { font-size:52px;display:block;margin-bottom:1.75rem; }
+.auth-logo { font-family:'Raleway',sans-serif;font-weight:200;font-size:32px;letter-spacing:.2em;color:#FFFFFF;display:block;margin-bottom:1.75rem; }
+.auth-logo span { color:#F5A623; }
 .auth-title { font-size:26px;font-weight:700;color:white;letter-spacing:-.02em;margin-bottom:.375rem; }
-.auth-subtitle { font-size:13px;color:rgba(255,255,255,.4);margin-bottom:2rem;line-height:1.6; }
+.auth-subtitle { font-size:13px;color:rgba(255,255,255,.35);margin-bottom:2rem;line-height:1.6; }
 .auth-input {
   display:block;width:100%;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
   border-radius:10px;padding:.8rem 1rem;
   font-family:inherit;font-size:14px;color:white;
-  margin-bottom:.625rem;outline:none;transition:border-color .15s;
+  margin-bottom:.625rem;outline:none;transition:border-color .15s,box-shadow .15s;
 }
-.auth-input::placeholder { color:rgba(255,255,255,.25); }
-.auth-input:focus { border-color:rgba(255,255,255,.3); }
+.auth-input::placeholder { color:rgba(255,255,255,.22); }
+.auth-input:focus { border-color:rgba(245,166,35,.5);box-shadow:0 0 0 3px rgba(245,166,35,.08); }
 .auth-input[readonly] { opacity:.4;cursor:default; }
 .auth-btn {
   display:block;width:100%;
-  background:rgba(255,255,255,.95);color:var(--brain);
+  background:#F5A623;color:#0A0A10;
   border:none;border-radius:10px;padding:.9rem;
-  font-family:inherit;font-size:14px;font-weight:700;
+  font-family:inherit;font-size:14px;font-weight:800;
   cursor:pointer;margin-top:.375rem;transition:opacity .15s;
-  letter-spacing:-.01em;
+  letter-spacing:.01em;
 }
-.auth-btn:hover { opacity:.9; }
+.auth-btn:hover { opacity:.88; }
 .auth-btn:disabled { opacity:.4;cursor:not-allowed; }
 .auth-err { font-size:12px;color:#f87171;margin-top:.75rem;min-height:1.4em; }
-.auth-hint { font-size:11px;color:rgba(255,255,255,.2);margin-top:1.75rem;line-height:1.7; }
-.auth-link { font-size:12px;color:rgba(255,255,255,.35);margin-top:1rem;cursor:pointer;display:inline-block; }
-.auth-link:hover { color:rgba(255,255,255,.65); }
+.auth-hint { font-size:11px;color:rgba(255,255,255,.18);margin-top:1.75rem;line-height:1.7; }
+.auth-link { font-size:12px;color:rgba(255,255,255,.3);margin-top:1rem;cursor:pointer;display:inline-block; }
+.auth-link:hover { color:rgba(245,166,35,.8); }
 .auth-success { font-size:12px;color:#4ade80;margin-top:.75rem;min-height:1.4em; }
 
 /* ── LANGUAGE SELECTOR ── */
 .lang-bar { display:flex;justify-content:center;gap:.5rem;margin-bottom:2rem; }
-.lang-btn { background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;
-  padding:.3rem .65rem;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;font-family:inherit; }
-.lang-btn:hover { background:rgba(255,255,255,.12);color:rgba(255,255,255,.7); }
-.lang-btn.active { background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;font-weight:600; }
+.lang-btn { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;
+  padding:.3rem .65rem;font-size:12px;color:rgba(255,255,255,.35);cursor:pointer;transition:all .15s;font-family:inherit; }
+.lang-btn:hover { background:rgba(255,255,255,.1);color:rgba(255,255,255,.7); }
+.lang-btn.active { background:rgba(245,166,35,.12);border-color:rgba(245,166,35,.3);color:#F5A623;font-weight:600; }
 
 /* ── HEADER LANG ── */
 .header-lang { display:flex;gap:.3rem;align-items:center; }
@@ -367,9 +365,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 <!-- ── HEADER ── -->
 <header class="header">
   <div class="brain-logo">
-    <div class="brain-mark">🧠</div>
+    <div class="brain-mark"></div>
     <div>
-      <div class="brain-name" id="hdr-brain-name">BBrain</div>
+      <div class="brain-name" id="hdr-brain-name">BB<span class="brain-name-amber">rain</span></div>
       <div class="brain-sub" id="hdr-sub" data-t="header.subtitle">Espaço privado do fundador</div>
     </div>
   </div>
@@ -705,7 +703,7 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
       <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
-    <span class="auth-icon">🧠</span>
+    <span class="auth-logo">BB<span>rain</span></span>
     <h1 class="auth-title" data-t="auth.setup.title">Bem-vindo ao BBrain</h1>
     <p class="auth-subtitle" data-t="auth.setup.subtitle">Primeira vez aqui.<br>Crie seu usuário e senha para proteger este espaço.</p>
     <input type="text"     id="setup-user" class="auth-input" data-t-ph="auth.setup.username" placeholder="Usuário" autocomplete="username" spellcheck="false">
@@ -726,7 +724,7 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
       <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
-    <span class="auth-icon">🧠</span>
+    <span class="auth-logo">BB<span>rain</span></span>
     <h1 class="auth-title" data-t="auth.login.title">BBrain</h1>
     <p class="auth-subtitle" data-t="auth.login.subtitle">Aproove · Diário do Fundador</p>
     <input type="text"     id="login-user" class="auth-input" data-t-ph="auth.login.username" placeholder="Usuário" autocomplete="username" spellcheck="false">
