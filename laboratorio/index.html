@@ -46,6 +46,8 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .stat-chip b { font-weight: 700; font-family: 'DM Mono', monospace; color: var(--ink); }
 .stat-chip.active { background: var(--green-bg); border-color: var(--green-bd); }
 .stat-chip.active b { color: var(--green); }
+.stat-chip-link { cursor: pointer; transition: background .12s, border-color .12s; }
+.stat-chip-link:hover { background: var(--paper3); border-color: var(--ink3); }
 
 /* ── SESSION ACTIVE BANNER ── */
 .session-banner {
@@ -221,6 +223,24 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .report-section { margin-bottom:1.75rem; }
 .report-section h3 { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:.875rem; padding-bottom:.5rem; border-bottom:1px solid var(--line2); }
 .report-idea-item { font-size:13px; color:var(--ink2); padding:.5rem .75rem; border-radius:6px; background:var(--paper2); margin-bottom:.4rem; display:flex; align-items:flex-start; gap:.6rem; line-height:1.5; }
+/* ── BRAIN NAME MODAL ── */
+.brain-name-overlay { position:fixed; inset:0; background:rgba(10,5,25,.7); backdrop-filter:blur(6px); z-index:500; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.brain-name-modal { background:var(--surface); border-radius:18px; padding:2.25rem 2rem 2rem; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.2); text-align:center; }
+.brain-name-modal .bm-icon { font-size:2.5rem; margin-bottom:1rem; }
+.brain-name-modal h2 { font-size:20px; font-weight:700; letter-spacing:-.02em; margin-bottom:.4rem; }
+.brain-name-modal p { font-size:13px; color:var(--ink3); line-height:1.6; margin-bottom:1.5rem; }
+.brain-name-preview { font-size:28px; font-weight:800; letter-spacing:-.03em; color:var(--brain); margin-bottom:1.25rem; min-height:40px; transition:all .15s; }
+.brain-name-preview span { color:var(--ink3); }
+.brain-name-input { width:100%; padding:.75rem 1rem; border:1.5px solid var(--line2); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; text-align:center; outline:none; transition:border-color .15s; margin-bottom:1rem; }
+.brain-name-input:focus { border-color:var(--brain); }
+.brain-name-suggestions { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem; }
+.brain-name-sug { padding:.3rem .75rem; border:1px solid var(--line2); border-radius:20px; font-size:12px; font-weight:600; color:var(--ink2); cursor:pointer; background:var(--paper2); transition:all .12s; }
+.brain-name-sug:hover, .brain-name-sug.active { background:var(--brain); color:white; border-color:var(--brain); }
+.btn-confirm-brain { width:100%; padding:.875rem; background:var(--brain); color:white; border:none; border-radius:10px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+.btn-confirm-brain:hover { opacity:.85; }
+.brain-name-skip { display:block; margin-top:.875rem; font-size:12px; color:var(--ink3); cursor:pointer; }
+.brain-name-skip:hover { color:var(--ink); }
+
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--brain); color: white; padding: .625rem 1.25rem; border-radius: 8px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .2s; pointer-events: none; white-space: nowrap; z-index: 300; }
 .toast.show { opacity: 1; }
@@ -349,7 +369,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   <div class="brain-logo">
     <div class="brain-mark">🧠</div>
     <div>
-      <div class="brain-name">BBrain</div>
+      <div class="brain-name" id="hdr-brain-name">BBrain</div>
       <div class="brain-sub" id="hdr-sub" data-t="header.subtitle">Espaço privado do fundador</div>
     </div>
   </div>
@@ -357,9 +377,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <div class="stat-chip active" id="stat-session-active" style="display:none">
       <b id="stat-session-time">00:00</b> <span data-t="header.active_session">sessão ativa</span>
     </div>
-    <div class="stat-chip"><b id="stat-total">0</b> <span data-t="header.ideas">ideias</span></div>
-    <div class="stat-chip"><b id="stat-roadmap">0</b> <span data-t="header.roadmap">no roadmap</span></div>
-    <div class="stat-chip"><b id="stat-sessions">0</b> <span data-t="header.sessions">sessões</span></div>
+    <div class="stat-chip stat-chip-link" onclick="navToIdeas()" title="Ver todas as ideias"><b id="stat-total">0</b> <span data-t="header.ideas">ideias</span></div>
+    <div class="stat-chip stat-chip-link" onclick="navToRoadmap()" title="Ver ideias no roadmap"><b id="stat-roadmap">0</b> <span data-t="header.roadmap">no roadmap</span></div>
+    <div class="stat-chip stat-chip-link" onclick="navToSessions()" title="Ver sessões"><b id="stat-sessions">0</b> <span data-t="header.sessions">sessões</span></div>
     <div class="header-lang" id="header-lang">
       <button class="hlang-btn active" onclick="setLang('pt')">PT</button>
       <button class="hlang-btn" onclick="setLang('en')">EN</button>
@@ -413,10 +433,10 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 
 <!-- ── TABS ── -->
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('ideas', this)">
+  <button id="tab-btn-ideas" class="tab-btn active" onclick="switchTab('ideas', this)">
     <span data-t="tab.ideas">💡 Ideias</span> <span class="tab-count" id="tc-ideas">0</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('sessions', this)">
+  <button id="tab-btn-sessions" class="tab-btn" onclick="switchTab('sessions', this)">
     <span data-t="tab.sessions">📓 Diário de sessões</span> <span class="tab-count" id="tc-sessions">0</span>
   </button>
   <button class="tab-btn" onclick="switchTab('roadmap', this)">
@@ -658,6 +678,20 @@ COLOR PALETTE:
 
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
+
+<!-- ── BRAIN NAME MODAL ── -->
+<div class="brain-name-overlay" id="brain-name-overlay" style="display:none">
+  <div class="brain-name-modal">
+    <div class="bm-icon">🧠</div>
+    <h2>Como se chama o seu cérebro?</h2>
+    <p>Este é o seu espaço privado. Dê um nome ao seu cérebro — ou use a sugestão abaixo.</p>
+    <div class="brain-name-preview" id="bm-preview">BBrain</div>
+    <input class="brain-name-input" id="bm-input" type="text" maxlength="20" placeholder="Ex: BBrain, MeuCérebro, IdeaHub...">
+    <div class="brain-name-suggestions" id="bm-suggestions"></div>
+    <button class="btn-confirm-brain" onclick="confirmBrainName()">Confirmar nome</button>
+    <span class="brain-name-skip" onclick="skipBrainName()">Usar sugestão e continuar →</span>
+  </div>
+</div>
 
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay hidden">
@@ -1331,8 +1365,12 @@ async function loadSettings() {
     const r = await api('/api/settings', { headers:{'Authorization':'Bearer '+authToken} });
     userSettings = (await r.json()).settings || {};
     applySettingsToUI();
-    // Mostra banner se não configurado ainda
-    if (!userSettings.reminder_frequency) {
+    // Mostra modal de nome do cérebro se nunca foi configurado
+    if (!userSettings.brain_name) {
+      setTimeout(() => showBrainNameModal(), 800);
+    }
+    // Mostra banner de lembretes se não configurado ainda
+    if (!userSettings.reminder_frequency && userSettings.brain_name) {
       setTimeout(() => { document.getElementById('reminder-banner').style.display='block'; }, 2000);
     }
     document.getElementById('tc-roadmap').textContent = ideas.filter(i=>i.status==='no_roadmap').length;
@@ -1346,6 +1384,81 @@ function applySettingsToUI() {
   if (document.getElementById('reminder-freq')) document.getElementById('reminder-freq').value = freq;
   if (document.getElementById('reminder-time')) document.getElementById('reminder-time').value = time;
   updateReminderUI();
+  applyBrainName();
+}
+
+// ── BRAIN NAME ────────────────────────────────────────────────
+function defaultBrainName(username) {
+  if (!username) return 'BBrain';
+  const first = username.trim()[0].toUpperCase();
+  return first + 'Brain';
+}
+
+function applyBrainName() {
+  const name = userSettings.brain_name || defaultBrainName(localStorage.getItem('bbrain_username'));
+  document.getElementById('hdr-brain-name').textContent = name;
+  document.title = name + ' — Aproove';
+}
+
+function showBrainNameModal() {
+  const username = localStorage.getItem('bbrain_username') || '';
+  const suggested = defaultBrainName(username);
+  const first = username[0]?.toUpperCase() || 'B';
+
+  // Sugestões
+  const suggestions = [
+    suggested,
+    username.trim() ? username.trim()[0].toUpperCase() + username.trim().slice(1) + 'Brain' : 'MeuBrain',
+    'MeuCérebro',
+    'IdeaHub',
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
+  const sugHtml = suggestions.map(s =>
+    `<span class="brain-name-sug${s===suggested?' active':''}" onclick="selectBrainSug('${s}',this)">${s}</span>`
+  ).join('');
+  document.getElementById('bm-suggestions').innerHTML = sugHtml;
+  document.getElementById('bm-preview').textContent = suggested;
+  document.getElementById('bm-input').value = '';
+  document.getElementById('bm-input').placeholder = suggested;
+  document.getElementById('brain-name-overlay').style.display = 'flex';
+
+  document.getElementById('bm-input').oninput = function() {
+    const val = this.value.trim() || suggested;
+    document.getElementById('bm-preview').textContent = val;
+    document.querySelectorAll('.brain-name-sug').forEach(s => s.classList.remove('active'));
+  };
+}
+
+function selectBrainSug(name, el) {
+  document.getElementById('bm-input').value = '';
+  document.getElementById('bm-preview').textContent = name;
+  document.querySelectorAll('.brain-name-sug').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function saveBrainName(name) {
+  userSettings.brain_name = name;
+  applyBrainName();
+  document.getElementById('brain-name-overlay').style.display = 'none';
+  try {
+    await api('/api/settings', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brain_name: name })
+    });
+  } catch {}
+  showToast('🧠 ' + name + ' ativado!');
+}
+
+function confirmBrainName() {
+  const suggested = defaultBrainName(localStorage.getItem('bbrain_username'));
+  const val = document.getElementById('bm-input').value.trim() || document.getElementById('bm-preview').textContent || suggested;
+  saveBrainName(val);
+}
+
+function skipBrainName() {
+  const suggested = document.getElementById('bm-preview').textContent || defaultBrainName(localStorage.getItem('bbrain_username'));
+  saveBrainName(suggested);
 }
 
 function updateReminderUI() {
@@ -1993,6 +2106,19 @@ function updateStats() {
   document.getElementById('stat-total').textContent    = ideas.length;
   document.getElementById('stat-roadmap').textContent  = ideas.filter(i => i.status==='no_roadmap').length;
   document.getElementById('stat-sessions').textContent = sessions.length;
+}
+
+// ── NAVEGAÇÃO PELOS STAT CHIPS ────────────────────────────────
+function navToIdeas() {
+  switchTab('ideas', document.getElementById('tab-btn-ideas'));
+  setFilter('todas', document.querySelector('.filter-btn[onclick*="todas"]'));
+}
+function navToRoadmap() {
+  switchTab('ideas', document.getElementById('tab-btn-ideas'));
+  setFilter('no_roadmap', document.querySelector('.filter-btn[onclick*="no_roadmap"]'));
+}
+function navToSessions() {
+  switchTab('sessions', document.getElementById('tab-btn-sessions'));
 }
 
 // ── HELPERS ───────────────────────────────────────────────────

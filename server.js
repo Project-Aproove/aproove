@@ -356,6 +356,7 @@ async function initSheets() {
     // Carrega configurações de lembretes e plano
     settingsCache = {
       plan:               cfg.plan               || 'free',
+      brain_name:         cfg.brain_name         || '',
       reminder_frequency: cfg.reminder_frequency || '',
       reminder_time:      cfg.reminder_time      || '08:00',
       reminder_channels:  cfg.reminder_channels  || 'email',
@@ -384,6 +385,7 @@ async function saveAuthToSheets(data) {
       ['email',                 data.email || MASTER_ADMIN_EMAIL],
       ['force_password_change', data.force_password_change ? 'true' : 'false'],
       ['plan',                  settingsCache.plan               || 'free'],
+      ['brain_name',            settingsCache.brain_name         || ''],
       ['reminder_frequency',    settingsCache.reminder_frequency || ''],
       ['reminder_time',         settingsCache.reminder_time      || '08:00'],
       ['reminder_channels',     settingsCache.reminder_channels  || 'email'],
@@ -461,49 +463,230 @@ async function sendWhatsAppReply(to, text) {
   } catch {}
 }
 
-function processWhatsAppMessage(entry) {
+// ── Download de mídia do Meta Graph API ──────────────────────────────────────
+async function downloadWAMedia(mediaId) {
+  if (!WA_ACCESS_TOKEN || !mediaId) return null;
+  const https = require('https');
+  // Passo 1: obter URL de download
+  const mediaUrl = await new Promise(resolve => {
+    const req = https.request({
+      hostname: 'graph.facebook.com',
+      path: `/v18.0/${mediaId}`,
+      method: 'GET',
+      headers: { Authorization: `Bearer ${WA_ACCESS_TOKEN}` }
+    }, r => {
+      let d = ''; r.on('data', c => d += c);
+      r.on('end', () => { try { resolve(JSON.parse(d).url || null); } catch { resolve(null); } });
+    });
+    req.on('error', () => resolve(null)); req.end();
+  });
+  if (!mediaUrl) return null;
+  // Passo 2: baixar o arquivo
+  return new Promise(resolve => {
+    const parsed = new URL(mediaUrl);
+    const req = https.request({
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      method: 'GET',
+      headers: { Authorization: `Bearer ${WA_ACCESS_TOKEN}` }
+    }, r => {
+      const chunks = [];
+      const mimeType = r.headers['content-type'] || 'audio/ogg';
+      r.on('data', c => chunks.push(c));
+      r.on('end', () => resolve({ buffer: Buffer.concat(chunks), mimeType }));
+    });
+    req.on('error', () => resolve(null)); req.end();
+  });
+}
+
+// ── Transcrição de áudio via Gemini API ──────────────────────────────────────
+async function transcribeAudioGemini(buffer, mimeType) {
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+  if (!GEMINI_KEY || !buffer) return null;
+  return new Promise(resolve => {
+    const https = require('https');
+    const body = JSON.stringify({
+      contents: [{ parts: [
+        { text: 'Transcreva exatamente o que está sendo dito neste áudio em português. Retorne apenas a transcrição, sem explicações.' },
+        { inline_data: { mime_type: mimeType, data: buffer.toString('base64') } }
+      ]}]
+    });
+    const req = https.request({
+      hostname: 'generativelanguage.googleapis.com',
+      path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, r => {
+      let d = ''; r.on('data', c => d += c);
+      r.on('end', () => {
+        try { resolve(JSON.parse(d).candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null); }
+        catch { resolve(null); }
+      });
+    });
+    req.on('error', () => resolve(null)); req.write(body); req.end();
+  });
+}
+
+// ── Interpretação de intenção da mensagem ─────────────────────────────────────
+function interpretWAIntent(text) {
+  const t = text.toLowerCase().trim();
+  const startPhrases = ['check-in', 'checkin', 'iniciar sessão', 'iniciar sessao',
+    'nova sessão', 'nova sessao', 'começar sessão', 'comecar sessao', 'início', 'inicio de sessao'];
+  const endPhrases = ['check-out', 'checkout', 'encerrar sessão', 'encerrar sessao',
+    'terminar sessão', 'terminar sessao', 'fim de sessão', 'fim de sessao', 'encerrar', 'terminei'];
+  if (startPhrases.some(p => t === p || t.startsWith(p + ' ') || t.startsWith(p + ','))) return 'session_start';
+  if (endPhrases.some(p => t === p || t.startsWith(p + ' ') || t.startsWith(p + ','))) return 'session_end';
+  return 'idea';
+}
+
+// ── Extrai local e pensamento inicial do texto de check-in ───────────────────
+function parseCheckinText(text) {
+  const prefixes = [
+    'check-in em ', 'checkin em ', 'iniciar sessão em ', 'iniciar sessao em ',
+    'nova sessão em ', 'nova sessao em ', 'check-in ', 'checkin '
+  ];
+  const lower = text.toLowerCase();
+  for (const p of prefixes) {
+    if (lower.startsWith(p)) {
+      const rest = text.slice(p.length).trim();
+      const comma = rest.indexOf(',');
+      if (comma > 0) return { location: rest.slice(0, comma).trim(), initial_thoughts: rest.slice(comma + 1).trim() };
+      return { location: rest || 'WhatsApp', initial_thoughts: null };
+    }
+  }
+  return { location: 'WhatsApp', initial_thoughts: null };
+}
+
+// ── Processamento de mensagens WhatsApp ──────────────────────────────────────
+async function processWhatsAppMessage(entry) {
   try {
-    const changes = entry.changes || [];
-    for (const change of changes) {
-      const value = change.value || {};
-      const messages = value.messages || [];
+    for (const change of entry.changes || []) {
+      const messages = change.value?.messages || [];
       for (const msg of messages) {
-        if (msg.type !== 'text' && msg.type !== 'audio') continue;
-        const text = msg.type === 'text'
-          ? msg.text?.body || ''
-          : '[Áudio recebido — transcrição pendente]';
+        const phone = msg.from;
+        let text = '';
+        let isAudio = false;
 
-        if (!text.trim()) continue;
+        if (msg.type === 'text') {
+          text = msg.text?.body?.trim() || '';
+        } else if (msg.type === 'audio') {
+          isAudio = true;
+          const media = await downloadWAMedia(msg.audio?.id);
+          if (media) {
+            const transcript = await transcribeAudioGemini(media.buffer, media.mimeType);
+            if (transcript) {
+              text = transcript;
+              console.log(`🎙️ Áudio transcrito (${phone}): "${text.slice(0, 80)}"`);
+            }
+          }
+          if (!text) {
+            text = process.env.GEMINI_API_KEY
+              ? '[Áudio — falha na transcrição]'
+              : '[Áudio — configure GEMINI_API_KEY para transcrever automaticamente]';
+          }
+        } else {
+          continue;
+        }
 
-        const data = readIdeas();
-        const idea = {
-          id: generateId(),
-          text: text.trim(),
-          source: 'whatsapp',
-          whatsapp_from: msg.from,
-          created_at: new Date().toISOString(),
-          status: 'nova',
-          tags: [],
-          evaluation: null,
-          roadmap_phase: null,
-          connections: []
-        };
-        data.ideas.unshift(idea);
-        writeIdeas(data);
-        console.log(`📱 WhatsApp → ideia criada: #${idea.id} de ${msg.from}`);
+        if (!text) continue;
+        const intent = interpretWAIntent(text);
 
-        // Confirmação automática
-        sendWhatsAppReply(msg.from, `💡 Ideia #${idea.id} capturada! Acesse o laboratório para gerenciar.`);
+        // ── CHECK-IN: iniciar sessão ──
+        if (intent === 'session_start') {
+          const { location, initial_thoughts } = parseCheckinText(text);
+          const sessData = readSessions();
+          const session = {
+            id: generateId(),
+            started_at: new Date().toISOString(),
+            ended_at: null,
+            location,
+            initial_thoughts: initial_thoughts || null,
+            duration_minutes: null,
+            features_worked: [],
+            ideas_captured: [],
+            social_content: null
+          };
+          sessData.sessions.unshift(session);
+          writeSessions(sessData);
+          waActiveSessions.set(phone, { session_id: session.id, started_at: session.started_at });
+          console.log(`📱 WhatsApp → sessão iniciada: #${session.id} em "${location}" (${phone})`);
+          sendWhatsAppReply(phone,
+            `🧠 *Sessão iniciada!*\n📍 ${location}\n\nMande suas ideias por aqui. Quando terminar, mande *check-out*.`
+          );
+
+        // ── CHECK-OUT: encerrar sessão ──
+        } else if (intent === 'session_end') {
+          const active = waActiveSessions.get(phone);
+          if (!active) {
+            sendWhatsAppReply(phone, `Nenhuma sessão ativa. Mande *check-in [local]* para iniciar uma.`);
+            continue;
+          }
+          const now = new Date();
+          const duration = Math.round((now - new Date(active.started_at)) / 60000);
+          const sessData = readSessions();
+          const idx = sessData.sessions.findIndex(s => s.id === active.session_id);
+          if (idx !== -1) {
+            sessData.sessions[idx].ended_at = now.toISOString();
+            sessData.sessions[idx].duration_minutes = duration;
+            writeSessions(sessData);
+          }
+          waActiveSessions.delete(phone);
+          console.log(`📱 WhatsApp → sessão encerrada: #${active.session_id} (${duration}min)`);
+          sendWhatsAppReply(phone,
+            `✅ *Sessão encerrada!*\n⏱️ ${duration} minuto${duration !== 1 ? 's' : ''} de foco.\n\nAté a próxima! 🚀`
+          );
+
+        // ── IDEIA ──
+        } else {
+          const active = waActiveSessions.get(phone);
+          const ideasData = readIdeas();
+          const idea = {
+            id: generateId(),
+            text,
+            source: 'whatsapp',
+            whatsapp_from: phone,
+            created_at: new Date().toISOString(),
+            status: 'nova',
+            tags: isAudio ? ['audio'] : [],
+            evaluation: null,
+            roadmap_phase: null,
+            connections: [],
+            session_id: active?.session_id || null
+          };
+          ideasData.ideas.unshift(idea);
+          writeIdeas(ideasData);
+
+          // Vincula à sessão ativa
+          if (active) {
+            const sessData = readSessions();
+            const idx = sessData.sessions.findIndex(s => s.id === active.session_id);
+            if (idx !== -1) {
+              const captured = sessData.sessions[idx].ideas_captured || [];
+              if (!captured.includes(idea.id)) {
+                sessData.sessions[idx].ideas_captured = [...captured, idea.id];
+                writeSessions(sessData);
+              }
+            }
+          }
+
+          console.log(`📱 WhatsApp → ideia #${idea.id}${active ? ` (sessão ${active.session_id})` : ''} de ${phone}`);
+          const sessInfo = active ? ' e vinculada à sua sessão' : '';
+          const audioPreview = isAudio ? `\n🎙️ _"${text.slice(0, 100)}${text.length > 100 ? '...' : ''}"_` : '';
+          sendWhatsAppReply(phone,
+            `💡 *Ideia #${idea.id} capturada${sessInfo}!*${audioPreview}`
+          );
+        }
       }
     }
   } catch (e) {
-    console.error('Erro ao processar mensagem WhatsApp:', e.message);
+    console.error('processWhatsAppMessage:', e.message);
   }
 }
 
 // ── AUTH ─────────────────────────────────────────────────────────────────────
-const authSessions = new Map(); // token → expiresAt (ms)
-const resetCodes   = new Map(); // code  → expiresAt (ms)
+const authSessions    = new Map(); // token → expiresAt (ms)
+const resetCodes      = new Map(); // code  → expiresAt (ms)
+const waActiveSessions = new Map(); // phone → { session_id, started_at }
 
 function hashPwd(password) {
   return crypto.createHash('sha256').update('bbrain:' + password).digest('hex');
@@ -698,7 +881,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await readBody(req);
       const updates = JSON.parse(body);
-      const allowed = ['plan','reminder_frequency','reminder_time','reminder_channels'];
+      const allowed = ['plan','brain_name','reminder_frequency','reminder_time','reminder_channels'];
       allowed.forEach(k => { if (k in updates) settingsCache[k] = updates[k]; });
       // Persiste no Sheets (via auth save, reutilizando a aba Config)
       const auth = readAuth() || {};
@@ -1078,6 +1261,14 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(content);
     } catch { /* fallback abaixo */ }
+  }
+
+  // Brand pages (internal, noindex)
+  if (pathname === '/brand' || pathname === '/brand/') {
+    return serveFile(res, path.join(ROOT, 'public', 'brand', 'index.html'));
+  }
+  if (pathname === '/brand/kit.html' || pathname === '/brand/kit') {
+    return serveFile(res, path.join(ROOT, 'public', 'brand', 'kit.html'));
   }
 
   let filePath;

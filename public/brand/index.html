@@ -1,0 +1,1833 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>BBrain â Key Visual & Brand Guidelines</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;600;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Cores primÃ¡rias */
+  --amber:    #F5A623;
+  --amber-dk: #C47A00;
+  --dark:     #0A0A10;
+  --dark2:    #13131F;
+  --dark3:    #1C1C2E;
+  /* Cores secundÃ¡rias */
+  --violet:   #7C3AED;
+  --violet-lt:#A78BFA;
+  --teal:     #0D9488;
+  --teal-lt:  #5EEAD4;
+  --rose:     #E11D48;
+  --rose-lt:  #FDA4AF;
+  --gold:     #D97706;
+  --cream:    #FFF8F0;
+  --white:    #FFFFFF;
+  /* Neutros */
+  --gray1:    #F5F4F0;
+  --gray2:    #E2E1DB;
+  --gray3:    #9CA3AF;
+  --gray4:    #4B5563;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ââ TIPOGRAFIA ââ */
+.f-raleway { font-family: 'Raleway', sans-serif; }
+.f-dm      { font-family: 'DM Sans', sans-serif; }
+.f-mono    { font-family: 'DM Mono', monospace; }
+
+/* ââ LAYOUT ââ */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ââ SEÃÃES ââ */
+.section {
+  padding: 5rem 0 4rem;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.section:last-child { border-bottom: none; }
+
+.sec-label {
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 500;
+  margin-bottom: .75rem;
+  font-family: 'DM Mono', monospace;
+}
+
+.sec-title {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: -.02em;
+  color: var(--white);
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.sec-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,.45);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+/* ââ COVER ââ */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 2rem;
+}
+
+.cover-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(245,166,35,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cover-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin-bottom: 3rem;
+}
+
+.cover-logo {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+
+.cover-title {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 200;
+  font-size: clamp(48px, 8vw, 80px);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: .75rem;
+}
+
+.cover-subtitle {
+  font-size: 15px;
+  color: rgba(255,255,255,.35);
+  letter-spacing: .06em;
+  margin-bottom: 4rem;
+}
+
+.cover-meta {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cover-meta-item {
+  text-align: center;
+}
+
+.cmi-label {
+  font-size: 10px;
+  color: rgba(255,255,255,.25);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  font-family: 'DM Mono', monospace;
+}
+
+.cmi-val {
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+}
+
+/* ââ ANIMAÃÃES ââ */
+@keyframes lineFade {
+  0%, 100% { opacity: .1; }
+  50%       { opacity: .22; }
+}
+@keyframes glowText {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(245,166,35,.25)); }
+  50%       { filter: drop-shadow(0 0 24px rgba(245,166,35,.6)); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: .4; }
+  50%       { opacity: 1; }
+}
+
+/* ââ LOGO COMPONENT ââ */
+.logo-symbol {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-lines { position: absolute; top:0; left:0; width:100%; height:100%; animation: lineFade 3s ease-in-out infinite; }
+.logo-bb { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; animation: glowText 3s ease-in-out infinite; }
+.b-s { position: absolute; font-family: 'Raleway', sans-serif; font-weight: 900; color: var(--amber); line-height: 1; user-select: none; }
+.b-m { position: absolute; font-family: 'Raleway', sans-serif; font-weight: 900; color: var(--amber); opacity: .28; line-height: 1; transform: scaleX(-1); user-select: none; }
+
+/* tamanhos */
+.sym-xl  { width:160px; height:160px; }
+.bb-xl   { width:120px; height:100px; }
+.bs-xl   { font-size:100px; left:4px; }
+.bm-xl   { font-size:100px; right:4px; }
+
+.sym-lg  { width:100px; height:100px; }
+.bb-lg   { width:76px;  height:64px; }
+.bs-lg   { font-size:64px; left:3px; }
+.bm-lg   { font-size:64px; right:3px; }
+
+.sym-md  { width:60px;  height:60px; }
+.bb-md   { width:44px;  height:38px; }
+.bs-md   { font-size:38px; left:2px; }
+.bm-md   { font-size:38px; right:2px; }
+
+.sym-sm  { width:40px;  height:40px; }
+.bb-sm   { width:30px;  height:25px; }
+.bs-sm   { font-size:25px; left:1px; }
+.bm-sm   { font-size:25px; right:1px; }
+
+.sym-xs  { width:26px;  height:26px; }
+.bb-xs   { width:20px;  height:17px; }
+.bs-xs   { font-size:17px; left:1px; }
+.bm-xs   { font-size:17px; right:1px; }
+
+/* wordmarks */
+.wm {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 200;
+  color: var(--white);
+  letter-spacing: .22em;
+  text-transform: none;
+  line-height: 1;
+}
+.wm-xl { font-size: 48px; }
+.wm-lg { font-size: 32px; }
+.wm-md { font-size: 22px; }
+.wm-sm { font-size: 16px; }
+
+/* ââ GRID ââ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; }
+
+/* ââ CARDS ââ */
+.card {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+
+.card-dark {
+  background: var(--dark2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 1.75rem;
+}
+
+/* ââ TABELA ââ */
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  font-family: 'DM Mono', monospace;
+  padding: .625rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  font-weight: 400;
+}
+td {
+  padding: .75rem 1rem;
+  font-size: 13px;
+  color: rgba(255,255,255,.7);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+td:first-child { color: var(--white); font-weight: 500; }
+
+/* ââ NAV ââ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,10,16,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  padding: .875rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+  text-decoration: none;
+  letter-spacing: .06em;
+  font-family: 'DM Mono', monospace;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--amber); }
+
+/* ââ TOC ââ */
+.toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+  margin-bottom: 3rem;
+}
+.toc-item {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: rgba(255,255,255,.4);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 6px;
+  padding: .375rem .75rem;
+  text-decoration: none;
+  transition: all .2s;
+}
+.toc-item:hover { color: var(--amber); border-color: rgba(245,166,35,.3); }
+
+/* ââ CHIP ââ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: .3rem .75rem;
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ââ MOCKUP FRAMES ââ */
+.phone-frame {
+  width: 220px;
+  border-radius: 36px;
+  background: #111118;
+  border: 2px solid rgba(255,255,255,.1);
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,.6);
+  flex-shrink: 0;
+}
+
+.phone-notch {
+  height: 28px;
+  background: #111118;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notch-pill {
+  width: 60px;
+  height: 14px;
+  background: #000;
+  border-radius: 10px;
+}
+
+.phone-screen {
+  background: var(--dark);
+  min-height: 380px;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 16px;
+  font-size: 10px;
+  color: rgba(255,255,255,.5);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ââ SWATCHES ââ */
+.swatch-row {
+  display: flex;
+  gap: .875rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.swatch-color {
+  height: 64px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.swatch-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--white);
+}
+
+.swatch-hex {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: rgba(255,255,255,.35);
+}
+
+.swatch-use {
+  font-size: 10px;
+  color: rgba(255,255,255,.25);
+  line-height: 1.4;
+}
+
+/* ââ FORBIDDEN ââ */
+.forbidden-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.forbidden-item {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 2px solid var(--rose);
+  position: relative;
+}
+
+.forbidden-label {
+  background: var(--rose);
+  color: #fff;
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .08em;
+  padding: 4px 10px;
+  text-align: center;
+}
+
+.forbidden-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 100px;
+}
+
+/* ââ TYPE SPECIMEN ââ */
+.type-specimen {
+  padding: 2rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.type-meta {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  color: var(--amber);
+  letter-spacing: .1em;
+  margin-bottom: .5rem;
+}
+
+/* ââ RULE LINE ââ */
+.rule {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,.06);
+  margin: 2rem 0;
+}
+
+/* ââ HIGHLIGHT BOX ââ */
+.hbox {
+  background: rgba(245,166,35,.06);
+  border: 1px solid rgba(245,166,35,.2);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.hbox-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--amber);
+  margin-bottom: .375rem;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .06em;
+}
+
+.hbox p {
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+  line-height: 1.6;
+}
+
+/* ââ WA MOCKUP ââ */
+.wa-screen { background: #0B1014; }
+.wa-header {
+  background: #1F2C34;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wa-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--dark3);
+  border: 2px solid rgba(245,166,35,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.wa-info { flex: 1; }
+.wa-name { font-size: 12px; font-weight: 600; color: #fff; }
+.wa-status { font-size: 10px; color: rgba(255,255,255,.4); }
+.wa-icons { display: flex; gap: 12px; color: rgba(255,255,255,.5); font-size: 14px; }
+.wa-bg { background: #0D1418; padding: 10px; flex: 1; min-height: 200px; }
+.wa-msg {
+  max-width: 75%;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.wa-msg-in { background: #1F2C34; color: #E8E8E8; margin-right: auto; border-top-left-radius: 2px; }
+.wa-msg-out { background: #005C4B; color: #E8E8E8; margin-left: auto; border-top-right-radius: 2px; }
+.wa-time { font-size: 9px; color: rgba(255,255,255,.3); text-align: right; margin-top: 2px; }
+.wa-bar {
+  background: #1F2C34;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wa-input {
+  flex: 1;
+  background: #2A3942;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 11px;
+  color: rgba(255,255,255,.3);
+}
+.wa-send {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #00A884;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+/* ââ IG MOCKUP ââ */
+.ig-screen { background: #000; }
+.ig-story-screen { background: linear-gradient(180deg, #1a0a2e 0%, #0A0A10 50%, #1a1a0a 100%); position: relative; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ig-story-bar { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; gap: 4px; }
+.ig-story-seg { height: 2px; flex: 1; background: rgba(255,255,255,.3); border-radius: 2px; }
+.ig-story-seg.active { background: #fff; }
+.ig-story-user { position: absolute; top: 18px; left: 10px; display: flex; align-items: center; gap: 8px; }
+.ig-story-av { width: 28px; height: 28px; border-radius: 50%; background: var(--dark3); border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--amber); }
+.ig-story-name { font-size: 11px; color: #fff; font-weight: 500; }
+.ig-post-header { display: flex; align-items: center; gap: 8px; padding: 8px 10px; }
+.ig-post-av { width: 28px; height: 28px; border-radius: 50%; background: var(--dark3); border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--amber); }
+.ig-post-name { font-size: 11px; font-weight: 600; color: #fff; }
+.ig-post-img { width: 100%; aspect-ratio: 1; background: var(--dark2); display: flex; align-items: center; justify-content: center; }
+.ig-post-actions { padding: 8px 10px 4px; display: flex; gap: 10px; font-size: 16px; }
+.ig-post-likes { font-size: 10px; font-weight: 600; color: #fff; padding: 0 10px 3px; }
+.ig-post-cap { font-size: 10px; color: rgba(255,255,255,.7); padding: 0 10px 8px; line-height: 1.4; }
+
+/* ââ BANNER ââ */
+.banner {
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+/* ââ SITE MOCKUP ââ */
+.site-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+
+.site-browser-bar {
+  background: #1C1C2E;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.browser-dots { display: flex; gap: 6px; }
+.browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+.browser-url {
+  flex: 1;
+  background: rgba(255,255,255,.06);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: rgba(255,255,255,.35);
+  text-align: center;
+}
+
+.site-hero {
+  background: var(--dark);
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.site-nav {
+  background: rgba(10,10,16,.95);
+  padding: .875rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.site-nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.site-nav-link {
+  font-size: 11px;
+  color: rgba(255,255,255,.4);
+}
+
+.site-btn {
+  background: var(--amber);
+  color: var(--dark);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Raleway', sans-serif;
+  letter-spacing: .04em;
+  cursor: pointer;
+}
+
+.site-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  background: var(--dark2);
+}
+
+.site-feat {
+  padding: 1.5rem;
+  border-right: 1px solid rgba(255,255,255,.05);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.site-feat:nth-child(3n) { border-right: none; }
+
+.site-feat-icon { font-size: 20px; margin-bottom: .625rem; }
+.site-feat-title { font-size: 12px; font-weight: 600; color: #fff; margin-bottom: .25rem; }
+.site-feat-desc { font-size: 10px; color: rgba(255,255,255,.35); line-height: 1.5; }
+
+/* ââ COLOR COMBO ââ */
+.combo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.combo {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07);
+}
+
+.combo-preview {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.combo-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.combo-info {
+  padding: .75rem;
+  background: rgba(255,255,255,.03);
+}
+
+.combo-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.combo-use {
+  font-size: 10px;
+  color: rgba(255,255,255,.3);
+}
+
+/* ââ USAGE RULES ââ */
+.rule-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.rule-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.rule-ok { background: rgba(13,148,136,.15); }
+.rule-no { background: rgba(225,29,72,.15); }
+
+.rule-text { flex: 1; }
+.rule-title { font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 3px; }
+.rule-desc  { font-size: 12px; color: rgba(255,255,255,.4); line-height: 1.5; }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="logo-symbol sym-xs" style="position:relative;display:flex;align-items:center;justify-content:center;">
+      <svg class="logo-lines" viewBox="0 0 26 26" fill="none">
+        <line x1="13" y1="13" x2="13" y2="2"  stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="13" y2="24" stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="2"  y2="13" stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="24" y2="13" stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="4"  y2="4"  stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="22" y2="4"  stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="4"  y2="22" stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="22" y2="22" stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+      </svg>
+      <div class="logo-bb bb-xs"><div class="b-s bs-xs">B</div><div class="b-m bm-xs">B</div></div>
+    </div>
+    <span style="font-family:'Raleway',sans-serif;font-weight:200;font-size:16px;letter-spacing:.18em;">BBrain</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#conceito">Conceito</a></li>
+    <li><a href="#brandkit">â Brand Kit</a></li>
+    <li><a href="#logo">Logo</a></li>
+    <li><a href="#cores">Cores</a></li>
+    <li><a href="#tipo">Tipo</a></li>
+    <li><a href="#uso">Uso</a></li>
+    <li><a href="#mockups">Mockups</a></li>
+    <li><a href="#banners">Banners</a></li>
+    <li><a href="#site">Site</a></li>
+  </ul>
+</nav>
+
+<!-- COVER -->
+<div class="cover" style="padding-top:5rem;">
+  <div class="cover-bg"></div>
+  <svg class="cover-lines" viewBox="0 0 900 600" fill="none" style="opacity:.04;">
+    <line x1="450" y1="300" x2="450" y2="0"   stroke="#F5A623" stroke-width="1"/>
+    <line x1="450" y1="300" x2="450" y2="600" stroke="#F5A623" stroke-width="1"/>
+    <line x1="450" y1="300" x2="0"   y2="300" stroke="#F5A623" stroke-width="1"/>
+    <line x1="450" y1="300" x2="900" y2="300" stroke="#F5A623" stroke-width="1"/>
+    <line x1="450" y1="300" x2="90"  y2="0"   stroke="#F5A623" stroke-width=".6"/>
+    <line x1="450" y1="300" x2="810" y2="0"   stroke="#F5A623" stroke-width=".6"/>
+    <line x1="450" y1="300" x2="90"  y2="600" stroke="#F5A623" stroke-width=".6"/>
+    <line x1="450" y1="300" x2="810" y2="600" stroke="#F5A623" stroke-width=".6"/>
+  </svg>
+
+  <div class="cover-tag">Key Visual & Brand Guidelines Â· v1.0 Â· 2026</div>
+
+  <div class="cover-logo">
+    <div class="logo-symbol sym-xl" style="position:relative;display:flex;align-items:center;justify-content:center;">
+      <svg class="logo-lines" viewBox="0 0 160 160" fill="none">
+        <line x1="80" y1="80" x2="80"  y2="4"   stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="80"  y2="156" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="4"   y2="80"  stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="156" y2="80"  stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="26"  y2="26"  stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="134" y2="26"  stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="26"  y2="134" stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="134" y2="134" stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+      </svg>
+      <div class="logo-bb bb-xl"><div class="b-s bs-xl">B</div><div class="b-m bm-xl">B</div></div>
+    </div>
+  </div>
+
+  <div class="cover-title">BBrain</div>
+  <div class="cover-subtitle">O segundo cÃ©rebro de quem nÃ£o para de pensar</div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="cmi-label">Produto</div><div class="cmi-val">App SaaS Â· Browser</div></div>
+    <div class="cover-meta-item"><div class="cmi-label">Tom</div><div class="cmi-val">Inspirador & Humano</div></div>
+    <div class="cover-meta-item"><div class="cmi-label">Cor primÃ¡ria</div><div class="cmi-val">#F5A623 Amber</div></div>
+    <div class="cover-meta-item"><div class="cmi-label">Tipografia</div><div class="cmi-val">Raleway + DM Sans</div></div>
+    <div class="cover-meta-item"><div class="cmi-label">VersÃ£o</div><div class="cmi-val">1.0 Â· 2026</div></div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- âââââââââââââââââââââââââââââââ
+     01 â CONCEITO DE MARCA
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="conceito">
+  <div class="sec-label">01 â Conceito</div>
+  <div class="sec-title">A marca BBrain</div>
+  <div class="sec-sub">Por que existe, para quem Ã© e o que representa visualmente.</div>
+
+  <div class="grid-2" style="margin-bottom:2rem;">
+    <div class="card">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);letter-spacing:.1em;margin-bottom:.75rem;">PROPÃSITO</div>
+      <p style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.8;">BBrain existe para devolver clareza para quem pensa demais. NÃ£o Ã© um app de produtividade fria â Ã© um companheiro que recebe suas ideias sem julgamento, organiza sem burocracia e devolve valor real.</p>
+    </div>
+    <div class="card">
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);letter-spacing:.1em;margin-bottom:.75rem;">PERSONA</div>
+      <p style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.8;">Fundadores, criativos, profissionais sobrecarregados. Pessoas que tÃªm muito na cabeÃ§a e precisam de um lugar confiÃ¡vel para isso morar. NÃ£o estÃ£o procurando mais um app â estÃ£o procurando um sistema que pensa junto.</p>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:2rem;">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:32px;margin-bottom:.75rem;">â¡</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:.375rem;">Sem fricÃ§Ã£o</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);">Captura em segundos. Nenhuma decisÃ£o antes de digitar.</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:32px;margin-bottom:.75rem;">ð§ </div>
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:.375rem;">ExpansÃ£o</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);">O logo irradia porque ideias se expandem. O B espelhado Ã© o segundo cÃ©rebro.</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div style="font-size:32px;margin-bottom:.75rem;">ð</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:.375rem;">ConfianÃ§a</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);">100% privado. Seus pensamentos nÃ£o alimentam modelo nenhum.</div>
+    </div>
+  </div>
+
+  <div class="hbox">
+    <div class="hbox-title">Conceito visual do logo</div>
+    <p>O sÃ­mbolo usa dois "B" â um sÃ³lido (o cÃ©rebro real), um espelhado com opacidade (o segundo cÃ©rebro, o reflexo, a extensÃ£o). As 8 linhas que irradiam do centro representam a expansÃ£o do pensamento em todas as direÃ§Ãµes. A marca nÃ£o Ã© uma ferramenta â Ã© uma presenÃ§a.</p>
+  </div>
+
+  <div style="margin-top:2rem;">
+    <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);letter-spacing:.1em;margin-bottom:1rem;">PERSONALIDADE DA MARCA</div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+      <span class="chip" style="background:rgba(245,166,35,.1);color:var(--amber);border:1px solid rgba(245,166,35,.2);">Humano</span>
+      <span class="chip" style="background:rgba(124,58,237,.1);color:var(--violet-lt);border:1px solid rgba(124,58,237,.2);">Inspirador</span>
+      <span class="chip" style="background:rgba(13,148,136,.1);color:var(--teal-lt);border:1px solid rgba(13,148,136,.2);">Honesto</span>
+      <span class="chip" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);">Sem fricÃ§Ã£o</span>
+      <span class="chip" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);">ConfiÃ¡vel</span>
+      <span class="chip" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);">Inteligente</span>
+      <span class="chip" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);">Expansivo</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- âââââââââââââââââââââââââââââââ
+     BRAND KIT â DOWNLOAD
+âââââââââââââââââââââââââââââââ -->
+<div style="padding: 4rem 0; border-bottom: 1px solid rgba(255,255,255,.06);" id="brandkit">
+  <div class="sec-label">Material da marca</div>
+  <div class="sec-title">Baixar Brand Kit BBrain</div>
+  <div class="sec-sub">Arquivos vetoriais oficiais prontos para uso no Illustrator e Photoshop â logos, paleta de cores e guia tipogrÃ¡fico.</div>
+
+  <!-- Cards dos materiais -->
+  <div class="grid-3" style="margin-bottom:2.5rem;">
+    <div class="card" style="display:flex;flex-direction:column;gap:.75rem;">
+      <div style="font-size:28px;">â</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;">Logotipo</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.5;">5 versÃµes oficiais em SVG e PDF vetorial. Principal, horizontal, Ã­cone, fundo claro e monocromÃ¡tico.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);">SVG + PDF Â· 5 arquivos</div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:.75rem;">
+      <div style="font-size:28px;">ð¨</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;">Paleta de Cores</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.5;">Sistema completo com hex, RGB e CMYK. PrimÃ¡rias, secundÃ¡rias e combinaÃ§Ãµes aprovadas.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);">SVG + PDF Â· 1 arquivo</div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;gap:.75rem;">
+      <div style="font-size:28px;">Aa</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;">Tipografia</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.5;">Guia completo com Raleway, DM Sans e DM Mono. Hierarquia, pesos e links para download.</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);">SVG + PDF Â· 1 arquivo</div>
+    </div>
+  </div>
+
+  <!-- CTA de download -->
+  <div style="background:linear-gradient(135deg,rgba(245,166,35,.06) 0%,rgba(124,58,237,.04) 100%);border:1px solid rgba(245,166,35,.18);border-radius:20px;padding:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;">
+    <div>
+      <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:20px;color:#fff;margin-bottom:.5rem;">14 arquivos prontos para download</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.4);line-height:1.6;">SVG vetorial abre direto no Illustrator como objeto editÃ¡vel.<br>PDF vetorial para impressÃ£o profissional.</div>
+      <div style="display:flex;gap:.625rem;margin-top:1rem;flex-wrap:wrap;">
+        <span style="font-size:11px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--amber);border-radius:20px;padding:3px 10px;font-family:'DM Mono',monospace;">Adobe Illustrator</span>
+        <span style="font-size:11px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--amber);border-radius:20px;padding:3px 10px;font-family:'DM Mono',monospace;">Adobe Photoshop</span>
+        <span style="font-size:11px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--amber);border-radius:20px;padding:3px 10px;font-family:'DM Mono',monospace;">PDF vetorial</span>
+        <span style="font-size:11px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--amber);border-radius:20px;padding:3px 10px;font-family:'DM Mono',monospace;">Figma compatÃ­vel</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;align-items:center;">
+      <a href="/brand/kit.html" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:var(--amber);color:#0A0A10;border-radius:12px;padding:.875rem 2rem;font-family:'Raleway',sans-serif;font-weight:700;font-size:15px;letter-spacing:.04em;text-decoration:none;transition:opacity .2s;white-space:nowrap;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+        â Baixar Material da Marca
+      </a>
+      <div style="font-size:11px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;text-align:center;">NecessÃ¡rio identificaÃ§Ã£o Â· Acesso gratuito</div>
+    </div>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     02 â LOGO
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="logo">
+  <div class="sec-label">02 â Logo</div>
+  <div class="sec-title">VersÃµes do logotipo</div>
+  <div class="sec-sub">Todas as versÃµes oficiais e suas aplicaÃ§Ãµes corretas.</div>
+
+  <!-- VersÃ£o principal -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.5rem;">VERSÃO PRINCIPAL â FUNDO ESCURO</div>
+  <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:3rem;gap:2rem;margin-bottom:1.5rem;">
+    <div class="logo-symbol sym-xl" style="position:relative;display:flex;align-items:center;justify-content:center;">
+      <svg class="logo-lines" viewBox="0 0 160 160" fill="none">
+        <line x1="80" y1="80" x2="80"  y2="4"   stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="80"  y2="156" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="4"   y2="80"  stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="156" y2="80"  stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="26"  y2="26"  stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="134" y2="26"  stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="26"  y2="134" stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+        <line x1="80" y1="80" x2="134" y2="134" stroke="#F5A623" stroke-width=".8"  stroke-linecap="round"/>
+      </svg>
+      <div class="logo-bb bb-xl"><div class="b-s bs-xl">B</div><div class="b-m bm-xl">B</div></div>
+    </div>
+    <div class="wm wm-xl">BBrain</div>
+  </div>
+
+  <!-- Horizontal + Ã­cone app + fundo claro -->
+  <div class="grid-2" style="margin-bottom:1.5rem;">
+    <div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">HORIZONTAL â HEADER / APP</div>
+      <div class="card" style="display:flex;align-items:center;gap:14px;padding:2rem;">
+        <div class="logo-symbol sym-md" style="position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg class="logo-lines" viewBox="0 0 60 60" fill="none">
+            <line x1="30" y1="30" x2="30" y2="4"  stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="30" y2="56" stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="4"  y2="30" stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="56" y2="30" stroke="#F5A623" stroke-width="1" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="10" y2="10" stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="50" y2="10" stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="10" y2="50" stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+            <line x1="30" y1="30" x2="50" y2="50" stroke="#F5A623" stroke-width=".6" stroke-linecap="round"/>
+          </svg>
+          <div class="logo-bb bb-md"><div class="b-s bs-md">B</div><div class="b-m bm-md">B</div></div>
+        </div>
+        <div>
+          <div class="wm wm-md">BBrain</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.08em;margin-top:3px;">Segundo cÃ©rebro</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">ÃCONE â APP STORE / GOOGLE PLAY</div>
+      <div class="card" style="display:flex;align-items:center;justify-content:center;padding:2rem;">
+        <div style="width:100px;height:100px;border-radius:24px;background:var(--dark);border:1px solid rgba(245,166,35,.2);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 40px rgba(245,166,35,.07);">
+          <div class="logo-symbol sym-lg" style="position:relative;display:flex;align-items:center;justify-content:center;">
+            <svg class="logo-lines" viewBox="0 0 100 100" fill="none">
+              <line x1="50" y1="50" x2="50" y2="5"  stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="50" y2="95" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="5"  y2="50" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="95" y2="50" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="17" y2="17" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="83" y2="17" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="17" y2="83" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+              <line x1="50" y1="50" x2="83" y2="83" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+            </svg>
+            <div class="logo-bb bb-lg"><div class="b-s bs-lg">B</div><div class="b-m bm-lg">B</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fundo claro -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">VERSÃO FUNDO CLARO â DOCUMENTOS / IMPRESSOS</div>
+  <div style="background:var(--gray1);border-radius:16px;padding:2.5rem;display:flex;align-items:center;gap:14px;">
+    <div class="logo-symbol sym-md" style="position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg class="logo-lines" viewBox="0 0 60 60" fill="none">
+        <line x1="30" y1="30" x2="30" y2="4"  stroke="#C47A00" stroke-width="1" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="30" y2="56" stroke="#C47A00" stroke-width="1" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="4"  y2="30" stroke="#C47A00" stroke-width="1" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="56" y2="30" stroke="#C47A00" stroke-width="1" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="10" y2="10" stroke="#C47A00" stroke-width=".6" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="50" y2="10" stroke="#C47A00" stroke-width=".6" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="10" y2="50" stroke="#C47A00" stroke-width=".6" stroke-linecap="round"/>
+        <line x1="30" y1="30" x2="50" y2="50" stroke="#C47A00" stroke-width=".6" stroke-linecap="round"/>
+      </svg>
+      <div class="logo-bb bb-md">
+        <div class="b-s bs-md" style="color:#C47A00;">B</div>
+        <div class="b-m bm-md" style="color:#C47A00;">B</div>
+      </div>
+    </div>
+    <div class="wm wm-lg" style="color:var(--dark);">BBrain</div>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     03 â CORES
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="cores">
+  <div class="sec-label">03 â Cores</div>
+  <div class="sec-title">Sistema de cores</div>
+  <div class="sec-sub">Paleta completa com regras tÃ©cnicas de aplicaÃ§Ã£o baseadas em teoria das cores complementares, anÃ¡logas e triÃ¡dicas.</div>
+
+  <!-- PrimÃ¡rias -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.25rem;">CORES PRIMÃRIAS</div>
+  <div class="swatch-row" style="margin-bottom:2.5rem;">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F5A623;"></div>
+      <div class="swatch-name">Amber</div>
+      <div class="swatch-hex">#F5A623</div>
+      <div class="swatch-use">Cor principal. Logo, CTAs, destaques primÃ¡rios.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C47A00;"></div>
+      <div class="swatch-name">Amber Dark</div>
+      <div class="swatch-hex">#C47A00</div>
+      <div class="swatch-use">VersÃ£o fundo claro e estados hover.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0A0A10;"></div>
+      <div class="swatch-name">Deep Night</div>
+      <div class="swatch-hex">#0A0A10</div>
+      <div class="swatch-use">Fundo principal. Base de toda aplicaÃ§Ã£o escura.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#13131F;"></div>
+      <div class="swatch-name">Night 2</div>
+      <div class="swatch-hex">#13131F</div>
+      <div class="swatch-use">Cards, superfÃ­cies secundÃ¡rias.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#FFFFFF;border:1px solid rgba(0,0,0,.1);"></div>
+      <div class="swatch-name">White</div>
+      <div class="swatch-hex">#FFFFFF</div>
+      <div class="swatch-use">Texto principal sobre escuro.</div>
+    </div>
+  </div>
+
+  <!-- SecundÃ¡rias -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.25rem;">CORES SECUNDÃRIAS â COMPLEMENTARES & ANÃLOGAS</div>
+  <div class="swatch-row" style="margin-bottom:2.5rem;">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#7C3AED;"></div>
+      <div class="swatch-name">Violet</div>
+      <div class="swatch-hex">#7C3AED</div>
+      <div class="swatch-use">Complementar anÃ¡logo. IA, insights, destaques premium.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#A78BFA;"></div>
+      <div class="swatch-name">Lavender</div>
+      <div class="swatch-hex">#A78BFA</div>
+      <div class="swatch-use">VersÃ£o clara do violet. Badges, tags suaves.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0D9488;"></div>
+      <div class="swatch-name">Teal</div>
+      <div class="swatch-hex">#0D9488</div>
+      <div class="swatch-use">TriÃ¡dico. ConfirmaÃ§Ãµes, sucesso, aÃ§Ãµes positivas.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#5EEAD4;"></div>
+      <div class="swatch-name">Teal Light</div>
+      <div class="swatch-hex">#5EEAD4</div>
+      <div class="swatch-use">VersÃ£o clara. Texto de status, Ã­cones de confirmaÃ§Ã£o.</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E11D48;"></div>
+      <div class="swatch-name">Rose</div>
+      <div class="swatch-hex">#E11D48</div>
+      <div class="swatch-use">Complementar direto. Alertas, erros, urgÃªncia.</div>
+    </div>
+  </div>
+
+  <!-- Teoria das cores -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.25rem;">COMBINAÃÃES APROVADAS â TEORIA DAS CORES</div>
+  <div class="combo-grid" style="margin-bottom:2rem;">
+    <div class="combo">
+      <div class="combo-preview" style="background:#0A0A10;">
+        <div class="combo-dot" style="background:#F5A623;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:#0A0A10;border:1.5px solid rgba(255,255,255,.2);"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Amber + Deep Night</div>
+        <div class="combo-use">Principal Â· Alto contraste</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:#13131F;">
+        <div class="combo-dot" style="background:#F5A623;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:#7C3AED;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Amber + Violet</div>
+        <div class="combo-use">AnÃ¡logo quenteÂ·frio Â· Premium</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:#0A0A10;">
+        <div class="combo-dot" style="background:#F5A623;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:#0D9488;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Amber + Teal</div>
+        <div class="combo-use">TriÃ¡dico Â· Energia + Clareza</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:#F5F4F0;">
+        <div class="combo-dot" style="background:#C47A00;"></div>
+        <div style="font-size:10px;color:rgba(0,0,0,.3);">+</div>
+        <div class="combo-dot" style="background:#0A0A10;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Amber Dark + Cream</div>
+        <div class="combo-use">Fundo claro Â· Impressos</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:#13131F;">
+        <div class="combo-dot" style="background:#A78BFA;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:#5EEAD4;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Lavender + Teal Light</div>
+        <div class="combo-use">Interface Â· UI secundÃ¡ria</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:linear-gradient(135deg,#1C1C2E,#0A0A10);">
+        <div class="combo-dot" style="background:#F5A623;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:#7C3AED;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:#0D9488;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">TrÃ­ade completa</div>
+        <div class="combo-use">Campanhas Â· MÃ¡ximo impacto</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:linear-gradient(135deg,#7C3AED22,#0A0A10);">
+        <div class="combo-dot" style="background:#F5A623;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">+</div>
+        <div class="combo-dot" style="background:rgba(124,58,237,.4);border:1.5px solid #7C3AED;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Amber + Violet glow</div>
+        <div class="combo-use">Stories Â· AnÃºncios premium</div>
+      </div>
+    </div>
+    <div class="combo">
+      <div class="combo-preview" style="background:#0A0A10;">
+        <div class="combo-dot" style="background:#F5A623;opacity:.28;"></div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4);">â</div>
+        <div class="combo-dot" style="background:#F5A623;"></div>
+      </div>
+      <div class="combo-info">
+        <div class="combo-name">Amber sÃ³lido + Amber 28%</div>
+        <div class="combo-use">Logo oficial Â· Par do B duplo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acessibilidade -->
+  <div class="hbox">
+    <div class="hbox-title">Contraste & Acessibilidade (WCAG 2.1)</div>
+    <p>#F5A623 sobre #0A0A10 â ratio 8.4:1 Â· â AAA. #FFFFFF sobre #0A0A10 â ratio 19.8:1 Â· â AAA. Sempre priorizar texto branco ou amber sobre fundos escuros. Nunca usar texto amber sobre fundo claro sem verificar contraste mÃ­nimo AA (4.5:1).</p>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     04 â TIPOGRAFIA
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="tipo">
+  <div class="sec-label">04 â Tipografia</div>
+  <div class="sec-title">Sistema tipogrÃ¡fico</div>
+  <div class="sec-sub">Duas famÃ­lias. Cada uma com um papel claro. Nunca misturar fora das regras.</div>
+
+  <div class="type-specimen">
+    <div class="type-meta">Raleway Â· Display / Logotipo / TÃ­tulos â Google Fonts Â· Gratuita</div>
+    <div style="font-family:'Raleway',sans-serif;font-weight:900;font-size:56px;color:var(--amber);letter-spacing:-.02em;line-height:1;">BBrain</div>
+    <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:36px;color:#fff;margin-top:.5rem;">O segundo cÃ©rebro</div>
+    <div style="font-family:'Raleway',sans-serif;font-weight:300;font-size:24px;color:rgba(255,255,255,.5);margin-top:.25rem;letter-spacing:.1em;">DE QUEM NÃO PARA DE PENSAR</div>
+    <div style="font-family:'Raleway',sans-serif;font-weight:200;font-size:20px;color:rgba(255,255,255,.3);margin-top:.25rem;letter-spacing:.22em;">CAPTURE Â· ORGANIZE Â· EXPANDA</div>
+  </div>
+
+  <div class="type-specimen">
+    <div class="type-meta">DM Sans Â· Corpo / Interface / UI â Google Fonts Â· Gratuita</div>
+    <div style="font-family:'DM Sans',sans-serif;font-weight:500;font-size:20px;color:#fff;">Capture em segundos</div>
+    <div style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:15px;color:rgba(255,255,255,.6);margin-top:.375rem;line-height:1.7;">Uma caixa de texto. Nenhum menu, nenhuma pasta, nenhuma decisÃ£o. VocÃª pensa, digita, acabou. AtÃ© pelo WhatsApp.</div>
+    <div style="font-family:'DM Sans',sans-serif;font-weight:300;font-size:13px;color:rgba(255,255,255,.35);margin-top:.375rem;">Texto auxiliar Â· labels Â· metadados</div>
+  </div>
+
+  <div class="type-specimen" style="border-bottom:none;">
+    <div class="type-meta">DM Mono Â· CÃ³digo / Metadados / Labels â Google Fonts Â· Gratuita</div>
+    <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--amber);">VERSION 1.0 Â· 2026 Â· #F5A623 Â· BRAND GUIDELINES</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.3);margin-top:.375rem;">bbrainapp.you Â· Â© 2026 BBrain Â· Aproove</div>
+  </div>
+
+  <hr class="rule">
+
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.25rem;">HIERARQUIA TIPOGRÃFICA</div>
+  <table>
+    <thead><tr><th>NÃ­vel</th><th>Fonte</th><th>Peso</th><th>Tamanho</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td>Display</td><td>Raleway</td><td>900</td><td>48â80px</td><td>Hero, splash, capa</td></tr>
+      <tr><td>H1</td><td>Raleway</td><td>700</td><td>32â40px</td><td>TÃ­tulos de seÃ§Ã£o</td></tr>
+      <tr><td>H2</td><td>Raleway</td><td>600</td><td>24â28px</td><td>SubtÃ­tulos</td></tr>
+      <tr><td>Wordmark</td><td>Raleway</td><td>200</td><td>16â48px</td><td>Nome da marca</td></tr>
+      <tr><td>Body</td><td>DM Sans</td><td>400</td><td>14â16px</td><td>Texto corrido</td></tr>
+      <tr><td>UI</td><td>DM Sans</td><td>500</td><td>12â14px</td><td>BotÃµes, labels, nav</td></tr>
+      <tr><td>Caption</td><td>DM Sans</td><td>300</td><td>11â12px</td><td>Legendas, meta</td></tr>
+      <tr><td>Mono</td><td>DM Mono</td><td>400</td><td>10â13px</td><td>CÃ³digos, hex, labels tÃ©cnicos</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     05 â REGRAS DE USO
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="uso">
+  <div class="sec-label">05 â Regras de uso</div>
+  <div class="sec-title">O que fazer e o que nunca fazer</div>
+  <div class="sec-sub">Regras claras para manter a marca consistente em qualquer aplicaÃ§Ã£o.</div>
+
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--teal-lt);letter-spacing:.1em;margin-bottom:1rem;">â PERMITIDO</div>
+  <div style="margin-bottom:2rem;">
+    <div class="rule-item"><div class="rule-icon rule-ok">â</div><div class="rule-text"><div class="rule-title">Usar o sÃ­mbolo isolado em tamanhos pequenos</div><div class="rule-desc">O BB com linhas pode aparecer sem o wordmark "BBrain" em Ã­cones de app, avatares e favicons.</div></div></div>
+    <div class="rule-item"><div class="rule-icon rule-ok">â</div><div class="rule-text"><div class="rule-title">Aplicar sobre fundos escuros de qualquer tonalidade</div><div class="rule-desc">O logo funciona em qualquer fundo escuro desde que o contraste com o amber seja mantido acima de 4.5:1.</div></div></div>
+    <div class="rule-item"><div class="rule-icon rule-ok">â</div><div class="rule-text"><div class="rule-title">Usar a versÃ£o fundo claro em materiais impressos</div><div class="rule-desc">Usar #C47A00 no lugar do amber padrÃ£o quando o fundo for branco ou claro.</div></div></div>
+    <div class="rule-item"><div class="rule-icon rule-ok">â</div><div class="rule-text"><div class="rule-title">Aplicar a animaÃ§Ã£o de glow nas versÃµes digitais</div><div class="rule-desc">A animaÃ§Ã£o de pulso nas linhas Ã© parte da identidade digital e deve ser mantida em apps e web.</div></div></div>
+    <div class="rule-item"><div class="rule-icon rule-ok" style="border-bottom:none;">â</div><div class="rule-text" style="border-bottom:none;"><div class="rule-title">Combinar com as cores secundÃ¡rias aprovadas</div><div class="rule-desc">Violet, Teal e Rose podem ser usados conforme as combinaÃ§Ãµes aprovadas na seÃ§Ã£o de cores.</div></div></div>
+  </div>
+
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--rose-lt);letter-spacing:.1em;margin-bottom:1rem;">â PROIBIDO</div>
+  <div class="forbidden-grid">
+    <div class="forbidden-item">
+      <div class="forbidden-label">â NÃO DISTORCER</div>
+      <div class="forbidden-body" style="background:var(--dark2);">
+        <div style="display:flex;align-items:center;gap:6px;transform:scaleX(1.4);">
+          <div style="font-family:'Raleway',sans-serif;font-weight:900;font-size:28px;color:var(--amber);">BB</div>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:.5rem;">Nunca esticar ou comprimir o logo em qualquer eixo.</div>
+      </div>
+    </div>
+    <div class="forbidden-item">
+      <div class="forbidden-label">â NÃO MUDAR A COR</div>
+      <div class="forbidden-body" style="background:var(--dark2);">
+        <div style="font-family:'Raleway',sans-serif;font-weight:900;font-size:28px;color:#00FF00;">BB</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:.5rem;">O sÃ­mbolo Ã© sempre amber #F5A623. Nunca em outras cores.</div>
+      </div>
+    </div>
+    <div class="forbidden-item">
+      <div class="forbidden-label">â NÃO USAR SEM CLAREZA</div>
+      <div class="forbidden-body" style="background:#888;">
+        <div style="font-family:'Raleway',sans-serif;font-weight:900;font-size:28px;color:#F5A623;opacity:.3;">BB</div>
+        <div style="font-size:10px;color:rgba(0,0,0,.5);text-align:center;margin-top:.5rem;">Nunca aplicar sobre fundo com contraste insuficiente.</div>
+      </div>
+    </div>
+    <div class="forbidden-item">
+      <div class="forbidden-label">â NÃO ADICIONAR EFEITOS</div>
+      <div class="forbidden-body" style="background:var(--dark2);">
+        <div style="font-family:'Raleway',sans-serif;font-weight:900;font-size:28px;color:var(--amber);text-shadow:4px 4px 0 #7C3AED,-4px -4px 0 #E11D48;">BB</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:.5rem;">Sem sombras externas, gradientes ou outline nÃ£o aprovados.</div>
+      </div>
+    </div>
+    <div class="forbidden-item">
+      <div class="forbidden-label">â NÃO TROCAR TIPOGRAFIA</div>
+      <div class="forbidden-body" style="background:var(--dark2);">
+        <div style="font-family:'Comic Sans MS',cursive;font-size:18px;color:var(--amber);">BBrain</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:.5rem;">O wordmark Ã© sempre Raleway 200. Nunca outra fonte.</div>
+      </div>
+    </div>
+    <div class="forbidden-item">
+      <div class="forbidden-label">â NÃO REMOVER AS LINHAS</div>
+      <div class="forbidden-body" style="background:var(--dark2);">
+        <div style="font-family:'Raleway',sans-serif;font-weight:900;font-size:36px;color:var(--amber);">BB</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:.5rem;">As linhas de expansÃ£o fazem parte do sÃ­mbolo oficial.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox" style="margin-top:2rem;">
+    <div class="hbox-title">EspaÃ§o de proteÃ§Ã£o</div>
+    <p>O logo deve ter ao redor um espaÃ§o mÃ­nimo equivalente Ã  altura da letra "B" do wordmark. Nunca posicionar outros elementos, texto ou bordas dentro dessa zona de proteÃ§Ã£o.</p>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     06 â MOCKUPS MOBILE
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="mockups">
+  <div class="sec-label">06 â Mockups</div>
+  <div class="sec-title">AplicaÃ§Ãµes reais</div>
+  <div class="sec-sub">WhatsApp, Instagram Feed, Reels, Stories e LinkedIn â priorizando mobile.</div>
+
+  <!-- WHATSAPP CONTATO -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.5rem;">WHATSAPP â TELA DE CONTATO</div>
+  <div style="display:flex;gap:2rem;align-items:flex-start;margin-bottom:3rem;flex-wrap:wrap;">
+    <div class="phone-frame">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>âââ 100%</span></div>
+        <!-- WA Contact Screen -->
+        <div style="background:#111B21;height:100%;min-height:360px;">
+          <!-- Header profile -->
+          <div style="background:#1F2C34;padding:10px;display:flex;align-items:flex-start;gap:4px;">
+            <div style="font-size:18px;color:rgba(255,255,255,.6);">â</div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:1rem 0;">
+              <!-- Avatar grande -->
+              <div style="width:72px;height:72px;border-radius:50%;background:var(--dark3);border:3px solid var(--amber);display:flex;align-items:center;justify-content:center;margin-bottom:.75rem;position:relative;">
+                <div class="logo-symbol" style="width:52px;height:52px;position:relative;display:flex;align-items:center;justify-content:center;">
+                  <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 52 52" fill="none">
+                    <line x1="26" y1="26" x2="26" y2="4"  stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="26" y2="48" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="4"  y2="26" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="48" y2="26" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="9"  y2="9"  stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="43" y2="9"  stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="9"  y2="43" stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".5"/>
+                    <line x1="26" y1="26" x2="43" y2="43" stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".5"/>
+                  </svg>
+                  <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:center;width:38px;height:32px;">
+                    <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:32px;color:#F5A623;left:2px;line-height:1;">B</span>
+                    <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:32px;color:#F5A623;opacity:.28;right:2px;line-height:1;transform:scaleX(-1);">B</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size:14px;font-weight:700;color:#fff;">BBrain</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;">O segundo cÃ©rebro</div>
+              <div style="font-size:10px;color:var(--amber);margin-top:4px;font-family:'DM Mono',monospace;">bbrainapp.you</div>
+            </div>
+          </div>
+          <!-- Action buttons -->
+          <div style="display:flex;justify-content:center;gap:1.5rem;padding:.875rem;background:#111B21;">
+            <div style="text-align:center;">
+              <div style="width:42px;height:42px;border-radius:50%;background:#1F2C34;display:flex;align-items:center;justify-content:center;font-size:16px;margin:0 auto .375rem;">ð¬</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">Mensagem</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:42px;height:42px;border-radius:50%;background:#1F2C34;display:flex;align-items:center;justify-content:center;font-size:16px;margin:0 auto .375rem;">ð</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">Chamada</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:42px;height:42px;border-radius:50%;background:#1F2C34;display:flex;align-items:center;justify-content:center;font-size:16px;margin:0 auto .375rem;">ð</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">Notif.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHATSAPP CONVERSA -->
+    <div class="phone-frame">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>âââ 100%</span></div>
+        <div class="wa-screen" style="display:flex;flex-direction:column;height:100%;min-height:360px;">
+          <div class="wa-header">
+            <span style="color:rgba(255,255,255,.6);font-size:16px;">â</span>
+            <div class="wa-avatar">
+              <span style="font-family:'Raleway',sans-serif;font-weight:900;font-size:13px;color:var(--amber);">B</span>
+            </div>
+            <div class="wa-info">
+              <div class="wa-name">BBrain ð§ </div>
+              <div class="wa-status">online agora</div>
+            </div>
+            <div class="wa-icons"><span>ð</span><span>â®</span></div>
+          </div>
+          <div class="wa-bg" style="flex:1;overflow:hidden;">
+            <div class="wa-msg wa-msg-in">
+              Oi! Em que vocÃª estÃ¡ pensando agora? ð¡
+              <div class="wa-time">9:38</div>
+            </div>
+            <div class="wa-msg wa-msg-out">
+              Tenho umas 3 ideias de produto mas nÃ£o sei por onde comeÃ§ar
+              <div class="wa-time">9:39</div>
+            </div>
+            <div class="wa-msg wa-msg-in">
+              Manda aqui. Vou organizar isso pra vocÃª e avaliar qual tem mais viabilidade. Sem julgamento. ð§ 
+              <div class="wa-time">9:39</div>
+            </div>
+            <div class="wa-msg wa-msg-out">
+              1. App de gestÃ£o de ideias 2. Newsletter paga 3. Curso online
+              <div class="wa-time">9:40</div>
+            </div>
+            <div class="wa-msg wa-msg-in">
+              â¦ AnÃ¡lise pronta. O app tem maior potencial de escala. Posso criar um roadmap?
+              <div class="wa-time">9:41</div>
+            </div>
+          </div>
+          <div class="wa-bar">
+            <div style="font-size:16px;color:rgba(255,255,255,.4);">ð</div>
+            <div class="wa-input">Digite uma mensagem</div>
+            <div class="wa-send">â</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:200px;">
+      <div class="card" style="margin-bottom:1rem;">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);margin-bottom:.625rem;">CONTATO WA</div>
+        <p style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;">O avatar usa o sÃ­mbolo BB com linhas sobre fundo escuro. Nome "BBrain ð§ ". O emoji reforÃ§a a identidade sem poluir.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);margin-bottom:.625rem;">TOM NA CONVERSA</div>
+        <p style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6;">Direto, acolhedor, sem fricÃ§Ã£o. Usa â¦ para outputs de IA. Sem formalidade excessiva. Humano.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTAGRAM FEED + STORY + REELS -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.5rem;">INSTAGRAM â FEED Â· STORY Â· REELS</div>
+  <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:3rem;">
+
+    <!-- Feed post -->
+    <div class="phone-frame">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar" style="background:#000;"><span>9:41</span><span>âââ 100%</span></div>
+        <div class="ig-screen">
+          <div class="ig-post-header">
+            <div class="ig-post-av">BB</div>
+            <div>
+              <div class="ig-post-name">bbrain.app</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.35);">Patrocinado</div>
+            </div>
+            <div style="margin-left:auto;font-size:14px;color:rgba(255,255,255,.5);">â¯</div>
+          </div>
+          <div class="ig-post-img">
+            <!-- Arte do post -->
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#0A0A10 0%,#1C1C2E 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;padding:1.5rem;text-align:center;">
+              <div class="logo-symbol" style="width:52px;height:52px;position:relative;display:flex;align-items:center;justify-content:center;">
+                <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 52 52" fill="none">
+                  <line x1="26" y1="26" x2="26" y2="3"  stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="26" y2="49" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="3"  y2="26" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="49" y2="26" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="8"  y2="8"  stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="44" y2="8"  stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="8"  y2="44" stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+                  <line x1="26" y1="26" x2="44" y2="44" stroke="#F5A623" stroke-width=".6" stroke-linecap="round" opacity=".4"/>
+                </svg>
+                <div style="position:relative;z-index:2;display:flex;align-items:center;width:38px;height:32px;">
+                  <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:32px;color:#F5A623;left:2px;line-height:1;">B</span>
+                  <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:32px;color:#F5A623;opacity:.28;right:2px;line-height:1;transform:scaleX(-1);">B</span>
+                </div>
+              </div>
+              <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:16px;color:#fff;line-height:1.2;">Suas ideias merecem<br>um lugar confiÃ¡vel.</div>
+              <div style="font-family:'DM Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.45);">Capture. Organize. Expanda.</div>
+              <div style="background:var(--amber);color:var(--dark);border-radius:20px;padding:4px 14px;font-size:10px;font-weight:700;font-family:'Raleway',sans-serif;letter-spacing:.04em;margin-top:.25rem;">ACESSAR GRÃTIS</div>
+            </div>
+          </div>
+          <div class="ig-post-actions">â¤ï¸ ð¬ âï¸ <span style="margin-left:auto;">ð</span></div>
+          <div class="ig-post-likes">1.847 curtidas</div>
+          <div class="ig-post-cap"><strong>bbrain.app</strong> O segundo cÃ©rebro de quem nÃ£o para de pensar. Sem fricÃ§Ã£o. 100% privado. ð bbrainapp.you</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story -->
+    <div class="phone-frame">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar" style="background:transparent;position:absolute;z-index:3;width:100%;"><span>9:41</span><span>âââ 100%</span></div>
+        <div style="background:linear-gradient(180deg,#1C1C2E 0%,#0A0A10 60%,#130A1C 100%);min-height:380px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;text-align:center;">
+          <!-- Progress bars -->
+          <div style="position:absolute;top:28px;left:8px;right:8px;display:flex;gap:3px;z-index:3;">
+            <div style="height:2px;flex:1;background:rgba(255,255,255,.3);border-radius:2px;"></div>
+            <div style="height:2px;flex:1;background:#fff;border-radius:2px;"></div>
+            <div style="height:2px;flex:1;background:rgba(255,255,255,.3);border-radius:2px;"></div>
+          </div>
+          <!-- User info -->
+          <div style="position:absolute;top:38px;left:10px;display:flex;align-items:center;gap:6px;">
+            <div style="width:26px;height:26px;border-radius:50%;background:var(--dark3);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:var(--amber);font-family:'Raleway',sans-serif;">B</div>
+            <span style="font-size:11px;color:#fff;font-weight:500;">bbrain.app</span>
+          </div>
+          <!-- Content -->
+          <div style="font-family:'Raleway',sans-serif;font-weight:200;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1rem;">UMA PERGUNTA</div>
+          <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:22px;color:#fff;line-height:1.2;margin-bottom:.75rem;">Quantas ideias boas vocÃª jÃ¡ esqueceu hoje?</div>
+          <div style="width:40px;height:1px;background:var(--amber);margin-bottom:.75rem;"></div>
+          <div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.5);line-height:1.5;margin-bottom:1.5rem;">O BBrain captura antes que desapareÃ§a.<br>Sem menu. Sem pasta. SÃ³ digita.</div>
+          <div style="background:var(--amber);color:var(--dark);border-radius:20px;padding:6px 20px;font-size:11px;font-weight:700;font-family:'Raleway',sans-serif;letter-spacing:.04em;">Ver o app â</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reels thumbnail -->
+    <div class="phone-frame">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar" style="background:transparent;position:absolute;z-index:3;width:100%;"><span>9:41</span><span>âââ 100%</span></div>
+        <div style="background:linear-gradient(180deg,#0A0A10 0%,#13131F 100%);min-height:380px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;text-align:center;">
+          <!-- Reels interface -->
+          <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:1.25rem;align-items:center;">
+            <div style="text-align:center;"><div style="font-size:18px;">â¤ï¸</div><div style="font-size:9px;color:#fff;">1.2k</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;">ð¬</div><div style="font-size:9px;color:#fff;">234</div></div>
+            <div style="text-align:center;"><div style="font-size:18px;">âï¸</div><div style="font-size:9px;color:#fff;">89</div></div>
+          </div>
+          <!-- Content -->
+          <div class="logo-symbol" style="width:80px;height:80px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+            <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 80 80" fill="none" opacity=".4">
+              <line x1="40" y1="40" x2="40" y2="4"  stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="40" y2="76" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="4"  y2="40" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="76" y2="40" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="13" y2="13" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="67" y2="13" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="13" y2="67" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+              <line x1="40" y1="40" x2="67" y2="67" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+            </svg>
+            <div style="position:relative;z-index:2;display:flex;align-items:center;width:60px;height:50px;">
+              <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:50px;color:#F5A623;left:3px;line-height:1;">B</span>
+              <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:50px;color:#F5A623;opacity:.28;right:3px;line-height:1;transform:scaleX(-1);">B</span>
+            </div>
+          </div>
+          <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:18px;color:#fff;line-height:1.2;margin-bottom:.5rem;">3 formas de parar<br>de perder ideias</div>
+          <div style="font-family:'DM Sans',sans-serif;font-size:11px;color:rgba(255,255,255,.4);margin-bottom:1rem;">bbrainapp.you</div>
+          <!-- Bottom bar -->
+          <div style="position:absolute;bottom:12px;left:10px;right:10px;display:flex;align-items:center;gap:8px;">
+            <div style="width:22px;height:22px;border-radius:50%;background:var(--dark3);border:1.5px solid var(--amber);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:var(--amber);font-family:'Raleway',sans-serif;">B</div>
+            <span style="font-size:10px;color:#fff;font-weight:500;">bbrain.app</span>
+            <div style="margin-left:auto;background:var(--amber);color:var(--dark);border-radius:12px;padding:3px 10px;font-size:9px;font-weight:700;font-family:'Raleway',sans-serif;">Seguir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINKEDIN -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1.5rem;">LINKEDIN â POST FEED</div>
+  <div style="background:#1B1F23;border-radius:16px;overflow:hidden;max-width:480px;margin-bottom:3rem;border:1px solid rgba(255,255,255,.07);">
+    <div style="padding:.875rem;display:flex;align-items:center;gap:10px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--dark);border:2px solid var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Raleway',sans-serif;font-weight:900;font-size:16px;color:var(--amber);flex-shrink:0;">B</div>
+      <div><div style="font-size:12px;font-weight:600;color:#fff;">BBrain</div><div style="font-size:10px;color:rgba(255,255,255,.35);">O segundo cÃ©rebro Â· 2.847 seguidores</div></div>
+    </div>
+    <div style="padding:0 .875rem .875rem;font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;">
+      HÃ¡ 3 anos eu perdia entre 5 e 8 ideias por dia.<br><br>
+      NÃ£o por falta de criatividade.<br>
+      Por falta de um lugar confiÃ¡vel para elas morarem.<br><br>
+      <span style="color:var(--amber);font-weight:500;">O BBrain resolve isso em segundos.</span><br><br>
+      Capture no browser. Capture pelo WhatsApp.<br>A IA organiza. VocÃª decide.<br><br>
+      <span style="color:rgba(255,255,255,.4);">#produtividade #segundocÃ©rebro #IA #BBrain</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#0A0A10,#1C1C2E);padding:1.5rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.05);">
+      <div><div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:14px;color:#fff;">BBrain</div><div style="font-size:11px;color:var(--amber);">bbrainapp.you</div></div>
+      <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;">
+        <div class="logo-symbol" style="width:36px;height:36px;position:relative;display:flex;align-items:center;justify-content:center;">
+          <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 36 36" fill="none">
+            <line x1="18" y1="18" x2="18" y2="3"  stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+            <line x1="18" y1="18" x2="18" y2="33" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+            <line x1="18" y1="18" x2="3"  y2="18" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+            <line x1="18" y1="18" x2="33" y2="18" stroke="#F5A623" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+          </svg>
+          <div style="position:relative;z-index:2;display:flex;width:26px;height:22px;">
+            <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:22px;color:#F5A623;left:1px;line-height:1;">B</span>
+            <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:22px;color:#F5A623;opacity:.28;right:1px;line-height:1;transform:scaleX(-1);">B</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:.625rem .875rem;display:flex;gap:1.5rem;border-top:1px solid rgba(255,255,255,.05);">
+      <span style="font-size:11px;color:rgba(255,255,255,.4);">ð Curtir</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.4);">ð¬ Comentar</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.4);">â Compartilhar</span>
+    </div>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     07 â BANNERS
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="banners">
+  <div class="sec-label">07 â Banners</div>
+  <div class="sec-title">AnÃºncios & banners digitais</div>
+  <div class="sec-sub">Formatos principais para campanhas pagas e orgÃ¢nicas.</div>
+
+  <!-- Banner 1 â escuro principal -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">1200Ã628 â FACEBOOK / LINKEDIN ADS</div>
+  <div class="banner" style="background:linear-gradient(135deg,#0A0A10 0%,#1C1C2E 100%);border:1px solid rgba(245,166,35,.1);border-radius:16px;padding:3rem;margin-bottom:2rem;min-height:200px;position:relative;overflow:hidden;">
+    <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.06;" viewBox="0 0 800 420" fill="none" preserveAspectRatio="xMidYMid slice">
+      <line x1="400" y1="210" x2="400" y2="0"   stroke="#F5A623" stroke-width="1.5"/>
+      <line x1="400" y1="210" x2="400" y2="420" stroke="#F5A623" stroke-width="1.5"/>
+      <line x1="400" y1="210" x2="0"   y2="210" stroke="#F5A623" stroke-width="1.5"/>
+      <line x1="400" y1="210" x2="800" y2="210" stroke="#F5A623" stroke-width="1.5"/>
+      <line x1="400" y1="210" x2="80"  y2="0"   stroke="#F5A623" stroke-width="1"/>
+      <line x1="400" y1="210" x2="720" y2="0"   stroke="#F5A623" stroke-width="1"/>
+      <line x1="400" y1="210" x2="80"  y2="420" stroke="#F5A623" stroke-width="1"/>
+      <line x1="400" y1="210" x2="720" y2="420" stroke="#F5A623" stroke-width="1"/>
+    </svg>
+    <div style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;width:100%;gap:2rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Raleway',sans-serif;font-weight:200;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.75rem;">SEGUNDO CÃREBRO</div>
+        <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:28px;color:#fff;line-height:1.15;margin-bottom:.625rem;">Suas ideias merecem<br>mais do que o WhatsApp.</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.45);margin-bottom:1.25rem;">Capture. Organize. Expanda. Com IA.</div>
+        <div style="display:inline-block;background:var(--amber);color:var(--dark);border-radius:8px;padding:8px 22px;font-size:13px;font-weight:700;font-family:'Raleway',sans-serif;letter-spacing:.04em;">ComeÃ§ar grÃ¡tis â</div>
+      </div>
+      <div class="logo-symbol" style="width:120px;height:120px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg style="position:absolute;top:0;left:0;width:100%;height:100%;" viewBox="0 0 120 120" fill="none" opacity=".5">
+          <line x1="60" y1="60" x2="60" y2="4"  stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="60" y2="116" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="4"  y2="60" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="116" y2="60" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="20" y2="20" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="100" y2="20" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="20" y2="100" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+          <line x1="60" y1="60" x2="100" y2="100" stroke="#F5A623" stroke-width=".8" stroke-linecap="round"/>
+        </svg>
+        <div style="position:relative;z-index:2;display:flex;width:88px;height:74px;">
+          <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:74px;color:#F5A623;left:4px;line-height:1;">B</span>
+          <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:74px;color:#F5A623;opacity:.28;right:4px;line-height:1;transform:scaleX(-1);">B</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banner 2 â violeta -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">VARIAÃÃO â VIOLETA Â· CAMPANHA IA</div>
+  <div class="banner" style="background:linear-gradient(135deg,#13131F 0%,#1C0A2E 100%);border:1px solid rgba(124,58,237,.15);border-radius:16px;padding:2.5rem;margin-bottom:2rem;min-height:140px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:1.5rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:22px;color:#fff;margin-bottom:.5rem;">IA que avalia suas ideias.<br><span style="color:var(--violet-lt);">Sem decidir por vocÃª.</span></div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);">Viabilidade em segundos. Roadmap em um clique.</div>
+      </div>
+      <div style="display:inline-block;background:var(--violet);color:#fff;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;font-family:'Raleway',sans-serif;">Conhecer a IA â</div>
+    </div>
+  </div>
+
+  <!-- Banner 3 â teal -->
+  <div style="font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">VARIAÃÃO â TEAL Â· PRIVACIDADE</div>
+  <div class="banner" style="background:linear-gradient(135deg,#0A1412 0%,#0A0A10 100%);border:1px solid rgba(13,148,136,.2);border-radius:16px;padding:2.5rem;margin-bottom:3rem;min-height:140px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:1.5rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:22px;color:#fff;margin-bottom:.5rem;">100% privado.<br><span style="color:var(--teal-lt);">Seus pensamentos sÃ£o sÃ³ seus.</span></div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);">Nenhum dado seu alimenta modelo de IA. Nunca.</div>
+      </div>
+      <div style="display:inline-block;background:var(--teal);color:#fff;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;font-family:'Raleway',sans-serif;">Ver polÃ­tica â</div>
+    </div>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     08 â PROPOSTA VISUAL DO SITE
+âââââââââââââââââââââââââââââââ -->
+<div class="section" id="site">
+  <div class="sec-label">08 â Site</div>
+  <div class="sec-title">Proposta visual do site</div>
+  <div class="sec-sub">Baseado no conteÃºdo real de bbrainapp.you â estrutura visual e hierarquia de informaÃ§Ã£o.</div>
+
+  <div class="site-frame">
+    <div class="site-browser-bar">
+      <div class="browser-dots">
+        <div class="browser-dot" style="background:#FF5F57;"></div>
+        <div class="browser-dot" style="background:#FFBD2E;"></div>
+        <div class="browser-dot" style="background:#28C840;"></div>
+      </div>
+      <div class="browser-url">bbrainapp.you</div>
+    </div>
+
+    <!-- Nav -->
+    <div class="site-nav">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;width:22px;height:22px;position:relative;justify-content:center;">
+          <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:16px;color:var(--amber);left:1px;line-height:1;">B</span>
+          <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:16px;color:var(--amber);opacity:.28;right:1px;line-height:1;transform:scaleX(-1);">B</span>
+        </div>
+        <span style="font-family:'Raleway',sans-serif;font-weight:200;font-size:14px;color:#fff;letter-spacing:.16em;">BBrain</span>
+      </div>
+      <div class="site-nav-links">
+        <span class="site-nav-link">Como funciona</span>
+        <span class="site-nav-link">Planos</span>
+        <span class="site-nav-link">Entrar</span>
+      </div>
+      <button class="site-btn">ComeÃ§ar grÃ¡tis</button>
+    </div>
+
+    <!-- Hero -->
+    <div class="site-hero">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.18em;text-transform:uppercase;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.15);border-radius:20px;padding:4px 14px;">Em desenvolvimento Â· Acesso antecipado aberto</div>
+
+      <div class="logo-symbol sym-lg" style="position:relative;display:flex;align-items:center;justify-content:center;">
+        <svg class="logo-lines" viewBox="0 0 100 100" fill="none">
+          <line x1="50" y1="50" x2="50" y2="4"  stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="50" y2="96" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="4"  y2="50" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="96" y2="50" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="17" y2="17" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="83" y2="17" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="17" y2="83" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="83" y2="83" stroke="#F5A623" stroke-width=".7"  stroke-linecap="round"/>
+        </svg>
+        <div class="logo-bb bb-lg"><div class="b-s bs-lg">B</div><div class="b-m bm-lg">B</div></div>
+      </div>
+
+      <div style="font-family:'Raleway',sans-serif;font-weight:700;font-size:clamp(22px,4vw,36px);color:#fff;line-height:1.1;">O segundo cÃ©rebro de quem<br><em style="color:var(--amber);font-style:normal;">nÃ£o para de pensar.</em></div>
+      <div style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.45);max-width:420px;line-height:1.7;">Captura, organiza e transforma o que passa pela sua cabeÃ§a em algo que vocÃª realmente usa.</div>
+
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+        <button class="site-btn" style="font-size:13px;padding:10px 28px;">ComeÃ§ar grÃ¡tis â</button>
+        <button style="background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);border-radius:8px;padding:10px 20px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;">Ver como funciona â</button>
+      </div>
+
+      <div style="font-size:11px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;">Apps em desenvolvimento Â· Use pelo browser agora</div>
+    </div>
+
+    <!-- Features -->
+    <div class="site-features">
+      <div class="site-feat"><div class="site-feat-icon">â¡</div><div class="site-feat-title">Capture em segundos</div><div class="site-feat-desc">Uma caixa de texto. Nenhum menu. AtÃ© pelo WhatsApp.</div></div>
+      <div class="site-feat"><div class="site-feat-icon">ð</div><div class="site-feat-title">DiÃ¡rio de sessÃµes</div><div class="site-feat-desc">HistÃ³rico honesto do seu processo criativo.</div></div>
+      <div class="site-feat"><div class="site-feat-icon">ðºï¸</div><div class="site-feat-title">Roadmap de ideias</div><div class="site-feat-desc">Do rascunho para o plano de aÃ§Ã£o sem perder nada.</div></div>
+      <div class="site-feat"><div class="site-feat-icon">â¦</div><div class="site-feat-title">IA que avalia</div><div class="site-feat-desc">Viabilidade em segundos. NÃ£o decide por vocÃª.</div></div>
+      <div class="site-feat"><div class="site-feat-icon">ð</div><div class="site-feat-title">100% privado</div><div class="site-feat-desc">Seus dados nÃ£o alimentam modelo nenhum. Nunca.</div></div>
+      <div class="site-feat" style="border-right:none;"><div class="site-feat-icon">ð</div><div class="site-feat-title">Global</div><div class="site-feat-desc">BR, EUA, Europa, MÃ©xico, CanadÃ¡, AustrÃ¡lia.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- âââââââââââââââââââââââââââââââ
+     09 â GUIA TÃCNICO
+âââââââââââââââââââââââââââââââ -->
+<div class="section">
+  <div class="sec-label">09 â Guia tÃ©cnico</div>
+  <div class="sec-title">AplicaÃ§Ã£o tÃ©cnica</div>
+  <div class="sec-sub">EspecificaÃ§Ãµes para desenvolvedores, designers e fornecedores.</div>
+
+  <table style="margin-bottom:2rem;">
+    <thead><tr><th>AplicaÃ§Ã£o</th><th>Formato</th><th>Tamanho mÃ­nimo</th><th>Fundo</th></tr></thead>
+    <tbody>
+      <tr><td>App Store</td><td>PNG sem transparÃªncia</td><td>1024Ã1024px</td><td>#0A0A10</td></tr>
+      <tr><td>Google Play</td><td>PNG sem transparÃªncia</td><td>512Ã512px</td><td>#0A0A10</td></tr>
+      <tr><td>WhatsApp avatar</td><td>JPG / PNG</td><td>500Ã500px</td><td>#0A0A10</td></tr>
+      <tr><td>Favicon web</td><td>ICO / SVG</td><td>32Ã32px</td><td>Transparente</td></tr>
+      <tr><td>Instagram avatar</td><td>JPG</td><td>320Ã320px</td><td>#0A0A10</td></tr>
+      <tr><td>LinkedIn avatar</td><td>PNG</td><td>400Ã400px</td><td>#0A0A10</td></tr>
+      <tr><td>YouTube avatar</td><td>PNG</td><td>800Ã800px</td><td>#0A0A10</td></tr>
+      <tr><td>Story / Reels</td><td>PNG / MP4</td><td>1080Ã1920px</td><td>VariÃ¡vel</td></tr>
+      <tr><td>Feed quadrado</td><td>PNG / JPG</td><td>1080Ã1080px</td><td>VariÃ¡vel</td></tr>
+      <tr><td>Banner ads</td><td>PNG / JPG</td><td>1200Ã628px</td><td>#0A0A10</td></tr>
+      <tr><td>Impresso A4</td><td>PDF vetorial</td><td>210Ã297mm 300dpi</td><td>Branco</td></tr>
+    </tbody>
+  </table>
+
+  <div class="hbox">
+    <div class="hbox-title">Fontes â links oficiais Google Fonts</div>
+    <p>Raleway: fonts.google.com/specimen/Raleway Â· DM Sans: fonts.google.com/specimen/DM+Sans Â· DM Mono: fonts.google.com/specimen/DM+Mono â Todas gratuitas para uso comercial (Open Font License).</p>
+  </div>
+
+  <div style="margin-top:2rem;font-size:11px;font-family:'DM Mono',monospace;color:rgba(255,255,255,.3);letter-spacing:.1em;margin-bottom:1rem;">VARIÃVEIS CSS OFICIAIS</div>
+  <div class="card-dark" style="font-family:'DM Mono',monospace;font-size:12px;color:rgba(255,255,255,.6);line-height:2;">
+    <span style="color:var(--amber);">--brand-amber:</span> #F5A623;<br>
+    <span style="color:var(--amber);">--brand-amber-dk:</span> #C47A00;<br>
+    <span style="color:var(--amber);">--brand-dark:</span> #0A0A10;<br>
+    <span style="color:var(--amber);">--brand-dark2:</span> #13131F;<br>
+    <span style="color:var(--violet-lt);">--brand-violet:</span> #7C3AED;<br>
+    <span style="color:var(--teal-lt);">--brand-teal:</span> #0D9488;<br>
+    <span style="color:var(--rose-lt);">--brand-rose:</span> #E11D48;<br>
+    <span style="color:rgba(255,255,255,.4);">--font-display:</span> 'Raleway', sans-serif;<br>
+    <span style="color:rgba(255,255,255,.4);">--font-body:</span> 'DM Sans', sans-serif;<br>
+    <span style="color:rgba(255,255,255,.4);">--font-mono:</span> 'DM Mono', monospace;
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="padding:3rem 0;text-align:center;border-top:1px solid rgba(255,255,255,.06);">
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.75rem;">
+    <div style="display:flex;align-items:center;width:22px;height:22px;position:relative;justify-content:center;">
+      <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:16px;color:var(--amber);left:1px;line-height:1;">B</span>
+      <span style="position:absolute;font-family:'Raleway',sans-serif;font-weight:900;font-size:16px;color:var(--amber);opacity:.28;right:1px;line-height:1;transform:scaleX(-1);">B</span>
+    </div>
+    <span style="font-family:'Raleway',sans-serif;font-weight:200;font-size:16px;color:#fff;letter-spacing:.18em;">BBrain</span>
+  </div>
+  <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);letter-spacing:.08em;">Key Visual & Brand Guidelines Â· v1.0 Â· 2026 Â· Uma produÃ§Ã£o Selo7 Â· bbrainapp.you</div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>
