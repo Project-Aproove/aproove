@@ -1,7 +1,12 @@
 {
-  "version": "0.0.2",
-  "updated_at": "2026-03-18",
+  "version": "0.0.3",
+  "updated_at": "2026-03-22",
   "history": [
+    {
+      "version": "0.0.3",
+      "date": "2026-03-22",
+      "notes": "Brand pages + nova identidade visual BBrain (Amber/Deep Night) — /brand e /brand/kit.html no ar"
+    },
     {
       "version": "0.0.2",
       "date": "2026-03-18",
