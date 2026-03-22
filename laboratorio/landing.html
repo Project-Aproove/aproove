@@ -7,25 +7,29 @@
   <meta name="description" content="BBrain organiza o que você pensa antes que desapareça. Para fundadores, criadores e quem constrói muito.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink:    #0f0f14;
-      --ink2:   #4a4a58;
-      --ink3:   #9a9aaa;
-      --brain:  #1a0a3a;
-      --brain2: #2d1260;
-      --line:   rgba(15,15,20,.1);
-      --bg:     #ffffff;
-      --bg2:    #f8f7fc;
-      --green:  #16a34a;
+      --amber:   #F5A623;
+      --amber-dk:#C47A00;
+      --dark:    #0A0A10;
+      --dark2:   #13131F;
+      --dark3:   #1C1C2E;
+      --ink:     #FFFFFF;
+      --ink2:    rgba(255,255,255,.65);
+      --ink3:    rgba(255,255,255,.35);
+      --line:    rgba(255,255,255,.06);
+      --line2:   rgba(255,255,255,.12);
+      --bg:      #0A0A10;
+      --bg2:     #13131F;
+      --green:   #22c55e;
       --r: 14px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'DM Sans', system-ui, sans-serif;
-      background: var(--bg);
+      background: var(--dark);
       color: var(--ink);
       min-height: 100dvh;
     }
@@ -36,13 +40,13 @@
       padding: 0 2rem;
       height: 56px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(255,255,255,.88);
+      background: rgba(10,10,16,.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--line);
     }
-    .nav-logo { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 15px; color: var(--brain); text-decoration: none; }
-    .nav-logo-icon { font-size: 20px; }
-    .nav-cta { padding: .45rem 1.1rem; background: var(--brain); color: white; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: opacity .15s; }
+    .nav-logo { display: flex; align-items: center; gap: .5rem; font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 17px; letter-spacing: .18em; color: var(--ink); text-decoration: none; }
+    .nav-logo-amber { color: var(--amber); }
+    .nav-cta { padding: .45rem 1.1rem; background: var(--amber); color: var(--dark); border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; transition: opacity .15s; }
     .nav-cta:hover { opacity: .85; }
 
     /* ── HERO ── */
@@ -57,15 +61,15 @@
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74,29,122,.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse 70% 50% at 50% 20%, rgba(245,166,35,.07) 0%, transparent 65%);
       pointer-events: none;
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: .4rem;
       padding: .3rem .85rem; border-radius: 20px;
-      background: var(--bg2); border: 1px solid var(--line);
-      font-size: 11.5px; font-weight: 500; color: var(--ink2);
-      margin-bottom: 2rem; letter-spacing: .02em;
+      background: rgba(245,166,35,.08); border: 1px solid rgba(245,166,35,.2);
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 400; color: var(--amber);
+      margin-bottom: 2rem; letter-spacing: .06em;
     }
     .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
     .hero-q {
@@ -86,8 +90,8 @@
       font-family: inherit;
       font-size: clamp(14px, 2vw, 16px);
       color: var(--ink);
-      background: var(--bg2);
-      border: 1.5px solid var(--line);
+      background: var(--dark2);
+      border: 1.5px solid var(--line2);
       border-radius: var(--r);
       outline: none;
       transition: border-color .15s, box-shadow .15s;
@@ -97,15 +101,14 @@
     }
     .hero-input::placeholder { color: var(--ink3); }
     .hero-input:focus {
-      border-color: rgba(26,10,58,.35);
-      box-shadow: 0 0 0 3px rgba(74,29,122,.08);
-      background: #fff;
+      border-color: rgba(245,166,35,.4);
+      box-shadow: 0 0 0 3px rgba(245,166,35,.08);
     }
     .hero-input-btn {
       position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
-      padding: .5rem 1rem; background: var(--brain); color: white;
+      padding: .5rem 1rem; background: var(--amber); color: var(--dark);
       border: none; border-radius: 8px; font-family: inherit;
-      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-size: 12px; font-weight: 700; cursor: pointer;
       transition: opacity .15s;
     }
     .hero-input-btn:hover { opacity: .85; }
@@ -120,15 +123,15 @@
     .btn-descobrir {
       display: inline-flex; align-items: center; gap: .5rem;
       padding: .875rem 2.25rem;
-      background: var(--brain); color: white;
+      background: var(--amber); color: var(--dark);
       border: none; border-radius: var(--r);
-      font-family: inherit; font-size: 15px; font-weight: 600;
+      font-family: inherit; font-size: 15px; font-weight: 700;
       cursor: pointer; text-decoration: none;
       transition: all .15s;
-      box-shadow: 0 4px 16px rgba(26,10,58,.25);
+      box-shadow: 0 4px 24px rgba(245,166,35,.25);
       margin-bottom: 3rem;
     }
-    .btn-descobrir:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(26,10,58,.3); }
+    .btn-descobrir:hover { transform: translateY(-1px); box-shadow: 0 6px 32px rgba(245,166,35,.35); opacity: .92; }
     .btn-descobrir:active { transform: none; }
     .stores {
       display: flex; gap: .875rem; align-items: center; flex-wrap: wrap; justify-content: center;
@@ -137,18 +140,18 @@
     .store-badge {
       display: flex; align-items: center; gap: .6rem;
       padding: .6rem 1.1rem;
-      background: var(--ink); color: white;
+      background: var(--dark2); color: var(--ink); border: 1px solid var(--line2);
       border-radius: 10px; text-decoration: none;
       transition: opacity .15s;
       min-width: 140px;
     }
-    .store-badge.disabled { opacity: .35; cursor: default; pointer-events: none; }
+    .store-badge.disabled { opacity: .3; cursor: default; pointer-events: none; }
     .store-badge:not(.disabled):hover { opacity: .85; }
     .store-badge-icon { font-size: 20px; }
     .store-badge-text { text-align: left; }
-    .store-badge-sub { font-size: 9px; opacity: .7; display: block; font-weight: 400; }
+    .store-badge-sub { font-size: 9px; opacity: .6; display: block; font-weight: 400; }
     .store-badge-name { font-size: 13px; font-weight: 600; display: block; }
-    .store-soon { font-size: 11px; color: var(--ink3); margin-top: .35rem; }
+    .store-soon { font-size: 11px; color: var(--ink3); margin-top: .35rem; font-family: 'DM Mono', monospace; letter-spacing: .04em; }
     .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); color: var(--ink3); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: .3rem; }
     .hero-scroll-arrow { animation: bounce 2s infinite; }
     @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(4px)} }
@@ -156,58 +159,58 @@
     /* ── FEATURES ── */
     .section { padding: 5rem 1.5rem; }
     .section-inner { max-width: 900px; margin: 0 auto; }
-    .section-label { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: .875rem; }
+    .section-label { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin-bottom: .875rem; }
     .section-title { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 600; line-height: 1.25; color: var(--ink); margin-bottom: 1rem; }
     .section-title em { font-style: italic; color: var(--ink2); }
     .section-sub { font-size: 15px; color: var(--ink2); max-width: 520px; line-height: 1.65; margin-bottom: 3rem; }
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
     .feature-card {
       padding: 1.5rem; border-radius: var(--r);
-      background: var(--bg2); border: 1px solid var(--line);
+      background: var(--dark2); border: 1px solid var(--line);
     }
     .feature-icon { font-size: 1.75rem; margin-bottom: .875rem; }
     .feature-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: .4rem; }
     .feature-desc { font-size: 13px; color: var(--ink2); line-height: 1.6; }
     .feature-card.highlight {
-      background: var(--brain); border-color: transparent;
+      background: rgba(245,166,35,.08); border-color: rgba(245,166,35,.2);
       grid-column: span 2;
     }
-    .feature-card.highlight .feature-title { color: white; }
-    .feature-card.highlight .feature-desc { color: rgba(255,255,255,.7); }
+    .feature-card.highlight .feature-title { color: var(--amber); }
+    .feature-card.highlight .feature-desc { color: var(--ink2); }
     @media(max-width:520px){ .feature-card.highlight { grid-column: span 1; } }
 
     /* ── PRICING ── */
-    .pricing-section { background: var(--bg2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .pricing-section { background: var(--dark2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .pricing-controls {
       display: flex; gap: .75rem; align-items: center; flex-wrap: wrap;
       margin-bottom: 2.5rem;
     }
     .billing-toggle {
-      display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 3px;
+      display: flex; background: var(--dark); border: 1px solid var(--line2); border-radius: 9px; padding: 3px;
     }
     .billing-btn {
       padding: .35rem .875rem; border-radius: 7px; border: none; background: none;
       font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--ink2); cursor: pointer;
     }
-    .billing-btn.active { background: var(--brain); color: white; }
-    .billing-annual-badge { font-size: 10.5px; padding: .2rem .5rem; background: #dcfce7; color: #15803d; border-radius: 5px; font-weight: 600; margin-left: .25rem; }
+    .billing-btn.active { background: var(--amber); color: var(--dark); font-weight: 700; }
+    .billing-annual-badge { font-size: 10.5px; padding: .2rem .5rem; background: rgba(34,197,94,.15); color: #4ade80; border-radius: 5px; font-weight: 600; margin-left: .25rem; }
     .country-select {
-      padding: .4rem .75rem; border: 1px solid var(--line); border-radius: 9px;
-      background: white; font-family: inherit; font-size: 12.5px; color: var(--ink2);
+      padding: .4rem .75rem; border: 1px solid var(--line2); border-radius: 9px;
+      background: var(--dark); color: var(--ink2); font-family: inherit; font-size: 12.5px;
       cursor: pointer; outline: none;
     }
     .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
     .plan-card {
-      background: white; border: 1px solid var(--line); border-radius: 16px;
+      background: var(--dark); border: 1px solid var(--line2); border-radius: 16px;
       padding: 1.75rem 1.5rem; position: relative; display: flex; flex-direction: column;
     }
     .plan-card.popular {
-      border-color: var(--brain); border-width: 2px;
-      box-shadow: 0 0 0 4px rgba(26,10,58,.06);
+      border-color: var(--amber); border-width: 2px;
+      box-shadow: 0 0 0 4px rgba(245,166,35,.06);
     }
     .plan-popular-badge {
       position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-      background: var(--brain); color: white;
+      background: var(--amber); color: var(--dark);
       font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
       padding: .25rem .75rem; border-radius: 6px;
       white-space: nowrap;
@@ -224,14 +227,14 @@
     .plan-features li.off::before { content: '—'; color: var(--ink3); font-weight: 400; }
     .plan-btn {
       display: block; width: 100%; padding: .75rem;
-      border-radius: 10px; border: 1.5px solid var(--line);
-      background: white; color: var(--ink);
+      border-radius: 10px; border: 1.5px solid var(--line2);
+      background: transparent; color: var(--ink);
       font-family: inherit; font-size: 13.5px; font-weight: 600;
       cursor: pointer; text-align: center; text-decoration: none;
       transition: all .15s;
     }
     .plan-card.popular .plan-btn {
-      background: var(--brain); color: white; border-color: var(--brain);
+      background: var(--amber); color: var(--dark); border-color: var(--amber); font-weight: 700;
     }
     .plan-btn:hover { opacity: .8; }
     .pricing-note { font-size: 12px; color: var(--ink3); text-align: center; margin-top: 1.5rem; line-height: 1.6; }
@@ -239,10 +242,11 @@
     /* ── FOOTER ── */
     footer { padding: 2.5rem 1.5rem; border-top: 1px solid var(--line); }
     .footer-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-    .footer-logo { font-size: 14px; font-weight: 700; color: var(--brain); }
+    .footer-logo { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 15px; letter-spacing: .16em; color: var(--ink); }
+    .footer-logo-amber { color: var(--amber); }
     .footer-links { display: flex; gap: 1.5rem; }
     .footer-links a { font-size: 12.5px; color: var(--ink3); text-decoration: none; }
-    .footer-links a:hover { color: var(--ink); }
+    .footer-links a:hover { color: var(--amber); }
     .footer-copy { font-size: 12px; color: var(--ink3); }
 
     /* ── RESPONSIVE ── */
@@ -260,8 +264,7 @@
 <!-- NAV -->
 <nav>
   <a class="nav-logo" href="/">
-    <span class="nav-logo-icon">🧠</span>
-    <span>BBrain</span>
+    <span>BB<span class="nav-logo-amber">rain</span></span>
   </a>
   <a class="nav-cta" href="/laboratorio">Entrar</a>
 </nav>
@@ -386,7 +389,7 @@
 <footer>
   <div class="footer-inner">
     <div style="display:flex;flex-direction:column;gap:.25rem;">
-      <span class="footer-logo">🧠 BBrain</span>
+      <span class="footer-logo">BB<span class="footer-logo-amber">rain</span></span>
       <span style="font-size:11px;color:var(--ink3);">Uma produção <a href="https://selo7.com" target="_blank" style="color:var(--ink3);text-decoration:none;font-weight:500;">Selo7</a></span>
     </div>
     <div class="footer-links">
