@@ -1444,6 +1444,7 @@ Máximo 400 palavras. Sem introdução, sem elogios.`;
     return serveFile(res, path.join(ROOT, 'public', pathname));
   }
 
+
   // Brand pages (internal, noindex)
   if (pathname === '/brand' || pathname === '/brand/') {
     return serveFile(res, path.join(ROOT, 'public', 'brand', 'index.html'));

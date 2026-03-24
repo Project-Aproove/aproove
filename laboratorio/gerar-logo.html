@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gerar Logo BBrain 1024x1024</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;900&display=swap" rel="stylesheet">
+<style>
+body { background:#111; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:sans-serif; gap:1rem; }
+canvas { border:1px solid #333; }
+button { background:#F5A623; color:#0A0A10; border:none; padding:.75rem 2rem; font-size:16px; font-weight:700; border-radius:8px; cursor:pointer; }
+p { color:#888; font-size:13px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1024" height="1024"></canvas>
+<button onclick="download()">⬇ Baixar bbrain-logo-1024.jpg</button>
+<p>Aguarde a fonte carregar (~2s) antes de baixar</p>
+<script>
+function draw() {
+  const c = document.getElementById('c');
+  const ctx = c.getContext('2d');
+  const W = 1024, H = 1024;
+
+  // Background
+  ctx.fillStyle = '#0A0A10';
+  ctx.fillRect(0, 0, W, H);
+
+  // Expansion lines
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.strokeStyle = '#F5A623';
+  ctx.lineCap = 'round';
+  const cx = W/2, cy = H/2 - 40;
+  const lines = [
+    [cx,cy, cx,cy-360],
+    [cx,cy, cx,cy+360],
+    [cx,cy, cx-360,cy],
+    [cx,cy, cx+360,cy],
+    [cx,cy, cx-220,cy-220],
+    [cx,cy, cx+220,cy-220],
+    [cx,cy, cx-220,cy+220],
+    [cx,cy, cx+220,cy+220],
+  ];
+  lines.forEach(([x1,y1,x2,y2], i) => {
+    ctx.lineWidth = i < 4 ? 3 : 2;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  });
+  ctx.restore();
+
+  // B letters
+  ctx.font = '900 380px Raleway, Arial';
+  ctx.textBaseline = 'middle';
+
+  // B solid
+  ctx.fillStyle = '#F5A623';
+  ctx.fillText('B', 120, cy + 20);
+
+  // B mirrored
+  ctx.save();
+  ctx.globalAlpha = 0.28;
+  ctx.fillStyle = '#F5A623';
+  ctx.translate(W, 0);
+  ctx.scale(-1, 1);
+  ctx.fillText('B', 120, cy + 20);
+  ctx.restore();
+
+  // Wordmark
+  ctx.font = '200 96px Raleway, Arial';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '20px';
+  ctx.fillText('BBrain', W/2, H - 140);
+}
+
+// Aguarda a fonte do Google carregar
+document.fonts.ready.then(() => {
+  setTimeout(draw, 300);
+});
+
+function download() {
+  draw();
+  const c = document.getElementById('c');
+  const link = document.createElement('a');
+  link.download = 'bbrain-logo-1024.jpg';
+  link.href = c.toDataURL('image/jpeg', 0.95);
+  link.click();
+}
+</script>
+</body>
+</html>

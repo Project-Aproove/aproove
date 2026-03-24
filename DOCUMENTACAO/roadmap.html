@@ -158,7 +158,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
         <div class="ps-label">Em andamento</div>
       </div>
       <div class="phase-stat">
-        <div class="ps-val">28</div>
+        <div class="ps-val">32</div>
         <div class="ps-label">No backlog</div>
       </div>
     </div>
@@ -437,6 +437,88 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
           <div class="task-content"><h4>App mobile (iOS + Android)</h4><p>Clientes aprovam pelo celular. Equipe acompanha status em tempo real com push notifications.</p></div>
           <div class="task-meta"><span class="effort grande">Grande</span></div>
         </div>
+      </div>
+    </div>
+
+    <div class="section-sep"></div>
+
+    <!-- FASE 5: ECOSSISTEMA E INTEGRAÇÕES -->
+    <div class="phase-block">
+      <div class="phase-header">
+        <div class="phase-dot upcoming"></div>
+        <span class="phase-num">Fase 5</span>
+        <span class="phase-title-text">Ecossistema, IA e Integrações</span>
+        <span class="phase-badge upcoming">Backlog</span>
+        <span class="phase-period">2027 →</span>
+      </div>
+
+      <!-- CONTEXTO DA FASE -->
+      <div style="background:var(--blue-bg);border:1px solid var(--blue-bd);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+        <p style="font-size:12px;color:var(--blue);line-height:1.65;"><strong>Visão desta fase:</strong> transformar o Aproove de uma ferramenta de aprovação em um <em>hub de produção de conteúdo</em>. O usuário conecta suas próprias chaves de IA e ferramentas profissionais — o Aproove orquestra tudo. Cada integração é um argumento irresistível para o plano mais caro.</p>
+      </div>
+
+      <div class="task-list">
+
+        <!-- AI HUB -->
+        <div class="task-item" style="border-left:3px solid var(--blue);">
+          <div class="task-check"></div>
+          <div class="task-content">
+            <h4>AI Hub — Gerador de copy plugável (OpenAI · Gemini · Claude)</h4>
+            <p>O usuário conecta a chave de API da IA de sua preferência (OpenAI GPT-4o, Google Gemini, Anthropic Claude). O Aproove usa para: gerar legenda + CTA + hashtags a partir do briefing da campanha; sugerir variações de copy para A/B; resumir o histórico de feedbacks em uma frase acionável; gerar relatório do ciclo de aprovação. Nenhum custo de IA para o Aproove — o gasto é do cliente.</p>
+          </div>
+          <div class="task-meta"><span class="effort medio">Médio</span></div>
+        </div>
+
+        <!-- RESUMO IA DE FEEDBACKS -->
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content">
+            <h4>Resumo automático de rodadas de feedback com IA</h4>
+            <p>Após 2+ rodadas de revisão na mesma peça, a IA (via AI Hub) lê todos os comentários e gera um parágrafo resumindo os pontos recorrentes do cliente. Reduz ruído de comunicação e acelera o ciclo. Disponível apenas no plano Power.</p>
+          </div>
+          <div class="task-meta"><span class="effort baixo">Baixo</span></div>
+        </div>
+
+        <!-- KOMMO CRM -->
+        <div class="task-item" style="border-left:3px solid var(--green);">
+          <div class="task-check"></div>
+          <div class="task-content">
+            <h4>Kommo CRM — Sync bidirecional de clientes e aprovações</h4>
+            <p>Bruno já é parceiro Kommo — canal de distribuição imediato. Integração: (1) Importar clientes do Kommo para o Aproove com um clique; (2) Quando deal avança no pipeline Kommo, cria campanha automaticamente no Aproove; (3) Quando conteúdo é aprovado, atualiza o deal e move para próxima etapa; (4) Histórico de aprovações visível no card do deal. Posiciona o Aproove como addon nativo para toda a base Kommo.</p>
+          </div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+
+        <!-- ADOBE PHOTOSHOP API -->
+        <div class="task-item" style="border-left:3px solid var(--red);">
+          <div class="task-check"></div>
+          <div class="task-content">
+            <h4>Adobe Photoshop API — Auto-resize para todos os formatos sociais</h4>
+            <p>O usuário conecta sua chave Adobe Creative Cloud. Ao fazer upload de uma arte, o Aproove gera automaticamente todas as variações de formato: Feed 1:1 (1080×1080), Stories/Reels 9:16 (1080×1920), LinkedIn 1.91:1 (1200×627), X/Twitter 16:9, Pinterest 2:3. Elimina trabalho manual de resizing — uma das maiores dores de agências. Cada formato fica disponível para aprovação individual. Disponível no plano Agency.</p>
+          </div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+
+        <!-- ADOBE ILLUSTRATOR PLUGIN -->
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content">
+            <h4>Adobe Illustrator — Plugin de export direto para o Aproove</h4>
+            <p>Plugin instalável no Illustrator (via Adobe UXP) que aparece como painel. O designer seleciona a campanha e a peça, clica em "Enviar para aprovação" — o arquivo é exportado em PDF/PNG e enviado diretamente para o Aproove sem sair do software. Reduz o ciclo de "exportar → nomear → subir" para zero cliques. Disponível no plano Agency.</p>
+          </div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+
+        <!-- AGENTES AUTÔNOMOS -->
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div class="task-content">
+            <h4>Agentes autônomos — Ciclos de aprovação sem intervenção humana</h4>
+            <p>Visão de longo prazo: agente de IA (via OpenAI Agents API ou equivalente) gerencia um ciclo de aprovação inteiro de forma autônoma. Recebe o briefing, gera o copy, solicita aprovação ao cliente, interpreta o feedback como texto, faz as alterações e resubmete — avisando a equipe apenas nos pontos de decisão críticos. Plano Enterprise futuro. Depende da maturidade do mercado e confiança do cliente em IA.</p>
+          </div>
+          <div class="task-meta"><span class="effort grande">Grande</span></div>
+        </div>
+
       </div>
     </div>
 

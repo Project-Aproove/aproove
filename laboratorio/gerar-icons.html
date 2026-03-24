@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gerar Ícones BBrain PWA</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;900&display=swap" rel="stylesheet">
+<style>
+body { background:#111; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:sans-serif; gap:1rem; color:#fff; }
+.btns { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+button { background:#F5A623; color:#0A0A10; border:none; padding:.75rem 1.5rem; font-size:15px; font-weight:700; border-radius:8px; cursor:pointer; }
+canvas { display:none; }
+p { color:#888; font-size:13px; text-align:center; }
+</style>
+</head>
+<body>
+<h2 style="color:#F5A623">Gerador de Ícones BBrain PWA</h2>
+<canvas id="c192" width="192" height="192"></canvas>
+<canvas id="c512" width="512" height="512"></canvas>
+<div class="btns">
+  <button onclick="download(192)">⬇ icon-192.png</button>
+  <button onclick="download(512)">⬇ icon-512.png</button>
+  <button onclick="download(192);setTimeout(()=>download(512),500)">⬇ Baixar os dois</button>
+</div>
+<p>Salve na pasta <b>public/icons/</b> do projeto</p>
+<script>
+function drawIcon(size) {
+  const c = document.getElementById(`c${size}`);
+  const ctx = c.getContext('2d');
+  const W = size, H = size;
+  const scale = size / 192;
+
+  ctx.fillStyle = '#0A0A10';
+  ctx.fillRect(0, 0, W, H);
+
+  // Expansion lines
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.strokeStyle = '#F5A623';
+  ctx.lineCap = 'round';
+  const cx = W/2, cy = H/2 - 8*scale;
+  const r = 72*scale;
+  const rd = r * 0.7;
+  [
+    [cx,cy,cx,cy-r],[cx,cy,cx,cy+r],
+    [cx,cy,cx-r,cy],[cx,cy,cx+r,cy],
+    [cx,cy,cx-rd,cy-rd],[cx,cy,cx+rd,cy-rd],
+    [cx,cy,cx-rd,cy+rd],[cx,cy,cx+rd,cy+rd],
+  ].forEach(([x1,y1,x2,y2],i) => {
+    ctx.lineWidth = (i < 4 ? 2 : 1.5) * scale;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  });
+  ctx.restore();
+
+  // B solid
+  ctx.font = `900 ${88*scale}px Raleway, Arial`;
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#F5A623';
+  ctx.fillText('B', 18*scale, cy + 6*scale);
+
+  // B mirrored
+  ctx.save();
+  ctx.globalAlpha = 0.28;
+  ctx.fillStyle = '#F5A623';
+  ctx.translate(W, 0);
+  ctx.scale(-1, 1);
+  ctx.fillText('B', 18*scale, cy + 6*scale);
+  ctx.restore();
+
+  // Wordmark
+  ctx.font = `200 ${22*scale}px Raleway, Arial`;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'center';
+  ctx.fillText('BBrain', W/2, H - 28*scale);
+}
+
+document.fonts.ready.then(() => {
+  setTimeout(() => { drawIcon(192); drawIcon(512); }, 400);
+});
+
+function download(size) {
+  drawIcon(size);
+  const c = document.getElementById(`c${size}`);
+  const a = document.createElement('a');
+  a.download = `icon-${size}.png`;
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
