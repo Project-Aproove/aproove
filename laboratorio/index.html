@@ -2,9 +2,20 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BBrain — Bruno Cérebro · Aproove</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BBrain</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BBrain">
+<meta name="theme-color" content="#0A0A10">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+// Aplica tema antes do render para evitar flash
+(function(){const t=localStorage.getItem('bbrain-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();
+</script>
 <style>
 :root {
   --ink: #111110; --ink2: #4a4a47; --ink3: #9a9a96;
@@ -16,12 +27,24 @@
   --blue: #0d4a8a; --blue-bg: #e8f0fb; --blue-bd: rgba(13,74,138,.2);
   --red: #8a1a1a; --red-bg: #fbeaea; --red-bd: rgba(138,26,26,.2);
   --purple: #4a1d7a; --purple-bg: #f3eefb; --purple-bd: rgba(74,29,122,.2);
-  --brain: #1a0a3a; --brain-mid: #3a1f7a; --brain-glow: rgba(74,45,138,.15);
+  --brain: #0A0A10; --brain-mid: #13131F; --brain-glow: rgba(245,166,35,.12);
+  --amber-brand: #F5A623; --amber-brand-dk: #C47A00;
   --wa: #25d366; --wa-bg: #e8fdf2; --wa-bd: rgba(37,211,102,.25);
+}
+html[data-theme="dark"] {
+  --ink: #ECEAE3; --ink2: #8C8C85; --ink3: #555550;
+  --paper: #0A0A10; --paper2: #13131F; --paper3: #1C1C2E;
+  --surface: #13131F;
+  --line: rgba(255,255,255,.06); --line2: rgba(255,255,255,.10);
+  --green-bg: rgba(42,95,42,.18); --green-bd: rgba(42,95,42,.35);
+  --amber-bg: rgba(122,74,10,.18); --amber-bd: rgba(122,74,10,.35);
+  --blue-bg: rgba(13,74,138,.18); --blue-bd: rgba(13,74,138,.35);
+  --red-bg: rgba(138,26,26,.18); --red-bd: rgba(138,26,26,.35);
+  --purple-bg: rgba(74,29,122,.18); --purple-bd: rgba(74,29,122,.35);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--paper); color: var(--ink); line-height: 1.6; min-height: 100vh; transition: background .2s, color .2s; }
 ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-thumb { background: var(--paper3); border-radius: 3px; }
 
 /* ── HEADER ── */
@@ -33,19 +56,17 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
 }
 .brain-logo { display: flex; align-items: center; gap: .625rem; }
-.brain-mark {
-  width: 32px; height: 32px; border-radius: 8px;
-  background: var(--brain); display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0;
-  box-shadow: 0 0 0 1px rgba(74,45,138,.3), 0 2px 8px var(--brain-glow);
-}
-.brain-name { font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+.brain-mark { display: none; }
+.brain-name { font-family: 'Raleway', sans-serif; font-weight: 200; font-size: 18px; letter-spacing: .18em; color: var(--ink); }
+.brain-name-amber { color: #F5A623; }
 .brain-sub { font-size: 11px; color: var(--ink3); }
 .header-actions { margin-left: auto; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
 .stat-chip { display: flex; align-items: center; gap: .3rem; padding: .25rem .625rem; background: var(--paper2); border: 1px solid var(--line2); border-radius: 12px; font-size: 11px; color: var(--ink2); }
 .stat-chip b { font-weight: 700; font-family: 'DM Mono', monospace; color: var(--ink); }
 .stat-chip.active { background: var(--green-bg); border-color: var(--green-bd); }
 .stat-chip.active b { color: var(--green); }
+.stat-chip-link { cursor: pointer; transition: background .12s, border-color .12s; }
+.stat-chip-link:hover { background: var(--paper3); border-color: var(--ink3); }
 
 /* ── SESSION ACTIVE BANNER ── */
 .session-banner {
@@ -98,13 +119,13 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   color: var(--ink); line-height: 1.6; outline: none; transition: border-color .15s, box-shadow .15s;
 }
 .idea-textarea::placeholder { color: var(--ink3); }
-.idea-textarea:focus { border-color: rgba(74,29,122,.4); box-shadow: 0 0 0 3px var(--brain-glow); }
+.idea-textarea:focus { border-color: rgba(245,166,35,.4); box-shadow: 0 0 0 3px rgba(245,166,35,.08); }
 .capture-footer { display: flex; align-items: center; justify-content: space-between; margin-top: .875rem; gap: .75rem; flex-wrap: wrap; }
 .capture-hint { font-size: 11px; color: var(--ink3); }
 .capture-hint kbd { font-family: 'DM Mono', monospace; font-size: 10px; padding: 1px 5px; background: var(--paper2); border: 1px solid var(--line2); border-radius: 3px; }
 .btn-idea {
-  background: var(--brain); color: white; border: none; border-radius: 8px;
-  padding: .5rem 1.25rem; font-family: inherit; font-size: 13px; font-weight: 600;
+  background: #F5A623; color: #0A0A10; border: none; border-radius: 8px;
+  padding: .5rem 1.25rem; font-family: inherit; font-size: 13px; font-weight: 700;
   cursor: pointer; transition: opacity .15s;
 }
 .btn-idea:hover { opacity: .85; }
@@ -114,7 +135,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .filters { display: flex; gap: .4rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
 .filter-btn { padding: .3rem .75rem; border: 1px solid var(--line2); border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--paper2); color: var(--ink2); cursor: pointer; transition: all .12s; }
 .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
-.filter-btn.active { background: var(--brain); color: white; border-color: var(--brain); }
+.filter-btn.active { background: #F5A623; color: #0A0A10; border-color: #F5A623; font-weight: 700; }
 .fc { font-family: 'DM Mono', monospace; font-size: 10px; opacity: .65; }
 
 /* ── IDEA CARDS ── */
@@ -221,6 +242,24 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .report-section { margin-bottom:1.75rem; }
 .report-section h3 { font-size:13px; font-weight:700; color:var(--ink); margin-bottom:.875rem; padding-bottom:.5rem; border-bottom:1px solid var(--line2); }
 .report-idea-item { font-size:13px; color:var(--ink2); padding:.5rem .75rem; border-radius:6px; background:var(--paper2); margin-bottom:.4rem; display:flex; align-items:flex-start; gap:.6rem; line-height:1.5; }
+/* ── BRAIN NAME MODAL ── */
+.brain-name-overlay { position:fixed; inset:0; background:rgba(10,5,25,.7); backdrop-filter:blur(6px); z-index:500; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.brain-name-modal { background:var(--surface); border-radius:18px; padding:2.25rem 2rem 2rem; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,.2); text-align:center; }
+.brain-name-modal .bm-icon { font-size:2.5rem; margin-bottom:1rem; }
+.brain-name-modal h2 { font-size:20px; font-weight:700; letter-spacing:-.02em; margin-bottom:.4rem; }
+.brain-name-modal p { font-size:13px; color:var(--ink3); line-height:1.6; margin-bottom:1.5rem; }
+.brain-name-preview { font-size:28px; font-weight:800; letter-spacing:-.03em; color:var(--brain); margin-bottom:1.25rem; min-height:40px; transition:all .15s; }
+.brain-name-preview span { color:var(--ink3); }
+.brain-name-input { width:100%; padding:.75rem 1rem; border:1.5px solid var(--line2); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; text-align:center; outline:none; transition:border-color .15s; margin-bottom:1rem; }
+.brain-name-input:focus { border-color:var(--brain); }
+.brain-name-suggestions { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.5rem; }
+.brain-name-sug { padding:.3rem .75rem; border:1px solid var(--line2); border-radius:20px; font-size:12px; font-weight:600; color:var(--ink2); cursor:pointer; background:var(--paper2); transition:all .12s; }
+.brain-name-sug:hover, .brain-name-sug.active { background:var(--brain); color:white; border-color:var(--brain); }
+.btn-confirm-brain { width:100%; padding:.875rem; background:var(--brain); color:white; border:none; border-radius:10px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+.btn-confirm-brain:hover { opacity:.85; }
+.brain-name-skip { display:block; margin-top:.875rem; font-size:12px; color:var(--ink3); cursor:pointer; }
+.brain-name-skip:hover { color:var(--ink); }
+
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--brain); color: white; padding: .625rem 1.25rem; border-radius: 8px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity .2s; pointer-events: none; white-space: nowrap; z-index: 300; }
 .toast.show { opacity: 1; }
@@ -284,44 +323,45 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 }
 
 /* ── AUTH OVERLAY ── */
-.auth-overlay { position:fixed;inset:0;z-index:9999;background:var(--brain);display:flex;align-items:center;justify-content:center;padding:1.5rem; }
+.auth-overlay { position:fixed;inset:0;z-index:9999;background:#0A0A10;display:flex;align-items:center;justify-content:center;padding:1.5rem; }
 .auth-overlay.hidden { display:none; }
 .auth-box { width:100%;max-width:360px;text-align:center; }
-.auth-icon { font-size:52px;display:block;margin-bottom:1.75rem; }
+.auth-logo { font-family:'Raleway',sans-serif;font-weight:200;font-size:32px;letter-spacing:.2em;color:#FFFFFF;display:block;margin-bottom:1.75rem; }
+.auth-logo span { color:#F5A623; }
 .auth-title { font-size:26px;font-weight:700;color:white;letter-spacing:-.02em;margin-bottom:.375rem; }
-.auth-subtitle { font-size:13px;color:rgba(255,255,255,.4);margin-bottom:2rem;line-height:1.6; }
+.auth-subtitle { font-size:13px;color:rgba(255,255,255,.35);margin-bottom:2rem;line-height:1.6; }
 .auth-input {
   display:block;width:100%;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
   border-radius:10px;padding:.8rem 1rem;
   font-family:inherit;font-size:14px;color:white;
-  margin-bottom:.625rem;outline:none;transition:border-color .15s;
+  margin-bottom:.625rem;outline:none;transition:border-color .15s,box-shadow .15s;
 }
-.auth-input::placeholder { color:rgba(255,255,255,.25); }
-.auth-input:focus { border-color:rgba(255,255,255,.3); }
+.auth-input::placeholder { color:rgba(255,255,255,.22); }
+.auth-input:focus { border-color:rgba(245,166,35,.5);box-shadow:0 0 0 3px rgba(245,166,35,.08); }
 .auth-input[readonly] { opacity:.4;cursor:default; }
 .auth-btn {
   display:block;width:100%;
-  background:rgba(255,255,255,.95);color:var(--brain);
+  background:#F5A623;color:#0A0A10;
   border:none;border-radius:10px;padding:.9rem;
-  font-family:inherit;font-size:14px;font-weight:700;
+  font-family:inherit;font-size:14px;font-weight:800;
   cursor:pointer;margin-top:.375rem;transition:opacity .15s;
-  letter-spacing:-.01em;
+  letter-spacing:.01em;
 }
-.auth-btn:hover { opacity:.9; }
+.auth-btn:hover { opacity:.88; }
 .auth-btn:disabled { opacity:.4;cursor:not-allowed; }
 .auth-err { font-size:12px;color:#f87171;margin-top:.75rem;min-height:1.4em; }
-.auth-hint { font-size:11px;color:rgba(255,255,255,.2);margin-top:1.75rem;line-height:1.7; }
-.auth-link { font-size:12px;color:rgba(255,255,255,.35);margin-top:1rem;cursor:pointer;display:inline-block; }
-.auth-link:hover { color:rgba(255,255,255,.65); }
+.auth-hint { font-size:11px;color:rgba(255,255,255,.18);margin-top:1.75rem;line-height:1.7; }
+.auth-link { font-size:12px;color:rgba(255,255,255,.3);margin-top:1rem;cursor:pointer;display:inline-block; }
+.auth-link:hover { color:rgba(245,166,35,.8); }
 .auth-success { font-size:12px;color:#4ade80;margin-top:.75rem;min-height:1.4em; }
 
 /* ── LANGUAGE SELECTOR ── */
 .lang-bar { display:flex;justify-content:center;gap:.5rem;margin-bottom:2rem; }
-.lang-btn { background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;
-  padding:.3rem .65rem;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;font-family:inherit; }
-.lang-btn:hover { background:rgba(255,255,255,.12);color:rgba(255,255,255,.7); }
-.lang-btn.active { background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:white;font-weight:600; }
+.lang-btn { background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;
+  padding:.3rem .65rem;font-size:12px;color:rgba(255,255,255,.35);cursor:pointer;transition:all .15s;font-family:inherit; }
+.lang-btn:hover { background:rgba(255,255,255,.1);color:rgba(255,255,255,.7); }
+.lang-btn.active { background:rgba(245,166,35,.12);border-color:rgba(245,166,35,.3);color:#F5A623;font-weight:600; }
 
 /* ── HEADER LANG ── */
 .header-lang { display:flex;gap:.3rem;align-items:center; }
@@ -340,6 +380,32 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 .btn-logout:hover { border-color:var(--red-bd);background:var(--red-bg);color:var(--red); }
 .header-user { font-size:11px;color:var(--ink3);padding:.25rem .5rem;
   background:var(--paper2);border:1px solid var(--line);border-radius:8px; }
+.btn-theme { display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--line2);background:none;cursor:pointer;font-size:14px;transition:all .15s;color:var(--ink3); }
+.btn-theme:hover { background:var(--paper2);border-color:var(--line2); }
+
+/* ── HEADER LOGO IMG ── */
+.brain-logo-img { height:40px;width:auto;display:block;cursor:default; }
+.brain-logo-img.visible { display:block; }
+
+/* ── AUTH LOGO IMG ── */
+.auth-logo-img { height:120px;width:auto;display:none;margin:0 auto 1.25rem;cursor:default; }
+.auth-logo-img.visible { display:block; }
+
+/* ── ADMIN SETTINGS PANEL ── */
+.settings-section { background:var(--surface);border:1px solid var(--line2);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem; }
+.settings-section h3 { font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.25rem; }
+.logo-upload-grid { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+.logo-slot { border:1.5px dashed var(--line2);border-radius:12px;padding:1.25rem;text-align:center;transition:border-color .15s; }
+.logo-slot:hover { border-color:rgba(245,166,35,.4); }
+.logo-slot-label { font-size:11px;color:var(--ink3);margin-bottom:.75rem; }
+.logo-slot-preview { width:100%;height:60px;display:flex;align-items:center;justify-content:center;margin-bottom:.75rem; }
+.logo-slot-preview img { max-height:56px;max-width:100%;object-fit:contain; }
+.logo-slot-actions { display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap; }
+.btn-upload { padding:.3rem .75rem;border-radius:6px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);color:#C47A00;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit; }
+html[data-theme="dark"] .btn-upload { color:#F5A623; }
+.btn-upload:hover { background:rgba(245,166,35,.2); }
+.btn-clear-logo { padding:.3rem .75rem;border-radius:6px;background:none;border:1px solid var(--line2);color:var(--ink3);font-size:11px;cursor:pointer;transition:all .15s;font-family:inherit; }
+.btn-clear-logo:hover { border-color:var(--red-bd);color:var(--red); }
 </style>
 </head>
 <body>
@@ -347,9 +413,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 <!-- ── HEADER ── -->
 <header class="header">
   <div class="brain-logo">
-    <div class="brain-mark">🧠</div>
-    <div>
-      <div class="brain-name">BBrain</div>
+    <img id="hdr-logo-img" class="brain-logo-img" src="/bbrain-logo-light.svg" alt="BBrain">
+    <div id="hdr-logo-text" style="display:none">
+      <div class="brain-name" id="hdr-brain-name">BB<span class="brain-name-amber">rain</span></div>
       <div class="brain-sub" id="hdr-sub" data-t="header.subtitle">Espaço privado do fundador</div>
     </div>
   </div>
@@ -357,9 +423,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
     <div class="stat-chip active" id="stat-session-active" style="display:none">
       <b id="stat-session-time">00:00</b> <span data-t="header.active_session">sessão ativa</span>
     </div>
-    <div class="stat-chip"><b id="stat-total">0</b> <span data-t="header.ideas">ideias</span></div>
-    <div class="stat-chip"><b id="stat-roadmap">0</b> <span data-t="header.roadmap">no roadmap</span></div>
-    <div class="stat-chip"><b id="stat-sessions">0</b> <span data-t="header.sessions">sessões</span></div>
+    <div class="stat-chip stat-chip-link" onclick="navToIdeas()" title="Ver todas as ideias"><b id="stat-total">0</b> <span data-t="header.ideas">ideias</span></div>
+    <div class="stat-chip stat-chip-link" onclick="navToRoadmap()" title="Ver ideias no roadmap"><b id="stat-roadmap">0</b> <span data-t="header.roadmap">no roadmap</span></div>
+    <div class="stat-chip stat-chip-link" onclick="navToSessions()" title="Ver sessões"><b id="stat-sessions">0</b> <span data-t="header.sessions">sessões</span></div>
     <div class="header-lang" id="header-lang">
       <button class="hlang-btn active" onclick="setLang('pt')">PT</button>
       <button class="hlang-btn" onclick="setLang('en')">EN</button>
@@ -367,6 +433,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
       <button class="hlang-btn" onclick="setLang('es')">ES</button>
       <button class="hlang-btn" onclick="setLang('de')">DE</button>
     </div>
+    <button class="btn-theme" id="btn-theme" onclick="toggleTheme()" title="Alternar tema claro/escuro">☀️</button>
     <button class="btn-logout" id="btn-reminder" onclick="applySettingsToUI();document.getElementById('reminder-banner').style.display='block'" style="display:none" title="Configurar lembretes">🔔</button>
     <span class="header-user" id="header-user" style="display:none"></span>
     <button class="btn-logout" id="btn-logout" onclick="logout()" style="display:none" title="Sair">↪ Sair</button>
@@ -413,10 +480,10 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
 
 <!-- ── TABS ── -->
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('ideas', this)">
+  <button id="tab-btn-ideas" class="tab-btn active" onclick="switchTab('ideas', this)">
     <span data-t="tab.ideas">💡 Ideias</span> <span class="tab-count" id="tc-ideas">0</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('sessions', this)">
+  <button id="tab-btn-sessions" class="tab-btn" onclick="switchTab('sessions', this)">
     <span data-t="tab.sessions">📓 Diário de sessões</span> <span class="tab-count" id="tc-sessions">0</span>
   </button>
   <button class="tab-btn" onclick="switchTab('roadmap', this)">
@@ -427,6 +494,9 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
   </button>
   <button class="tab-btn" onclick="switchTab('stitch', this)">
     <span>📱 App</span>
+  </button>
+  <button class="tab-btn" id="tab-btn-settings" onclick="switchTab('settings', this)" style="display:none">
+    <span>⚙️ Config</span>
   </button>
 </div>
 
@@ -530,6 +600,7 @@ body { font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--pa
       <div style="display:flex;gap:.5rem;align-items:center;">
         <input type="month" id="report-month" style="padding:.4rem .75rem;border:1px solid var(--line2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--ink2);">
         <button onclick="loadReport()" class="btn-idea" style="padding:.4rem .875rem;font-size:12px;">Gerar</button>
+        <button onclick="runAIAnalysis()" class="btn-idea" style="padding:.4rem .875rem;font-size:12px;background:#7C3AED;">✨ Análise AI</button>
         <button onclick="exportReport()" class="filter-btn" style="padding:.4rem .875rem;font-size:12px;">↓ HTML</button>
       </div>
     </div>
@@ -648,6 +719,56 @@ COLOR PALETTE:
     </div>
   </div>
 
+  <!-- TAB: CONFIGURAÇÕES (admin only) -->
+  <div class="tab-panel" id="panel-settings">
+    <div class="settings-section">
+      <h3>Logotipo personalizado</h3>
+      <div class="logo-upload-grid">
+        <div class="logo-slot">
+          <div class="logo-slot-label">Para fundo claro</div>
+          <div class="logo-slot-preview" id="logo-light-preview">
+            <span style="font-size:11px;color:var(--ink3)">Nenhum</span>
+          </div>
+          <div class="logo-slot-actions">
+            <label class="btn-upload" style="cursor:pointer">
+              Enviar
+              <input type="file" accept="image/*" style="display:none" onchange="handleLogoUpload('light', this)">
+            </label>
+            <button class="btn-clear-logo" onclick="clearLogo('light')">Remover</button>
+          </div>
+        </div>
+        <div class="logo-slot">
+          <div class="logo-slot-label">Para fundo escuro</div>
+          <div class="logo-slot-preview" id="logo-dark-preview">
+            <span style="font-size:11px;color:var(--ink3)">Nenhum</span>
+          </div>
+          <div class="logo-slot-actions">
+            <label class="btn-upload" style="cursor:pointer">
+              Enviar
+              <input type="file" accept="image/*" style="display:none" onchange="handleLogoUpload('dark', this)">
+            </label>
+            <button class="btn-clear-logo" onclick="clearLogo('dark')">Remover</button>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--ink3);margin-top:1rem;line-height:1.6;">
+        O logo para fundo claro aparece no header e na tela de login em tema claro.<br>
+        O logo para fundo escuro aparece no header em tema escuro e sempre na tela de login.
+      </p>
+    </div>
+    <div class="settings-section">
+      <h3>Tema da interface</h3>
+      <div style="display:flex;gap:.75rem;align-items:center;">
+        <button class="btn-upload" onclick="applyTheme('light')">☀️ Claro</button>
+        <button class="btn-upload" onclick="applyTheme('dark')">🌙 Escuro</button>
+        <span style="font-size:11px;color:var(--ink3)" id="theme-current-label">—</span>
+      </div>
+    </div>
+    <div style="text-align:center;padding:.75rem 0 .25rem;color:var(--ink3);font-size:11px;" id="app-version-label">
+      Carregando versão…
+    </div>
+  </div>
+
 </div><!-- #tab-content -->
 </main>
 
@@ -658,6 +779,20 @@ COLOR PALETTE:
 
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
+
+<!-- ── BRAIN NAME MODAL ── -->
+<div class="brain-name-overlay" id="brain-name-overlay" style="display:none">
+  <div class="brain-name-modal">
+    <div class="bm-icon">🧠</div>
+    <h2>Como se chama o seu cérebro?</h2>
+    <p>Este é o seu espaço privado. Dê um nome ao seu cérebro — ou use a sugestão abaixo.</p>
+    <div class="brain-name-preview" id="bm-preview">BBrain</div>
+    <input class="brain-name-input" id="bm-input" type="text" maxlength="20" placeholder="Ex: BBrain, MeuCérebro, IdeaHub...">
+    <div class="brain-name-suggestions" id="bm-suggestions"></div>
+    <button class="btn-confirm-brain" onclick="confirmBrainName()">Confirmar nome</button>
+    <span class="brain-name-skip" onclick="skipBrainName()">Usar sugestão e continuar →</span>
+  </div>
+</div>
 
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay" class="auth-overlay hidden">
@@ -671,7 +806,8 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
       <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
-    <span class="auth-icon">🧠</span>
+    <img id="auth-logo-img" class="auth-logo-img" src="" alt="BBrain">
+    <span class="auth-logo" id="auth-logo-text">BB<span>rain</span></span>
     <h1 class="auth-title" data-t="auth.setup.title">Bem-vindo ao BBrain</h1>
     <p class="auth-subtitle" data-t="auth.setup.subtitle">Primeira vez aqui.<br>Crie seu usuário e senha para proteger este espaço.</p>
     <input type="text"     id="setup-user" class="auth-input" data-t-ph="auth.setup.username" placeholder="Usuário" autocomplete="username" spellcheck="false">
@@ -692,8 +828,8 @@ COLOR PALETTE:
       <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
       <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
     </div>
-    <span class="auth-icon">🧠</span>
-    <h1 class="auth-title" data-t="auth.login.title">BBrain</h1>
+    <img id="auth-login-logo-img" class="auth-logo-img" src="" alt="BBrain">
+    <span class="auth-logo" id="auth-login-logo-text">BB<span>rain</span></span>
     <p class="auth-subtitle" data-t="auth.login.subtitle">Aproove · Diário do Fundador</p>
     <input type="text"     id="login-user" class="auth-input" data-t-ph="auth.login.username" placeholder="Usuário" autocomplete="username" spellcheck="false">
     <input type="password" id="login-pwd"  class="auth-input" data-t-ph="auth.login.password" placeholder="Senha" autocomplete="current-password">
@@ -1030,6 +1166,8 @@ function showForgot() {
 
 async function checkAuth() {
   applyTranslations();
+  updateThemeBtn();
+  updateLogoDisplay();
   const overlay = document.getElementById('auth-overlay');
 
   // Expiração diária: força novo login a cada dia
@@ -1321,6 +1459,129 @@ function exportReport() {
   URL.revokeObjectURL(u);
 }
 
+function toggleAppend(id) {
+  const box = document.getElementById(`append-${id}`);
+  const visible = box.style.display !== 'none';
+  box.style.display = visible ? 'none' : 'block';
+  if (!visible) setTimeout(() => document.getElementById(`append-input-${id}`)?.focus(), 50);
+}
+
+async function appendToIdea(id) {
+  const input = document.getElementById(`append-input-${id}`);
+  if (!input) { showToast('Erro: campo não encontrado'); return; }
+  const extra = input.value.trim();
+  if (!extra) { showToast('Escreva algo antes de acrescentar'); return; }
+
+  const idea = ideas.find(i => String(i.id) === String(id));
+  if (!idea) { showToast('Erro: ideia não encontrada'); return; }
+
+  const now = new Date();
+  const stamp = now.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' }) + ', ' + now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  const newText = (idea.text || '') + '\n\n↳ ' + stamp + '\n' + extra;
+
+  idea.text = newText;
+  input.value = '';
+  document.getElementById(`append-${id}`).style.display = 'none';
+  localStorage.setItem('bbrain_ideas', JSON.stringify(ideas));
+  renderIdeas();
+  showToast('✓ Pensamento acrescentado');
+
+  try {
+    await api(`/api/ideas/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: newText })
+    });
+  } catch {}
+}
+
+function fmtAI(text, actionable) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^→ ([A-ZÇÃÕ]+) (.+?)—(.+)$/gm, (_, cat, action, why) => {
+      const label = `${cat}: ${action.trim()}`;
+      const clickable = actionable
+        ? `style="cursor:pointer;" onclick="fillAIAction(${JSON.stringify(label)})" title="Clique para preparar conteúdo desta ação"`
+        : '';
+      return `<div ${clickable} style="display:flex;gap:.75rem;align-items:flex-start;padding:.6rem .75rem;background:var(--paper);border-radius:8px;margin:.35rem 0;border-left:3px solid #F5A623;${actionable?'transition:opacity .15s;':''}" ${actionable?'onmouseenter="this.style.opacity=\'0.8\'" onmouseleave="this.style.opacity=\'1\'"':''}>
+          <span style="font-size:10px;font-weight:800;color:#F5A623;white-space:nowrap;padding-top:2px;">${cat}</span>
+          <span style="font-size:13px;color:var(--ink);line-height:1.5;"><strong>${action.trim()}</strong><span style="color:var(--ink3);"> — ${why.trim()}</span></span>
+        </div>`;
+    })
+    .replace(/^- (.+)$/gm, '<div style="padding:.2rem 0 .2rem 1rem;font-size:13px;color:var(--ink2);border-left:2px solid var(--line2);margin:.2rem 0;">$1</div>')
+    .replace(/\n\n/g, '<br>').replace(/\n/g, '<br>');
+}
+
+function fillAIAction(text) {
+  const ta = document.getElementById('ai-action-input');
+  if (ta) { ta.value = text; ta.focus(); }
+}
+
+async function runAIAnalysis() {
+  const monthInput = document.getElementById('report-month');
+  if (!monthInput.value) monthInput.value = new Date().toISOString().slice(0,7);
+  const month = monthInput.value;
+  const content = document.getElementById('report-content');
+  content.innerHTML = '<p style="color:var(--ink3);font-size:13px;">✨ Dois cérebros pensando...</p>';
+  try {
+    const r = await api('/api/report/ai-analysis', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ month })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Erro');
+
+    content.innerHTML = `
+      <div style="border-radius:12px;overflow:hidden;border:1px solid var(--line2);margin-bottom:1rem;">
+        <div style="background:#F5A623;padding:1rem 1.25rem;display:flex;align-items:center;gap:.75rem;">
+          <span style="font-size:20px;">✨</span>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:#0A0A10;">Painel estratégico — ${d.month}</div>
+            <div style="font-size:11px;color:rgba(10,10,16,.6);">${d.ideas_count} ideias · ${d.sessions_count} sessões analisadas</div>
+          </div>
+        </div>
+        <div style="padding:1.25rem;background:var(--paper2);line-height:1.8;">${fmtAI(esc(d.analysis), true)}</div>
+      </div>
+      <div style="border-radius:12px;border:1px solid var(--line2);padding:1.25rem;background:var(--paper2);">
+        <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:.75rem;">→ O que queremos fazer com isso?</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:.75rem;">Clique em uma ação acima ou descreva o que vamos executar:</div>
+        <textarea id="ai-action-input" rows="2" placeholder="Ex: Criar um post sobre automação de marketing..." style="width:100%;box-sizing:border-box;padding:.6rem .75rem;border:1px solid var(--line2);border-radius:8px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--paper);resize:vertical;"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:.5rem;">
+          <button onclick="runAIAction('${month}')" class="btn-idea" style="padding:.4rem 1.25rem;font-size:12px;background:#7C3AED;">→ Preparar</button>
+        </div>
+        <div id="ai-action-result"></div>
+      </div>`;
+  } catch(e) { content.innerHTML = `<p style="color:red;font-size:13px;">Erro: ${e.message}</p>`; }
+}
+
+async function runAIAction(month, followup) {
+  const inputEl = document.getElementById('ai-action-input');
+  const action = followup || inputEl?.value?.trim();
+  if (!action) { showToast('Descreva o que vamos fazer'); return; }
+  const result = document.getElementById('ai-action-result');
+  result.innerHTML = '<p style="color:var(--ink3);font-size:13px;margin-top:.75rem;">✨ Executando...</p>';
+  try {
+    const r = await api('/api/report/ai-action', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, month })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Erro');
+    const resultId = 'air-' + Date.now();
+    result.innerHTML = `
+      <div id="${resultId}" style="margin-top:.75rem;border-radius:10px;overflow:hidden;border:1px solid var(--line2);">
+        <div style="background:#7C3AED;padding:.75rem 1rem;font-size:12px;font-weight:700;color:#fff;">✨ ${esc(d.action)}</div>
+        <div style="padding:1rem;background:var(--paper);line-height:1.8;font-size:13px;">${fmtAI(esc(d.result), false)}</div>
+        <div style="padding:.75rem 1rem;border-top:1px solid var(--line2);background:var(--paper2);display:flex;gap:.5rem;align-items:center;">
+          <input id="ai-followup-input" type="text" placeholder="Responda ou peça um ajuste..." style="flex:1;padding:.4rem .75rem;border:1px solid var(--line2);border-radius:8px;font-family:inherit;font-size:12px;color:var(--ink);background:var(--paper);">
+          <button onclick="runAIAction('${month}', document.getElementById('ai-followup-input').value)" class="btn-idea" style="padding:.4rem 1rem;font-size:12px;background:#7C3AED;white-space:nowrap;">→ Enviar</button>
+        </div>
+      </div>`;
+  } catch(e) { result.innerHTML = `<p style="color:red;font-size:13px;">Erro: ${e.message}</p>`; }
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 // LEMBRETES
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1331,8 +1592,12 @@ async function loadSettings() {
     const r = await api('/api/settings', { headers:{'Authorization':'Bearer '+authToken} });
     userSettings = (await r.json()).settings || {};
     applySettingsToUI();
-    // Mostra banner se não configurado ainda
-    if (!userSettings.reminder_frequency) {
+    // Mostra modal de nome do cérebro se nunca foi configurado
+    if (!userSettings.brain_name) {
+      setTimeout(() => showBrainNameModal(), 800);
+    }
+    // Mostra banner de lembretes se não configurado ainda
+    if (!userSettings.reminder_frequency && userSettings.brain_name) {
       setTimeout(() => { document.getElementById('reminder-banner').style.display='block'; }, 2000);
     }
     document.getElementById('tc-roadmap').textContent = ideas.filter(i=>i.status==='no_roadmap').length;
@@ -1346,6 +1611,81 @@ function applySettingsToUI() {
   if (document.getElementById('reminder-freq')) document.getElementById('reminder-freq').value = freq;
   if (document.getElementById('reminder-time')) document.getElementById('reminder-time').value = time;
   updateReminderUI();
+  applyBrainName();
+}
+
+// ── BRAIN NAME ────────────────────────────────────────────────
+function defaultBrainName(username) {
+  if (!username) return 'BBrain';
+  const first = username.trim()[0].toUpperCase();
+  return first + 'Brain';
+}
+
+function applyBrainName() {
+  const name = userSettings.brain_name || defaultBrainName(localStorage.getItem('bbrain_username'));
+  document.getElementById('hdr-brain-name').textContent = name;
+  document.title = name + ' — Aproove';
+}
+
+function showBrainNameModal() {
+  const username = localStorage.getItem('bbrain_username') || '';
+  const suggested = defaultBrainName(username);
+  const first = username[0]?.toUpperCase() || 'B';
+
+  // Sugestões
+  const suggestions = [
+    suggested,
+    username.trim() ? username.trim()[0].toUpperCase() + username.trim().slice(1) + 'Brain' : 'MeuBrain',
+    'MeuCérebro',
+    'IdeaHub',
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
+  const sugHtml = suggestions.map(s =>
+    `<span class="brain-name-sug${s===suggested?' active':''}" onclick="selectBrainSug('${s}',this)">${s}</span>`
+  ).join('');
+  document.getElementById('bm-suggestions').innerHTML = sugHtml;
+  document.getElementById('bm-preview').textContent = suggested;
+  document.getElementById('bm-input').value = '';
+  document.getElementById('bm-input').placeholder = suggested;
+  document.getElementById('brain-name-overlay').style.display = 'flex';
+
+  document.getElementById('bm-input').oninput = function() {
+    const val = this.value.trim() || suggested;
+    document.getElementById('bm-preview').textContent = val;
+    document.querySelectorAll('.brain-name-sug').forEach(s => s.classList.remove('active'));
+  };
+}
+
+function selectBrainSug(name, el) {
+  document.getElementById('bm-input').value = '';
+  document.getElementById('bm-preview').textContent = name;
+  document.querySelectorAll('.brain-name-sug').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function saveBrainName(name) {
+  userSettings.brain_name = name;
+  applyBrainName();
+  document.getElementById('brain-name-overlay').style.display = 'none';
+  try {
+    await api('/api/settings', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brain_name: name })
+    });
+  } catch {}
+  showToast('🧠 ' + name + ' ativado!');
+}
+
+function confirmBrainName() {
+  const suggested = defaultBrainName(localStorage.getItem('bbrain_username'));
+  const val = document.getElementById('bm-input').value.trim() || document.getElementById('bm-preview').textContent || suggested;
+  saveBrainName(val);
+}
+
+function skipBrainName() {
+  const suggested = document.getElementById('bm-preview').textContent || defaultBrainName(localStorage.getItem('bbrain_username'));
+  saveBrainName(suggested);
 }
 
 function updateReminderUI() {
@@ -1447,6 +1787,110 @@ document.addEventListener('keydown', e => {
   else if (login && login.style.display !== 'none') doLogin();
 });
 
+// ── TEMA CLARO / ESCURO ───────────────────────────────────────
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('bbrain-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('bbrain-theme', 'light');
+  }
+  updateThemeBtn();
+  updateLogoDisplay();
+  const lbl = document.getElementById('theme-current-label');
+  if (lbl) lbl.textContent = theme === 'dark' ? 'Tema escuro ativo' : 'Tema claro ativo';
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  applyTheme(isDark ? 'light' : 'dark');
+}
+
+function updateThemeBtn() {
+  const btn = document.getElementById('btn-theme');
+  if (!btn) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.textContent = isDark ? '🌙' : '☀️';
+  btn.title = isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro';
+}
+
+// ── LOGO PERSONALIZADO ────────────────────────────────────────
+const LOGO_DEFAULT_DARK  = '/bbrain-logo.svg';
+const LOGO_DEFAULT_LIGHT = '/bbrain-logo-light.svg';
+
+function updateLogoDisplay() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+  // Header: usa upload customizado ou padrão conforme tema
+  const hdrCustom = localStorage.getItem(isDark ? 'bbrain-logo-dark' : 'bbrain-logo-light');
+  const hdrSrc = hdrCustom || (isDark ? LOGO_DEFAULT_DARK : LOGO_DEFAULT_LIGHT);
+  const hdrImg  = document.getElementById('hdr-logo-img');
+  const hdrText = document.getElementById('hdr-logo-text');
+  if (hdrImg) {
+    hdrImg.src = hdrSrc;
+    hdrImg.classList.add('visible');
+    if (hdrText) hdrText.style.display = 'none';
+  }
+
+  // Auth overlay — sempre usa logo escuro (bg #0A0A10)
+  const authCustom = localStorage.getItem('bbrain-logo-dark');
+  const authSrc = authCustom || LOGO_DEFAULT_DARK;
+  ['auth-logo-img','auth-login-logo-img'].forEach(id => {
+    const img  = document.getElementById(id);
+    const text = document.getElementById(id.replace('-img','-text'));
+    if (img) {
+      img.src = authSrc;
+      img.classList.add('visible');
+      if (text) text.style.display = 'none';
+    }
+  });
+}
+
+// ── ADMIN: UPLOAD DE LOGO ─────────────────────────────────────
+function handleLogoUpload(variant, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    localStorage.setItem('bbrain-logo-' + variant, e.target.result);
+    renderLogoPreview(variant, e.target.result);
+    updateLogoDisplay();
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function clearLogo(variant) {
+  localStorage.removeItem('bbrain-logo-' + variant);
+  renderLogoPreview(variant, null);
+  updateLogoDisplay();
+}
+
+function renderLogoPreview(variant, dataUrl) {
+  const el = document.getElementById('logo-' + variant + '-preview');
+  if (!el) return;
+  if (dataUrl) {
+    el.innerHTML = '<img src="' + dataUrl + '" style="max-height:56px;max-width:100%;object-fit:contain;">';
+  } else {
+    el.innerHTML = '<span style="font-size:11px;color:var(--ink3)">Nenhum</span>';
+  }
+}
+
+function initAdminSettings() {
+  ['light','dark'].forEach(v => {
+    const stored = localStorage.getItem('bbrain-logo-' + v);
+    if (stored) renderLogoPreview(v, stored);
+  });
+  const settingsTab = document.getElementById('tab-btn-settings');
+  if (settingsTab) settingsTab.style.display = '';
+  const lbl = document.getElementById('theme-current-label');
+  if (lbl) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    lbl.textContent = isDark ? 'Tema escuro ativo' : 'Tema claro ativo';
+  }
+}
+
 // ── LOGOUT ────────────────────────────────────────────────────
 async function logout() {
   if (!confirm('Sair do BBrain?')) return;
@@ -1465,12 +1909,15 @@ function showHeaderUser() {
   if (uEl && user) { uEl.textContent = user; uEl.style.display = ''; }
   if (bEl) bEl.style.display = '';
   if (rEl) rEl.style.display = '';
+  if (user === 'brunomassa') initAdminSettings();
 }
 
 // ── INIT ──────────────────────────────────────────────────────
 async function init() {
   const authed = await checkAuth();
   if (!authed) return;
+  updateThemeBtn();
+  updateLogoDisplay();
   showHeaderUser();
   showLegacyFooter();
   updateCheckinDatetime();
@@ -1478,6 +1925,30 @@ async function init() {
   renderRoadmap();
   loadSettings();
   checkForActiveSession();
+  connectSSE();
+  loadAppVersion();
+}
+
+async function loadAppVersion() {
+  try {
+    const r = await fetch('/version.json');
+    if (!r.ok) return;
+    const d = await r.json();
+    const el = document.getElementById('app-version-label');
+    if (el) el.textContent = `v${d.version} · ${d.updated_at || ''}`;
+  } catch {}
+}
+
+let sseSource = null;
+function connectSSE() {
+  if (sseSource) sseSource.close();
+  sseSource = new EventSource(`/api/events?token=${encodeURIComponent(authToken)}`);
+  sseSource.addEventListener('new-idea', async e => {
+    const idea = JSON.parse(e.data);
+    showToast(`💡 Nova ideia chegou pelo WhatsApp`);
+    await loadIdeas();
+  });
+  sseSource.onerror = () => { sseSource.close(); setTimeout(connectSSE, 5000); };
 }
 
 function updateCheckinDatetime() {
@@ -1691,12 +2162,14 @@ async function endSession() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ended_at: activeSession.ended_at, duration_minutes: diffMin })
     });
-  } catch {
-    // Atualiza localmente
-    const idx = sessions.findIndex(s => s.id === activeSession.id);
-    if (idx !== -1) sessions[idx] = activeSession;
-    localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
-  }
+  } catch {}
+  // Atualiza localmente imediatamente e renderiza
+  const idx = sessions.findIndex(s => s.id === activeSession.id);
+  if (idx !== -1) sessions[idx] = { ...sessions[idx], ended_at: activeSession.ended_at, duration_minutes: diffMin };
+  else sessions.unshift({ ...activeSession });
+  localStorage.setItem('bbrain_sessions', JSON.stringify(sessions));
+  renderSessions();
+  updateStats();
 
   clearInterval(sessionTimer);
   sessionTimer = null;
@@ -1914,10 +2387,18 @@ function renderIdeas() {
           ${tags}
           ${evalBlock}
           <div class="idea-actions">
+            <button class="act" onclick="toggleAppend('${idea.id}')">+ Acrescentar</button>
             ${idea.status!=='no_roadmap'?`<button class="act green" onclick="updateIdeaStatus('${idea.id}','no_roadmap')">${t('ideas.action.roadmap')}</button>`:''}
             ${idea.status!=='em_analise'&&idea.status!=='no_roadmap'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','em_analise')">${t('ideas.action.analyze')}</button>`:''}
             ${idea.status!=='arquivada'?`<button class="act" onclick="updateIdeaStatus('${idea.id}','arquivada')">${t('ideas.action.archive')}</button>`:`<button class="act" onclick="updateIdeaStatus('${idea.id}','nova')">${t('ideas.action.reopen')}</button>`}
             <button class="act del" onclick="deleteIdea('${idea.id}')">✕</button>
+          </div>
+          <div class="idea-append-box" id="append-${idea.id}" style="display:none;margin-top:.75rem;">
+            <textarea class="idea-textarea" id="append-input-${idea.id}" rows="2" placeholder="Acrescente um pensamento, contexto ou desdobramento..." style="min-height:60px;font-size:13px;"></textarea>
+            <div style="display:flex;gap:.5rem;margin-top:.4rem;justify-content:flex-end;">
+              <button class="filter-btn" onclick="toggleAppend('${idea.id}')">Cancelar</button>
+              <button class="btn-idea" style="padding:.4rem 1rem;font-size:12px;" onclick="appendToIdea('${idea.id}')">Acrescentar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1993,6 +2474,19 @@ function updateStats() {
   document.getElementById('stat-total').textContent    = ideas.length;
   document.getElementById('stat-roadmap').textContent  = ideas.filter(i => i.status==='no_roadmap').length;
   document.getElementById('stat-sessions').textContent = sessions.length;
+}
+
+// ── NAVEGAÇÃO PELOS STAT CHIPS ────────────────────────────────
+function navToIdeas() {
+  switchTab('ideas', document.getElementById('tab-btn-ideas'));
+  setFilter('todas', document.querySelector('.filter-btn[onclick*="todas"]'));
+}
+function navToRoadmap() {
+  switchTab('ideas', document.getElementById('tab-btn-ideas'));
+  setFilter('no_roadmap', document.querySelector('.filter-btn[onclick*="no_roadmap"]'));
+}
+function navToSessions() {
+  switchTab('sessions', document.getElementById('tab-btn-sessions'));
 }
 
 // ── HELPERS ───────────────────────────────────────────────────
